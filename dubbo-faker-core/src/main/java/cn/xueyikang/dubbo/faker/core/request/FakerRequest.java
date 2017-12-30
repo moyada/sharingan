@@ -1,10 +1,12 @@
 package cn.xueyikang.dubbo.faker.core.request;
 
+import cn.xueyikang.dubbo.faker.core.consumer.InvokerConsumer;
 import cn.xueyikang.dubbo.faker.core.handle.AbstractHandle;
 import cn.xueyikang.dubbo.faker.core.handle.MethodInvokeHandle;
 import cn.xueyikang.dubbo.faker.core.invoke.AbstractInvoke;
 import cn.xueyikang.dubbo.faker.core.invoke.AsyncInvoke;
 import cn.xueyikang.dubbo.faker.core.manager.FakerManager;
+import cn.xueyikang.dubbo.faker.core.model.InvokeFuture;
 import cn.xueyikang.dubbo.faker.core.model.MethodInvokeDO;
 import cn.xueyikang.dubbo.faker.core.utils.*;
 import com.google.common.collect.Lists;
@@ -14,9 +16,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandle;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 public class FakerRequest {
@@ -28,8 +36,6 @@ public class FakerRequest {
 
     private final AbstractHandle handle;
 
-    private AbstractInvoke invoke;
-
     public FakerRequest() {
         this.handle = new MethodInvokeHandle();
     }
@@ -39,6 +45,7 @@ public class FakerRequest {
             context = new ClassPathXmlApplicationContext(new String[]{"classpath:application-dubbo.xml"});
         }
 
+        // get method invoke info
         MethodInvokeDO invokeInfo = fakerManager.getInvokeInfo(invokeId);
         if(null == invokeInfo) {
             return "该请求调用不存在";
@@ -91,17 +98,34 @@ public class FakerRequest {
 
 
         // init invoke thread pool
-        invoke = new AsyncInvoke(null == poolSize ? 10 : poolSize, fakerManager);
+        AbstractInvoke invoke = new AsyncInvoke(null == poolSize ? 10 : poolSize);
         int timeout = null == qps ? 100 : 3600 / qps;
+        Queue<InvokeFuture> queue = new ConcurrentLinkedQueue<>();
+
+        // init logging thread poll
+        ExecutorService excutor = Executors.newFixedThreadPool(5);
 
         // find param convert
         Map<Integer, Integer> convertMap = ConvertUtil.getConvertMap(paramTypes);
 
         int size = null == questNum ? 100 : questNum, i, top = fakerParam.size();
         String[] values;
+
         // generator fakerId
         String fakerId = UUIDUtil.getUUID();
         Random random = new Random();
+
+        // async result
+        CompletableFuture<Object> future;
+        Instant start;
+
+        // start logging thread
+        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
+        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
+        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
+        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
+        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
+
         // convert param and invoke method
         for (int index = 0; index < size; index++) {
             // random invoke param
@@ -136,9 +160,12 @@ public class FakerRequest {
                     }
                 }
             }
-            invoke.invoke(fakerId, methodHandle, argsValue);
+            start = Instant.now();
+            future = invoke.invoke(fakerId, methodHandle, argsValue);
+            queue.add(new InvokeFuture(start, future));
         }
         invoke.destroy();
+        excutor.shutdown();
         return "请求编号：" + fakerId;
     }
 

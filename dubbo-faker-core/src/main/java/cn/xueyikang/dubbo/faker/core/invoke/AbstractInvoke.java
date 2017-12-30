@@ -1,10 +1,11 @@
 package cn.xueyikang.dubbo.faker.core.invoke;
 
 import java.lang.invoke.MethodHandle;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractInvoke {
 
-    public abstract void invoke(String fakerId, MethodHandle handle, Object[] argsValue);
+    public abstract CompletableFuture<Object> invoke(String fakerId, MethodHandle handle, Object[] argsValue);
 
     public abstract void destroy();
 }
