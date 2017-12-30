@@ -6,8 +6,6 @@ import cn.xueyikang.dubbo.faker.core.invoke.AbstractInvoke;
 import cn.xueyikang.dubbo.faker.core.invoke.AsyncInvoke;
 import cn.xueyikang.dubbo.faker.core.manager.FakerManager;
 import cn.xueyikang.dubbo.faker.core.model.MethodInvokeDO;
-import cn.xueyikang.dubbo.faker.core.parser.JacksonParser;
-import cn.xueyikang.dubbo.faker.core.parser.JsonParser;
 import cn.xueyikang.dubbo.faker.core.utils.*;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeansException;
@@ -32,11 +30,8 @@ public class FakerRequest {
 
     private AbstractInvoke invoke;
 
-    private final JsonParser parser;
-
     public FakerRequest() {
         this.handle = new MethodInvokeHandle();
-        this.parser = new JacksonParser();
     }
 
     public String request(int appId, int invokeId, String type, Integer poolSize, Integer qps, Integer questNum) {
@@ -109,6 +104,7 @@ public class FakerRequest {
         Random random = new Random();
         // convert param and invoke method
         for (int index = 0; index < size; index++) {
+            // random invoke param
             values = JsonUtil.toArray(fakerParam.get(random.nextInt(top)), String.class);
             //values = fakerParam.get(index).split(",");
             if(null == values) {
