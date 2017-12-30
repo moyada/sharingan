@@ -49,9 +49,62 @@ public class JsonUtil {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <C> C toObject(String json, Class<C> c) {
+        if(c.isEnum()) {
+            Enum anEnum = Enum.valueOf((Class<Enum>) c, json);
+            return c.cast(anEnum);
+        }
         if("String".equals(c.getSimpleName())) {
             return c.cast(json);
+        }
+        if("Integer".equals(c.getSimpleName())) {
+            return (C) Integer.valueOf(json);
+        }
+        if("int".equals(c.getSimpleName())) {
+            return (C) Integer.valueOf(json);
+        }
+        if("Long".equals(c.getSimpleName())) {
+            return (C) Long.valueOf(json);
+        }
+        if("long".equals(c.getSimpleName())) {
+            return (C) Long.valueOf(json);
+        }
+        if("Short".equals(c.getSimpleName())) {
+            return (C) Short.valueOf(json);
+        }
+        if("short".equals(c.getSimpleName())) {
+            return (C) Short.valueOf(json);
+        }
+        if("Double".equals(c.getSimpleName())) {
+            return (C) Double.valueOf(json);
+        }
+        if("double".equals(c.getSimpleName())) {
+            return (C) Double.valueOf(json);
+        }
+        if("Float".equals(c.getSimpleName())) {
+            return (C) Float.valueOf(json);
+        }
+        if("float".equals(c.getSimpleName())) {
+            return (C) Float.valueOf(json);
+        }
+        if("Character".equals(c.getSimpleName())) {
+            return c.cast(json.charAt(0));
+        }
+        if("char".equals(c.getSimpleName())) {
+            return (C) (Character) json.charAt(0);
+        }
+        if("Boolean".equals(c.getSimpleName())) {
+            return (C) Boolean.valueOf(json);
+        }
+        if("boolean".equals(c.getSimpleName())) {
+            return (C) Boolean.valueOf(json);
+        }
+        if("Byte".equals(c.getSimpleName())) {
+            return (C) Byte.valueOf(json);
+        }
+        if("byte".equals(c.getSimpleName())) {
+            return (C) Byte.valueOf(json);
         }
         C obj;
         try {
