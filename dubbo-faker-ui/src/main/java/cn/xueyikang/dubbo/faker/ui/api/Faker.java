@@ -29,7 +29,7 @@ public class Faker {
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
     @RequestMapping(value = "invoke", method = RequestMethod.GET, produces = "application/json")
-    public void invoke(
+    public String invoke(
 //                       @ApiParam(name = "appId", required = true, value = "项目编号") @RequestParam("appId") int appId,
                        @ApiParam(name = "invokeId", required = true, value = "请求编号") @RequestParam("invokeId") int invokeId,
 //                       @ApiParam(name = "type", required = true, value = "参数类别") @RequestParam("type") String type,
@@ -38,6 +38,16 @@ public class Faker {
                        @ApiParam(name = "qps", value = "每秒钟请求数") @RequestParam(value = "qps", required = false) Integer qps,
                        @ApiParam(name = "loop", value = "请求次数") @RequestParam(value = "loop", required = false) Integer loop
                                 ) {
-        fakerRequest.request(invokeId, invokeExpression, poolSize, qps, loop);
+        poolSize = null == poolSize ? 1 : poolSize;
+        qps = null == qps ? 1 : qps;
+        loop = null == loop ? 1 : loop;
+        if(loop < poolSize) {
+            return "请求次数必须大于并发数";
+        }
+        if(loop < qps) {
+            return "请求次数必须大于每秒钟请求数";
+        }
+
+        return fakerRequest.request(invokeId, invokeExpression, poolSize, qps, loop);
     }
 }

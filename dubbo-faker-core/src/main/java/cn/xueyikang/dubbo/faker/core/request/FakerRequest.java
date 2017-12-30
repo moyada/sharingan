@@ -43,7 +43,7 @@ public class FakerRequest {
     }
 
     public String request(int invokeId, String invokeExpression,
-                          Integer poolSize, Integer qps, Integer questNum) {
+                          int poolSize, int qps, int questNum) {
         if(null == context) {
             context = new ClassPathXmlApplicationContext(new String[]{"classpath:application-dubbo.xml"});
         }
@@ -90,7 +90,6 @@ public class FakerRequest {
             return "依赖类未找到" + e;
         }
 
-        poolSize = null == poolSize ? 1 : poolSize;
         Object[] service;
         try {
             service = new Object[poolSize];
@@ -124,7 +123,7 @@ public class FakerRequest {
 
         // init invoke thread pool
         AbstractInvoke invoke = new AsyncInvoke(poolSize);
-        int timeout = null == qps ? 100 : 3600 / qps;
+        int timeout = 1 <= qps ? 100 : 3600 / qps;
         Queue<InvokeFuture> queue = new ConcurrentLinkedQueue<>();
 
         // find param convert
@@ -143,7 +142,7 @@ public class FakerRequest {
         // init logging thread poll
         ExecutorService excutor;
         // start logging thread
-        if(null == questNum) {
+        if(1 <= questNum) {
             size = 1;
             excutor = Executors.newFixedThreadPool(1);
             excutor.submit(new InvokerConsumer("t-1", fakerId, invokeId, queue, fakerManager));
