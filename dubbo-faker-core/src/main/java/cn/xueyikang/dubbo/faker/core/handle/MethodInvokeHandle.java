@@ -12,9 +12,8 @@ public class MethodInvokeHandle extends AbstractHandle {
     private static final Logger log = LoggerFactory.getLogger(MethodInvokeHandle.class);
 
     @Override
-    public MethodHandle fetchHandleInfo(String className, String methodName, String returnType, String[] argsType) {
+    public MethodHandle fetchHandleInfo(String className, String methodName, String returnType, Class<?> paramClass[]) {
         Class<?> classType, returnClassType;
-        Class<?> paramClass[];
 
         try {
             classType = ReflectUtil.getClassType(className);
@@ -28,20 +27,7 @@ public class MethodInvokeHandle extends AbstractHandle {
             throw new RuntimeException("Take Return Class Error: " + e);
         }
 
-        int length = argsType.length;
-        if(0 == length) {
-            paramClass = new Class[0];
-        }
-        else {
-            paramClass = new Class[length];
-            try {
-                for (int index = 0; index < length; index++) {
-                    paramClass[index] = ReflectUtil.getClassType(argsType[index]);
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Take Parameter Class Error: " + e);
-            }
-        }
+
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodType methodType = MethodType.methodType(returnClassType, paramClass);

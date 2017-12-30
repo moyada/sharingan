@@ -15,6 +15,6 @@ public class InvokeTest extends BaseTest {
     private FakerRequest fakerRequest;
     @Test
     public void test() {
-        fakerRequest.request(1, 1, "model");
+        fakerRequest.request(1, 1, "model", null, null, null);
     }
 }

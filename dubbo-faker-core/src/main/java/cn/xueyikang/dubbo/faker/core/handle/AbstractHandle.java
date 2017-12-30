@@ -4,5 +4,5 @@ import java.lang.invoke.MethodHandle;
 
 public abstract class AbstractHandle {
 
-    public abstract MethodHandle fetchHandleInfo(String className, String methodName, String returnType, String[] argsType);
+    public abstract MethodHandle fetchHandleInfo(String className, String methodName, String returnType, Class<?> paramClass[]);
 }
