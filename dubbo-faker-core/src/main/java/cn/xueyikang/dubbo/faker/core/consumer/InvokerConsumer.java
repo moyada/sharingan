@@ -69,7 +69,7 @@ public class InvokerConsumer implements Runnable {
                 logDO.setMessage(Throwable.class.cast(o).getMessage());
             }
             else {
-                // TODO: 2017/12/31 count spend time
+                // TODO: 2017/12/31 counting spend time
 //                if (millis > 1000) {
 //                    logDO.setCode(Code.TIME_OUT);
 //                } else {

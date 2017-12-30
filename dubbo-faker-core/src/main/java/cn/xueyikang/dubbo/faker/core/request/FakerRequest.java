@@ -89,9 +89,14 @@ public class FakerRequest {
         } catch (ClassNotFoundException e) {
             return "依赖类未找到" + e;
         }
-        Object service;
+
+        poolSize = null == poolSize ? 1 : poolSize;
+        Object[] service;
         try {
-            service = BeanUtil.getBean(context, classType);
+            service = new Object[poolSize];
+            for (int index = 0; index < poolSize; index++ ) {
+                service[index] = BeanUtil.getBean(context, classType);
+            }
         }
         catch (BeansException e) {
             return "依赖实例未找到" + e;
@@ -118,7 +123,7 @@ public class FakerRequest {
 
 
         // init invoke thread pool
-        AbstractInvoke invoke = new AsyncInvoke(null == poolSize ? 1 : poolSize);
+        AbstractInvoke invoke = new AsyncInvoke(poolSize);
         int timeout = null == qps ? 100 : 3600 / qps;
         Queue<InvokeFuture> queue = new ConcurrentLinkedQueue<>();
 
@@ -186,7 +191,6 @@ public class FakerRequest {
             }
             else {
                 argsValue = new Object[length];
-                argsValue[0] = service;
                 for (i = 0; i < length; i++) {
                     value = values[i].toString();
 
@@ -207,7 +211,7 @@ public class FakerRequest {
                 }
             }
             start = Instant.now();
-            future = invoke.invoke(fakerId, methodHandle, service, argsValue);
+            future = invoke.invoke(fakerId, methodHandle, service[size % poolSize], argsValue);
             queue.add(new InvokeFuture(start, future, Arrays.toString(argsValue)));
         }
         invoke.destroy();
