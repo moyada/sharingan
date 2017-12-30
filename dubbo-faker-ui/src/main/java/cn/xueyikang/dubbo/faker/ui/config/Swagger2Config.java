@@ -70,14 +70,14 @@ public class Swagger2Config implements WebMvcConfigurer {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-//                .produces(produecetypes())
+                .produces(produecetypes())
 //                .groupName("demo-api")
 //                .apiInfo(demoapiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
-                .build()
-                .ignoredParameterTypes(ApiIgnore.class);
+                .build();
+//                .ignoredParameterTypes(ApiIgnore.class);
 //                .enableUrlTemplating(false);
 //                .securitySchemes(Collections.singletonList(apiKey()));
     }

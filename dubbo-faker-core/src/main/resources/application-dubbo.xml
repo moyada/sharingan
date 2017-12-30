@@ -12,10 +12,9 @@
     <import resource="application-dubbo-import.xml"/>
     <import resource="application-dubbo-export.xml"/>
 
-    <context:property-placeholder order="0" location="classpath:/properties/dubbo.properties" />
+    <context:property-placeholder order="0" location="classpath:/properties/dubbo.properties" ignore-unresolvable="true"/>
 
     <dubbo:application name="${dubbo.application}" />
-    <dubbo:application name="dubbo-faker" />
     <dubbo:registry address="${dubbo.registry}" backupProvider="${dubbo.provider.backup}"/>
     <dubbo:provider export="${dubbo.export}" token="${dubbo.token}"/>
     <dubbo:protocol name="dubbo" port="-1" host="intranet" />

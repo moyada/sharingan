@@ -50,6 +50,9 @@ public class JsonUtil {
     }
 
     public static <C> C toObject(String json, Class<C> c) {
+        if("String".equals(c.getSimpleName())) {
+            return c.cast(json);
+        }
         C obj;
         try {
             obj = mapper.readValue(json, c);

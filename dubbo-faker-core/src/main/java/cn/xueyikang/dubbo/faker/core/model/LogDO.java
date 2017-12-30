@@ -10,6 +10,10 @@ public class LogDO {
 
     private String fakerId;
 
+    private Integer invokeId;
+
+    private String realParam;
+
     private Integer code;
 
     private String message;
@@ -24,6 +28,22 @@ public class LogDO {
 
     public void setFakerId(String fakerId) {
         this.fakerId = fakerId;
+    }
+
+    public Integer getInvokeId() {
+        return invokeId;
+    }
+
+    public void setInvokeId(Integer invokeId) {
+        this.invokeId = invokeId;
+    }
+
+    public String getRealParam() {
+        return realParam;
+    }
+
+    public void setRealParam(String realParam) {
+        this.realParam = realParam;
     }
 
     public Integer getCode() {

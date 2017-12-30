@@ -7,7 +7,7 @@ CREATE TABLE `method_invoke` (
   `param_type` text,
   `return_type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `invoke_param` (
@@ -16,15 +16,17 @@ CREATE TABLE `invoke_param` (
   `type` varchar(11) DEFAULT NULL,
   `param_value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `faker_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `faker_id` varchar(32) DEFAULT NULL,
+  `invoke_id` int(11) DEFAULT NULL,
+  `real_param` varchar(255) DEFAULT NULL,
   `code` tinyint(3) unsigned DEFAULT NULL,
   `message` varchar(200) DEFAULT NULL,
   `spend_time` int(11) DEFAULT NULL,
   `invoke_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

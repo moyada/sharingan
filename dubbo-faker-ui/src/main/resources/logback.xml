@@ -33,7 +33,7 @@
         </filter>
     </appender>
 
-    <logger name="com.souche.faker.core" level="info" additivity="false">
+    <logger name="com.souche.faker" level="info" additivity="false">
         <appender-ref ref="INVOKE_ERROR" />
         <appender-ref ref="STDOUT" />
     </logger>

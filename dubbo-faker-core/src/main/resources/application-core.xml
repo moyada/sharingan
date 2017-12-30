@@ -9,5 +9,5 @@
 	<!-- 扫描controller（controller层注入） -->
 	<context:component-scan base-package="cn.xueyikang.dubbo.faker.core" />
 
-	<import resource="classpath:application-dubbo.xml"/>
+	<!--<import resource="classpath:application-dubbo.xml"/>-->
 </beans>

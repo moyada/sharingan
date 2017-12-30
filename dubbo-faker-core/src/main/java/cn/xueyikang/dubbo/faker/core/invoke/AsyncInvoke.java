@@ -14,10 +14,30 @@ public class AsyncInvoke extends AbstractInvoke implements AutoCloseable {
     }
 
     @Override
-    public CompletableFuture<Object> invoke(String fakerId, MethodHandle handle, Object[] argsValue) {
+    public CompletableFuture<Object> invoke(String fakerId, MethodHandle handle, Object service, Object[] argsValue) {
         return CompletableFuture.supplyAsync(()->{
             try {
-                return handle.invoke(argsValue);
+                if(null == argsValue) {
+                    return handle.invoke(service);
+                }
+                switch (argsValue.length) {
+                    case 1:
+                        return handle.invoke(service, argsValue[0]);
+                    case 2:
+                        return handle.invoke(service, argsValue[0], argsValue[1]);
+                    case 3:
+                        return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2]);
+                    case 4:
+                        return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3]);
+                    case 5:
+                        return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4]);
+                    case 6:
+                        return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4], argsValue[5]);
+                    case 7:
+                        return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4], argsValue[5], argsValue[6]);
+                    default:
+                        return null;
+                }
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;

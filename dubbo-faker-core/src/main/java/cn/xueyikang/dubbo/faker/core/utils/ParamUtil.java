@@ -28,19 +28,15 @@ public class ParamUtil {
         Set<String> rebuildParamSet = Sets.newHashSetWithExpectedSize(length);
 
         Matcher m;
-        int count, i;
         String find;
         List<String> param;
         for (int index = 0; index < length; index++) {
             m = p.matcher(array[index].toString());
-            count = m.groupCount();
-            if(count > 0) {
-                param = Lists.newArrayListWithExpectedSize(count);
-                for (i = 0; i < count; i++) {
-                    find = m.group(i);
-                    param.add(find);
-                    rebuildParamSet.add(find);
-                }
+            param = Lists.newArrayList();
+            for(; m.find(); ) {
+                find = m.group();
+                param.add(find);
+                rebuildParamSet.add(find);
                 rebuildParamMap.put(index, param);
             }
         }
@@ -52,7 +48,9 @@ public class ParamUtil {
     }
 
     public static void main(String[] args) {
-        String invokeParam = "[\"${123.model}\", [{\"action\":\"${23.haha}\",\"money\":[{\"action\":\"${23.haha}\",\"money\":1111}]}], \"wishenm\"]";
-        System.out.println(getRebuildParam(JsonUtil.toArray(invokeParam, Object.class)));
+         String invokeParam = "[\"${123.model}\", [{\"action\":\"${23.haha}\",\"money\":[{\"action\":\"${23.haha}\",\"money\":1111}]}], \"wishenm\"]";
+//        String invokeParam = "[\"${1.model}\"]";
+        Object[] array = JsonUtil.toArray(invokeParam, Object.class);
+        System.out.println(getRebuildParam(array));
     }
 }

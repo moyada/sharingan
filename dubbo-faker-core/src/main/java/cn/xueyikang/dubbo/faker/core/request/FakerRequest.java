@@ -12,6 +12,8 @@ import cn.xueyikang.dubbo.faker.core.model.RebuildParam;
 import cn.xueyikang.dubbo.faker.core.utils.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,6 +29,7 @@ import java.util.concurrent.Executors;
 
 @Component
 public class FakerRequest {
+    private static final Logger log = LoggerFactory.getLogger(FakerRequest.class);
 
     private ClassPathXmlApplicationContext context;
 
@@ -80,15 +83,15 @@ public class FakerRequest {
         }
 
         // get service instance
-//        Class classType;
-//        try {
-//            classType = ReflectUtil.getClassType(invokeInfo.getClassName());
-//        } catch (ClassNotFoundException e) {
-//            return "依赖类未找到" + e;
-//        }
+        Class classType;
+        try {
+            classType = ReflectUtil.getClassType(invokeInfo.getClassName());
+        } catch (ClassNotFoundException e) {
+            return "依赖类未找到" + e;
+        }
         Object service;
         try {
-            service = BeanUtil.getBean(context, invokeInfo.getClassName());
+            service = BeanUtil.getBean(context, classType);
         }
         catch (BeansException e) {
             return "依赖实例未找到" + e;
@@ -119,13 +122,8 @@ public class FakerRequest {
         int timeout = null == qps ? 100 : 3600 / qps;
         Queue<InvokeFuture> queue = new ConcurrentLinkedQueue<>();
 
-        // init logging thread poll
-        ExecutorService excutor = Executors.newFixedThreadPool(5);
-
         // find param convert
         Map<Integer, Integer> convertMap = ConvertUtil.getConvertMap(paramTypes);
-
-        int size = null == questNum ? 1 : questNum, i;
 
         // generator fakerId
         String fakerId = UUIDUtil.getUUID();
@@ -135,18 +133,37 @@ public class FakerRequest {
         CompletableFuture<Object> future;
         Instant start;
 
+        int size, i;
+
+        // init logging thread poll
+        ExecutorService excutor;
         // start logging thread
-        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
-        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
-        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
-        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
-        excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
+        if(null == questNum) {
+            size = 1;
+            excutor = Executors.newFixedThreadPool(1);
+            excutor.submit(new InvokerConsumer("t-1", fakerId, invokeId, queue, fakerManager));
+        }
+        else {
+            size = questNum;
+            int linstener = size / 10;
+            linstener = linstener > 100 ? 100 : linstener;
+            excutor = Executors.newFixedThreadPool(linstener);
 
-
+            for (i = 0; i < linstener; i++) {
+                excutor.submit(new InvokerConsumer("t-"+i, fakerId, invokeId, queue, fakerManager));
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         length = values.length;
         String value;
         List<String> params, paramValues;
+
+        log.info("start faker invoke: " + fakerId);
 
         // convert param and invoke method
         for (int index = 0; index < size; index++) {
@@ -165,10 +182,10 @@ public class FakerRequest {
 
             // convert param value
             if(0 == length) {
-                argsValue = new Object[]{service};
+                argsValue = null;
             }
             else {
-                argsValue = new Object[length + 1];
+                argsValue = new Object[length];
                 argsValue[0] = service;
                 for (i = 0; i < length; i++) {
                     value = values[i].toString();
@@ -182,23 +199,29 @@ public class FakerRequest {
                     }
 
                     if(1 == convertMap.get(i)) {
-                        argsValue[i + 1] = JsonUtil.toList(value, Object.class);
+                        argsValue[i] = JsonUtil.toList(value, Object.class);
                     }
                     else {
-                        argsValue[i + 1] = JsonUtil.toObject(value, paramTypes[i]);
+                        argsValue[i] = JsonUtil.toObject(value, paramTypes[i]);
                     }
                 }
             }
             start = Instant.now();
-            future = invoke.invoke(fakerId, methodHandle, argsValue);
-            queue.add(new InvokeFuture(start, future));
+            future = invoke.invoke(fakerId, methodHandle, service, argsValue);
+            queue.add(new InvokeFuture(start, future, Arrays.toString(argsValue)));
         }
         invoke.destroy();
+        log.info("faker invoke done: " + fakerId);
+        // destroy thread pool
+        while (!queue.isEmpty()) {
+        }
         excutor.shutdown();
+        log.info("shutdown");
         return "请求编号：" + fakerId;
     }
 
     public static void main(String[] args) {
+        JsonUtil.toObject("13283-n", String.class);
 
         String invokeParam = "[\"${123.model}\", {\"action\":\"haha\",\"money\":1111}, \"wishenm\"]";
         Object[] array1 = JsonUtil.toArray(invokeParam, Object.class);

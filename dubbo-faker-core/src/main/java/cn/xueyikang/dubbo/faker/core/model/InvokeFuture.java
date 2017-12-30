@@ -13,9 +13,12 @@ public class InvokeFuture {
 
     private CompletableFuture<Object> future;
 
-    public InvokeFuture(Instant start, CompletableFuture<Object> future) {
+    private String realParam;
+
+    public InvokeFuture(Instant start, CompletableFuture<Object> future, String realParam) {
         this.start = start;
         this.future = future;
+        this.realParam = realParam;
     }
 
     public Instant getStart() {
@@ -32,5 +35,13 @@ public class InvokeFuture {
 
     public void setFuture(CompletableFuture<Object> future) {
         this.future = future;
+    }
+
+    public String getRealParam() {
+        return realParam;
+    }
+
+    public void setRealParam(String realParam) {
+        this.realParam = realParam;
     }
 }

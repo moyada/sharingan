@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractInvoke {
 
-    public abstract CompletableFuture<Object> invoke(String fakerId, MethodHandle handle, Object[] argsValue);
+    public abstract CompletableFuture<Object> invoke(String fakerId, MethodHandle handle, Object service, Object[] argsValue);
 
     public abstract void destroy();
 }
