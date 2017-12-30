@@ -1,0 +1,13 @@
+target/
+classes/
+.idea
+*.iml
+out/
+/dubbo-faker-ui/page/node_modules/
+/dubbo-faker-ui/target/
+/dubbo-faker-api/target/
+/dubbo-faker-core/target/
+.classpath
+.project
+.settings/
+/dubbo-faker-ui/src/main/webapp/swagger

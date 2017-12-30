@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xueyikang.dubbo.faker.core.dao.FakerDAO">
+
+	<insert id="saveInvokeInfo">
+		INSERT INTO `method_invoke`
+		(`app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`)
+		VALUE
+		(#{appId}, #{appName}, #{className}, #{methodName}, #{paramType}, #{returnType});
+	</insert>
+
+	<select id="findInvokeInfoById" resultType="methodInvokeDO">
+		SELECT `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`
+		FROM `method_invoke`
+		WHERE id = #{id};
+	</select>
+
+	<select id="findParamByType" resultType="String">
+		SELECT `param_value`
+		FROM `invoke_param`
+		WHERE app_id = #{appId}
+		AND `type` = #{type};
+	</select>
+
+	<insert id="saveLog">
+		INSERT INTO `faker_log`
+		(`faker_id`, `code`, `message`, `spend_time`, `invoke_time`)
+		VALUE
+		(#{fakerId}, #{code}, #{message}, #{spendTime}, #{invokeTime});
+	</insert>
+</mapper>
