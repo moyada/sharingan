@@ -8,8 +8,10 @@ import cn.xueyikang.dubbo.faker.core.invoke.AsyncInvoke;
 import cn.xueyikang.dubbo.faker.core.manager.FakerManager;
 import cn.xueyikang.dubbo.faker.core.model.InvokeFuture;
 import cn.xueyikang.dubbo.faker.core.model.MethodInvokeDO;
+import cn.xueyikang.dubbo.faker.core.model.RebuildParam;
 import cn.xueyikang.dubbo.faker.core.utils.*;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -17,10 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandle;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -40,7 +39,8 @@ public class FakerRequest {
         this.handle = new MethodInvokeHandle();
     }
 
-    public String request(int appId, int invokeId, String type, Integer poolSize, Integer qps, Integer questNum) {
+    public String request(int invokeId, String invokeParam,
+                          Integer poolSize, Integer qps, Integer questNum) {
         if(null == context) {
             context = new ClassPathXmlApplicationContext(new String[]{"classpath:application-dubbo.xml"});
         }
@@ -94,11 +94,28 @@ public class FakerRequest {
             return "依赖实例未找到" + e;
         }
 
-        List<String> fakerParam = fakerManager.getFakerParam(appId, type);
+        Object[] values = JsonUtil.toArray(invokeParam, Object.class);
+        if(null == values) {
+            return "参数输入有误";
+        }
+        RebuildParam rebuildParam = ParamUtil.getRebuildParam(values);
+        Set<String> rebuildParamSet = rebuildParam.getRebuildParamSet();
+        Map<Integer, List<String>> rebuildParamMap = rebuildParam.getRebuildParamMap();
+
+        Map<String, List<String>> paramMap;
+        if(rebuildParamSet.isEmpty()) {
+            paramMap = null;
+        }
+        else {
+            paramMap = Maps.newHashMapWithExpectedSize(rebuildParamSet.size());
+            for (String param : rebuildParamSet) {
+                paramMap.put(param, fakerManager.getFakerParamByRebuildParam(param));
+            }
+        }
 
 
         // init invoke thread pool
-        AbstractInvoke invoke = new AsyncInvoke(null == poolSize ? 10 : poolSize);
+        AbstractInvoke invoke = new AsyncInvoke(null == poolSize ? 1 : poolSize);
         int timeout = null == qps ? 100 : 3600 / qps;
         Queue<InvokeFuture> queue = new ConcurrentLinkedQueue<>();
 
@@ -108,8 +125,7 @@ public class FakerRequest {
         // find param convert
         Map<Integer, Integer> convertMap = ConvertUtil.getConvertMap(paramTypes);
 
-        int size = null == questNum ? 100 : questNum, i, top = fakerParam.size();
-        String[] values;
+        int size = null == questNum ? 1 : questNum, i;
 
         // generator fakerId
         String fakerId = UUIDUtil.getUUID();
@@ -126,14 +142,17 @@ public class FakerRequest {
         excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
         excutor.submit(new InvokerConsumer(fakerId, queue, fakerManager));
 
+
+
+        length = values.length;
+        String value;
+        List<String> params, paramValues;
+
         // convert param and invoke method
         for (int index = 0; index < size; index++) {
             // random invoke param
-            values = JsonUtil.toArray(fakerParam.get(random.nextInt(top)), String.class);
             //values = fakerParam.get(index).split(",");
-            if(null == values) {
-                continue;
-            }
+
             if(timeout > 50) {
                 try {
                     Thread.sleep(timeout);
@@ -142,9 +161,9 @@ public class FakerRequest {
                 }
             }
 
-            length = values.length;
             Object[] argsValue;
 
+            // convert param value
             if(0 == length) {
                 argsValue = new Object[]{service};
             }
@@ -152,11 +171,21 @@ public class FakerRequest {
                 argsValue = new Object[length + 1];
                 argsValue[0] = service;
                 for (i = 0; i < length; i++) {
+                    value = values[i].toString();
+
+                    params = rebuildParamMap.get(i);
+                    if(null != params) {
+                        for (String p : params) {
+                            paramValues = paramMap.get(p);
+                            value = value.replace(p, paramValues.get(random.nextInt(paramValues.size())));
+                        }
+                    }
+
                     if(1 == convertMap.get(i)) {
-                        argsValue[i + 1] = JsonUtil.toList(values[i], Object.class);
+                        argsValue[i + 1] = JsonUtil.toList(value, Object.class);
                     }
                     else {
-                        argsValue[i + 1] = JsonUtil.toObject(values[i], paramTypes[i]);
+                        argsValue[i + 1] = JsonUtil.toObject(value, paramTypes[i]);
                     }
                 }
             }
@@ -170,6 +199,13 @@ public class FakerRequest {
     }
 
     public static void main(String[] args) {
+
+        String invokeParam = "[\"${123.model}\", {\"action\":\"haha\",\"money\":1111}, \"wishenm\"]";
+        Object[] array1 = JsonUtil.toArray(invokeParam, Object.class);
+        System.out.println(array1[1] instanceof Map);
+        System.out.println(array1);
+
+
         boolean array = String[].class.isArray();
         String[] strs = new String[]{"666", "xxx"};
         String str = JsonUtil.toJson(strs);

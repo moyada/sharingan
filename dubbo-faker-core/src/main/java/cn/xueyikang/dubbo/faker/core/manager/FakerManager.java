@@ -41,6 +41,13 @@ public class FakerManager {
         return fakerDAO.findParamByType(appId, type);
     }
 
+    public List<String> getFakerParamByRebuildParam(String param) {
+        String[] split = param.substring(1, param.length() - 1).split(".");
+        Integer appId = Integer.valueOf(split[0]);
+        String type = split[1];
+        return fakerDAO.findParamByType(appId, type);
+    }
+
     public void saveLog(LogDO logDO) {
         fakerDAO.saveLog(logDO);
     }

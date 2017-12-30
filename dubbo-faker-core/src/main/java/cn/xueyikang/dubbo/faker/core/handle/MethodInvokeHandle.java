@@ -28,7 +28,6 @@ public class MethodInvokeHandle extends AbstractHandle {
         }
 
 
-
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodType methodType = MethodType.methodType(returnClassType, paramClass);
 
