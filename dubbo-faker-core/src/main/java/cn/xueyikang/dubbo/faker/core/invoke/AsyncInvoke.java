@@ -46,15 +46,21 @@ public class AsyncInvoke extends AbstractInvoke implements AutoCloseable {
             logDO.setMessage(t.getMessage());
             return null;
         });
-        //发出异常通知
-//        resultFuture.completeExceptionally(new Exception("异常"));
+
         try {
             resultFuture.get();
-            logDO.setCode(Code.OK);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        logDO.setSpendTime(Duration.between(start, Instant.now()).toMillis());
+
+        long millis = Duration.between(start, Instant.now()).toMillis();
+        if(millis > 1000) {
+            logDO.setCode(Code.TIME_OUT);
+        }
+        else {
+            logDO.setCode(Code.OK);
+        }
+        logDO.setSpendTime(millis);
         fakerManager.saveLog(logDO);
     }
 

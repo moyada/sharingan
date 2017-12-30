@@ -110,10 +110,12 @@ public class FakerRequest {
             if(null == values) {
                 continue;
             }
-            try {
-                Thread.sleep(timeout);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(timeout > 50) {
+                try {
+                    Thread.sleep(timeout);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             length = values.length;

@@ -9,4 +9,6 @@ public class Code {
     public static final Integer OK = 200;
 
     public static final Integer ERROR = 500;
+
+    public static final Integer TIME_OUT = 504;
 }
