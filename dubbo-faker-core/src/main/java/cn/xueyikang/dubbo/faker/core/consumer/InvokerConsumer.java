@@ -56,25 +56,25 @@ public class InvokerConsumer implements Runnable {
 
             LogDO logDO = new LogDO();
 
-            future.exceptionally((t)->{
-                logDO.setCode(Code.ERROR);
-                logDO.setMessage(t.getMessage());
-                return null;
-            });
-
+            Object o;
             try {
-                future.get();
+                o = future.get();
             } catch (InterruptedException | ExecutionException e) {
                 continue;
             }
 
             long millis = Duration.between(start, Instant.now()).toMillis();
-            if(null == logDO.getCode()) {
-                if (millis > 1000) {
-                    logDO.setCode(Code.TIME_OUT);
-                } else {
+            if(o instanceof Throwable) {
+                logDO.setCode(Code.ERROR);
+                logDO.setMessage(Throwable.class.cast(o).getMessage());
+            }
+            else {
+                // TODO: 2017/12/31 count spend time
+//                if (millis > 1000) {
+//                    logDO.setCode(Code.TIME_OUT);
+//                } else {
                     logDO.setCode(Code.OK);
-                }
+//                }
             }
 
             logDO.setFakerId(fakerId);

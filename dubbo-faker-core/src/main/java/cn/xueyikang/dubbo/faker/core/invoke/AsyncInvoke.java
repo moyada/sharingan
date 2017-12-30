@@ -21,6 +21,8 @@ public class AsyncInvoke extends AbstractInvoke implements AutoCloseable {
                     return handle.invoke(service);
                 }
                 switch (argsValue.length) {
+                    case 0:
+                        return handle.invoke(service);
                     case 1:
                         return handle.invoke(service, argsValue[0]);
                     case 2:
@@ -38,9 +40,8 @@ public class AsyncInvoke extends AbstractInvoke implements AutoCloseable {
                     default:
                         return null;
                 }
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
-                return null;
+            } catch (Throwable e) {
+                return e;
             }
         }, this.excutor);
     }

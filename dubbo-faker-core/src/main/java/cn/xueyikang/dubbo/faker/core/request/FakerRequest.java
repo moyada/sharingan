@@ -42,7 +42,7 @@ public class FakerRequest {
         this.handle = new MethodInvokeHandle();
     }
 
-    public String request(int invokeId, String invokeParam,
+    public String request(int invokeId, String invokeExpression,
                           Integer poolSize, Integer qps, Integer questNum) {
         if(null == context) {
             context = new ClassPathXmlApplicationContext(new String[]{"classpath:application-dubbo.xml"});
@@ -97,7 +97,7 @@ public class FakerRequest {
             return "依赖实例未找到" + e;
         }
 
-        Object[] values = JsonUtil.toArray(invokeParam, Object.class);
+        Object[] values = JsonUtil.toArray(invokeExpression, Object.class);
         if(null == values) {
             return "参数输入有误";
         }
@@ -145,11 +145,11 @@ public class FakerRequest {
         }
         else {
             size = questNum;
-            int linstener = size / 10;
-            linstener = linstener > 100 ? 100 : linstener;
-            excutor = Executors.newFixedThreadPool(linstener);
+            int listener = size / 10;
+            listener = listener > 100 ? 100 : listener;
+            excutor = Executors.newFixedThreadPool(listener);
 
-            for (i = 0; i < linstener; i++) {
+            for (i = 0; i < listener; i++) {
                 excutor.submit(new InvokerConsumer("t-"+i, fakerId, invokeId, queue, fakerManager));
                 try {
                     Thread.sleep(20);
