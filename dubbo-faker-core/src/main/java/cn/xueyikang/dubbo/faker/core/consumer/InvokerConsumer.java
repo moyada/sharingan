@@ -5,6 +5,7 @@ import cn.xueyikang.dubbo.faker.core.manager.FakerManager;
 import cn.xueyikang.dubbo.faker.core.model.InvokeFuture;
 import cn.xueyikang.dubbo.faker.core.model.LogDO;
 import cn.xueyikang.dubbo.faker.core.utils.JsonUtil;
+import cn.xueyikang.dubbo.faker.core.utils.ReflectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +28,18 @@ public class InvokerConsumer implements Runnable {
     private final String fakerId;
     private final Integer invokeId;
     private final String name;
+    private final boolean saveResult;
+    private final String resultParam;
 
-    public InvokerConsumer(String name, String fakerId, Integer invokeId, Queue<InvokeFuture> queue, FakerManager fakerManager) {
+    public InvokerConsumer(String name, String fakerId, Integer invokeId, Queue<InvokeFuture> queue, FakerManager fakerManager,
+                           boolean saveResult, String resultParam) {
         this.queue = queue;
         this.fakerManager = fakerManager;
         this.fakerId = fakerId;
         this.invokeId = invokeId;
         this.name = name;
+        this.saveResult = saveResult;
+        this.resultParam = resultParam;
     }
 
     @Override
@@ -72,7 +78,14 @@ public class InvokerConsumer implements Runnable {
                 logDO.setMessage(stackTrace[0].toString());
             }
             else {
-                logDO.setResult(JsonUtil.toGsonJson(o));
+                if(this.saveResult) {
+                    if(null == this.resultParam) {
+                        logDO.setResult(JsonUtil.toGsonJson(o));
+                    }
+                    else {
+                        logDO.setResult(String.valueOf(ReflectUtil.getValue(o, this.resultParam)));
+                    }
+                }
                 // TODO: 2017/12/31 counting spend time
 //                if (millis > 1000) {
 //                    logDO.setCode(Code.TIME_OUT);

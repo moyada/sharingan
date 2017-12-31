@@ -42,8 +42,8 @@ public class FakerRequest {
         this.handle = new MethodInvokeHandle();
     }
 
-    public String request(int invokeId, String invokeExpression,
-                          int poolSize, int qps, int questNum) {
+    public String request(int invokeId, String invokeExpression, int poolSize, int qps, int questNum,
+                          boolean saveResult, String resultParam) {
         if(null == context) {
             context = new ClassPathXmlApplicationContext(new String[]{"classpath:application-dubbo.xml"});
         }
@@ -150,7 +150,7 @@ public class FakerRequest {
         if(1 <= questNum) {
             size = 1;
             excutor = Executors.newFixedThreadPool(1);
-            excutor.submit(new InvokerConsumer("t-1", fakerId, invokeId, queue, fakerManager));
+            excutor.submit(new InvokerConsumer("t-1", fakerId, invokeId, queue, fakerManager, saveResult, resultParam));
         }
         else {
             size = questNum;
@@ -159,7 +159,7 @@ public class FakerRequest {
             excutor = Executors.newFixedThreadPool(listener);
 
             for (i = 0; i < listener; i++) {
-                excutor.submit(new InvokerConsumer("t-"+i, fakerId, invokeId, queue, fakerManager));
+                excutor.submit(new InvokerConsumer("t-"+i, fakerId, invokeId, queue, fakerManager, saveResult, resultParam));
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {

@@ -2,6 +2,7 @@ package cn.xueyikang.dubbo.faker.core.utils;
 
 import cn.xueyikang.dubbo.faker.core.common.HandleInfo;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,27 @@ public class ReflectUtil {
         return Class.forName(className);
     }
 
+    public static Object getValue(Object obj, String field) {
+        try {
+            Class cls = obj.getClass();
+            Field f = cls.getDeclaredField(field);
+            if(null == f) {
+                cls = cls.getSuperclass();
+                if(null == cls) {
+                    return null;
+                }
+                f = cls.getDeclaredField(field);
+                if(null == f) {
+                    return null;
+                }
+            }
+            f.setAccessible(true);
+            return f.get(obj);
+        } catch (Exception var8) {
+            var8.printStackTrace();
+            return null;
+        }
+    }
 
     public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 
