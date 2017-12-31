@@ -32,8 +32,11 @@ mvn clean install
  ```
  
 * 修改`jdbc.properties`中mysql数据库连接配置
+
 * 修改`dubbo.properties`中zookeeper连接配置
+
 * 修改`application-dubbo-import.xml`增加测试接口引用
+
 ```xml
 <dubbo:reference id="dubboService" interface="com.company.project.DubboService" />
 ```
@@ -52,6 +55,7 @@ CREATE TABLE `method_invoke` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='调用方法表';
 
+
 CREATE TABLE `invoke_param` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `app_id` int(11) DEFAULT NULL COMMENT '项目编号',
@@ -60,6 +64,7 @@ CREATE TABLE `invoke_param` (
   PRIMARY KEY (`id`),
   KEY `idx_type` (`app_id`,`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='调用参数表';
+
 
 CREATE TABLE `faker_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -82,6 +87,7 @@ INSERT INTO `method_invoke` (`id`, `app_id`, `app_name`, `class_name`, `method_n
 VALUES
 	(1, 1, 'test', 'com.company.DubboService', 'getOne', 'java.lang.String,java.lang.Integer', 'java.util.List');
 
+
 INSERT INTO `invoke_param` (`id`, `app_id`, `type`, `param_value`)
 VALUES
 	(1, 1, 'test', '12345');
@@ -90,7 +96,9 @@ VALUES
 ### 6. 启动项目，打开`localhost:8080/swagger-ui.html`，测试请求
 
 invokeId 输入`method_invoke`的主键(如1)
+
 invokeExpression 支持输入固定参数或参数表达式，需以`json`数组的格式(如["${1.test}"]、["12345"])
+
 表达式格式为`${app_id.type}`，程序将会从invoke_param数据中获取模拟参数随机抽取调用，当使用了表达式而又无模拟参数时将抛出`NoSuchParamException`
 
 测试结果保存在`faker_log`表中，每次测试将生成一个唯一的`faker_id`，暂时通过日志信息`"faker invoke done:`观察测试的完成情况。
