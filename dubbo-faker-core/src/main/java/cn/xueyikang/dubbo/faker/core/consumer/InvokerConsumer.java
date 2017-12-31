@@ -74,8 +74,7 @@ public class InvokerConsumer implements Runnable {
             long millis = Duration.between(start, Instant.now()).toMillis();
             if(o instanceof Throwable) {
                 logDO.setCode(Code.ERROR);
-                StackTraceElement[] stackTrace = Throwable.class.cast(o).getStackTrace();
-                logDO.setMessage(stackTrace[0].toString());
+                logDO.setMessage(Throwable.class.cast(o).getMessage());
             }
             else {
                 if(this.saveResult) {
