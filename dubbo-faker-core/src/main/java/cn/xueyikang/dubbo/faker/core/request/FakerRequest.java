@@ -98,11 +98,12 @@ public class FakerRequest {
             }
         }
         catch (BeansException e) {
+            e.printStackTrace();
             return "依赖实例未找到" + e;
         }
 
         Object[] values = JsonUtil.toArray(invokeExpression, Object.class);
-        if(null == values) {
+        if(null == values || paramTypes.length != values.length) {
             return "参数输入有误";
         }
         RebuildParam rebuildParam = ParamUtil.getRebuildParam(values);
@@ -191,7 +192,7 @@ public class FakerRequest {
             else {
                 argsValue = new Object[length];
                 for (i = 0; i < length; i++) {
-                    value = values[i].toString();
+                    value = JsonUtil.toJson(values[i]);
 
                     params = rebuildParamMap.get(i);
                     if(null != params) {

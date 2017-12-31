@@ -66,7 +66,7 @@ public class InvokerConsumer implements Runnable {
             long millis = Duration.between(start, Instant.now()).toMillis();
             if(o instanceof Throwable) {
                 logDO.setCode(Code.ERROR);
-                logDO.setMessage(Throwable.class.cast(o).getMessage());
+                logDO.setMessage(Throwable.class.cast(o).getCause().getMessage());
             }
             else {
                 // TODO: 2017/12/31 counting spend time

@@ -38,9 +38,9 @@ public class Faker {
                        @ApiParam(name = "qps", value = "每秒钟请求数") @RequestParam(value = "qps", required = false) Integer qps,
                        @ApiParam(name = "loop", value = "请求次数") @RequestParam(value = "loop", required = false) Integer loop
                                 ) {
-        poolSize = null == poolSize ? 1 : poolSize;
-        qps = null == qps ? 1 : qps;
-        loop = null == loop ? 1 : loop;
+        poolSize = null == poolSize || 1 > poolSize ? 1 : poolSize;
+        qps = null == qps || 1 > qps ? 1 : qps;
+        loop = null == loop || 1 > loop ? 1 : loop;
         if(loop < poolSize) {
             return "请求次数必须大于并发数";
         }
