@@ -93,7 +93,7 @@ public class Swagger2Config implements WebMvcConfigurer {
     private HashSet<String> produecetypes(){
         HashSet <String> hs = new HashSet<String>();
         hs.add(MediaType.APPLICATION_JSON_VALUE);
-        hs.add(MediaType.TEXT_HTML_VALUE);
+//        hs.add(MediaType.TEXT_HTML_VALUE);
         return hs;
     }
 

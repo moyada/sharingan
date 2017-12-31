@@ -1,4 +1,4 @@
-package cn.xueyikang.dubbo.faker.core.consumer;
+package cn.xueyikang.dubbo.faker.core.thread;
 
 import cn.xueyikang.dubbo.faker.core.common.Code;
 import cn.xueyikang.dubbo.faker.core.manager.FakerManager;
@@ -45,7 +45,7 @@ public class InvokerConsumer implements Runnable {
     @Override
     public void run() {
         log.info("InvokerConsumer " + this.name + "start");
-        for(;;) {
+        while (true) {
             if(queue.isEmpty()) {
                 try {
                     Thread.sleep(50);
@@ -61,8 +61,6 @@ public class InvokerConsumer implements Runnable {
             Instant start = invokeFuture.getStart();
             CompletableFuture<Object> future = invokeFuture.getFuture();
 
-            LogDO logDO = new LogDO();
-
             Object o;
             try {
                 o = future.get();
@@ -72,6 +70,8 @@ public class InvokerConsumer implements Runnable {
             }
 
             long millis = Duration.between(start, Instant.now()).toMillis();
+
+            LogDO logDO = new LogDO();
             if(o instanceof Throwable) {
                 logDO.setCode(Code.ERROR);
                 logDO.setMessage(Throwable.class.cast(o).getMessage());
@@ -96,10 +96,9 @@ public class InvokerConsumer implements Runnable {
             logDO.setFakerId(fakerId);
             logDO.setInvokeId(invokeId);
             logDO.setRealParam(invokeFuture.getRealParam());
-
             logDO.setInvokeTime(Timestamp.from(start));
-
             logDO.setSpendTime(millis);
+
             fakerManager.saveLog(logDO);
         }
     }

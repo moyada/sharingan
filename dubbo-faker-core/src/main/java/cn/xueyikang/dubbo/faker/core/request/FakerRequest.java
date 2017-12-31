@@ -1,20 +1,24 @@
 package cn.xueyikang.dubbo.faker.core.request;
 
-import cn.xueyikang.dubbo.faker.core.consumer.InvokerConsumer;
-import cn.xueyikang.dubbo.faker.core.handle.AbstractHandle;
-import cn.xueyikang.dubbo.faker.core.handle.MethodInvokeHandle;
 import cn.xueyikang.dubbo.faker.core.invoke.AbstractInvoke;
 import cn.xueyikang.dubbo.faker.core.invoke.AsyncInvoke;
 import cn.xueyikang.dubbo.faker.core.manager.FakerManager;
+import cn.xueyikang.dubbo.faker.core.model.FakerProxy;
 import cn.xueyikang.dubbo.faker.core.model.InvokeFuture;
 import cn.xueyikang.dubbo.faker.core.model.MethodInvokeDO;
 import cn.xueyikang.dubbo.faker.core.model.RebuildParam;
-import cn.xueyikang.dubbo.faker.core.utils.*;
+import cn.xueyikang.dubbo.faker.core.proxy.MethodHandleProxy;
+import cn.xueyikang.dubbo.faker.core.thread.LoggingListener;
+import cn.xueyikang.dubbo.faker.core.utils.ConvertUtil;
+import cn.xueyikang.dubbo.faker.core.utils.JsonUtil;
+import cn.xueyikang.dubbo.faker.core.utils.ParamUtil;
+import cn.xueyikang.dubbo.faker.core.utils.UUIDUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.souche.car.model.common.create.ColorDTO;
+import com.souche.car.model.common.enums.ColorType;
+import com.souche.car.model.common.enums.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
@@ -24,8 +28,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Component
 public class FakerRequest {
@@ -36,10 +38,10 @@ public class FakerRequest {
     @Autowired
     private FakerManager fakerManager;
 
-    private final AbstractHandle handle;
+    private final MethodHandleProxy methodHandleProxy;
 
     public FakerRequest() {
-        this.handle = new MethodInvokeHandle();
+        this.methodHandleProxy = new MethodHandleProxy();
     }
 
     public String request(int invokeId, String invokeExpression, int poolSize, int qps, int questNum,
@@ -48,134 +50,64 @@ public class FakerRequest {
             context = new ClassPathXmlApplicationContext(new String[]{"classpath:application-dubbo.xml"});
         }
 
-        // get method invoke info
         MethodInvokeDO invokeInfo = fakerManager.getInvokeInfo(invokeId);
         if(null == invokeInfo) {
-            return "该请求调用不存在";
+            return "调用信息缺失";
         }
 
-        // get param type
-        Class<?>[] paramTypes;
-        String[] argsType = invokeInfo.getParamType().split(",");
-        int length = argsType.length;
-        if(0 == length) {
-            paramTypes = new Class[0];
-        }
-        else {
-            paramTypes = new Class[length];
-            try {
-                for (int index = 0; index < length; index++) {
-                    paramTypes[index] = ReflectUtil.getClassType(argsType[index]);
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Take Parameter Class Error: " + e);
-            }
-        }
-
-        // get method handle
-        MethodHandle methodHandle;
-        try {
-            methodHandle = handle.fetchHandleInfo(invokeInfo.getClassName(), invokeInfo.getMethodName(),
-                    invokeInfo.getReturnType(), paramTypes);
-        }
-        catch (Exception e) {
-            return "方法句柄获取失败" + e;
-        }
-
-        // get service instance
-        Class classType;
-        try {
-            classType = ReflectUtil.getClassType(invokeInfo.getClassName());
-        } catch (ClassNotFoundException e) {
-            return "依赖类未找到" + e;
-        }
-
-        Object[] service;
-        try {
-            service = new Object[poolSize];
-            for (int index = 0; index < poolSize; index++ ) {
-                service[index] = BeanUtil.getBean(context, classType);
-            }
-        }
-        catch (BeansException e) {
-            e.printStackTrace();
-            return "依赖实例未找到" + e;
+        FakerProxy proxy = methodHandleProxy.getProxy(context, invokeInfo, poolSize);
+        if(null == proxy) {
+            return "获取代理失败";
         }
 
         Object[] values = JsonUtil.toArray(invokeExpression, Object.class);
+
+        Class<?>[] paramTypes = proxy.getParamTypes();
         if(null == values || paramTypes.length != values.length) {
-            return "参数输入有误";
+            return "输入参数有误";
         }
+
         RebuildParam rebuildParam = ParamUtil.getRebuildParam(values);
-        Set<String> rebuildParamSet = rebuildParam.getRebuildParamSet();
+
         Map<Integer, List<String>> rebuildParamMap = rebuildParam.getRebuildParamMap();
-
-        Map<String, List<String>> paramMap;
-        if(rebuildParamSet.isEmpty()) {
-            paramMap = null;
-        }
-        else {
-            paramMap = Maps.newHashMapWithExpectedSize(rebuildParamSet.size());
-            List<String> paramValueList;
-            for (String param : rebuildParamSet) {
-                paramValueList = fakerManager.getFakerParamByRebuildParam(param);
-                if(!paramValueList.isEmpty()) {
-                    paramMap.put(param, paramValueList);
-                }
-            }
-        }
-
-
-        // init invoke thread pool
-        AbstractInvoke invoke = new AsyncInvoke(poolSize);
-        int timeout = 1 <= qps ? 100 : 3600 / qps;
-        Queue<InvokeFuture> queue = new ConcurrentLinkedQueue<>();
+        Map<String, List<String>> paramMap = fakerManager.getFakerParamMapByRebuildParam(rebuildParam.getRebuildParamSet());
 
         // find param convert
         Map<Integer, Integer> convertMap = ConvertUtil.getConvertMap(paramTypes);
 
         // generator fakerId
         String fakerId = UUIDUtil.getUUID();
-        Random random = new Random();
+
+        MethodHandle methodHandle = proxy.getMethodHandle();
+        Object[] service = proxy.getService();
+
+        int timeout = 1 <= qps ? 100 : 3600 / qps;
+
+        // init invoke thread pool
+        AbstractInvoke invoke = new AsyncInvoke(poolSize);
+        Queue<InvokeFuture> queue = new ConcurrentLinkedQueue<>();
 
         // async result
         CompletableFuture<Object> future;
         Instant start;
 
-        int size, i;
-
         // init logging thread poll
-        ExecutorService excutor;
-        // start logging thread
-        if(1 <= questNum) {
-            size = 1;
-            excutor = Executors.newFixedThreadPool(1);
-            excutor.submit(new InvokerConsumer("t-1", fakerId, invokeId, queue, fakerManager, saveResult, resultParam));
+        LoggingListener loggingListener;
+        if(1 == questNum) {
+
+            loggingListener = new LoggingListener(1, 20);
+            loggingListener.run(fakerId, invokeId, queue, fakerManager, saveResult, resultParam);
         }
         else {
-            size = questNum;
-            int listener = size / 10;
-            listener = listener > 100 ? 100 : listener;
-            excutor = Executors.newFixedThreadPool(listener);
 
-            for (i = 0; i < listener; i++) {
-                excutor.submit(new InvokerConsumer("t-"+i, fakerId, invokeId, queue, fakerManager, saveResult, resultParam));
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            loggingListener = new LoggingListener(questNum / 15, 40);
+            loggingListener.run(fakerId, invokeId, queue, fakerManager, saveResult, resultParam);
         }
-
-        length = values.length;
-        String value;
-        List<String> params, paramValues;
 
         log.info("start faker invoke: " + fakerId);
 
         // convert param and invoke method
-        for (int index = 0; index < size; index++) {
+        for (int index = 0; index < questNum; index++) {
             // random invoke param
             //values = fakerParam.get(index).split(",");
 
@@ -187,49 +119,44 @@ public class FakerRequest {
                 }
             }
 
-            Object[] argsValue;
+            Object[] argsValue = ParamUtil.convertValue(values, paramTypes, rebuildParamMap, paramMap, convertMap);
 
-            // convert param value
-            if(0 == length) {
-                argsValue = null;
-            }
-            else {
-                argsValue = new Object[length];
-                for (i = 0; i < length; i++) {
-                    value = JsonUtil.toJson(values[i]);
-
-                    params = rebuildParamMap.get(i);
-                    if(null != params) {
-                        for (String p : params) {
-                            paramValues = paramMap.get(p);
-                            value = value.replace(p, paramValues.get(random.nextInt(paramValues.size())));
-                        }
-                    }
-
-                    if(1 == convertMap.get(i)) {
-                        argsValue[i] = JsonUtil.toList(value, Object.class);
-                    }
-                    else {
-                        argsValue[i] = JsonUtil.toObject(value, paramTypes[i]);
-                    }
-                }
-            }
             start = Instant.now();
-            future = invoke.invoke(fakerId, methodHandle, service[size % poolSize], argsValue);
+            future = invoke.invoke(fakerId, methodHandle, service[questNum % poolSize], argsValue);
+
             queue.add(new InvokeFuture(start, future, JsonUtil.toJson(argsValue)));
         }
         invoke.destroy();
+
         log.info("faker invoke done: " + fakerId);
+
         // destroy thread pool
         while (!queue.isEmpty()) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        excutor.shutdown();
+        loggingListener.shutdown();
+
         log.info("shutdown");
+
         return "请求编号：" + fakerId;
     }
 
     public static void main(String[] args) {
-        JsonUtil.toObject("13283-n", String.class);
+        ColorDTO modelColorDTO = new ColorDTO();
+        modelColorDTO.setColorName("黑");
+        modelColorDTO.setColorType(ColorType.EXTERIOR_COLOR);
+        modelColorDTO.setColorValue("#123412");
+        modelColorDTO.setComment("haha");
+        modelColorDTO.setStatusType(StatusType.ON);
+        String json = JsonUtil.toJson(modelColorDTO);
+        System.out.println(json);
+        modelColorDTO = JsonUtil.toObject(json, ColorDTO.class);
+
+        int[] ints = JsonUtil.toObject("[1,2,3,4,5]", int[].class);
 
         String invokeParam = "[\"${123.model}\", {\"action\":\"haha\",\"money\":1111}, \"wishenm\"]";
         Object[] array1 = JsonUtil.toArray(invokeParam, Object.class);

@@ -10,7 +10,7 @@
 	</insert>
 
 	<select id="findInvokeInfoById" resultType="methodInvokeDO">
-		SELECT `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`
+		SELECT `id`, `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`
 		FROM `method_invoke`
 		WHERE id = #{id};
 	</select>

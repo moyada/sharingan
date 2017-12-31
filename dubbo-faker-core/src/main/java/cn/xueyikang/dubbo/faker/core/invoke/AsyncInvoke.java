@@ -1,6 +1,6 @@
 package cn.xueyikang.dubbo.faker.core.invoke;
 
-import cn.xueyikang.dubbo.faker.core.exception.UnsupportParamNumException;
+import cn.xueyikang.dubbo.faker.core.exception.UnsupportedParamNumberException;
 
 import java.lang.invoke.MethodHandle;
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +40,7 @@ public class AsyncInvoke extends AbstractInvoke implements AutoCloseable {
                     case 7:
                         return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4], argsValue[5], argsValue[6]);
                     default:
-                        return new UnsupportParamNumException("[Faker Invoker Error] Param number not yet support.");
+                        return new UnsupportedParamNumberException("[Faker Invoker Error] Param number not yet support.");
                 }
             } catch (Throwable e) {
                 return e;
