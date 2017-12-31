@@ -85,7 +85,7 @@ CREATE TABLE `faker_log` (
 ```sql
 INSERT INTO `method_invoke` (`id`, `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`)
 VALUES
-	(1, 1, 'test', 'com.company.DubboService', 'getOne', 'java.lang.String,java.lang.Integer', 'java.util.List');
+	(1, 1, 'test', 'com.company.project.DubboService', 'getListByNameAndType', 'java.lang.String,java.lang.Integer', 'java.util.List');
 
 
 INSERT INTO `invoke_param` (`id`, `app_id`, `type`, `param_value`)

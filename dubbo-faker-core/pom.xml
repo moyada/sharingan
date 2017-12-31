@@ -20,9 +20,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.souche</groupId>
-            <artifactId>car-model-api</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <groupId>com.company</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
 
