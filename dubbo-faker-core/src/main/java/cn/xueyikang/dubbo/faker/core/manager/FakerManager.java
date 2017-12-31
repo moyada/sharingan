@@ -1,6 +1,7 @@
 package cn.xueyikang.dubbo.faker.core.manager;
 
 import cn.xueyikang.dubbo.faker.core.dao.FakerDAO;
+import cn.xueyikang.dubbo.faker.core.exception.NoSuchParamException;
 import cn.xueyikang.dubbo.faker.core.model.LogDO;
 import cn.xueyikang.dubbo.faker.core.model.MethodInvokeDO;
 import com.google.common.collect.Maps;
@@ -62,7 +63,10 @@ public class FakerManager {
         List<String> paramValueList;
         for (String param : paramSet) {
             paramValueList = this.getFakerParamByRebuildParam(param);
-            if(!paramValueList.isEmpty()) {
+            if(paramValueList.isEmpty()) {
+                throw new NoSuchParamException(param + " don't have any param, please checkout invoke_param table.");
+            }
+            else {
                 paramMap.put(param, paramValueList);
             }
         }

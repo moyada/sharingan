@@ -52,19 +52,19 @@ public class FakerRequest {
 
         MethodInvokeDO invokeInfo = fakerManager.getInvokeInfo(invokeId);
         if(null == invokeInfo) {
-            return "调用信息缺失";
+            return "Failed to fetch invoke info, checkout method_invoke table.";
         }
 
         FakerProxy proxy = methodHandleProxy.getProxy(context, invokeInfo, poolSize);
         if(null == proxy) {
-            return "获取代理失败";
+            return "Failed to fetch service proxy.";
         }
 
         Object[] values = JsonUtil.toArray(invokeExpression, Object.class);
 
         Class<?>[] paramTypes = proxy.getParamTypes();
         if(null == values || paramTypes.length != values.length) {
-            return "输入参数有误";
+            return "Error input param or don't match invoke param.";
         }
 
         RebuildParam rebuildParam = ParamUtil.getRebuildParam(values);
@@ -142,7 +142,7 @@ public class FakerRequest {
 
         log.info("shutdown");
 
-        return "请求编号：" + fakerId;
+        return "fakerId：" + fakerId;
     }
 
     public static void main(String[] args) {

@@ -1,16 +1,19 @@
 package cn.xueyikang.dubbo.faker.core.proxy;
 
+import cn.xueyikang.dubbo.faker.core.exception.NoSuchClassException;
 import cn.xueyikang.dubbo.faker.core.handle.AbstractHandle;
 import cn.xueyikang.dubbo.faker.core.handle.MethodInvokeHandle;
 import cn.xueyikang.dubbo.faker.core.model.FakerProxy;
 import cn.xueyikang.dubbo.faker.core.model.MethodInvokeDO;
 import cn.xueyikang.dubbo.faker.core.utils.BeanUtil;
 import cn.xueyikang.dubbo.faker.core.utils.ReflectUtil;
+import com.alibaba.dubbo.rpc.RpcException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.ref.SoftReference;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +40,7 @@ public class MethodHandleProxy {
         SoftReference<FakerProxy> ref = proxyMap.get(id);
         if(null != ref) {
             proxy = ref.get();
-            if (null != proxy) {
+            if (null != proxy && poolSize == proxy.getService().length) {
                 return proxy;
             }
         }
@@ -56,7 +59,7 @@ public class MethodHandleProxy {
                     paramTypes[index] = ReflectUtil.getClassType(argsType[index]);
                 }
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Take Parameter Class Error: " + e);
+                throw new IllegalArgumentException("Failed to fetch parameter class: " + e);
             }
         }
 
@@ -67,10 +70,19 @@ public class MethodHandleProxy {
                     invokeInfo.getReturnType(), paramTypes);
         }
         catch (Exception e) {
-            throw new NoSuchMethodError("方法句柄获取失败" + e);
+            throw new NoSuchMethodError("Failed to fetch method error, class: " +
+                    invokeInfo.getClassName() + ", method: " +
+                    invokeInfo.getMethodName() + ", return: " +
+                    invokeInfo.getReturnType() + ", param: " +
+                    Arrays.toString(paramTypes) + ", " +
+                    e);
         }
         if(null == methodHandle) {
-            throw new NoSuchMethodError("方法句柄获取失败");
+            throw new NoSuchMethodError("Failed to fetch method error, class: " +
+                    invokeInfo.getClassName() + ", method: " +
+                    invokeInfo.getMethodName() + ", return: " +
+                    invokeInfo.getReturnType() + ", param: " +
+                    Arrays.toString(paramTypes));
         }
 
         // get service instance
@@ -78,8 +90,7 @@ public class MethodHandleProxy {
         try {
             classType = ReflectUtil.getClassType(invokeInfo.getClassName());
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            throw new NoSuchClassException("Failed to fetch class error: ", e);
         }
 
         Object[] service;
@@ -90,8 +101,7 @@ public class MethodHandleProxy {
             }
         }
         catch (BeansException e) {
-            e.printStackTrace();
-            return null;
+            throw new RpcException("Failed to invoke the method subscribe in the service " + invokeInfo.getClassName() + ".", e);
         }
         proxy = new FakerProxy();
         proxy.setParamTypes(paramTypes);
