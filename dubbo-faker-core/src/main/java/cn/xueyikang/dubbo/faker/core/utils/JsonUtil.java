@@ -41,8 +41,18 @@ public class JsonUtil {
     private static final Gson gson = new GsonBuilder().create();
     private static final JsonParser parser = new JsonParser();
 
+    public static String toGsonJson(Object object) {
+        return gson.toJson(object);
+    }
+
     public static String toJson(Object object) {
         try {
+            if(object instanceof String ||
+                    object instanceof Boolean ||
+                    object instanceof Number ||
+                    object instanceof Character) {
+                return object.toString();
+            }
             return mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             return null;

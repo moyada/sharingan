@@ -4,6 +4,7 @@ import cn.xueyikang.dubbo.faker.core.common.Code;
 import cn.xueyikang.dubbo.faker.core.manager.FakerManager;
 import cn.xueyikang.dubbo.faker.core.model.InvokeFuture;
 import cn.xueyikang.dubbo.faker.core.model.LogDO;
+import cn.xueyikang.dubbo.faker.core.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,15 +61,18 @@ public class InvokerConsumer implements Runnable {
             try {
                 o = future.get();
             } catch (InterruptedException | ExecutionException e) {
+                log.error("save invoke error " + e);
                 continue;
             }
 
             long millis = Duration.between(start, Instant.now()).toMillis();
             if(o instanceof Throwable) {
                 logDO.setCode(Code.ERROR);
-                logDO.setMessage(Throwable.class.cast(o).getCause().getMessage());
+                StackTraceElement[] stackTrace = Throwable.class.cast(o).getStackTrace();
+                logDO.setMessage(stackTrace[0].toString());
             }
             else {
+                logDO.setResult(JsonUtil.toGsonJson(o));
                 // TODO: 2017/12/31 counting spend time
 //                if (millis > 1000) {
 //                    logDO.setCode(Code.TIME_OUT);

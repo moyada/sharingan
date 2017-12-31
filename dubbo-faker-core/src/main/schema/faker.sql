@@ -25,7 +25,8 @@ CREATE TABLE `faker_log` (
   `invoke_id` int(11) DEFAULT NULL,
   `real_param` varchar(255) DEFAULT NULL,
   `code` tinyint(3) unsigned DEFAULT NULL,
-  `message` varchar(200) DEFAULT NULL,
+  `result` varchar(255) DEFAULT NULL,
+  `message` varchar(255) DEFAULT NULL,
   `spend_time` int(11) DEFAULT NULL,
   `invoke_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)

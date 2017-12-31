@@ -24,8 +24,8 @@
 
 	<insert id="saveLog">
 		INSERT INTO `faker_log`
-		(`faker_id`, `invoke_id`, `real_param`, `code`, `message`, `spend_time`, `invoke_time`)
+		(`faker_id`, `invoke_id`, `real_param`, `code`, `result`, `message`, `spend_time`, `invoke_time`)
 		VALUE
-		(#{fakerId}, #{invokeId}, #{realParam}, #{code}, #{message}, #{spendTime}, #{invokeTime});
+		(#{fakerId}, #{invokeId}, #{realParam}, #{code}, #{result}, #{message}, #{spendTime}, #{invokeTime});
 	</insert>
 </mapper>

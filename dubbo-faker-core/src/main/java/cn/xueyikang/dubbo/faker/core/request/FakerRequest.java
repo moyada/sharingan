@@ -116,8 +116,12 @@ public class FakerRequest {
         }
         else {
             paramMap = Maps.newHashMapWithExpectedSize(rebuildParamSet.size());
+            List<String> paramValueList;
             for (String param : rebuildParamSet) {
-                paramMap.put(param, fakerManager.getFakerParamByRebuildParam(param));
+                paramValueList = fakerManager.getFakerParamByRebuildParam(param);
+                if(!paramValueList.isEmpty()) {
+                    paramMap.put(param, paramValueList);
+                }
             }
         }
 
@@ -212,7 +216,7 @@ public class FakerRequest {
             }
             start = Instant.now();
             future = invoke.invoke(fakerId, methodHandle, service[size % poolSize], argsValue);
-            queue.add(new InvokeFuture(start, future, Arrays.toString(argsValue)));
+            queue.add(new InvokeFuture(start, future, JsonUtil.toJson(argsValue)));
         }
         invoke.destroy();
         log.info("faker invoke done: " + fakerId);

@@ -16,6 +16,8 @@ public class LogDO {
 
     private Integer code;
 
+    private String result;
+
     private String message;
 
     private Long spendTime;
@@ -52,6 +54,14 @@ public class LogDO {
 
     public void setCode(Integer code) {
         this.code = code;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 
     public String getMessage() {
