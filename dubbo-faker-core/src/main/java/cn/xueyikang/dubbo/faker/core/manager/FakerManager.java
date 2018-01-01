@@ -30,6 +30,10 @@ public class FakerManager {
     @Autowired
     private FakerDAO fakerDAO;
 
+    public List<MethodInvokeDO> getAll() {
+        return fakerDAO.findAll();
+    }
+
     public boolean saveInfokeInfo(MethodInvokeDO methodInvokeDO) {
         try {
             fakerDAO.saveInvokeInfo(methodInvokeDO);

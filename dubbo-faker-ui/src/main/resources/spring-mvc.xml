@@ -24,4 +24,6 @@
 
     <!-- swagger 配置 -->
     <bean class="cn.xueyikang.dubbo.faker.ui.config.Swagger2Config"/>
+
+    <mvc:resources mapping="/**" location="resource/" />
 </beans>

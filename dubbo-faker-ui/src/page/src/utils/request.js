@@ -1,4 +1,5 @@
 import fetch from 'dva/fetch';
+import querystring from 'querystring';
 
 function parseJSON(response) {
   return response.json();
@@ -21,7 +22,10 @@ function checkStatus(response) {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default function request(url, options) {
+export default function request(url, payload, options) {
+  if (payload !== undefined && payload !== null) {
+    url += `?` + querystring.encode(payload);
+  }
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON)

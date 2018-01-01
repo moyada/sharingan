@@ -9,6 +9,11 @@
 		(#{appId}, #{appName}, #{className}, #{methodName}, #{paramType}, #{returnType});
 	</insert>
 
+	<select id="findAll" resultType="methodInvokeDO">
+		SELECT `id`, `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`
+		FROM `method_invoke`;
+	</select>
+
 	<select id="findInvokeInfoById" resultType="methodInvokeDO">
 		SELECT `id`, `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`
 		FROM `method_invoke`

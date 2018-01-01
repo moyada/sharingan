@@ -10,6 +10,8 @@ public interface FakerDAO {
 
     void saveInvokeInfo(MethodInvokeDO methodInvokeDO);
 
+    List<MethodInvokeDO> findAll();
+
     MethodInvokeDO findInvokeInfoById(@Param("id") int id);
 
     List<String> findParamByType(@Param("appId") int appId, @Param("type") String type);
