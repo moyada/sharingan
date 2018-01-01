@@ -1,7 +1,7 @@
 {
   "entry": "src/index.js",
   "disableCSSModules": false,
-  "publicPath": "../main/webapp/resource",
+  "publicPath": "",
   "outputPath": "../main/webapp/resource",
   "autoprefixer": null,
   "env": {
