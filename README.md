@@ -93,7 +93,9 @@ VALUES
 	(1, 1, 'test', '12345');
 ```
 
-### 6. 启动项目，打开`localhost:8080/swagger-ui.html`，测试请求
+### 6. 启动项目，打开 http://localhost:8080/index.html 进入管理页面，测试请求
+
+接口地址: http://localhost:8080/swagger-ui.html
 
 invokeId 输入`method_invoke`的主键(如1)
 
