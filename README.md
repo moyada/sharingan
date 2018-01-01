@@ -9,7 +9,7 @@ dubbo-faker，可以用来对`dubbo`项目进行简单测试。
 ### 1. `clone`代码
 
 ```sh
-git clone git@github.com:xueyikang/dubbo-faker.git
+git clone git@github.com:moyada/dubbo-faker.git
 ```
 
 ### 2. 编译安装
@@ -77,7 +77,7 @@ CREATE TABLE `faker_log` (
   `spend_time` int(11) DEFAULT NULL COMMENT '耗时',
   `invoke_time` timestamp NULL DEFAULT NULL COMMENT '请求时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='测试请求表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='请求结果表';
 ```
 
 ### 5. 导入测试参数
@@ -101,7 +101,7 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
 
 表达式格式为`${app_id.type}`，程序将会从invoke_param数据中获取模拟参数随机抽取调用，当使用了表达式而又无模拟参数时将抛出`NoSuchParamException`
 
-测试结果保存在`faker_log`表中，每次测试将生成一个唯一的`faker_id`，暂时通过日志信息`"faker invoke done:`观察测试的完成情况。
+测试结果保存在`faker_log`表中，每次测试将生成一个唯一的`faker_id`，暂时通过日志信息`faker invoke done`观察测试的完成情况。
 
 
 

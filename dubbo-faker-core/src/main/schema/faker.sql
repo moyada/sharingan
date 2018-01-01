@@ -29,4 +29,4 @@ CREATE TABLE `faker_log` (
   `spend_time` int(11) DEFAULT NULL COMMENT '耗时',
   `invoke_time` timestamp NULL DEFAULT NULL COMMENT '请求时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='测试请求表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='请求结果表';
