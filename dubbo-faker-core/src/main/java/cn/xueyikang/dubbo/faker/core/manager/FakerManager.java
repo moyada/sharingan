@@ -34,6 +34,28 @@ public class FakerManager {
         return fakerDAO.findAll();
     }
 
+
+    public List<MethodInvokeDO> getAllApp() {
+        return fakerDAO.findAllApp();
+    }
+
+    public List<String> getClassByApp(int appId) {
+        return fakerDAO.findClassByApp(appId);
+    }
+
+    public List<MethodInvokeDO> getMethodByClass(String className) {
+        return fakerDAO.findMethodByClass(className);
+    }
+
+    public int countMethodByFakerId(String fakerId) {
+        return fakerDAO.countMethodByFakerId(fakerId);
+    }
+
+    public List<LogDO> getMethodByFakerId(String fakerId, int pageIndex, int pageSize) {
+        int offset = pageSize * (pageIndex - 1);
+        return fakerDAO.findMethodByFakerId(fakerId, offset, pageSize);
+    }
+
     public boolean saveInfokeInfo(MethodInvokeDO methodInvokeDO) {
         try {
             fakerDAO.saveInvokeInfo(methodInvokeDO);

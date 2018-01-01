@@ -15,6 +15,7 @@
     <!-- 默认首页定义 -->
     <welcome-file-list>
         <welcome-file>../resource/index.html</welcome-file>
+        <welcome-file>./resource/index.html</welcome-file>
     </welcome-file-list>
 
     <!-- Error Page定义 -->
@@ -63,20 +64,20 @@
     </servlet-mapping>
 
 
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>*.html</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>default</servlet-name>-->
+        <!--<url-pattern>*.html</url-pattern>-->
+    <!--</servlet-mapping>-->
 
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>*.js</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>default</servlet-name>-->
+        <!--<url-pattern>*.js</url-pattern>-->
+    <!--</servlet-mapping>-->
 
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>*.css</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>default</servlet-name>-->
+        <!--<url-pattern>*.css</url-pattern>-->
+    <!--</servlet-mapping>-->
 
     <!-- 字符过滤_防止添加到数据库中的数据为乱码 -->
     <filter>

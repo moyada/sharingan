@@ -1,19 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Table, Form, Row, Col, Input, Button } from 'antd';
+import { Table, Form, Row, Col, Input, Button, message } from 'antd';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
 import InvokeForm from '../components/InvokeForm';
 import request from '../utils/request';
 
 const FormItem = Form.Item;
+moment.locale('zh-cn');
 
 const columns = [{
   title: '请求参数',
   dataIndex: 'realParam',
-  width: '15%',
+  width: '22%',
+  render(data) {
+    return <div style={{paddingLeft: 10}}> {data} </div>
+  }
 }, {
   title: '结果码',
   dataIndex: 'code',
   width: '6%',
+  render(data) {
+    if(data === 200) {
+      return data
+    }
+    return <div style={{color: 'red'}}> {data} </div>
+  }
 }, {
   title: '请求结果',
   dataIndex: 'result',
@@ -21,7 +32,7 @@ const columns = [{
 }, {
   title: '异常信息',
   dataIndex: 'message',
-  width: '30%',
+  width: '20%',
 }, {
   title: '耗时',
   dataIndex: 'spendTime',
@@ -29,7 +40,10 @@ const columns = [{
 }, {
   title: '请求时间',
   dataIndex: 'invokeTime',
-  width: '10%',
+  width: '12%',
+  render(data) {
+    return <div> {moment(data).format("YYYY-MM-DD HH:mm:ss")} </div>
+  }
 }];
 
 class ResultList extends React.Component {
@@ -41,51 +55,53 @@ class ResultList extends React.Component {
       currentPageSize: 100,
       loading: false,
       data: [],
+      fakerId: null,
       pagination: {
         current: 1,
         pageSize: 100,
         defaultPageSize: 100,
         total: 0,
-        onChange: (p, s) => {
-          this.loadBrands(this.state.brandCode, this.state.brandName, p, data.pageSize);
+        onChange: (nextPage, pageSize) => {
+          this.loadData(this.state.fakerId, nextPage, pageSize);
         },
       },
     };
   }
 
-
-  loadBrands(brandCode, brandName, pageIndex, pageSize) {
-    const payload = {brand_code: brandCode, brand_name: brandName, page_index: pageIndex, page_size: pageSize };
+  loadData(fakerId, pageIndex, pageSize) {
+    const payload = {fakerId: fakerId, pageIndex: pageIndex, pageSize: pageSize };
     this.setState({loading: true})
-    const item = this
-    request('/brand/getBrandPage.jsonp', payload).then(data => {
-      const brandList = [];
-      data.items.forEach((item, index, array) => {
-        brandList.push({
-          key: item.brandCode,
-          country: item.country,
-          brandCode: item.brandCode,
-          brandName: item.brandName,
-          enName: item.enName,
-          pinyin: item.pinyin,
-          aliasName: item.aliasName,
-          firstWord: item.firstWord,
-          logoUrl: item.logoUrl,
+
+    request('/faker/getMethodByFakerId.jsonp', payload)
+      .then(({data, err}) => {
+        if(err) {
+          message.error(err)
+          this.setState({loading: false})
+          return
+        }
+
+        let dataSource = data.data.map(item =>
+          ({
+            key: item.id,
+            realParam: item.realParam,
+            code: item.code,
+            result: item.result,
+            message: item.message,
+            spendTime: item.spendTime,
+            invokeTime: item.invokeTime,
+          })
+        )
+
+        this.state.pagination.current = data.pageIndex
+        this.state.pagination.total = data.total
+
+        this.setState({
+          data: dataSource,
+          loading: false,
+          currentPageIndex: data.pageIndex,
+          currentPageSize: data.pageSize,
         });
-      });
-
-      this.state.pagination.current = pageIndex
-      this.state.pagination.total = data.totalNumber
-
-      this.setState({
-        brands: brandList,
-        loading: false,
-        brandCode: brandCode,
-        brandName: brandName,
-        currentPageIndex: pageIndex,
-        currentPageSize: pageSize,
-      });
-    });
+      })
   }
 
   handleSearch = (e) => {
@@ -94,8 +110,9 @@ class ResultList extends React.Component {
       if(err) {
         return
       }
-
-
+      const fakerId = values.fakerId
+      this.state.fakerId = fakerId
+      this.loadData(fakerId, 1, 100)
     });
   }
 

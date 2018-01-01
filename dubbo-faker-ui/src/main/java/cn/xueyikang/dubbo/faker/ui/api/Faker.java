@@ -1,8 +1,10 @@
 package cn.xueyikang.dubbo.faker.ui.api;
 
 import cn.xueyikang.dubbo.faker.core.manager.FakerManager;
+import cn.xueyikang.dubbo.faker.core.model.LogDO;
 import cn.xueyikang.dubbo.faker.core.model.MethodInvokeDO;
 import cn.xueyikang.dubbo.faker.core.request.FakerRequest;
+import cn.xueyikang.dubbo.faker.ui.model.PageVO;
 import cn.xueyikang.dubbo.faker.ui.model.Result;
 import cn.xueyikang.dubbo.faker.ui.model.SelectVO;
 import io.swagger.annotations.Api;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,6 +82,55 @@ public class Faker {
                 .collect(Collectors.toList());
     }
 
+    @ApiOperation(value = "获取全部项目", httpMethod = "GET")
+    @ApiResponse(code = 200, message = "success", response = Result.class)
+    @ResponseBody
+    @RequestMapping(value = "getAllApp", method = RequestMethod.GET)
+    public List<MethodInvokeDO> getAllApp() {
+        return fakerManager.getAllApp();
+    }
 
+    @ApiOperation(value = "获取接口", httpMethod = "GET")
+    @ApiResponse(code = 200, message = "success", response = Result.class)
+    @ResponseBody
+    @RequestMapping(value = "getClassByApp", method = RequestMethod.GET)
+    public List<SelectVO> getClassByApp(@ApiParam(name = "appId", required = true, value = "项目编号") @RequestParam("appId") int appId) {
+        List<String> classList = fakerManager.getClassByApp(appId);
+        return classList.stream()
+                .map(c -> new SelectVO(c, c))
+                .collect(Collectors.toList());
+    }
 
+    @ApiOperation(value = "获取方法", httpMethod = "GET")
+    @ApiResponse(code = 200, message = "success", response = Result.class)
+    @ResponseBody
+    @RequestMapping(value = "getMethodByClass", method = RequestMethod.GET)
+    public List<MethodInvokeDO> getMethodByClass(@ApiParam(name = "className", required = true, value = "类名") @RequestParam("className") String className) {
+        return fakerManager.getMethodByClass(className);
+    }
+
+    @ApiOperation(value = "获取结果", httpMethod = "GET")
+    @ApiResponse(code = 200, message = "success", response = Result.class)
+    @ResponseBody
+    @RequestMapping(value = "getMethodByFakerId", method = RequestMethod.GET)
+    public PageVO<LogDO> getMethodByFakerId(@ApiParam(name = "fakerId", required = true, value = "请求序号") @RequestParam("fakerId") String fakerId,
+                                            @ApiParam(name = "pageIndex", value = "页数") @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+                                            @ApiParam(name = "pageSize", value = "页面大小") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        pageIndex = null == pageIndex || pageIndex < 1 ? 1 : pageIndex;
+        pageSize = null == pageSize || pageSize < 20 ? 20 : pageSize;
+
+        PageVO<LogDO> page = new PageVO<>();
+        page.setPageIndex(pageIndex);
+        page.setPageSize(pageSize);
+
+        int total = fakerManager.countMethodByFakerId(fakerId);
+        page.setTotal(total);
+        if(0 == total) {
+            page.setData(Collections.emptyList());
+            return page;
+        }
+
+        page.setData(fakerManager.getMethodByFakerId(fakerId, pageIndex, pageSize));
+        return page;
+    }
 }

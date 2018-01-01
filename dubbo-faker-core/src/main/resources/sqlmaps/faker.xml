@@ -33,4 +33,43 @@
 		VALUE
 		(#{fakerId}, #{invokeId}, #{realParam}, #{code}, #{result}, #{message}, #{spendTime}, #{invokeTime});
 	</insert>
+
+
+	<select id="findAllApp" resultType="methodInvokeDO">
+		SELECT `app_id`, `app_name`
+		FROM `method_invoke`
+		GROUP BY `app_id`
+	</select>
+
+	<select id="findClassByApp" resultType="String">
+		SELECT `class_name`
+		FROM `method_invoke`
+		WHERE `app_id` = #{appId}
+		GROUP BY `class_name`
+	</select>
+
+	<select id="findMethodByClass" resultType="methodInvokeDO">
+		SELECT `id`, `method_name`, `param_type`, `return_type`
+		FROM `method_invoke`
+		WHERE `class_name` = #{className}
+	</select>
+
+	<select id="countMethodByFakerId" resultType="int">
+		SELECT count(*)
+		FROM `faker_log`
+		WHERE `faker_id` = #{fakerId}
+	</select>
+
+	<select id="findMethodByFakerId" resultType="logDO">
+		SELECT a.`id`, `real_param`, `code`, `result`, `message`, `spend_time`, `invoke_time`
+		FROM `faker_log` a,
+		(
+		SELECT id
+		FROM `faker_log`
+		WHERE `faker_id` = #{fakerId}
+		ORDER BY `code` DESC, `spend_time` DESC
+		LIMIT ${offset}, ${pageSize}
+		) b
+		WHERE a.`id` = b.`id`
+	</select>
 </mapper>

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Form, Row, Col, Input, InputNumber, Button, Radio, message } from 'antd';
+import { Form, Row, Col, Input, InputNumber, Button, Radio, message, notification } from 'antd';
 import InvokeSelect from '../components/InvokeSelect';
+import InvokeCascader from '../components/InvokeCascader';
 import request from "../utils/request";
 
 const FormItem = Form.Item;
@@ -18,8 +19,12 @@ class InvokeForm extends React.Component {
       if(err) {
         return
       }
+      if(values.invokeId.length !== 3) {
+        message.error("请选择调用请求")
+        return
+      }
       const payload = {
-        invokeId: values.invokeId,
+        invokeId: values.invokeId[2],
         invokeExpression: values.invokeExpression,
         poolSize: values.poolSize,
         qps: values.qps,
@@ -27,13 +32,17 @@ class InvokeForm extends React.Component {
         saveResult: values.saveResult,
         resultParam: values.resultParam,
       }
-
       message.success("生成测试请求")
 
       request("faker/invoke", payload)
         .then(resp => {
           if(resp.data.code === 200) {
-            message.success("请求成功: " + resp.data.data)
+
+            notification.open({
+              message: '请求成功',
+              description: resp.data.data,
+              duration: 20
+            });
             console.log(resp.data.data)
           }
           else {
@@ -77,12 +86,20 @@ class InvokeForm extends React.Component {
           <Col span={24} key='invokeId'>
             <FormItem {...formItemRowLayout} style={{ marginRight: '100px', marginTop: '20px' }} label={`请求`}>
               {getFieldDecorator(`invokeId`, {initFieldsValue: null, rules: [{ required: true}] })(
-                <InvokeSelect
-                  onSelect={this.onSelectInvoke.bind(this)}
+                <InvokeCascader
                 />
               )}
             </FormItem>
           </Col>
+          {/*<Col span={24} key='invokeId'>*/}
+            {/*<FormItem {...formItemRowLayout} style={{ marginRight: '100px', marginTop: '20px' }} label={`请求`}>*/}
+              {/*{getFieldDecorator(`invokeId`, {initFieldsValue: null, rules: [{ required: true}] })(*/}
+                {/*<InvokeSelect*/}
+                  {/*onSelect={this.onSelectInvoke.bind(this)}*/}
+                {/*/>*/}
+              {/*)}*/}
+            {/*</FormItem>*/}
+          {/*</Col>*/}
           <Col span={24} key='invokeExpression'>
             <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`参数表达式`}>
               {getFieldDecorator(`invokeExpression`, {initFieldsValue: null, rules: [{ required: true}] })(

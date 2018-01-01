@@ -1,12 +1,15 @@
 package cn.xueyikang.dubbo.faker.core.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
  * @author xueyikang
  * @create 2017-12-30 06:04
  */
-public class LogDO {
+public class LogDO implements Serializable {
+
+    private Long id;
 
     private String fakerId;
 
@@ -23,6 +26,14 @@ public class LogDO {
     private Long spendTime;
 
     private Timestamp invokeTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getFakerId() {
         return fakerId;

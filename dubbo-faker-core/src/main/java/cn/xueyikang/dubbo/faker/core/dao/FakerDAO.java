@@ -17,4 +17,17 @@ public interface FakerDAO {
     List<String> findParamByType(@Param("appId") int appId, @Param("type") String type);
 
     void saveLog(LogDO logDO);
+
+    List<MethodInvokeDO> findAllApp();
+
+    List<String> findClassByApp(@Param("appId") int appId);
+
+    List<MethodInvokeDO> findMethodByClass(@Param("className") String className);
+
+    int countMethodByFakerId(@Param("fakerId") String fakerId);
+
+    List<LogDO> findMethodByFakerId(@Param("fakerId") String fakerId,
+                                             @Param("offset") int offset,
+                                             @Param("pageSize") int pageSize);
+
 }
