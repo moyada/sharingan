@@ -1,9 +1,10 @@
 import React from 'react';
-import { Form, Row, Col, Input, InputNumber, Button, Radio, message, notification } from 'antd';
+import { Tabs, Form, Row, Col, Input, InputNumber, Button, Radio, message, notification } from 'antd';
 import InvokeSelect from '../components/InvokeSelect';
 import InvokeCascader from '../components/InvokeCascader';
 import request from "../utils/request";
 
+const TabPane = Tabs.TabPane;
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -11,6 +12,7 @@ const RadioGroup = Radio.Group;
 class InvokeForm extends React.Component {
   state = {
     expand: false,
+    type: 'dubbo'
   };
 
   handleSearch = (e) => {
@@ -19,37 +21,90 @@ class InvokeForm extends React.Component {
       if(err) {
         return
       }
-      if(values.invokeId.length !== 3) {
-        message.error("请选择调用请求")
-        return
-      }
-      const payload = {
-        invokeId: values.invokeId[2],
-        invokeExpression: values.invokeExpression,
-        poolSize: values.poolSize,
-        qps: values.qps,
-        loop: values.loop,
-        saveResult: values.saveResult,
-        resultParam: values.resultParam,
-      }
-      message.success("生成测试请求")
-
-      request("faker/invoke", payload)
-        .then(resp => {
-          if(resp.data.code === 200) {
-
-            notification.open({
-              message: '请求成功',
-              description: resp.data.data,
-              duration: 20
-            });
-            console.log(resp.data.data)
+      let payload
+      switch (this.state.type) {
+        case 'dubbo':
+          if(null == values.invokeId || values.invokeId === undefined || values.invokeId.length !== 3) {
+            message.error("请选择调用请求")
+            return
           }
-          else {
-            message.error(resp.data.msg)
+          if(null == values.invokeExpression || values.invokeExpression === undefined) {
+            message.error("请输入参数表达式")
+            return
           }
-        })
-    });
+
+          payload = {
+            invokeId: values.invokeId[2],
+            invokeExpression: values.invokeExpression,
+            poolSize: values.poolSize,
+            qps: values.qps,
+            loop: values.loop,
+            saveResult: values.saveResult,
+            resultParam: values.resultParam,
+          }
+
+          message.success("生成测试请求")
+
+          request("faker/invokeDubbo", payload)
+            .then(resp => {
+              if(resp.err) {
+                message.error(resp.err.message, 10)
+                return
+              }
+              if(resp.data.code === 200) {
+
+                notification.open({
+                  message: '请求成功',
+                  description: resp.data.data,
+                  duration: 20
+                });
+                console.log(resp.data.data)
+              }
+              else {
+                message.error(resp.data.msg, 10)
+              }
+            })
+          break
+
+        case 'http':
+          if(null == values.invokeUrl || values.invokeUrl === undefined) {
+            message.error("请输入请求地址")
+            return
+          }
+
+          payload = {
+            invokeUrl: values.invokeUrl,
+            poolSize: values.poolSize,
+            qps: values.qps,
+            loop: values.loop,
+            saveResult: values.saveResult,
+            resultParam: values.resultParam,
+          }
+
+          message.success("生成测试请求")
+
+          request("faker/invokeHttp", payload)
+            .then(resp => {
+              if(resp.err) {
+                message.error(resp.err.message, 10)
+                return
+              }
+              if(resp.data.code === 200) {
+
+                notification.open({
+                  message: '请求成功',
+                  description: resp.data.data,
+                  duration: 20
+                });
+                console.log(resp.data.data)
+              }
+              else {
+
+              }
+            })
+          break
+      }
+    })
   }
 
   handleReset = () => {
@@ -83,32 +138,40 @@ class InvokeForm extends React.Component {
         onSubmit={this.handleSearch}
       >
         <Row>
-          <Col span={24} key='invokeId'>
-            <FormItem {...formItemRowLayout} style={{ marginRight: '100px', marginTop: '20px' }} label={`请求`}>
-              {getFieldDecorator(`invokeId`, {initFieldsValue: null, rules: [{ required: true}] })(
-                <InvokeCascader
-                />
-              )}
-            </FormItem>
-          </Col>
-          {/*<Col span={24} key='invokeId'>*/}
-            {/*<FormItem {...formItemRowLayout} style={{ marginRight: '100px', marginTop: '20px' }} label={`请求`}>*/}
-              {/*{getFieldDecorator(`invokeId`, {initFieldsValue: null, rules: [{ required: true}] })(*/}
-                {/*<InvokeSelect*/}
-                  {/*onSelect={this.onSelectInvoke.bind(this)}*/}
-                {/*/>*/}
-              {/*)}*/}
-            {/*</FormItem>*/}
-          {/*</Col>*/}
-          <Col span={24} key='invokeExpression'>
-            <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`参数表达式`}>
-              {getFieldDecorator(`invokeExpression`, {initFieldsValue: null, rules: [{ required: true}] })(
-                <Input
-                  placeholder='["${1.model}"]'
-                />
-              )}
-            </FormItem>
-          </Col>
+          <Tabs defaultActiveKey="dubbo" onChange={(key) => this.state.type = key }>
+            <TabPane tab="Dubbo" key="dubbo">
+              <Col span={24} key='invokeId'>
+                <FormItem {...formItemRowLayout} style={{ marginRight: '100px', marginTop: '20px' }} label={`请求`}>
+                  {getFieldDecorator(`invokeId`, {initFieldsValue: null})(
+                    <InvokeCascader
+                    />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={24} key='invokeExpression'>
+                <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`参数表达式`}>
+                  {getFieldDecorator(`invokeExpression`, {initFieldsValue: null})(
+                    <Input
+                      placeholder='["${1.test}"]'
+                    />
+                  )}
+                </FormItem>
+              </Col>
+            </TabPane>
+
+            <TabPane tab="Http" key="http">
+              <Col span={24} key='invokeUrl'>
+                <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`请求地址`}>
+                  {getFieldDecorator(`invokeUrl`, {initFieldsValue: null})(
+                    <Input
+                      placeholder='http://test.dubbo.api?code=${1.test}'
+                    />
+                  )}
+                </FormItem>
+              </Col>
+            </TabPane>
+          </Tabs>
+
           <Col span={4} key='poolSize'>
             <FormItem {...formItemLayout} label={`并发数`}>
               {getFieldDecorator(`poolSize`, {initFieldsValue: null})(

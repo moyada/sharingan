@@ -47,9 +47,8 @@ const columns = [{
 }];
 
 class ResultList extends React.Component {
-
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       currentPageIndex: 1,
       currentPageSize: 100,
@@ -65,7 +64,7 @@ class ResultList extends React.Component {
           this.loadData(this.state.fakerId, nextPage, pageSize);
         },
       },
-    };
+    }
   }
 
   loadData(fakerId, pageIndex, pageSize) {

@@ -41,8 +41,8 @@ public class Faker {
     @ApiOperation(value = "调用虚拟请求", httpMethod = "GET", produces = "application/json")
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
-    @RequestMapping(value = "invoke", method = RequestMethod.GET, produces = "application/json")
-    public Result invoke(
+    @RequestMapping(value = "invokeDubbo", method = RequestMethod.GET, produces = "application/json")
+    public Result invokeDubbo(
                        @ApiParam(name = "invokeId", required = true, value = "请求编号", defaultValue = "1") @RequestParam("invokeId") int invokeId,
                        @ApiParam(name = "invokeExpression", required = true, value = "参数表达式", defaultValue = "[\"${1.model}\"]") @RequestParam("invokeExpression") String invokeExpression,
                        @ApiParam(name = "poolSize", value = "并发数") @RequestParam(value = "poolSize", required = false) Integer poolSize,
