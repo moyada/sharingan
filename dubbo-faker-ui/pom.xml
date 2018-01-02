@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>dubbo-faker</artifactId>
-        <groupId>cn.xueyikang</groupId>
+        <groupId>cn.moyada</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.xueyikang</groupId>
+    <groupId>cn.moyada</groupId>
     <packaging>war</packaging>
     <artifactId>dubbo-faker-ui</artifactId>
 
@@ -24,7 +24,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.xueyikang</groupId>
+            <groupId>cn.moyada</groupId>
             <artifactId>dubbo-faker-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

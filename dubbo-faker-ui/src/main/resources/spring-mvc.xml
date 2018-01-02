@@ -23,7 +23,7 @@
     <!--<bean class="com.mangofactory.swagger.configuration.SpringSwaggerConfig"/>-->
 
     <!-- swagger 配置 -->
-    <bean class="cn.xueyikang.dubbo.faker.ui.config.Swagger2Config"/>
+    <bean class="cn.moyada.dubbo.faker.ui.config.Swagger2Config"/>
 
     <!-- swagger ui resources-->
     <mvc:resources mapping="/swagger/**" location="swagger/" />
