@@ -19,12 +19,12 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.company</groupId>
-            <artifactId>project</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
+        <!-- 添加你需要测试的服务依赖 -->
+        <!--<dependency>-->
+            <!--<groupId>com.company</groupId>-->
+            <!--<artifactId>project</artifactId>-->
+            <!--<version>1.0.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.alibaba</groupId>

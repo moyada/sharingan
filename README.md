@@ -93,6 +93,7 @@ VALUES
 	(1, 1, 'test', '12345');
 ```
 
+
 ### 6. 启动项目，打开 http://localhost:8080/index.html 进入管理页面，测试请求
 
 接口地址: http://localhost:8080/swagger-ui.html
@@ -103,7 +104,7 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
 
 表达式格式为`${app_id.type}`，程序将会从invoke_param数据中获取模拟参数随机抽取调用，当使用了表达式而又无模拟参数时将抛出`NoSuchParamException`
 
-测试结果保存在`faker_log`表中，每次测试将生成一个唯一的`faker_id`，暂时通过日志信息`faker invoke done`观察测试的完成情况。
+测试结果保存在`faker_log`表中，每次测试将生成一个唯一的`faker_id`，完成时打印日志信息`faker invoke done`。
 
 
 
