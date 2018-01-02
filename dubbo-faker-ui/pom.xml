@@ -215,7 +215,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>cn.xueyikang</groupId>
+                                    <groupId>cn.moyada</groupId>
                                     <artifactId>dubbo-faker-core</artifactId>
                                     <version>1.0-SNAPSHOT</version>
                                     <type>jar</type>
@@ -233,7 +233,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>./target/WEB-INF/lib</outputDirectory>
-                            <excludeGroupIds>cn.xueyikang</excludeGroupIds>
+                            <excludeGroupIds>cn.moyada</excludeGroupIds>
                         </configuration>
                     </execution>
                 </executions>

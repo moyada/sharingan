@@ -18,7 +18,7 @@
 	<context:annotation-config/>
 
 	<!-- 扫描controller（controller层注入） -->
-	<context:component-scan base-package="cn.xueyikang.dubbo.faker.**" />
+	<context:component-scan base-package="cn.moyada.dubbo.faker.**" />
 
 	<mvc:annotation-driven />
 

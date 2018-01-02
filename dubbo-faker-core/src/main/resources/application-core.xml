@@ -7,7 +7,7 @@
 	<context:annotation-config/>
 
 	<!-- 扫描controller（controller层注入） -->
-	<context:component-scan base-package="cn.xueyikang.dubbo.faker.core" />
+	<context:component-scan base-package="cn.moyada.dubbo.faker.core" />
 
 	<!--<import resource="classpath:application-dubbo.xml"/>-->
 </beans>

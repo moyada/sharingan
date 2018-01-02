@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Form, Row, Col, Input, Button, message } from 'antd';
+import { Table, Form, Row, Col, Input, Popover, Button, message } from 'antd';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import InvokeForm from '../components/InvokeForm';
@@ -29,10 +29,36 @@ const columns = [{
   title: '请求结果',
   dataIndex: 'result',
   width: '20%',
+  render(data) {
+    if(data && data.length > 255) {
+      return (
+        <div>
+          {data.substring(0, 250)}
+          <Popover placement="topRight" trigger="hover" content={data}>
+            <Button>详细</Button>
+          </Popover>
+        </div>
+      )
+    }
+    return data
+  }
 }, {
   title: '异常信息',
   dataIndex: 'message',
   width: '20%',
+  render(data) {
+    if(data && data.length > 255) {
+      return (
+        <div>
+          {data.substring(0, 250)}
+          <Popover placement="topRight" trigger="hover" content={data}>
+            <Button>详细</Button>
+          </Popover>
+        </div>
+      )
+    }
+    return data
+  }
 }, {
   title: '耗时',
   dataIndex: 'spendTime',

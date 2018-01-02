@@ -43,6 +43,6 @@
     </settings>
 
     <typeAliases>
-        <package name="cn.xueyikang.dubbo.faker.core.model"/>
+        <package name="cn.moyada.dubbo.faker.core.model"/>
     </typeAliases>
 </configuration>

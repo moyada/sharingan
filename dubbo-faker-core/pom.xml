@@ -67,28 +67,6 @@
             <artifactId>dubbo</artifactId>
         </dependency>
 
-
-        <dependency>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>quasar-core</artifactId>
-            <classifier>jdk8</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>quasar-actors</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>comsat-httpclient</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>quasar-reactive-streams</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
