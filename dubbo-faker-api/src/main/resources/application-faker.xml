@@ -11,7 +11,7 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <bean id="catchAspect" class="cn.xueyikang.dubbo.faker.api.aop.FakerAop">
+    <bean id="catchAspect" class="cn.moyada.dubbo.faker.api.aop.FakerAop">
         <constructor-arg name="enable" value="true"/>
         <constructor-arg name="appName" value="demo"/>
     </bean>
@@ -25,14 +25,14 @@
     </aop:config>
 
 
-    <bean class="cn.xueyikang.dubbo.faker.api.config.WebConfig">
+    <bean class="cn.moyada.dubbo.faker.api.config.WebConfig">
         <property name="applicationName" value="appName"/>
     </bean>
 
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="*"/>
-            <bean class="cn.xueyikang.dubbo.faker.api.interceptor.FakerInterceptor">
+            <bean class="cn.moyada.dubbo.faker.api.interceptor.FakerInterceptor">
                 <constructor-arg value="appName" index="0"/>
             </bean>
         </mvc:interceptor>

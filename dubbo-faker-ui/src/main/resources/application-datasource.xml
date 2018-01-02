@@ -51,7 +51,7 @@
 
 
     <bean id="fakerMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="mapperInterface" value="cn.xueyikang.dubbo.faker.core.dao.FakerDAO"/>
+        <property name="mapperInterface" value="cn.moyada.dubbo.faker.core.dao.FakerDAO"/>
         <property name="sqlSessionFactory" ref="sqlSessionFactory" />
     </bean>
 </beans>
