@@ -78,18 +78,31 @@ public class InvokerConsumer implements Runnable {
             }
             else {
                 if(this.saveResult) {
-                    if(null == this.resultParam) {
-                        logDO.setResult(JsonUtil.toGsonJson(o));
+                    if(null != this.resultParam) {
+                        o = ReflectUtil.getValue(o, this.resultParam);
+                    }
+                    if(null == o) {
+                        logDO.setCode(Code.NULL);
+                        if(null != this.resultParam) {
+                            logDO.setResult(this.resultParam + ": null");
+                        }
+                        else {
+                            logDO.setResult("null");
+                        }
                     }
                     else {
-                        logDO.setResult(String.valueOf(ReflectUtil.getValue(o, this.resultParam)));
+                        logDO.setCode(Code.OK);
+                        logDO.setResult(JsonUtil.toGsonJson(o));
                     }
+                }
+                else {
+                    logDO.setCode(Code.OK);
                 }
                 // TODO: 2017/12/31 counting spend time
 //                if (millis > 1000) {
 //                    logDO.setCode(Code.TIME_OUT);
 //                } else {
-                    logDO.setCode(Code.OK);
+//                    logDO.setCode(Code.OK);
 //                }
             }
 

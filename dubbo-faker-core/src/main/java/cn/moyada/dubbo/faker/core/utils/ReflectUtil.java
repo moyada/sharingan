@@ -42,7 +42,7 @@ public class ReflectUtil {
             f.setAccessible(true);
             return f.get(obj);
         } catch (Exception var8) {
-            var8.printStackTrace();
+            // var8.printStackTrace();
             return null;
         }
     }

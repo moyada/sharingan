@@ -4,6 +4,7 @@ import cn.moyada.dubbo.faker.core.model.RebuildParam;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -49,8 +50,8 @@ public class ParamUtil {
         return rebuildParam;
     }
 
-    public static Object[] convertValue(Object[] values, Class<?>[] paramTypes, Map<Integer, List<String>> rebuildParamMap,
-                                        Map<String, List<String>> paramMap, Map<Integer, Integer> convertMap) {
+    public static Object[] convertValue(final Object[] values, final Class<?>[] paramTypes, final Map<Integer, List<String>> rebuildParamMap,
+                                        final Map<String, List<String>> paramMap, final Map<Integer, Integer> convertMap) {
         int length = values.length;
         if(0 == length) {
             return null;
@@ -59,6 +60,7 @@ public class ParamUtil {
         Object[] argsValue = new Object[length];
         String json;
         List<String> paramsList, valueList;
+        int subIndex, subLen;
         for (int index = 0; index < length; index++) {
             json = JsonUtil.toJson(values[index]);
             if(null == json) {
@@ -68,11 +70,11 @@ public class ParamUtil {
 
             paramsList = rebuildParamMap.get(index);
             if(null != paramsList) {
-                for (String param : paramsList) {
+                subLen = paramsList.size();
+                for (subIndex = 0; subIndex < subLen; subIndex++) {
+                    String param = paramsList.get(index);
                     valueList = paramMap.get(param);
-                    if(null != valueList) {
-                        json = json.replace(param, valueList.get(random.nextInt(valueList.size())));
-                    }
+                    json = StringUtils.replaceOnce(json, param, valueList.get(random.nextInt(valueList.size())));
                 }
             }
 
@@ -87,9 +89,7 @@ public class ParamUtil {
     }
 
     public static void main(String[] args) {
-         String invokeParam = "[\"${123.model}\", [{\"action\":\"${23.haha}\",\"money\":[{\"action\":\"${23.haha}\",\"money\":1111}]}], \"wishenm\"]";
-//        String invokeParam = "[\"${1.model}\"]";
-        Object[] array = JsonUtil.toArray(invokeParam, Object.class);
-        System.out.println(getRebuildParam(array));
+        System.out.println(StringUtils.replaceOnce("[\"${1.series}\",\"${1.series}\",\"${1.series}\"]", "${1.series}", "series-1696"));
+        System.out.println();
     }
 }

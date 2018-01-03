@@ -50,7 +50,7 @@ const columns = [{
     if(data && data.length > 255) {
       return (
         <div>
-          {data.substring(0, 250)}
+          {data.substring(0, 250)+`...`}
           <Popover placement="topRight" trigger="hover" content={data}>
             <Button>详细</Button>
           </Popover>
