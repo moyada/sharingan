@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, Form, Row, Col, Input, InputNumber, Button, Radio, message, notification } from 'antd';
+import { Tabs, Form, Table, Row, Col, Input, InputNumber, Button, Radio, Modal, message, notification } from 'antd';
 import InvokeSelect from '../components/InvokeSelect';
 import InvokeCascader from '../components/InvokeCascader';
 import request from "../utils/request";
@@ -12,11 +12,26 @@ const RadioGroup = Radio.Group;
 class InvokeForm extends React.Component {
   state = {
     expand: false,
-    type: 'dubbo'
-  };
+    type: 'dubbo',
+    data: [],
+    visible: false,
+  }
+
+  static isJSON(str) {
+    if (typeof str === 'string') {
+      try {
+        JSON.parse(str)
+        return str.charAt(0) === '{'
+      } catch (e) {
+        console.log(e)
+        return false
+      }
+    }
+    return false
+  }
 
   handleSearch = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if(err) {
         return
@@ -67,13 +82,13 @@ class InvokeForm extends React.Component {
           break
 
         case 'http':
-          if(null == values.invokeUrl || values.invokeUrl === undefined) {
-            message.error("请输入请求地址")
+          if(0 === this.state.data.length) {
+            message.error("请输入请求信息")
             return
           }
 
           payload = {
-            invokeUrl: values.invokeUrl,
+            invokeInfo: JSON.stringify(this.state.data),
             poolSize: values.poolSize,
             qps: values.qps,
             loop: values.loop,
@@ -82,6 +97,8 @@ class InvokeForm extends React.Component {
           }
 
           message.success("生成测试请求")
+
+          this.setState({data: []})
 
           request("faker/invokeHttp", payload)
             .then(resp => {
@@ -108,7 +125,7 @@ class InvokeForm extends React.Component {
   }
 
   handleReset = () => {
-    this.props.form.resetFields();
+    this.props.form.resetFields()
   }
 
   onSelectInvoke(value) {
@@ -120,6 +137,96 @@ class InvokeForm extends React.Component {
         })
       }
     }
+  }
+
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  }
+
+  removeHttp = (key) => {
+    return (event) => {
+      event.preventDefault();
+      let data = this.state.data
+      data = data.filter(e => e.key !== key)
+      this.setState({
+        data: data
+      })
+    }
+  }
+
+  handleOk = (e) => {
+    const {url, method, header, cookie, param} = this.props.form.getFieldsValue(["url", "method", "header", "cookie", "param"])
+    if(url === undefined || null === url) {
+
+      notification.error({
+        message: '错误',
+        description: 'url 不能为空',
+        duration: 5
+      });
+      return
+    }
+    if(method === undefined || null === method) {
+
+      notification.error({
+        message: '错误',
+        description: '请求方法 不能为空',
+        duration: 5
+      });
+      return
+    }
+
+    if(null != header && header !== undefined && !InvokeForm.isJSON(header)) {
+
+      notification.error({
+        message: '错误',
+        description: '请求头非JSON格式',
+        duration: 5
+      });
+      return
+    }
+
+    if(null != cookie && cookie !== undefined && !InvokeForm.isJSON(cookie)) {
+
+      notification.error({
+        message: '错误',
+        description: 'cookie非JSON格式',
+        duration: 5
+      });
+      return
+    }
+
+    if(null != param && param !== undefined && !InvokeForm.isJSON(param)) {
+
+      notification.error({
+        message: '错误',
+        description: '请求参数非JSON格式',
+        duration: 5
+      });
+      return
+    }
+
+    this.state.data.push({
+      key: Math.random(),
+      url: url,
+      method: method,
+      header: header,
+      cookie: cookie,
+      param: param,
+    })
+    this.props.form.resetFields(["url", "method", "header", "cookie", "param"])
+    this.setState({
+      visible: false,
+    });
+  }
+
+
+  handleCancel = (e) => {
+    this.props.form.resetFields(["url", "method", "header", "cookie", "param"])
+    this.setState({
+      visible: false,
+    });
   }
 
   render() {
@@ -135,6 +242,39 @@ class InvokeForm extends React.Component {
         wrapperCol: {span: 22},
       }
     ;
+
+    const columns = [{
+      title: '请求链接',
+      dataIndex: 'url',
+      width: '18%'
+    }, {
+      title: '请求方法',
+      dataIndex: 'method',
+      width: '8%'
+    }, {
+      title: '请求头',
+      dataIndex: 'header',
+      width: '20%'
+    }, {
+      title: 'cookie',
+      dataIndex: 'cookie',
+      width: '20%'
+    }, {
+      title: '请求参数',
+      dataIndex: 'param',
+      width: '25%'
+    }, {
+      title: '操作',
+      dataIndex: 'operate',
+      width: '5%',
+      render: (data, record) => {
+        return (
+          <div>
+            <a onClick={this.removeHttp(record.key)}>删除</a>
+          </div>
+        )
+      }
+    }];
 
     return (
       <Form
@@ -167,14 +307,116 @@ class InvokeForm extends React.Component {
 
             <TabPane tab="Http" key="http">
               <Col span={24} key='invokeUrl'>
-                <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`请求地址`}>
-                  {getFieldDecorator(`invokeUrl`, {initFieldsValue: null})(
+                <Table
+                  dataSource={this.state.data}
+                  columns={columns}
+                  pagination={false}
+                />
+              </Col>
+
+              <Col span={24} key='add' style={{textAlign: 'right', paddingRight: '50px', marginTop: 10 , marginBottom: 10 }} >
+                <Button type="primary" onClick={this.showModal}>添加请求信息</Button>
+                <Modal
+                  title="请求信息"
+                  visible={this.state.visible}
+                  onOk={this.handleOk.bind(this)}
+                  onCancel={this.handleCancel.bind(this)}
+                  width="70%"
+                >
+                  <Row>
+                    <Col span={24} key="url">
+                      <FormItem {...formItemRowLayout} label={`请求链接`}>
+                        {getFieldDecorator(`url`, {initFieldsValue: null})(
+                          <Input
+                            placeholder='http://'
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={24} key="method">
+                      <FormItem {...formItemRowLayout} label={`请求方法`}>
+                        {getFieldDecorator(`method`, {initFieldsValue: "get"})(
+                          <RadioGroup >
+                            <RadioButton value="get">GET</RadioButton>
+                            <RadioButton value="post">POST</RadioButton>
+                            <RadioButton value="put">PUT</RadioButton>
+                            <RadioButton value="delete">DELETE</RadioButton>
+                          </RadioGroup>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={24} key="header">
+                      <FormItem {...formItemRowLayout} label={`请求头`}>
+                        {getFieldDecorator(`header`, {initFieldsValue: null})(
+                          <Input
+                            placeholder='{"_token": "153957392783"}'
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={24} key="cookie">
+                      <FormItem {...formItemRowLayout} label={`cookie`}>
+                        {getFieldDecorator(`cookie`, {initFieldsValue: null})(
+                          <Input
+                            placeholder='{"JSESSIONID": "ByOK3vjFD72aPnrF7C2HmdnV6TZcEbzWoWiBYEnLerjQ99zWpBng"}'
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={24} key="param">
+                      <FormItem {...formItemRowLayout} label={`请求参数`}>
+                        {getFieldDecorator(`param`, {initFieldsValue: null})(
+                          <Input
+                            placeholder='{"id": "123"}'
+                          />
+                        )}
+                      </FormItem>
+                    </Col>
+                  </Row>
+                </Modal>
+              </Col>
+
+              <Col span={6} key='proxyHost'>
+                <FormItem {...formItemLayout} label={`代理主机`}>
+                  {getFieldDecorator(`proxyHost`, {initFieldsValue: null})(
                     <Input
-                      placeholder='http://test.dubbo.api?code=${1.test}'
+                      placeholder='127.0.0.1'
                     />
                   )}
                 </FormItem>
               </Col>
+
+              <Col span={6} key='proxyPort'>
+                <FormItem {...formItemLayout} label={`代理端口`}>
+                  {getFieldDecorator(`proxyPort`, {initFieldsValue: null})(
+                    <InputNumber
+                      min={0}
+                      precision={0}
+                      placeholder='80'
+                    />
+                  )}
+                </FormItem>
+              </Col>
+
+              <Col span={6} key='proxyUsername'>
+                <FormItem {...formItemLayout} label={`账号`}>
+                  {getFieldDecorator(`proxyUsername`, {initFieldsValue: null})(
+                    <Input
+                      placeholder='admin'
+                    />
+                  )}
+                </FormItem>
+              </Col>
+
+              <Col span={6} key='proxyPassword'>
+                <FormItem {...formItemLayout} style={{ marginRight: '20px' }} label={`密码`}>
+                  {getFieldDecorator(`proxyPassword`, {initFieldsValue: null})(
+                    <Input
+                    />
+                  )}
+                </FormItem>
+              </Col>
+
             </TabPane>
           </Tabs>
 
@@ -233,9 +475,9 @@ class InvokeForm extends React.Component {
         </Row>
         <Row>
           <Col span={24} style={{ textAlign: 'right', paddingRight: '50px', marginBottom: 10 }}>
-            <Button type="primary" htmlType="submit">Search</Button>
+            <Button type="primary" htmlType="submit">提交请求</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>
-              Clear
+              清除
             </Button>
           </Col>
         </Row>
