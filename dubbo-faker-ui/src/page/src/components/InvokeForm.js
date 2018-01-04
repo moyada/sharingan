@@ -34,7 +34,7 @@ class InvokeForm extends React.Component {
           }
 
           payload = {
-            invokeId: values.invokeId[2],
+            invokeId: values.invokeId[2].split(`-`)[0],
             invokeExpression: values.invokeExpression,
             poolSize: values.poolSize,
             qps: values.qps,
@@ -114,11 +114,11 @@ class InvokeForm extends React.Component {
   onSelectInvoke(value) {
     if(value !== undefined && null !== value && value.length === 3) {
       let values = value[2].split(`-`)
-      console.log(values)
-      this.props.form.setFieldsValue({
-          invokeId: values[0],
+      if(value !== undefined && null !== value) {
+        this.props.form.setFieldsValue({
           invokeExpression: values[1],
-      })
+        })
+      }
     }
   }
 
