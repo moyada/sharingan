@@ -16,6 +16,8 @@ public class MethodInvokeDO {
 
     private String returnType;
 
+    private String expression;
+
     public Integer getId() {
         return id;
     }
@@ -70,5 +72,13 @@ public class MethodInvokeDO {
 
     public void setReturnType(String returnType) {
         this.returnType = returnType;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 }

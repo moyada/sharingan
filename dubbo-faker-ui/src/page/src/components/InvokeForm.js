@@ -112,8 +112,13 @@ class InvokeForm extends React.Component {
   }
 
   onSelectInvoke(value) {
-    if(value !== undefined || null != value) {
-      this.props.form.setFieldsValue({invokeId: value})
+    if(value !== undefined && null !== value && value.length === 3) {
+      let values = value[2].split(`-`)
+      console.log(values)
+      this.props.form.setFieldsValue({
+          invokeId: values[0],
+          invokeExpression: values[1],
+      })
     }
   }
 
@@ -144,6 +149,7 @@ class InvokeForm extends React.Component {
                 <FormItem {...formItemRowLayout} style={{ marginRight: '100px', marginTop: '20px' }} label={`请求`}>
                   {getFieldDecorator(`invokeId`, {initFieldsValue: null})(
                     <InvokeCascader
+                      onChange={this.onSelectInvoke.bind(this)}
                     />
                   )}
                 </FormItem>
