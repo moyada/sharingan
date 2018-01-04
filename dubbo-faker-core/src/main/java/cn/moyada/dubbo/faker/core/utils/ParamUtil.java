@@ -72,7 +72,7 @@ public class ParamUtil {
             if(null != paramsList) {
                 subLen = paramsList.size();
                 for (subIndex = 0; subIndex < subLen; subIndex++) {
-                    String param = paramsList.get(index);
+                    String param = paramsList.get(subIndex);
                     valueList = paramMap.get(param);
                     json = StringUtils.replaceOnce(json, param, valueList.get(random.nextInt(valueList.size())));
                 }
