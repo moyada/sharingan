@@ -15,13 +15,14 @@ class InvokeForm extends React.Component {
     type: 'dubbo',
     data: [],
     visible: false,
+    index: 1,
   }
 
   static isJSON(str) {
     if (typeof str === 'string') {
       try {
         JSON.parse(str)
-        return str.charAt(0) === '{'
+        return true
       } catch (e) {
         console.log(e)
         return false
@@ -43,8 +44,9 @@ class InvokeForm extends React.Component {
             message.error("请选择调用请求")
             return
           }
-          if(null == values.invokeExpression || values.invokeExpression === undefined) {
-            message.error("请输入参数表达式")
+          if(null == values.invokeExpression || values.invokeExpression === undefined ||
+          values.invokeExpression.charAt(0) !== '[' || !InvokeForm.isJSON(values.invokeExpression)) {
+            message.error("请输入正确的参数表达式")
             return
           }
 
@@ -177,7 +179,8 @@ class InvokeForm extends React.Component {
       return
     }
 
-    if(null != header && header !== undefined && !InvokeForm.isJSON(header)) {
+    if(null != header && header !== undefined && header.trim() !== "" &&
+      header.charAt(0) === '{' && !InvokeForm.isJSON(header)) {
 
       notification.error({
         message: '错误',
@@ -187,7 +190,8 @@ class InvokeForm extends React.Component {
       return
     }
 
-    if(null != cookie && cookie !== undefined && !InvokeForm.isJSON(cookie)) {
+    if(null != cookie && cookie !== undefined && cookie.trim() !== "" &&
+      cookie.charAt(0) === '{' && !InvokeForm.isJSON(cookie)) {
 
       notification.error({
         message: '错误',
@@ -197,7 +201,8 @@ class InvokeForm extends React.Component {
       return
     }
 
-    if(null != param && param !== undefined && !InvokeForm.isJSON(param)) {
+    if(null != param && param !== undefined && param.trim() !== "" &&
+      param.charAt(0) === '{' && !InvokeForm.isJSON(param)) {
 
       notification.error({
         message: '错误',
@@ -207,8 +212,9 @@ class InvokeForm extends React.Component {
       return
     }
 
+
     this.state.data.push({
-      key: Math.random(),
+      key: `_` + this.state.index,
       url: url,
       method: method,
       header: header,
@@ -217,6 +223,7 @@ class InvokeForm extends React.Component {
     })
     this.props.form.resetFields(["url", "method", "header", "cookie", "param"])
     this.setState({
+      index: this.state.index + 1,
       visible: false,
     });
   }
@@ -244,6 +251,10 @@ class InvokeForm extends React.Component {
     ;
 
     const columns = [{
+      title: '编号',
+      dataIndex: 'key',
+      width: '5%'
+    }, {
       title: '请求链接',
       dataIndex: 'url',
       width: '18%'

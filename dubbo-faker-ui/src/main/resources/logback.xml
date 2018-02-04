@@ -13,6 +13,26 @@
         </encoder>
     </appender>
 
+    <appender name="INVOKE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/invoke_info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/invoke_info_${date}.log.%i.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${pattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
     <appender name="INVOKE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/invoke_error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -35,6 +55,7 @@
 
     <logger name="com.souche.faker" level="info" additivity="false">
         <appender-ref ref="INVOKE_ERROR" />
+        <appender-ref ref="INVOKE_INFO" />
         <appender-ref ref="STDOUT" />
     </logger>
 

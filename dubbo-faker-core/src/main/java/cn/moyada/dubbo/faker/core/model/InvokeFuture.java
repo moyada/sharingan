@@ -1,7 +1,6 @@
 package cn.moyada.dubbo.faker.core.model;
 
-import java.time.Instant;
-import java.util.concurrent.CompletableFuture;
+import java.sql.Timestamp;
 
 /**
  * @author xueyikang
@@ -9,39 +8,27 @@ import java.util.concurrent.CompletableFuture;
  */
 public class InvokeFuture {
 
-    private Instant start;
+    private FutureResult future;
 
-    private CompletableFuture<Object> future;
+    private Timestamp invokeTime;
 
     private String realParam;
 
-    public InvokeFuture(Instant start, CompletableFuture<Object> future, String realParam) {
-        this.start = start;
+    public InvokeFuture(FutureResult future, Timestamp invokeTime, String realParam) {
         this.future = future;
+        this.invokeTime = invokeTime;
         this.realParam = realParam;
     }
 
-    public Instant getStart() {
-        return start;
-    }
-
-    public void setStart(Instant start) {
-        this.start = start;
-    }
-
-    public CompletableFuture<Object> getFuture() {
+    public FutureResult getFuture() {
         return future;
-    }
-
-    public void setFuture(CompletableFuture<Object> future) {
-        this.future = future;
     }
 
     public String getRealParam() {
         return realParam;
     }
 
-    public void setRealParam(String realParam) {
-        this.realParam = realParam;
+    public Timestamp getInvokeTime() {
+        return invokeTime;
     }
 }

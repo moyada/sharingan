@@ -24,7 +24,6 @@ public class FakerInterceptor implements HandlerInterceptor, InitializingBean {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
         if(handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = HandlerMethod.class.cast(handler);
             String controllerName = handlerMethod.getBean().getClass().getName();

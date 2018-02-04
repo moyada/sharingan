@@ -1,6 +1,5 @@
 package cn.moyada.dubbo.faker.core.model;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +11,7 @@ public class RebuildParam {
 
     private Set<String> rebuildParamSet;
 
-    private Map<Integer, List<String>> rebuildParamMap;
+    private Map<Integer, Map<String, String>> rebuildParamMap;
 
     public Set<String> getRebuildParamSet() {
         return rebuildParamSet;
@@ -22,11 +21,11 @@ public class RebuildParam {
         this.rebuildParamSet = rebuildParamSet;
     }
 
-    public Map<Integer, List<String>> getRebuildParamMap() {
+    public Map<Integer, Map<String, String>> getRebuildParamMap() {
         return rebuildParamMap;
     }
 
-    public void setRebuildParamMap(Map<Integer, List<String>> rebuildParamMap) {
+    public void setRebuildParamMap(Map<Integer, Map<String, String>> rebuildParamMap) {
         this.rebuildParamMap = rebuildParamMap;
     }
 }

@@ -16,12 +16,10 @@ public class LoggingListener {
     private final ExecutorService excutor;
 
     private final int poolSie;
-    private final long timeout;
 
-    public LoggingListener(int poolSie, long timeout) {
-        this.excutor = Executors.newFixedThreadPool(poolSie > 100 ? 100 : poolSie);
-        this.poolSie = poolSie;
-        this.timeout = timeout;
+    public LoggingListener(int poolSie) {
+        this.poolSie = poolSie > 100 ? 100 : poolSie;
+        this.excutor = Executors.newFixedThreadPool(this.poolSie);
     }
 
     public void run(String fakerId, int invokeId, Queue<InvokeFuture> queue,
@@ -29,7 +27,7 @@ public class LoggingListener {
         for (int index = 0; index < this.poolSie; index++) {
             this.excutor.submit(new InvokerConsumer("t-"+index, fakerId, invokeId, queue, fakerManager, saveResult, resultParam));
             try {
-                Thread.sleep(this.timeout);
+                Thread.sleep(index);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

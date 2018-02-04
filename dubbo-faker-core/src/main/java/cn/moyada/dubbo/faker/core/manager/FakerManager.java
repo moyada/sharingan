@@ -76,7 +76,7 @@ public class FakerManager {
     }
 
     public List<String> getFakerParamByRebuildParam(String param) {
-        String[] split = param.substring(2, param.length() - 1).split("\\.");
+        String[] split = param.split("\\.");
         Integer appId = Integer.valueOf(split[0]);
         String type = split[1];
         return fakerDAO.findParamByType(appId, type);
@@ -88,6 +88,10 @@ public class FakerManager {
         Map<String, List<String>> paramMap = Maps.newHashMapWithExpectedSize(paramSet.size());
         List<String> paramValueList;
         for (String param : paramSet) {
+            // 过滤从结果中再获取参数的
+            if('_' == param.indexOf(0)) {
+                continue;
+            }
             paramValueList = this.getFakerParamByRebuildParam(param);
             if(paramValueList.isEmpty()) {
                 throw new NoSuchParamException(param + " don't have any param, please checkout invoke_param table.");

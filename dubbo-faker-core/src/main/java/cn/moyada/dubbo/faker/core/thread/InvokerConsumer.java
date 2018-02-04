@@ -2,6 +2,7 @@ package cn.moyada.dubbo.faker.core.thread;
 
 import cn.moyada.dubbo.faker.core.common.Code;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
+import cn.moyada.dubbo.faker.core.model.FutureResult;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.LogDO;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
@@ -9,12 +10,7 @@ import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author xueyikang
@@ -58,29 +54,19 @@ public class InvokerConsumer implements Runnable {
                 continue;
             }
             log.info(this.name + " save invoke...");
-            Instant start = invokeFuture.getStart();
-            CompletableFuture<Object> future = invokeFuture.getFuture();
+            FutureResult result = invokeFuture.getFuture();
 
-            Object o;
-            try {
-                o = future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("save invoke error " + e);
-                continue;
-            }
-
-            long millis = Duration.between(start, Instant.now()).toMillis();
+            Object o = result.getResult();
+            long spend = result.getSpend();
 
             LogDO logDO = new LogDO();
-            if(o instanceof Throwable) {
-                logDO.setCode(Code.ERROR);
-                logDO.setMessage(Throwable.class.cast(o).getMessage());
-            }
-            else {
+
+            if(result.isSuccess()) {
                 if(this.saveResult) {
                     if(null != this.resultParam) {
                         o = ReflectUtil.getValue(o, this.resultParam);
                     }
+
                     if(null == o) {
                         logDO.setCode(Code.NULL);
                         if(null != this.resultParam) {
@@ -91,26 +77,32 @@ public class InvokerConsumer implements Runnable {
                         }
                     }
                     else {
-                        logDO.setCode(Code.OK);
+                        if (spend > 1000) {
+                            logDO.setCode(Code.TIME_OUT);
+                        }
+                        else {
+                            logDO.setCode(Code.OK);
+                        }
                         logDO.setResult(JsonUtil.toGsonJson(o));
                     }
+                }
+                else if (spend > 1000) {
+                    logDO.setCode(Code.TIME_OUT);
                 }
                 else {
                     logDO.setCode(Code.OK);
                 }
-                // TODO: 2017/12/31 counting spend time
-//                if (millis > 1000) {
-//                    logDO.setCode(Code.TIME_OUT);
-//                } else {
-//                    logDO.setCode(Code.OK);
-//                }
+            }
+            else {
+                logDO.setCode(Code.ERROR);
+                logDO.setMessage(o.toString());
             }
 
             logDO.setFakerId(fakerId);
             logDO.setInvokeId(invokeId);
+            logDO.setSpendTime(spend);
+            logDO.setInvokeTime(invokeFuture.getInvokeTime());
             logDO.setRealParam(invokeFuture.getRealParam());
-            logDO.setInvokeTime(Timestamp.from(start));
-            logDO.setSpendTime(millis);
 
             fakerManager.saveLog(logDO);
         }

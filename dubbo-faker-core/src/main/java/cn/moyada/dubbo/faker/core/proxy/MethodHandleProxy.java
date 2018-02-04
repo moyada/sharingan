@@ -23,16 +23,25 @@ import java.util.Map;
  */
 public class MethodHandleProxy {
 
+    private ClassPathXmlApplicationContext context;
+
+    private final String xmlPath;
+
     private final AbstractHandle handle;
 
     private final Map<Integer, SoftReference<FakerProxy>> proxyMap;
 
-    public MethodHandleProxy() {
+    public MethodHandleProxy(String xmlPath) {
         this.handle = new MethodInvokeHandle();
-        proxyMap = new HashMap<>();
+        this.proxyMap = new HashMap<>();
+        this.xmlPath = xmlPath;
     }
 
-    public FakerProxy getProxy(ClassPathXmlApplicationContext context, MethodInvokeDO invokeInfo, int poolSize) {
+    public FakerProxy getProxy(MethodInvokeDO invokeInfo, int poolSize) {
+        if(null == context) {
+            context = new ClassPathXmlApplicationContext(new String[]{this.xmlPath});
+        }
+
         FakerProxy proxy;
 
         // check if has cache proxy
@@ -77,6 +86,7 @@ public class MethodHandleProxy {
                     Arrays.toString(paramTypes) + ", " +
                     e);
         }
+
         if(null == methodHandle) {
             throw new NoSuchMethodError("Failed to fetch method error, class: " +
                     invokeInfo.getClassName() + ", method: " +
@@ -103,6 +113,7 @@ public class MethodHandleProxy {
         catch (BeansException e) {
             throw new RpcException("Failed to invoke the method subscribe in the service " + invokeInfo.getClassName() + ".", e);
         }
+
         proxy = new FakerProxy();
         proxy.setParamTypes(paramTypes);
         proxy.setMethodHandle(methodHandle);

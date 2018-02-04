@@ -8,16 +8,21 @@ import java.io.Serializable;
  */
 public class Result<T> implements Serializable {
 
+    private static final long serialVersionUID = 5280258032251442037L;
+
     private Integer code;
 
     private T data;
 
     private String msg;
 
+    private boolean success;
+
     public static <T> Result<T> success(T data) {
         Result r = new Result();
         r.code = 200;
         r.data = data;
+        r.success = true;
         return r;
     }
 
@@ -25,6 +30,7 @@ public class Result<T> implements Serializable {
         Result r = new Result();
         r.code = code;
         r.msg = msg;
+        r.success = false;
         return r;
     }
 
@@ -50,5 +56,13 @@ public class Result<T> implements Serializable {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 }

@@ -47,6 +47,16 @@
         </dependency>
 
         <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>quasar-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>comsat-httpclient</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>

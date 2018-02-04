@@ -23,6 +23,9 @@ const columns = [{
     if(data === 200) {
       return data
     }
+    if(data === 504) {
+      return <div style={{color: 'orange'}}> {data} </div>
+    }
     return <div style={{color: 'red'}}> {data} </div>
   }
 }, {
