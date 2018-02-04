@@ -81,7 +81,7 @@ public class FakerRequest {
         log.info("start faker invoke: " + fakerId);
 
         // convert param and invoke method
-        int timeout = 1 <= qps ? 100 : 3600 / qps;
+        int timeout = 10 >= qps ? 100 : (3600 / qps) - 20;
         if(timeout > 50) {
             for (int index = 0; index < questNum; index++) {
 

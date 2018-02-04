@@ -42,7 +42,7 @@ public class InvokerConsumer implements Runnable {
     public void run() {
         log.info("InvokerConsumer " + this.name + "start");
         while (true) {
-            if(queue.isEmpty()) {
+            if (queue.isEmpty()) {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
@@ -50,7 +50,7 @@ public class InvokerConsumer implements Runnable {
                 }
             }
             InvokeFuture invokeFuture = queue.poll();
-            if(null == invokeFuture) {
+            if (null == invokeFuture) {
                 continue;
             }
             log.info(this.name + " save invoke...");
@@ -61,39 +61,33 @@ public class InvokerConsumer implements Runnable {
 
             LogDO logDO = new LogDO();
 
-            if(result.isSuccess()) {
-                if(this.saveResult) {
-                    if(null != this.resultParam) {
+            if (result.isSuccess()) {
+                if (this.saveResult) {
+                    if (null != this.resultParam) {
                         o = ReflectUtil.getValue(o, this.resultParam);
                     }
 
-                    if(null == o) {
+                    if (null == o) {
                         logDO.setCode(Code.NULL);
-                        if(null != this.resultParam) {
+                        if (null != this.resultParam) {
                             logDO.setResult(this.resultParam + ": null");
-                        }
-                        else {
+                        } else {
                             logDO.setResult("null");
                         }
-                    }
-                    else {
+                    } else {
                         if (spend > 1000) {
                             logDO.setCode(Code.TIME_OUT);
-                        }
-                        else {
+                        } else {
                             logDO.setCode(Code.OK);
                         }
                         logDO.setResult(JsonUtil.toGsonJson(o));
                     }
-                }
-                else if (spend > 1000) {
+                } else if (spend > 1000) {
                     logDO.setCode(Code.TIME_OUT);
-                }
-                else {
+                } else {
                     logDO.setCode(Code.OK);
                 }
-            }
-            else {
+            } else {
                 logDO.setCode(Code.ERROR);
                 logDO.setMessage(o.toString());
             }

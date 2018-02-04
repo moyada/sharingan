@@ -1,6 +1,7 @@
 package cn.moyada.dubbo.faker.core.utils;
 
 import cn.moyada.dubbo.faker.core.common.HandleInfo;
+import com.souche.car.model.common.model.ModelDTO;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -26,28 +27,44 @@ public class ReflectUtil {
     }
 
     public static Object getValue(Object obj, String field) {
+        Class cls = obj.getClass();
+        Field f = getField(cls, field);
+        if(null == f) {
+            return null;
+        }
+        f.setAccessible(true);
+
         try {
-            Class cls = obj.getClass();
-            Field f = cls.getDeclaredField(field);
-            if(null == f) {
-                cls = cls.getSuperclass();
-                if(null == cls) {
-                    return null;
-                }
-                f = cls.getDeclaredField(field);
-                if(null == f) {
-                    return null;
-                }
-            }
-            f.setAccessible(true);
             return f.get(obj);
-        } catch (Exception var8) {
-            // var8.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
             return null;
         }
     }
 
+    private static Field getField(Class cls, String fieldName) {
+        Field field;
+        do {
+            if("java.lang.Object".equals(cls.getName())) {
+                return null;
+            }
+            try {
+                field = cls.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                field = null;
+                cls = cls.getSuperclass();
+            }
+        }
+        while (null == field);
+        return field;
+    }
+
     public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+
+        ModelDTO modelDTO = new ModelDTO();
+        modelDTO.setModelName("haha");
+
+        getValue(modelDTO, "modelName2");
 
         List<String> l = new ArrayList<String>();
         Class<?>[] parameterTypes = new Class[7];

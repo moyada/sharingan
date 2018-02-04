@@ -26,11 +26,6 @@ public class LoggingListener {
                     FakerManager fakerManager, boolean saveResult, String resultParam) {
         for (int index = 0; index < this.poolSie; index++) {
             this.excutor.submit(new InvokerConsumer("t-"+index, fakerId, invokeId, queue, fakerManager, saveResult, resultParam));
-            try {
-                Thread.sleep(index);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
