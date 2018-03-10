@@ -37,10 +37,34 @@ export default function request(url, payload, method) {
   if(null == method) {
     method = 'GET';
   }
-  else {
-    checkMethod(method)
-  }
 
+
+  switch (method) {
+    case 'POST':
+      return postRequest(url, payload, method)
+    case 'GET':
+      return getRequest(url, payload, method)
+    default:
+      throw new Error('invalid request method');
+  }
+}
+
+
+
+function getRequest(url, payload, method) {
+  return fetch(url + `?` + querystring.encode(payload),
+    {
+      method: method,
+      credentials: 'include'
+    })
+    .then(checkStatus)
+    .then(parseJSON)
+    .then(data => ({ data }))
+    .catch(err => ({ err }));
+}
+
+
+function postRequest(url, payload, method) {
   return fetch(url,
     {
       method: method,

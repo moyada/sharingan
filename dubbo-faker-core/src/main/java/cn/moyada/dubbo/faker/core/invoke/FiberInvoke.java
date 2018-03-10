@@ -9,7 +9,6 @@ import co.paralleluniverse.strands.SuspendableCallable;
 
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
@@ -24,14 +23,15 @@ public class FiberInvoke extends AbstractInvoke implements AutoCloseable {
 
     public FiberInvoke(int poolSize, final Queue<InvokeFuture> queue) {
         this.excutor = Executors.newFixedThreadPool(poolSize);
-        this.scheduler = new FiberExecutorScheduler(null, this.excutor);
+        this.scheduler = new FiberExecutorScheduler("fiber", this.excutor);
         this.queue = queue;
     }
 
     @Suspendable
     @Override
     public void invoke(MethodHandle handle, Object service, Object[] argsValue, String realParam) {
-        Instant start = Instant.now();
+        Timestamp invokeTime = Timestamp.from(Instant.now());
+        long start = System.nanoTime();
 
         Fiber<FutureResult> fiber = this.scheduler
                 .newFiber((SuspendableCallable<FutureResult>) () -> {
@@ -47,8 +47,8 @@ public class FiberInvoke extends AbstractInvoke implements AutoCloseable {
             if(fiber.isDone()) {
                 try {
                     FutureResult result = fiber.get();
-                    result.setSpend(Duration.between(start, Instant.now()).toMillis());
-                    queue.add(new InvokeFuture(result, Timestamp.from(start), realParam));
+                    result.setSpend((System.nanoTime() - start) / 1000);
+                    queue.offer(new InvokeFuture(result, invokeTime, realParam));
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }

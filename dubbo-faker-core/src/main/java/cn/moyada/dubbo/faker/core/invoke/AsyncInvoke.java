@@ -5,7 +5,6 @@ import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +24,8 @@ public class AsyncInvoke extends AbstractInvoke implements AutoCloseable {
 
     @Override
     public void invoke(MethodHandle handle, Object service, Object[] argsValue, String realParam) {
-        Instant start = Instant.now();
+        Timestamp invokeTime = Timestamp.from(Instant.now());
+        long start = System.nanoTime();
 
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -36,8 +36,8 @@ public class AsyncInvoke extends AbstractInvoke implements AutoCloseable {
         }, this.excutor)
         .whenComplete((result, ex) ->
                 {
-                    result.setSpend(Duration.between(start, Instant.now()).toMillis());
-                    queue.add(new InvokeFuture(result, Timestamp.from(start), realParam));
+                    result.setSpend((System.nanoTime() - start) / 1000);
+                    queue.offer(new InvokeFuture(result, invokeTime, realParam));
                 }
         );
     }
