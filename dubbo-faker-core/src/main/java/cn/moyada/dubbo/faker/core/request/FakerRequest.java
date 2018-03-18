@@ -2,11 +2,15 @@ package cn.moyada.dubbo.faker.core.request;
 
 import cn.moyada.dubbo.faker.core.enums.ConvertType;
 import cn.moyada.dubbo.faker.core.invoke.AbstractInvoke;
-import cn.moyada.dubbo.faker.core.invoke.FiberInvoke;
+import cn.moyada.dubbo.faker.core.invoke.AsyncInvoke;
+import cn.moyada.dubbo.faker.core.listener.CompletedListener;
+import cn.moyada.dubbo.faker.core.listener.LoggingListener;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
-import cn.moyada.dubbo.faker.core.model.*;
+import cn.moyada.dubbo.faker.core.model.FakerProxy;
+import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
+import cn.moyada.dubbo.faker.core.model.ParamDO;
+import cn.moyada.dubbo.faker.core.model.RebuildParam;
 import cn.moyada.dubbo.faker.core.proxy.MethodHandleProxy;
-import cn.moyada.dubbo.faker.core.thread.LoggingListener;
 import cn.moyada.dubbo.faker.core.utils.ConvertUtil;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
 import cn.moyada.dubbo.faker.core.utils.ParamUtil;
@@ -21,8 +25,6 @@ import java.lang.invoke.MethodHandle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Component
 public class FakerRequest {
@@ -69,14 +71,10 @@ public class FakerRequest {
         MethodHandle methodHandle = proxy.getMethodHandle();
         Object[] service = proxy.getService();
 
-        // init invoke thread pool
-        Queue<InvokeFuture> queue = new ConcurrentLinkedQueue<>();
-        AbstractInvoke invoke = new FiberInvoke(poolSize, queue);
-
         // init logging thread poll
-        LoggingListener loggingListener = 1 == questNum ?
-                new LoggingListener(1) : new LoggingListener(questNum / 20);
-        loggingListener.run(fakerId, invokeId, queue, fakerManager, saveResult, resultParam);
+        CompletedListener listener = new LoggingListener(poolSize, fakerId, invokeId, fakerManager, saveResult, resultParam);
+        // init invoke thread pool
+        AbstractInvoke invoke = new AsyncInvoke(poolSize, listener);
 
         log.info("start faker invoke: " + fakerId);
 
@@ -111,14 +109,7 @@ public class FakerRequest {
         log.info("faker invoke done: " + fakerId);
 
         // destroy thread pool
-        while (!queue.isEmpty()) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        loggingListener.shutdown();
+        listener.shutdownDelay();
 
         log.info("shutdown");
 

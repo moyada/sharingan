@@ -1,5 +1,6 @@
 package cn.moyada.dubbo.faker.core.invoke;
 
+import cn.moyada.dubbo.faker.core.listener.CompletedListener;
 import cn.moyada.dubbo.faker.core.model.FutureResult;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import co.paralleluniverse.fibers.Fiber;
@@ -10,36 +11,35 @@ import co.paralleluniverse.strands.SuspendableCallable;
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Queue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class FiberInvoke extends AbstractInvoke implements AutoCloseable {
 
-    private final ExecutorService excutor;
     private final FiberExecutorScheduler scheduler;
-    private final Queue<InvokeFuture> queue;
 
-    public FiberInvoke(int poolSize, final Queue<InvokeFuture> queue) {
-        this.excutor = Executors.newFixedThreadPool(poolSize);
-        this.scheduler = new FiberExecutorScheduler("fiber", this.excutor);
-        this.queue = queue;
+    public FiberInvoke(int poolSize, final CompletedListener completedListener) {
+        super(Executors.newFixedThreadPool(poolSize), completedListener);
+        this.scheduler = new FiberExecutorScheduler("fiber", super.excutor);
     }
 
     @Suspendable
     @Override
     public void invoke(MethodHandle handle, Object service, Object[] argsValue, String realParam) {
+        super.count.increment();
         Timestamp invokeTime = Timestamp.from(Instant.now());
-        long start = System.nanoTime();
 
         Fiber<FutureResult> fiber = this.scheduler
                 .newFiber((SuspendableCallable<FutureResult>) () -> {
+                    FutureResult result;
+                    long start = System.nanoTime();
                     try {
-                        return FutureResult.success(super.execute(handle, service, argsValue));
+                        result = FutureResult.success(super.execute(handle, service, argsValue));
                     } catch (Throwable e) {
-                        return FutureResult.failed(e);
+                        result = FutureResult.failed(e.getMessage());
                     }
+                    result.setSpend((System.nanoTime() - start) / 1000_000);
+                    return result;
                 })
                 .start();
 
@@ -47,18 +47,14 @@ public class FiberInvoke extends AbstractInvoke implements AutoCloseable {
             if(fiber.isDone()) {
                 try {
                     FutureResult result = fiber.get();
-                    result.setSpend((System.nanoTime() - start) / 1000);
-                    queue.offer(new InvokeFuture(result, invokeTime, realParam));
+                    super.callback(new InvokeFuture(result, invokeTime, realParam));
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
+                super.count.decrement();
                 break;
             }
         }
-    }
-
-    public void destroy() {
-        this.excutor.shutdown();
     }
 
     @Override

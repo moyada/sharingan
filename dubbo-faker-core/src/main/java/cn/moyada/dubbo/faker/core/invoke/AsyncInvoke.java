@@ -1,49 +1,47 @@
 package cn.moyada.dubbo.faker.core.invoke;
 
+import cn.moyada.dubbo.faker.core.listener.CompletedListener;
 import cn.moyada.dubbo.faker.core.model.FutureResult;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AsyncInvoke extends AbstractInvoke implements AutoCloseable {
 
-    private final ExecutorService excutor;
-    private final Queue<InvokeFuture> queue;
-
-    public AsyncInvoke(int poolSize, final Queue<InvokeFuture> queue) {
-        Double size = poolSize * 1.3;
-        this.excutor = Executors.newFixedThreadPool(size.intValue());
-        this.queue = queue;
+    public AsyncInvoke(int poolSize, final CompletedListener completedListener) {
+        super(Executors.newFixedThreadPool((int) (poolSize * 1.3)), completedListener);
     }
 
     @Override
     public void invoke(MethodHandle handle, Object service, Object[] argsValue, String realParam) {
+        super.count.increment();
         Timestamp invokeTime = Timestamp.from(Instant.now());
-        long start = System.nanoTime();
 
         CompletableFuture.supplyAsync(() -> {
+            FutureResult result;
+            long start = System.nanoTime();
             try {
-                return FutureResult.success(super.execute(handle, service, argsValue));
+                result = FutureResult.success(super.execute(handle, service, argsValue));
             } catch (Throwable e) {
-                return FutureResult.failed(e.getMessage());
+                result = FutureResult.failed(e.getMessage());
             }
+            result.setSpend(start);
+//            result.setSpend((System.nanoTime() - start) / 1000_000);
+            return result;
         }, this.excutor)
+//        .exceptionally(ex -> FutureResult.failed(ex.getMessage()))
         .whenComplete((result, ex) ->
                 {
-                    result.setSpend((System.nanoTime() - start) / 1000);
-                    queue.offer(new InvokeFuture(result, invokeTime, realParam));
+                    result.setSpend((System.nanoTime() - result.getSpend()) / 1000_000);
+//                    result.setSpend(Duration.between(now, Instant.now()).toMillis());
+                    super.callback(new InvokeFuture(result, invokeTime, realParam));
+                    super.count.decrement();
                 }
         );
-    }
-
-    public void destroy() {
-        this.excutor.shutdown();
     }
 
     @Override

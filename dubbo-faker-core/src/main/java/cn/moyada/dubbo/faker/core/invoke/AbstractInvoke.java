@@ -1,14 +1,37 @@
 package cn.moyada.dubbo.faker.core.invoke;
 
 import cn.moyada.dubbo.faker.core.exception.UnsupportedParamNumberException;
+import cn.moyada.dubbo.faker.core.listener.CompletedListener;
+import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 
 import java.lang.invoke.MethodHandle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.LongAdder;
 
 public abstract class AbstractInvoke {
 
+    private final CompletedListener completedListener;
+    protected final ExecutorService excutor;
+    protected final LongAdder count;
+
+    public AbstractInvoke(ExecutorService excutor, CompletedListener completedListener) {
+        this.excutor = excutor;
+        this.completedListener = completedListener;
+        this.count = new LongAdder();
+    }
+
     public abstract void invoke(MethodHandle handle, Object service, Object[] argsValue, String realParam);
 
-    public abstract void destroy();
+    public void destroy() {
+        while (count.longValue() != 0) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        excutor.shutdown();
+    }
 
     protected Object execute(MethodHandle handle, Object service, Object[] argsValue) throws Throwable {
         if(null == argsValue) {
@@ -34,5 +57,9 @@ public abstract class AbstractInvoke {
             default:
                 return new UnsupportedParamNumberException("[Faker Invoker Error] Param number not yet support.");
         }
+    }
+
+    protected void callback(InvokeFuture result) {
+        completedListener.record(result);
     }
 }
