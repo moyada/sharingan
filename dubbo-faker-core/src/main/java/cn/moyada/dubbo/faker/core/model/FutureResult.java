@@ -1,15 +1,26 @@
 package cn.moyada.dubbo.faker.core.model;
 
 /**
+ *
+ * 调用结果
  * @author xueyikang
  * @create 2018-02-03 22:48
  */
 public class FutureResult<T> {
 
+    /**
+     * 是否成功
+     */
     private boolean success;
 
+    /**
+     * 结果/错误信息
+     */
     private T result;
 
+    /**
+     * 耗时
+     */
     private long spend;
 
     public static <T> FutureResult success(T data) {

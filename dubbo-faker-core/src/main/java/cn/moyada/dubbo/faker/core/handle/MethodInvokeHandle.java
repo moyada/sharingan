@@ -1,15 +1,13 @@
 package cn.moyada.dubbo.faker.core.handle;
 
+import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
 public class MethodInvokeHandle extends AbstractHandle {
-    private static final Logger log = LoggerFactory.getLogger(MethodInvokeHandle.class);
 
     @Override
     public MethodHandle fetchHandleInfo(String className, String methodName, String returnType, Class<?> paramClass[]) {
@@ -18,29 +16,28 @@ public class MethodInvokeHandle extends AbstractHandle {
         try {
             classType = ReflectUtil.getClassType(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Take Invoke Class Error: " + e);
+            throw new InitializeInvokerException("接口类型不存在: " + returnType);
         }
 
         try {
             returnClassType = ReflectUtil.getClassType(returnType);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Take Return Class Error: " + e);
+            throw new InitializeInvokerException("结果类型不存在: " + returnType);
         }
-
-
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
-        MethodType methodType = MethodType.methodType(returnClassType, paramClass);
 
         MethodHandle methodHandle;
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
         try {
+            // 创建方法信息
+            MethodType methodType = MethodType.methodType(returnClassType, paramClass);
+            // 查询方法返回方法具柄
             methodHandle = lookup.findVirtual(classType, methodName, methodType);
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw new RuntimeException("Take Method Class Error: " + e);
+        } catch (NoSuchMethodException e) {
+            throw new InitializeInvokerException("方法不存在: " + methodName);
+        }catch (IllegalAccessException e) {
+            throw new InitializeInvokerException("方法具柄获取失败");
         }
         return methodHandle;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(String.class.getName());
     }
 }

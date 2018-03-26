@@ -4,13 +4,20 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 参数表达式数据
  * @author xueyikang
  * @create 2017-12-30 19:16
  */
-public class RebuildParam {
+public class ParamProvider {
 
+    /**
+     * 参数表达式个数
+     */
     private Set<String> rebuildParamSet;
 
+    /**
+     *
+     */
     private Map<Integer, Map<String, String>> rebuildParamMap;
 
     public Set<String> getRebuildParamSet() {

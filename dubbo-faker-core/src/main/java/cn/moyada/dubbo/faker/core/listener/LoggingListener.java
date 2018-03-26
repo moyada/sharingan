@@ -11,8 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * @author xueyikang
@@ -31,9 +34,9 @@ public class LoggingListener implements CompletedListener {
     private final boolean saveResult;
 
 
-    public LoggingListener(int poolSie, String fakerId, int invokeId, FakerManager fakerManager,
+    public LoggingListener(String fakerId, int invokeId, FakerManager fakerManager,
                            boolean saveResult, String resultParam) {
-        this.excutor = Executors.newFixedThreadPool(poolSie > 100 ? 100 : poolSie);
+        this.excutor = new ThreadPoolExecutor(1, 1, 1L, TimeUnit.MINUTES, new LinkedBlockingDeque<>());
         this.count = new LongAdder();
         this.fakerId = fakerId;
         this.invokeId = invokeId;
@@ -43,12 +46,9 @@ public class LoggingListener implements CompletedListener {
     }
 
     public void shutdownDelay() {
+        // 是否全部记录完了
         while (count.longValue() != 0) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            LockSupport.parkNanos(10000);
         }
         this.excutor.shutdown();
     }
@@ -62,6 +62,7 @@ public class LoggingListener implements CompletedListener {
     class InvokerConsumer implements Runnable {
 
         private final InvokeFuture future;
+
         InvokerConsumer(InvokeFuture future) {
             this.future = future;
         }
@@ -69,42 +70,45 @@ public class LoggingListener implements CompletedListener {
         @Override
         public void run() {
             log.info(Thread.currentThread().getName() + " save invoke...");
+
             FutureResult result = future.getFuture();
-
-            Object o = result.getResult();
             long spend = result.getSpend();
-
             LogDO logDO = new LogDO();
 
             if (result.isSuccess()) {
                 if (saveResult) {
-                    if (null != resultParam) {
-                        o = ReflectUtil.getValue(o, resultParam);
-                    }
-
-                    if (null == o) {
-                        logDO.setCode(Code.NULL);
-                        if (null != resultParam) {
-                            logDO.setResult(resultParam + ": null");
-                        } else {
+                    // 是否保存结果
+                    if (null == resultParam) {
+                        String invokeResult = JsonUtil.toJson(result.getResult());
+                        if (null == invokeResult) {
+                            logDO.setCode(Code.NULL);
                             logDO.setResult("null");
                         }
-                    } else {
-                        if (spend > 1000) {
-                            logDO.setCode(Code.TIME_OUT);
-                        } else {
-                            logDO.setCode(Code.OK);
+                        else {
+                            logDO.setCode(spend > 1000 ? Code.TIME_OUT : Code.OK);
+                            logDO.setResult(invokeResult);
                         }
-                        logDO.setResult(JsonUtil.toGsonJson(o));
                     }
-                } else if (spend > 1000) {
-                    logDO.setCode(Code.TIME_OUT);
-                } else {
-                    logDO.setCode(Code.OK);
+                    else {
+                        // 保存结果的单个参数
+                        Object param = ReflectUtil.getValue(result.getResult(), resultParam);
+                        if (null == param) {
+                            logDO.setCode(Code.NULL);
+                            logDO.setResult(resultParam + ": null");
+                        }
+                        else {
+                            logDO.setCode(spend > 1000 ? Code.TIME_OUT : Code.OK);
+                            logDO.setResult(param.toString());
+                        }
+                    }
                 }
-            } else {
+                else {
+                    logDO.setCode(spend > 1000 ? Code.TIME_OUT : Code.OK);
+                }
+            }
+            else {
                 logDO.setCode(Code.ERROR);
-                logDO.setMessage(o.toString());
+                logDO.setMessage(result.getResult().toString());
             }
 
             logDO.setFakerId(fakerId);

@@ -1,5 +1,7 @@
 package cn.moyada.dubbo.faker.core.model;
 
+import org.openjdk.jol.info.ClassLayout;
+
 import java.sql.Timestamp;
 
 /**
@@ -7,6 +9,11 @@ import java.sql.Timestamp;
  * @create 2017-12-30 18:14
  */
 public class InvokeFuture {
+
+    public static void main(String[] args) {
+        System.out.println(ClassLayout.parseClass(InvokeFuture.class).toPrintable());
+        System.out.println(ClassLayout.parseClass(FutureResult.class).toPrintable());
+    }
 
     private FutureResult future;
 

@@ -1,21 +1,48 @@
 package cn.moyada.dubbo.faker.core.model;
 
+
+/**
+ * 方法调用信息
+ * @author xueyikang
+ * @create 2017-12-13 14:30
+ */
 public class MethodInvokeDO {
 
     private Integer id;
 
+    /**
+     * 项目编号
+     */
     private Integer appId;
 
+    /**
+     * 项目名称
+     */
     private String appName;
 
+    /**
+     * 接口路径名
+     */
     private String className;
 
+    /**
+     * 方法名
+     */
     private String methodName;
 
+    /**
+     * 参数类型
+     */
     private String paramType;
 
+    /**
+     * 返回值类型
+     */
     private String returnType;
 
+    /**
+     * 默认参数表达式
+     */
     private String expression;
 
     public Integer getId() {

@@ -1,28 +1,24 @@
 package cn.moyada.dubbo.faker.core.manager;
 
 import cn.moyada.dubbo.faker.core.dao.FakerDAO;
-import cn.moyada.dubbo.faker.core.exception.NoSuchParamException;
+import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.model.LogDO;
 import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
-
 /**
  * @author xueyikang
  * @create 2017-12-30 05:57
  */
 @Component
-@Scope(SCOPE_PROTOTYPE)
 public class FakerManager {
 
     private static final Logger log = LoggerFactory.getLogger(FakerManager.class);
@@ -33,7 +29,6 @@ public class FakerManager {
     public List<MethodInvokeDO> getAll() {
         return fakerDAO.findAll();
     }
-
 
     public List<MethodInvokeDO> getAllApp() {
         return fakerDAO.findAllApp();
@@ -68,7 +63,11 @@ public class FakerManager {
     }
 
     public MethodInvokeDO getInvokeInfo(int id) {
-        return fakerDAO.findInvokeInfoById(id);
+        MethodInvokeDO methodInvoke = fakerDAO.findInvokeInfoById(id);
+        if(null == methodInvoke) {
+            throw InitializeInvokerException.methodError;
+        }
+        return methodInvoke;
     }
 
     public List<String> getFakerParam(int appId, String type) {
@@ -81,6 +80,12 @@ public class FakerManager {
         String type = split[1];
         return fakerDAO.findParamByType(appId, type);
     }
+
+    /**
+     * 根据参数表达式获取数据库预存模拟参数
+     * @param paramSet 表达式集合
+     * @return
+     */
     public Map<String, List<String>> getFakerParamMapByRebuildParam(Set<String> paramSet) {
         if(null == paramSet || paramSet.isEmpty()) {
             return null;
@@ -88,30 +93,25 @@ public class FakerManager {
         Map<String, List<String>> paramMap = Maps.newHashMapWithExpectedSize(paramSet.size());
         List<String> paramValueList;
         for (String param : paramSet) {
-            // 过滤从结果中再获取参数的
-            if('_' == param.indexOf(0)) {
-                continue;
-            }
+            //TODO 过滤从结果中再获取参数的
+//            if('_' == param.indexOf(0)) {
+//                continue;
+//            }
             paramValueList = this.getFakerParamByRebuildParam(param);
             if(paramValueList.isEmpty()) {
-                throw new NoSuchParamException(param + " don't have any param, please checkout invoke_param table.");
+                throw new InitializeInvokerException("获取 " + param + " 实际参数集合失败，请检查数据库.");
             }
-            else {
-                paramMap.put(param, paramValueList);
-            }
+
+            paramMap.put(param, paramValueList);
         }
         return paramMap;
     }
 
+    /**
+     * 保存调用信息
+     * @param logDO
+     */
     public void saveLog(LogDO logDO) {
         fakerDAO.saveLog(logDO);
-    }
-
-    public static void main(String[] args) {
-        String param = "${1.model}";
-        String substring = param.substring(2, param.length() - 1);
-        String[] split = substring.split("\\.");
-        Integer appId = Integer.valueOf(split[0]);
-        String type = split[1];
     }
 }

@@ -1,7 +1,7 @@
 package cn.moyada.dubbo.faker.core.utils;
 
 import cn.moyada.dubbo.faker.core.enums.ConvertType;
-import cn.moyada.dubbo.faker.core.model.RebuildParam;
+import cn.moyada.dubbo.faker.core.model.ParamProvider;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
@@ -21,11 +21,11 @@ public class ParamUtil {
     private static final Random random = new Random();
 
     /**
-     * 查询表达式
+     * 查询包含的表达式
      * @param array
      * @return
      */
-    public static RebuildParam getRebuildParam(Object[] array) {
+    public static ParamProvider getRebuildParam(Object[] array) {
         Pattern p1 = Pattern.compile(expressionRegex);
         Pattern p2 = Pattern.compile(typeRegex);
 
@@ -33,6 +33,7 @@ public class ParamUtil {
 
         // 返回参数所含表达式集合
         Map<Integer, Map<String, String>> rebuildParamMap = Maps.newHashMapWithExpectedSize(length);
+
         // 返回参数所含查询集合
         Set<String> rebuildParamSet = Sets.newHashSetWithExpectedSize(length);
 
@@ -55,14 +56,14 @@ public class ParamUtil {
             }
         }
 
-        RebuildParam rebuildParam = new RebuildParam();
-        rebuildParam.setRebuildParamSet(rebuildParamSet);
-        rebuildParam.setRebuildParamMap(rebuildParamMap);
-        return rebuildParam;
+        ParamProvider paramProvider = new ParamProvider();
+        paramProvider.setRebuildParamSet(rebuildParamSet);
+        paramProvider.setRebuildParamMap(rebuildParamMap);
+        return paramProvider;
     }
 
     /**
-     * 转换参数
+     * 获取实际参数
      * @param values 原始参数
      * @param paramTypes 参数类型
      * @param rebuildParamMap 参数表达式
@@ -71,8 +72,8 @@ public class ParamUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static Object[] convertValue(final Object[] values, final Class<?>[] paramTypes, final Map<Integer, Map<String, String>> rebuildParamMap,
-                                        final Map<String, List<String>> fakerParamMap, final Map<Integer, ConvertType> convertMap) {
+    public static Object[] fetchParam(Object[] values, Class<?>[] paramTypes, Map<Integer, Map<String, String>> rebuildParamMap,
+                                      Map<String, List<String>> fakerParamMap, Map<Integer, ConvertType> convertMap) {
         int length = values.length;
         if(0 == length) {
             return null;

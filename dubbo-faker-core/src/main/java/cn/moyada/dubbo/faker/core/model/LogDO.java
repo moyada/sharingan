@@ -4,27 +4,55 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
+ * 调用结果记录
+ *
  * @author xueyikang
  * @create 2017-12-30 06:04
  */
 public class LogDO implements Serializable {
 
+    private static final long serialVersionUID = -4290742947963637423L;
+
     private Long id;
 
+    /**
+     * 调用编码
+     */
     private String fakerId;
 
+    /**
+     * 请求方法ID
+     */
     private Integer invokeId;
 
+    /**
+     * 实际请求参数
+     */
     private String realParam;
 
+    /**
+     * 结果码
+     */
     private Integer code;
 
+    /**
+     * 结果
+     */
     private String result;
 
+    /**
+     * 错误信息
+     */
     private String message;
 
+    /**
+     * 耗时
+     */
     private Long spendTime;
 
+    /**
+     * 请求时间
+     */
     private Timestamp invokeTime;
 
     public Long getId() {

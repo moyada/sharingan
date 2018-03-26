@@ -6,34 +6,56 @@ import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 
 import java.lang.invoke.MethodHandle;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.locks.LockSupport;
 
-public abstract class AbstractInvoke {
+public abstract class AbstractInvoker {
+
+    // cpu核心数*2
+    private final static int CPU_COUNT_MUL_2 = Runtime.getRuntime().availableProcessors() * 2;
 
     private final CompletedListener completedListener;
+
     protected final ExecutorService excutor;
     protected final LongAdder count;
 
-    public AbstractInvoke(ExecutorService excutor, CompletedListener completedListener) {
-        this.excutor = excutor;
+    protected final MethodHandle handle;
+    protected final Object service;
+
+    public AbstractInvoker(MethodHandle handle, Object service,
+                           CompletedListener completedListener, int poolSize) {
+        this.excutor = Executors.newFixedThreadPool(CPU_COUNT_MUL_2 > poolSize ? poolSize : CPU_COUNT_MUL_2);
         this.completedListener = completedListener;
         this.count = new LongAdder();
+        this.handle = handle;
+        this.service = service;
     }
 
-    public abstract void invoke(MethodHandle handle, Object service, Object[] argsValue, String realParam);
+    /**
+     * 调用请求
+     * @param argsValue
+     * @param realParam
+     */
+    public abstract void invoke(Object[] argsValue, String realParam);
 
+    /**
+     * 等待所有任务完成关闭线程池
+     */
     public void destroy() {
         while (count.longValue() != 0) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            LockSupport.parkNanos(10000);
         }
         excutor.shutdown();
     }
 
-    protected Object execute(MethodHandle handle, Object service, Object[] argsValue) throws Throwable {
+    /**
+     * 调用接口请求
+     * @param argsValue 参数
+     * @return
+     * @throws Throwable
+     */
+    protected Object execute(Object[] argsValue) throws Throwable {
         if(null == argsValue) {
             return handle.invoke(service);
         }
@@ -59,6 +81,10 @@ public abstract class AbstractInvoke {
         }
     }
 
+    /**
+     * 记录调用结果
+     * @param result
+     */
     protected void callback(InvokeFuture result) {
         completedListener.record(result);
     }

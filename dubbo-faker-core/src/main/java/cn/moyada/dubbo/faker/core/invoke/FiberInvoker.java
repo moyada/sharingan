@@ -12,20 +12,20 @@ import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 
-public class FiberInvoke extends AbstractInvoke implements AutoCloseable {
+public class FiberInvoker extends AbstractInvoker implements AutoCloseable {
 
     private final FiberExecutorScheduler scheduler;
 
-    public FiberInvoke(int poolSize, final CompletedListener completedListener) {
-        super(Executors.newFixedThreadPool(poolSize), completedListener);
+    public FiberInvoker(MethodHandle handle, Object service,
+                        CompletedListener completedListener, int poolSize) {
+        super(handle, service, completedListener, poolSize);
         this.scheduler = new FiberExecutorScheduler("fiber", super.excutor);
     }
 
     @Suspendable
     @Override
-    public void invoke(MethodHandle handle, Object service, Object[] argsValue, String realParam) {
+    public void invoke(Object[] argsValue, String realParam) {
         super.count.increment();
         Timestamp invokeTime = Timestamp.from(Instant.now());
 
@@ -34,7 +34,7 @@ public class FiberInvoke extends AbstractInvoke implements AutoCloseable {
                     FutureResult result;
                     long start = System.nanoTime();
                     try {
-                        result = FutureResult.success(super.execute(handle, service, argsValue));
+                        result = FutureResult.success(execute(argsValue));
                     } catch (Throwable e) {
                         result = FutureResult.failed(e.getMessage());
                     }
