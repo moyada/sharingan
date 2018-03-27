@@ -1,16 +1,18 @@
 package cn.moyada.dubbo.faker.core.proxy;
 
+import cn.moyada.dubbo.faker.core.common.BeanHolder;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.handle.AbstractHandle;
-import cn.moyada.dubbo.faker.core.handle.MethodInvokeHandle;
-import cn.moyada.dubbo.faker.core.model.FakerProxy;
 import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
-import cn.moyada.dubbo.faker.core.utils.BeanUtil;
+import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
 import com.alibaba.dubbo.rpc.RpcException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandle;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
@@ -21,29 +23,33 @@ import java.util.Map;
  * @author xueyikang
  * @create 2017-12-31 16:02
  */
+@Slf4j
+@Component
 public class MethodHandleProxy {
 
-    private final ClassPathXmlApplicationContext context;
+    private BeanHolder beanHolder;
 
-    private final AbstractHandle handle;
+    @Autowired
+    private AbstractHandle handle;
 
-    private final Map<Integer, SoftReference<FakerProxy>> proxyMap;
+    private Map<Integer, SoftReference<MethodProxy>> proxyMap;
 
-    public MethodHandleProxy(String xmlPath) {
-        this.handle = new MethodInvokeHandle();
+    @PostConstruct
+    private void init() {
         this.proxyMap = new HashMap<>();
-        this.context = new ClassPathXmlApplicationContext(new String[]{xmlPath});
+        this.beanHolder = new BeanHolder("classpath:application-dubbo.xml");
     }
 
-    public FakerProxy getProxy(MethodInvokeDO invokeInfo) {
-        FakerProxy proxy;
+    public MethodProxy getProxy(MethodInvokeDO invokeInfo) { //, int poolSize) {
+        MethodProxy proxy;
 
+        log.info("init method proxy info.");
         // 检测是否已存在
         Integer id = invokeInfo.getId();
-        SoftReference<FakerProxy> ref = proxyMap.get(id);
+        SoftReference<MethodProxy> ref = proxyMap.get(id);
         if(null != ref) {
             proxy = ref.get();
-            if (null != proxy) {
+            if (null != proxy) { // && proxy.getService().length == poolSize) {
                 return proxy;
             }
         }
@@ -79,18 +85,30 @@ public class MethodHandleProxy {
         }
 
         // 获取接口实例
-        Object service;
+        Object serviceAssembly;
+//        Object[] serviceAssembly = new Object[poolSize];
         try {
-            service = BeanUtil.getBean(context, classType);
+            serviceAssembly = beanHolder.getBean(classType);
+//            for (int index = 0; index < poolSize; index++) {
+//                serviceAssembly[index] = beanHelper.getBean(classType);
+//            }
         }
         catch (BeansException e) {
             throw new RpcException("获取接口实例失败: " + invokeInfo.getClassName() + ".", e);
         }
 
-        proxy = new FakerProxy();
+        // 初始化服务注册
+//        for (Object service : serviceAssembly) {
+            try {
+                methodHandle.invoke(serviceAssembly, null);
+            } catch (Throwable throwable) {
+            }
+//        }
+
+        proxy = new MethodProxy();
         proxy.setParamTypes(paramTypes);
         proxy.setMethodHandle(methodHandle);
-        proxy.setService(service);
+        proxy.setService(serviceAssembly);
 
         // 缓存调用代理
         ref = new SoftReference<>(proxy);

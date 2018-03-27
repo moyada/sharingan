@@ -1,6 +1,5 @@
 package cn.moyada.dubbo.faker.core.utils;
 
-import cn.moyada.dubbo.faker.core.parser.JacksonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
@@ -13,7 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -21,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JsonUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(JacksonParser.class);
+    private static final Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final TypeFactory typeFactory = mapper.getTypeFactory();
@@ -64,7 +66,7 @@ public class JsonUtil {
             switch (c.getName()) {
 
                 case "java.lang.String":
-                    return c.cast(json);
+                    return (C) json;
 
                 case "java.lang.Integer":
                     return (C) Integer.valueOf(json);

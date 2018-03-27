@@ -1,27 +1,22 @@
 package cn.moyada.dubbo.faker.core.request;
 
-import cn.moyada.dubbo.faker.core.enums.ConvertType;
+import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.invoke.AbstractInvoker;
 import cn.moyada.dubbo.faker.core.invoke.AsyncInvoker;
 import cn.moyada.dubbo.faker.core.listener.CompletedListener;
 import cn.moyada.dubbo.faker.core.listener.LoggingListener;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
-import cn.moyada.dubbo.faker.core.model.FakerProxy;
 import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
-import cn.moyada.dubbo.faker.core.model.ParamProvider;
+import cn.moyada.dubbo.faker.core.model.MethodProxy;
+import cn.moyada.dubbo.faker.core.provider.ParamProvider;
 import cn.moyada.dubbo.faker.core.proxy.MethodHandleProxy;
-import cn.moyada.dubbo.faker.core.utils.ConvertUtil;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
-import cn.moyada.dubbo.faker.core.utils.ParamUtil;
 import cn.moyada.dubbo.faker.core.utils.UUIDUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.LockSupport;
 
 @Component
@@ -31,34 +26,26 @@ public class FakerRequest {
     @Autowired
     private FakerManager fakerManager;
 
-    private final MethodHandleProxy methodHandleProxy;
-
-    public FakerRequest() {
-        this.methodHandleProxy = new MethodHandleProxy("classpath:application-dubbo.xml");
-    }
+    @Autowired
+    private MethodHandleProxy methodHandleProxy;
 
     public String request(int invokeId, String invokeExpression, int poolSize, int qps, int questNum,
                           boolean saveResult, String resultParam) {
-        MethodInvokeDO invokeInfo = fakerManager.getInvokeInfo(invokeId);
-        FakerProxy proxy = methodHandleProxy.getProxy(invokeInfo);
 
+        MethodInvokeDO invokeInfo = fakerManager.getInvokeInfo(invokeId);
+        MethodProxy proxy = methodHandleProxy.getProxy(invokeInfo); //, poolSize);
 
         Object[] values = JsonUtil.toArray(invokeExpression, Object[].class);
         Class<?>[] paramTypes = proxy.getParamTypes();
         if(null == values || paramTypes.length != values.length) {
-            return "参数表达式参数与调用方法参数个数不符.";
+            throw InitializeInvokerException.paramError;
         }
 
-        ParamProvider paramProvider = ParamUtil.getRebuildParam(values);
-
-        Map<Integer, Map<String, String>> rebuildParamMap = paramProvider.getRebuildParamMap();
-        Map<String, List<String>> fakerParamMap = fakerManager.getFakerParamMapByRebuildParam(paramProvider.getRebuildParamSet());
-
-        // find param convert
-        Map<Integer, ConvertType> convertMap = ConvertUtil.getConvertMap(paramTypes);
-
-        // 生成调用报告编码
+        // 生成调用报告序号
         String fakerId = UUIDUtil.getUUID();
+
+        // 参数提供器
+        ParamProvider paramProvider = new ParamProvider(fakerManager, values, paramTypes);
 
         // 创建调用结果监听器
         CompletedListener listener = new LoggingListener(fakerId, invokeId, fakerManager, saveResult, resultParam);
@@ -69,25 +56,18 @@ public class FakerRequest {
 
         log.info("start faker invoke: " + fakerId);
 
-        // convert param and invoke method
-        int timeout = 10 >= qps ? 100 : (3600 / qps) - 20;
+        int timeout = (3600 / qps) - (10 >= qps ? 0 : 20);
 
+        // 发起调用
         if(timeout > 50) {
             for (int index = 0; index < questNum; index++) {
-                Object[] argsValue = ParamUtil.fetchParam(values, paramTypes, rebuildParamMap, fakerParamMap, convertMap);
-
-                invoke.invoke(argsValue, Arrays.toString(argsValue));
-
+                invoke.invoke(paramProvider.fetchNextParam());
                 LockSupport.parkNanos(timeout * 1000);
             }
         }
         else {
             for (int index = 0; index < questNum; index++) {
-                // random invoke param
-                //values = fakerParam.get(index).split(",");
-                Object[] argsValue = ParamUtil.fetchParam(values, paramTypes, rebuildParamMap, fakerParamMap, convertMap);
-
-                invoke.invoke(argsValue, Arrays.toString(argsValue));
+                invoke.invoke(paramProvider.fetchNextParam());
             }
         }
 
@@ -99,6 +79,6 @@ public class FakerRequest {
 
         log.info("shutdown");
 
-        return "报告编号：" + fakerId;
+        return "请求结果序号：" + fakerId;
     }
 }

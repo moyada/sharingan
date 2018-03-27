@@ -1,6 +1,5 @@
 package cn.moyada.dubbo.faker.core.utils;
 
-import cn.moyada.dubbo.faker.core.common.HandleInfo;
 import com.souche.car.model.common.model.ModelDTO;
 
 import java.lang.reflect.Field;
@@ -74,7 +73,6 @@ public class ReflectUtil {
         parameterTypes[3] = double[].class;
         parameterTypes[4] = String[].class;
         parameterTypes[5] = l.getClass();
-        parameterTypes[6] = HandleInfo.class;
 
         System.out.println(getClassName(l.getClass()));
         System.out.println(getClassName(Void.class));

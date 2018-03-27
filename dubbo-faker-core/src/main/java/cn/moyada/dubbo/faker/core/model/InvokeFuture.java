@@ -1,24 +1,27 @@
 package cn.moyada.dubbo.faker.core.model;
 
-import org.openjdk.jol.info.ClassLayout;
-
 import java.sql.Timestamp;
 
 /**
+ * 调用结果
  * @author xueyikang
  * @create 2017-12-30 18:14
  */
 public class InvokeFuture {
 
-    public static void main(String[] args) {
-        System.out.println(ClassLayout.parseClass(InvokeFuture.class).toPrintable());
-        System.out.println(ClassLayout.parseClass(FutureResult.class).toPrintable());
-    }
-
+    /**
+     * 请求结果
+     */
     private FutureResult future;
 
+    /**
+     * 发起时间
+     */
     private Timestamp invokeTime;
 
+    /**
+     * 请求参数
+     */
     private String realParam;
 
     public InvokeFuture(FutureResult future, Timestamp invokeTime, String realParam) {

@@ -11,6 +11,7 @@ import co.paralleluniverse.strands.SuspendableCallable;
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class FiberInvoker extends AbstractInvoker implements AutoCloseable {
@@ -25,7 +26,7 @@ public class FiberInvoker extends AbstractInvoker implements AutoCloseable {
 
     @Suspendable
     @Override
-    public void invoke(Object[] argsValue, String realParam) {
+    public void invoke(Object[] argsValue) {
         super.count.increment();
         Timestamp invokeTime = Timestamp.from(Instant.now());
 
@@ -47,7 +48,7 @@ public class FiberInvoker extends AbstractInvoker implements AutoCloseable {
             if(fiber.isDone()) {
                 try {
                     FutureResult result = fiber.get();
-                    super.callback(new InvokeFuture(result, invokeTime, realParam));
+                    super.callback(new InvokeFuture(result, invokeTime, Arrays.toString(argsValue)));
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -55,10 +56,5 @@ public class FiberInvoker extends AbstractInvoker implements AutoCloseable {
                 break;
             }
         }
-    }
-
-    @Override
-    public void close() {
-        this.destroy();
     }
 }

@@ -20,12 +20,12 @@ public class ConvertUtil {
 
         Map<Integer, ConvertType> convertMap = Maps.newHashMapWithExpectedSize(length);
         for (int index = 0; index < length; index++) {
-            if(paramTypes[index].getSimpleName().endsWith("List")) {
+            if(paramTypes[index].getName().endsWith("List")) {
                 convertMap.put(index, ConvertType.LIST);
             }
-//            if(paramTypes[index].isArray()) {
-//                convertMap.put(index, 2);
-//            }
+            if(paramTypes[index].isArray()) {
+                convertMap.put(index, ConvertType.ARRAY);
+            }
             else {
                 convertMap.put(index, ConvertType.OBJECT);
             }

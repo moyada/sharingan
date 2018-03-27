@@ -7,8 +7,6 @@ import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.LogDO;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -18,11 +16,11 @@ import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
 /**
+ * 调用结果监听器
  * @author xueyikang
  * @create 2018-03-18 17:32
  */
 public class LoggingListener implements CompletedListener {
-    private static final Logger log = LoggerFactory.getLogger(LoggingListener.class);
 
     private final ExecutorService excutor;
     private final LongAdder count;
@@ -36,7 +34,7 @@ public class LoggingListener implements CompletedListener {
 
     public LoggingListener(String fakerId, int invokeId, FakerManager fakerManager,
                            boolean saveResult, String resultParam) {
-        this.excutor = new ThreadPoolExecutor(1, 1, 1L, TimeUnit.MINUTES, new LinkedBlockingDeque<>());
+        this.excutor = new ThreadPoolExecutor(1, 3, 2L, TimeUnit.SECONDS, new LinkedBlockingDeque<>());
         this.count = new LongAdder();
         this.fakerId = fakerId;
         this.invokeId = invokeId;
@@ -69,8 +67,6 @@ public class LoggingListener implements CompletedListener {
 
         @Override
         public void run() {
-            log.info(Thread.currentThread().getName() + " save invoke...");
-
             FutureResult result = future.getFuture();
             long spend = result.getSpend();
             LogDO logDO = new LogDO();

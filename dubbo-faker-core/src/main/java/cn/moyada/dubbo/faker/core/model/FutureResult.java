@@ -2,7 +2,7 @@ package cn.moyada.dubbo.faker.core.model;
 
 /**
  *
- * 调用结果
+ * 请求结果
  * @author xueyikang
  * @create 2018-02-03 22:48
  */

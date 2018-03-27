@@ -7,7 +7,7 @@ import java.lang.invoke.MethodHandle;
  * @author xueyikang
  * @create 2017-12-31 16:00
  */
-public class FakerProxy {
+public class MethodProxy {
 
     /**
      * 方法参数类型

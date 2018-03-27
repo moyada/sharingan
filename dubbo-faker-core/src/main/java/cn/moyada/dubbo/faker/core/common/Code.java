@@ -1,6 +1,7 @@
 package cn.moyada.dubbo.faker.core.common;
 
 /**
+ * 结果码
  * @author xueyikang
  * @create 2017-12-30 06:27
  */

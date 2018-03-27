@@ -2,11 +2,13 @@ package cn.moyada.dubbo.faker.core.handle;
 
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
+import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
+@Component
 public class MethodInvokeHandle extends AbstractHandle {
 
     @Override

@@ -6,14 +6,19 @@ import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 
 import java.lang.invoke.MethodHandle;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
-public abstract class AbstractInvoker {
+public abstract class AbstractInvoker implements AutoCloseable{
+    private final static int MAX_POOL_SIZE;
+    static {
+        int cpuCore = Runtime.getRuntime().availableProcessors() * 2;
+        MAX_POOL_SIZE = cpuCore % 8 == 0 ? cpuCore : cpuCore + (8 - cpuCore % 8);
+    }
 
-    // cpu核心数*2
-    private final static int CPU_COUNT_MUL_2 = Runtime.getRuntime().availableProcessors() * 2;
 
     private final CompletedListener completedListener;
 
@@ -22,10 +27,15 @@ public abstract class AbstractInvoker {
 
     protected final MethodHandle handle;
     protected final Object service;
+    protected final int poolSize;
+    // protected final AtomicInteger curIndex;
 
     public AbstractInvoker(MethodHandle handle, Object service,
                            CompletedListener completedListener, int poolSize) {
-        this.excutor = Executors.newFixedThreadPool(CPU_COUNT_MUL_2 > poolSize ? poolSize : CPU_COUNT_MUL_2);
+        poolSize = poolSize > MAX_POOL_SIZE ? MAX_POOL_SIZE : poolSize;
+        this.excutor = new ThreadPoolExecutor(poolSize, poolSize * 2, 30L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        this.poolSize = poolSize;
+        // this.curIndex = new AtomicInteger(0);
         this.completedListener = completedListener;
         this.count = new LongAdder();
         this.handle = handle;
@@ -35,9 +45,8 @@ public abstract class AbstractInvoker {
     /**
      * 调用请求
      * @param argsValue
-     * @param realParam
      */
-    public abstract void invoke(Object[] argsValue, String realParam);
+    public abstract void invoke(Object[] argsValue);
 
     /**
      * 等待所有任务完成关闭线程池
@@ -56,6 +65,7 @@ public abstract class AbstractInvoker {
      * @throws Throwable
      */
     protected Object execute(Object[] argsValue) throws Throwable {
+        // Object service = serviceAssembly[curIndex.getAndIncrement() % poolSize];
         if(null == argsValue) {
             return handle.invoke(service);
         }
@@ -87,5 +97,10 @@ public abstract class AbstractInvoker {
      */
     protected void callback(InvokeFuture result) {
         completedListener.record(result);
+    }
+
+    @Override
+    public void close() {
+        this.destroy();
     }
 }
