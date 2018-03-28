@@ -6,6 +6,7 @@ CREATE TABLE `method_invoke` (
   `method_name` varchar(255) DEFAULT NULL COMMENT '方法名称',
   `param_type` text COMMENT '参数类型以,分隔',
   `return_type` varchar(255) DEFAULT NULL COMMENT '返回值类型',
+  `expression` varchar(255) DEFAULT NULL COMMENT '默认参数表达式',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='调用方法表';
 
@@ -29,4 +30,4 @@ CREATE TABLE `faker_log` (
   `spend_time` int(11) DEFAULT NULL COMMENT '耗时',
   `invoke_time` timestamp NULL DEFAULT NULL COMMENT '请求时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='请求结果表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='调用结果表';
