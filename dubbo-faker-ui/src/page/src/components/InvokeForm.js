@@ -432,7 +432,7 @@ class InvokeForm extends React.Component {
             </TabPane>
           </Tabs>
 
-          <Col span={3} key='poolSize'>
+          <Col span={4} key='poolSize'>
             <FormItem {...formItemLayout} label={`并发数`}>
               {getFieldDecorator(`poolSize`, {initFieldsValue: null})(
                 <InputNumber
@@ -454,7 +454,7 @@ class InvokeForm extends React.Component {
               )}
             </FormItem>
           </Col>
-          <Col span={3} key='loop'>
+          <Col span={4} key='loop'>
             <FormItem {...formItemLayout} label={`请求次数`}>
               {getFieldDecorator(`loop`, {initFieldsValue: null})(
                 <InputNumber
@@ -465,11 +465,11 @@ class InvokeForm extends React.Component {
             </FormItem>
           </Col>
           <Col span={4} key='random'>
-            <FormItem {...formItemLayout} label={`随机调用`}>
+            <FormItem {...formItemLayout} label={`遍历调用`}>
               {getFieldDecorator(`random`, {initFieldsValue: 1})(
-                <RadioGroup >
-                  <RadioButton value={1}>是</RadioButton>
-                  <RadioButton value={0}>否</RadioButton>
+                <RadioGroup defaultValue={1}>
+                  <RadioButton value={1}>否</RadioButton>
+                  <RadioButton value={0}>是</RadioButton>
                 </RadioGroup>
               )}
             </FormItem>
