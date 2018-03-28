@@ -15,8 +15,7 @@ git clone git@github.com:moyada/dubbo-faker.git
 ### 2. 编译打包
 
 ```sh
-cd dubbo-faker
-mvn clean package -Dmaven.test.skip=true  
+sh build.sh
 ```
 
 ### 3. 修改`pom.xml`、`jdbc.properties`、`dubbo.properties`、`application-dubbo-import.xml`配置文件
