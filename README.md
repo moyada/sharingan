@@ -1,18 +1,18 @@
 # dubbo-faker
 
-dubbo-faker，可以用来对`dubbo`项目进行简单测试。
+dubbo-faker是个用来对稳定的[dubbo](https://github.com/apache/incubator-dubbo)项目进行简单测试的工程，用于快速检测代码变更的正确性。
 
-通过预设的参数，并发数，QPS直接通过dubbo协议连接测试生产者接口，并生成测试报告。
+通过预设的参数表达式、QPS等直接通过dubbo通信测试生产者接口，并生成测试报告。
 
 ## 如何使用
 
-### 1. `clone`代码
+### 1. 下载项目
 
 ```sh
 git clone git@github.com:moyada/dubbo-faker.git
 ```
 
-### 2. 编译安装
+### 2. 编译打包
 
 ```sh
 cd dubbo-faker
@@ -58,7 +58,7 @@ VALUES
 ```
 
 
-### 6. 启动项目，打开 http://localhost:8080/index.html 进入管理页面，测试请求
+### 6. 启动项目，打开 http://localhost:8080/index.html 进入测试页面，测试请求
 
 接口地址: http://localhost:8080/swagger-ui.html
 
