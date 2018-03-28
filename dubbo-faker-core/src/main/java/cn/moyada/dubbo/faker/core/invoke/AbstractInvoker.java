@@ -3,7 +3,6 @@ package cn.moyada.dubbo.faker.core.invoke;
 import cn.moyada.dubbo.faker.core.exception.UnsupportedParamNumberException;
 import cn.moyada.dubbo.faker.core.listener.CompletedListener;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
-
 import java.lang.invoke.MethodHandle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -13,12 +12,12 @@ import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
 public abstract class AbstractInvoker implements AutoCloseable{
+
     private final static int MAX_POOL_SIZE;
     static {
         int cpuCore = Runtime.getRuntime().availableProcessors() * 2;
         MAX_POOL_SIZE = cpuCore % 8 == 0 ? cpuCore : cpuCore + (8 - cpuCore % 8);
     }
-
 
     private final CompletedListener completedListener;
 
@@ -33,7 +32,7 @@ public abstract class AbstractInvoker implements AutoCloseable{
     public AbstractInvoker(MethodHandle handle, Object service,
                            CompletedListener completedListener, int poolSize) {
         poolSize = poolSize > MAX_POOL_SIZE ? MAX_POOL_SIZE : poolSize;
-        this.excutor = new ThreadPoolExecutor(poolSize, poolSize * 2, 30L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        this.excutor = new ThreadPoolExecutor(poolSize, MAX_POOL_SIZE, 30L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         this.poolSize = poolSize;
         // this.curIndex = new AtomicInteger(0);
         this.completedListener = completedListener;

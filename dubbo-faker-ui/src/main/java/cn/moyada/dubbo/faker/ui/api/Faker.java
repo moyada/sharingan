@@ -48,6 +48,7 @@ public class Faker {
                        @ApiParam(name = "poolSize", value = "并发数") @RequestParam(value = "poolSize", required = false) Integer poolSize,
                        @ApiParam(name = "qps", value = "每秒钟请求数") @RequestParam(value = "qps", required = false) Integer qps,
                        @ApiParam(name = "loop", value = "请求次数") @RequestParam(value = "loop", required = false) Integer loop,
+                       @ApiParam(name = "random", value = "随机请求") @RequestParam(value = "random", required = false, defaultValue = "1") Integer random,
                        @ApiParam(name = "saveResult", value = "保存结果", defaultValue = "false") @RequestParam(value = "saveResult", required = false) Boolean saveResult,
                        @ApiParam(name = "resultParam", value = "选定保存结果参数") @RequestParam(value = "resultParam", required = false) String resultParam
                                 ) {
@@ -62,7 +63,7 @@ public class Faker {
         }
         saveResult = null == saveResult ? false : saveResult;
         resultParam = null == resultParam || resultParam.trim().length() == 0 ? null : resultParam.trim();
-        String data = fakerRequest.request(invokeId, invokeExpression, poolSize, qps, loop, saveResult, resultParam);
+        String data = fakerRequest.request(invokeId, invokeExpression, poolSize, qps, loop, random == 1, saveResult, resultParam);
         return Result.success(data);
     }
 

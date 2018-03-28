@@ -24,7 +24,8 @@
 		SELECT `param_value`
 		FROM `invoke_param`
 		WHERE app_id = #{appId}
-		AND `type` = #{type};
+		AND `type` = #{type}
+		ORDER BY id;
 	</select>
 
 	<insert id="saveLog">

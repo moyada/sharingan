@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +17,6 @@ public class ParamUtil {
 
     private static final String typeRegex = "_?\\d+\\.\\w+";
     private static final String expressionRegex = "\\$\\{_?\\d+\\.\\w+(\\.\\w+)*\\}";
-    private static final Random random = new Random();
 
     /**
      * 查询包含的表达式

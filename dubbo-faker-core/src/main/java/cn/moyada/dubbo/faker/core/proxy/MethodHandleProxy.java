@@ -2,7 +2,7 @@ package cn.moyada.dubbo.faker.core.proxy;
 
 import cn.moyada.dubbo.faker.core.common.BeanHolder;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
-import cn.moyada.dubbo.faker.core.handle.AbstractHandle;
+import cn.moyada.dubbo.faker.core.handler.AbstractHandler;
 import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
@@ -12,7 +12,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.invoke.MethodHandle;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
@@ -27,17 +26,16 @@ import java.util.Map;
 @Component
 public class MethodHandleProxy {
 
-    private BeanHolder beanHolder;
-
     @Autowired
-    private AbstractHandle handle;
+    private AbstractHandler handle;
 
-    private Map<Integer, SoftReference<MethodProxy>> proxyMap;
+    private final BeanHolder beanHolder;
 
-    @PostConstruct
-    private void init() {
-        this.proxyMap = new HashMap<>();
+    private final Map<Integer, SoftReference<MethodProxy>> proxyMap;
+
+    public MethodHandleProxy() {
         this.beanHolder = new BeanHolder("classpath:application-dubbo.xml");
+        this.proxyMap = new HashMap<>();
     }
 
     public MethodProxy getProxy(MethodInvokeDO invokeInfo) { //, int poolSize) {

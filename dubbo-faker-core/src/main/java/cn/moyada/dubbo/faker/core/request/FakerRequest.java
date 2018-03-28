@@ -30,7 +30,7 @@ public class FakerRequest {
     private MethodHandleProxy methodHandleProxy;
 
     public String request(int invokeId, String invokeExpression, int poolSize, int qps, int questNum,
-                          boolean saveResult, String resultParam) {
+                          boolean random, boolean saveResult, String resultParam) {
 
         MethodInvokeDO invokeInfo = fakerManager.getInvokeInfo(invokeId);
         MethodProxy proxy = methodHandleProxy.getProxy(invokeInfo); //, poolSize);
@@ -45,7 +45,7 @@ public class FakerRequest {
         String fakerId = UUIDUtil.getUUID();
 
         // 参数提供器
-        ParamProvider paramProvider = new ParamProvider(fakerManager, values, paramTypes);
+        ParamProvider paramProvider = new ParamProvider(fakerManager, values, paramTypes, random);
 
         // 创建调用结果监听器
         CompletedListener listener = new LoggingListener(fakerId, invokeId, fakerManager, saveResult, resultParam);
@@ -54,18 +54,17 @@ public class FakerRequest {
         AbstractInvoker invoke = new AsyncInvoker(proxy.getMethodHandle(), proxy.getService(),
                 listener, poolSize);
 
-        log.info("start faker invoke: " + fakerId);
-
         int timeout = (3600 / qps) - (10 >= qps ? 0 : 20);
-
         // 发起调用
         if(timeout > 50) {
+            log.info("start timeout faker invoke: " + fakerId);
             for (int index = 0; index < questNum; index++) {
                 invoke.invoke(paramProvider.fetchNextParam());
                 LockSupport.parkNanos(timeout * 1000);
             }
         }
         else {
+            log.info("start faker invoke: " + fakerId);
             for (int index = 0; index < questNum; index++) {
                 invoke.invoke(paramProvider.fetchNextParam());
             }
@@ -77,7 +76,7 @@ public class FakerRequest {
 
         listener.shutdownDelay();
 
-        log.info("shutdown");
+        log.info("logging shutdown: " + fakerId);
 
         return "请求结果序号：" + fakerId;
     }

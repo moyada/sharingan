@@ -1,4 +1,4 @@
-package cn.moyada.dubbo.faker.core.handle;
+package cn.moyada.dubbo.faker.core.handler;
 
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
@@ -9,7 +9,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
 @Component
-public class MethodInvokeHandle extends AbstractHandle {
+public class MethodInvokeHandler extends AbstractHandler {
 
     @Override
     public MethodHandle fetchHandleInfo(String className, String methodName, String returnType, Class<?> paramClass[]) {

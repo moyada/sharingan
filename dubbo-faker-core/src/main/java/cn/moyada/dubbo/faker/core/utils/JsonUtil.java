@@ -146,8 +146,20 @@ public class JsonUtil {
         return map;
     }
 
+    public static <T, K, V> Map<T, Map<K, V>> toMapMap(String json, Class<T> t,
+                                                       Class<K> k, Class<V> v) {
+        Map<T, Map<K, V>> map;
+        try {
+            map = mapper.readValue(json, mapMapTypeGenerator(t, k, v));
+        } catch (IOException e) {
+            log.error("Deserialization HashMap Error: " + json + e);
+            return null;
+        }
+        return map;
+    }
+
     protected static CollectionType collectionTypeGenerator(Class<?> cls) {
-        String name = cls.getName().trim();
+        String name = cls.getName().intern();
         CollectionType type = collectionTypeMap.get(name);
         if(null == type) {
             type = typeFactory.constructCollectionType(ArrayList.class, cls);
@@ -157,7 +169,7 @@ public class JsonUtil {
     }
 
     protected static MapType mapTypeGenerator(Class<?> t, Class<?> u) {
-        String name = (t.getName().trim()+u.getName().intern()).intern();
+        String name = (t.getName()+u.getName()).intern();
         MapType type = mapTypeMap.get(name);
         if(null == type) {
             type = typeFactory.constructMapType(HashMap.class, t, u);
@@ -167,11 +179,23 @@ public class JsonUtil {
     }
 
     protected static MapType mapListTypeGenerator(Class<?> t, Class<?> u) {
-        String name = ("m1-"+t.getName().trim()+u.getName().intern()).intern();
+        String name = ("m1-"+t.getName()+u.getName()).intern();
         MapType type = mapTypeMap.get(name);
         if(null == type) {
             JavaType tType = typeFactory.constructType(t);
             JavaType uType = typeFactory.constructCollectionType(List.class, u);
+            type = typeFactory.constructMapType(HashMap.class, tType, uType);
+            mapTypeMap.put(name, type);
+        }
+        return type;
+    }
+
+    protected static MapType mapMapTypeGenerator(Class<?> t, Class<?> k, Class<?> v) {
+        String name = ("m2-"+t.getName()+k.getName()+v.getName()).intern();
+        MapType type = mapTypeMap.get(name);
+        if(null == type) {
+            JavaType tType = typeFactory.constructType(t);
+            JavaType uType = typeFactory.constructMapType(HashMap.class, k, v);
             type = typeFactory.constructMapType(HashMap.class, tType, uType);
             mapTypeMap.put(name, type);
         }

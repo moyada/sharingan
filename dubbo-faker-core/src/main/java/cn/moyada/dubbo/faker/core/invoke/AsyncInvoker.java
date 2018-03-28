@@ -26,13 +26,11 @@ public class AsyncInvoker extends AbstractInvoker {
             FutureResult result;
             // 开始时间
             long start = System.nanoTime();
-
             try {
                 result = FutureResult.success(super.execute(argsValue));
             } catch (Throwable e) {
                 result = FutureResult.failed(e.getMessage());
             }
-
             result.setSpend(start);
 //            result.setSpend((System.nanoTime() - start) / 1000_000);
             return result;

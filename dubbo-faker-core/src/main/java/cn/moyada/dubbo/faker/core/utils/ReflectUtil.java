@@ -1,10 +1,6 @@
 package cn.moyada.dubbo.faker.core.utils;
 
-import com.souche.car.model.common.model.ModelDTO;
-
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReflectUtil {
 
@@ -56,36 +52,5 @@ public class ReflectUtil {
         }
         while (null == field);
         return field;
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-
-        ModelDTO modelDTO = new ModelDTO();
-        modelDTO.setModelName("haha");
-
-        getValue(modelDTO, "modelName2");
-
-        List<String> l = new ArrayList<String>();
-        Class<?>[] parameterTypes = new Class[7];
-        parameterTypes[0] = String.class;
-        parameterTypes[1] = int.class;
-        parameterTypes[2] = Object.class;
-        parameterTypes[3] = double[].class;
-        parameterTypes[4] = String[].class;
-        parameterTypes[5] = l.getClass();
-
-        System.out.println(getClassName(l.getClass()));
-        System.out.println(getClassName(Void.class));
-//        System.out.println(getClassName(parameterTypes[0]));
-//        System.out.println(getClassName(parameterTypes[1]));
-//        System.out.println(getClassName(parameterTypes[2]));
-        System.out.println(getClassName(parameterTypes[3]));
-        System.out.println(getClassName(parameterTypes[4]));
-        System.out.println(getClassName(parameterTypes[5]));
-        System.out.println(getClassName(parameterTypes[6]));
-        Class classType1 = getClassType("java.lang.Void");
-        Class classType = getClassType("[D");
-        Class classType2 = getClassType("[I");
-        System.out.println(classType);
     }
 }

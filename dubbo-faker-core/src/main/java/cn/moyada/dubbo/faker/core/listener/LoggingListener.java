@@ -34,7 +34,7 @@ public class LoggingListener implements CompletedListener {
 
     public LoggingListener(String fakerId, int invokeId, FakerManager fakerManager,
                            boolean saveResult, String resultParam) {
-        this.excutor = new ThreadPoolExecutor(1, 3, 2L, TimeUnit.SECONDS, new LinkedBlockingDeque<>());
+        this.excutor = new ThreadPoolExecutor(1, 5, 3L, TimeUnit.SECONDS, new LinkedBlockingDeque<>());
         this.count = new LongAdder();
         this.fakerId = fakerId;
         this.invokeId = invokeId;
