@@ -31,3 +31,5 @@ CREATE TABLE `faker_log` (
   `invoke_time` timestamp NULL DEFAULT NULL COMMENT '请求时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='调用结果表';
+
+CREATE INDEX `idx_log` ON `faker_log` (`faker_id`, `code`, `spend_time`);

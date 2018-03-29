@@ -1,6 +1,6 @@
 package cn.moyada.dubbo.faker.ui.test.invoke;
 
-import cn.moyada.dubbo.faker.core.request.FakerRequest;
+import cn.moyada.dubbo.faker.core.Main;
 import cn.moyada.dubbo.faker.ui.test.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class InvokeTest extends BaseTest {
 
     @Autowired
-    private FakerRequest fakerRequest;
+    private Main main;
     @Test
     public void test() {
-        fakerRequest.request(1, "[\"${1.model}\"", 1, 1, 1, true, false, null);
+        main.invoke(1, "[\"${1.model}\"", 1, 1, 1, true, false, null);
     }
 }

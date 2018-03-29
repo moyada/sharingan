@@ -28,7 +28,7 @@ public class ParamProvider {
     private Class<?>[] paramTypes;
 
 //    private Map<String, Object> jsonMap;
-    private Map<String, IndexProvider> indexProviderMap;
+    private Map<String, AbstractIndexProvider> indexProviderMap;
 
 //    private Random random;
 
@@ -71,6 +71,8 @@ public class ParamProvider {
         String key, value;
         String[] paramLink;
         Map<String, String> paramMap;
+
+        AbstractIndexProvider indexProvider;
         for (int index = 0; index < length; index++) {
 
             // 获取当前位置的替换参数
@@ -86,9 +88,15 @@ public class ParamProvider {
                 // 提取参数的目标
                 value = entry.getValue();
 
-                indexProviderMap.putIfAbsent(value, new IndexProvider(fakerParamMap.get(value).size(), random));
+                if(random) {
+                    indexProvider = new RandomIndexProvider(fakerParamMap.get(value).size());
+                }
+                else {
+                    indexProvider = new OrderIndexProvider(fakerParamMap.get(value).size());
+                }
+                indexProviderMap.putIfAbsent(value, indexProvider);
 
-                // 替换表达式
+                        // 替换表达式
                 paramLink = findParamLink(key, value);
                 if(null != paramLink) {
                     linkMap.put(key, paramLink);

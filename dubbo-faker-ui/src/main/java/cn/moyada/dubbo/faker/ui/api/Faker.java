@@ -1,9 +1,11 @@
 package cn.moyada.dubbo.faker.ui.api;
 
+import cn.moyada.dubbo.faker.core.http.HttpInvoke;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.LogDO;
 import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
-import cn.moyada.dubbo.faker.core.request.FakerRequest;
+import cn.moyada.dubbo.faker.core.Main;
+import cn.moyada.dubbo.faker.core.utils.JsonUtil;
 import cn.moyada.dubbo.faker.ui.model.PageVO;
 import cn.moyada.dubbo.faker.ui.model.Result;
 import cn.moyada.dubbo.faker.ui.model.SelectVO;
@@ -33,7 +35,7 @@ import java.util.stream.Collectors;
 public class Faker {
 
     @Autowired
-    private FakerRequest fakerRequest;
+    private Main main;
 
     @Autowired
     private FakerManager fakerManager;
@@ -47,7 +49,7 @@ public class Faker {
                        @ApiParam(name = "invokeExpression", required = true, value = "参数表达式", defaultValue = "[\"${1.model}\"]") @RequestParam("invokeExpression") String invokeExpression,
                        @ApiParam(name = "poolSize", value = "并发数") @RequestParam(value = "poolSize", required = false) Integer poolSize,
                        @ApiParam(name = "qps", value = "每秒钟请求数") @RequestParam(value = "qps", required = false) Integer qps,
-                       @ApiParam(name = "loop", value = "请求次数") @RequestParam(value = "loop", required = false) Integer loop,
+                       @ApiParam(name = "loop", value = "请求次数") @RequestParam(value = "loop", required = false) Long loop,
                        @ApiParam(name = "random", value = "随机请求") @RequestParam(value = "random", required = false, defaultValue = "1") Integer random,
                        @ApiParam(name = "saveResult", value = "保存结果", defaultValue = "false") @RequestParam(value = "saveResult", required = false) Boolean saveResult,
                        @ApiParam(name = "resultParam", value = "选定保存结果参数") @RequestParam(value = "resultParam", required = false) String resultParam
@@ -63,7 +65,7 @@ public class Faker {
         }
         saveResult = null == saveResult ? false : saveResult;
         resultParam = null == resultParam || resultParam.trim().length() == 0 ? null : resultParam.trim();
-        String data = fakerRequest.request(invokeId, invokeExpression, poolSize, qps, loop, random == 1, saveResult, resultParam);
+        String data = main.invoke(invokeId, invokeExpression, poolSize, qps, loop, random == 1, saveResult, resultParam);
         return Result.success(data);
     }
 
@@ -73,7 +75,7 @@ public class Faker {
     @RequestMapping(value = "invokeHttp", method = RequestMethod.GET, produces = "application/json")
     public Result invokeHttp(
                        @ApiParam(name = "invokeInfo", required = true, value = "请求信息，多个以逗号分隔",
-                               defaultValue = "{ \"url\": \"http://test.dubbo-faker/api/get\", \"method\": \"get\", \"header\": \"\", \"cookie\": \"{\"JSESSIONID\": \"ByOK3vjFD72aPnrF7C2HmdnV6TZcEbzWoWiBYEnLerjQ99zWpBng\"}\", \"param\": \"\"")
+                               defaultValue = "[{ \"url\": \"http://test.dubbo-faker/api/get\", \"method\": \"get\", \"header\": \"\", \"cookie\": \"{\"JSESSIONID\": \"ByOK3vjFD72aPnrF7C2HmdnV6TZcEbzWoWiBYEnLerjQ99zWpBng\"}\", \"param\": \"\"}]")
                        @RequestParam("invokeInfo") String invokeInfo,
 
                        @ApiParam(name = "poolSize", value = "并发数") @RequestParam(value = "poolSize", required = false) Integer poolSize,
@@ -91,6 +93,8 @@ public class Faker {
         if(loop < qps) {
             return Result.failed(503, "请求次数必须大于每秒钟请求数");
         }
+        List<HttpInvoke> httpInvokes = JsonUtil.toList(invokeInfo, HttpInvoke.class);
+
         saveResult = null == saveResult ? false : saveResult;
         resultParam = null == resultParam || resultParam.trim().length() == 0 ? null : resultParam.trim();
         return Result.success(null);

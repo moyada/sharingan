@@ -1,9 +1,14 @@
 package cn.moyada.dubbo.faker.core.invoke;
 
 import cn.moyada.dubbo.faker.core.exception.UnsupportedParamNumberException;
-import cn.moyada.dubbo.faker.core.listener.CompletedListener;
+import cn.moyada.dubbo.faker.core.listener.AbstractListener;
+import cn.moyada.dubbo.faker.core.model.FutureResult;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
+import cn.moyada.dubbo.faker.core.utils.ParamUtil;
+
 import java.lang.invoke.MethodHandle;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -11,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
-public abstract class AbstractInvoker implements AutoCloseable{
+public abstract class AbstractInvoker {
 
     private final static int MAX_POOL_SIZE;
     static {
@@ -19,7 +24,7 @@ public abstract class AbstractInvoker implements AutoCloseable{
         MAX_POOL_SIZE = cpuCore % 8 == 0 ? cpuCore : cpuCore + (8 - cpuCore % 8);
     }
 
-    private final CompletedListener completedListener;
+    private final AbstractListener abstractListener;
 
     protected final ExecutorService excutor;
     protected final LongAdder count;
@@ -30,12 +35,12 @@ public abstract class AbstractInvoker implements AutoCloseable{
     // protected final AtomicInteger curIndex;
 
     public AbstractInvoker(MethodHandle handle, Object service,
-                           CompletedListener completedListener, int poolSize) {
+                           AbstractListener abstractListener, int poolSize) {
         poolSize = poolSize > MAX_POOL_SIZE ? MAX_POOL_SIZE : poolSize;
         this.excutor = new ThreadPoolExecutor(poolSize, MAX_POOL_SIZE, 30L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         this.poolSize = poolSize;
         // this.curIndex = new AtomicInteger(0);
-        this.completedListener = completedListener;
+        this.abstractListener = abstractListener;
         this.count = new LongAdder();
         this.handle = handle;
         this.service = service;
@@ -50,9 +55,12 @@ public abstract class AbstractInvoker implements AutoCloseable{
     /**
      * 等待所有任务完成关闭线程池
      */
-    public void destroy() {
+    public void shutdownDelay() {
         while (count.longValue() != 0) {
-            LockSupport.parkNanos(10000);
+            LockSupport.parkNanos(1_000_000);
+            if(Thread.currentThread().isInterrupted()) {
+                break;
+            }
         }
         excutor.shutdown();
     }
@@ -60,34 +68,57 @@ public abstract class AbstractInvoker implements AutoCloseable{
     /**
      * 调用接口请求
      * @param argsValue 参数
-     * @return
-     * @throws Throwable
      */
-    protected Object execute(Object[] argsValue) throws Throwable {
-        // Object service = serviceAssembly[curIndex.getAndIncrement() % poolSize];
-        if(null == argsValue) {
-            return handle.invoke(service);
+    protected void execute(Object[] argsValue) {
+        count.increment();
+
+        // 开始时间
+        long start = System.nanoTime();
+        Timestamp invokeTime = Timestamp.from(Instant.now());
+
+        FutureResult result;
+        try {
+            if(null != argsValue) {
+                switch (argsValue.length) {
+                    case 0:
+                        result = FutureResult.success(handle.invoke(service));
+                        break;
+                    case 1:
+                        result = FutureResult.success(handle.invoke(service, argsValue[0]));
+                        break;
+                    case 2:
+                        result = FutureResult.success(handle.invoke(service, argsValue[0], argsValue[1]));
+                        break;
+                    case 3:
+                        result = FutureResult.success(handle.invoke(service, argsValue[0], argsValue[1], argsValue[2]));
+                        break;
+                    case 4:
+                        result = FutureResult.success(handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3]));
+                        break;
+                    case 5:
+                        result = FutureResult.success(handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4]));
+                        break;
+                    case 6:
+                        result = FutureResult.success(handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4], argsValue[5]));
+                        break;
+                    case 7:
+                        result = FutureResult.success(handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4], argsValue[5], argsValue[6]));
+                        break;
+                    default:
+                        throw new UnsupportedParamNumberException("[Faker Invoker Error] Param number not yet support.");
+                }
+            }
+            else {
+                result = FutureResult.success(handle.invoke(service));
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            result = FutureResult.failed(throwable.getMessage());
         }
-        switch (argsValue.length) {
-            case 0:
-                return handle.invoke(service);
-            case 1:
-                return handle.invoke(service, argsValue[0]);
-            case 2:
-                return handle.invoke(service, argsValue[0], argsValue[1]);
-            case 3:
-                return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2]);
-            case 4:
-                return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3]);
-            case 5:
-                return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4]);
-            case 6:
-                return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4], argsValue[5]);
-            case 7:
-                return handle.invoke(service, argsValue[0], argsValue[1], argsValue[2], argsValue[3], argsValue[4], argsValue[5], argsValue[6]);
-            default:
-                return new UnsupportedParamNumberException("[Faker Invoker Error] Param number not yet support.");
-        }
+        // 完成计算耗时
+        result.setSpend((System.nanoTime() - start) / 1_000_000);
+        callback(new InvokeFuture(result, invokeTime, ParamUtil.toString(argsValue)));
+        count.decrement();
     }
 
     /**
@@ -95,11 +126,6 @@ public abstract class AbstractInvoker implements AutoCloseable{
      * @param result
      */
     protected void callback(InvokeFuture result) {
-        completedListener.record(result);
-    }
-
-    @Override
-    public void close() {
-        this.destroy();
+        abstractListener.record(result);
     }
 }

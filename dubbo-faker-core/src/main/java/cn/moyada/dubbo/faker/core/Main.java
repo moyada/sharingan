@@ -1,10 +1,10 @@
-package cn.moyada.dubbo.faker.core.request;
+package cn.moyada.dubbo.faker.core;
 
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.invoke.AbstractInvoker;
 import cn.moyada.dubbo.faker.core.invoke.AsyncInvoker;
-import cn.moyada.dubbo.faker.core.listener.CompletedListener;
-import cn.moyada.dubbo.faker.core.listener.LoggingListener;
+import cn.moyada.dubbo.faker.core.listener.BatchLoggingListener;
+import cn.moyada.dubbo.faker.core.listener.AbstractListener;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.locks.LockSupport;
 
 @Component
-public class FakerRequest {
-    private static final Logger log = LoggerFactory.getLogger(FakerRequest.class);
+public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     @Autowired
     private FakerManager fakerManager;
@@ -29,8 +29,9 @@ public class FakerRequest {
     @Autowired
     private MethodHandleProxy methodHandleProxy;
 
-    public String request(int invokeId, String invokeExpression, int poolSize, int qps, int questNum,
-                          boolean random, boolean saveResult, String resultParam) {
+    public String invoke(int invokeId, String invokeExpression, int poolSize,
+                         int qps, long questNum, boolean random,
+                         boolean saveResult, String resultParam) {
 
         MethodInvokeDO invokeInfo = fakerManager.getInvokeInfo(invokeId);
         MethodProxy proxy = methodHandleProxy.getProxy(invokeInfo); //, poolSize);
@@ -48,19 +49,20 @@ public class FakerRequest {
         ParamProvider paramProvider = new ParamProvider(fakerManager, values, paramTypes, random);
 
         // 创建调用结果监听器
-        CompletedListener listener = new LoggingListener(fakerId, invokeId, fakerManager, saveResult, resultParam);
+        AbstractListener listener = new BatchLoggingListener(fakerId, invokeId, questNum,
+                fakerManager, saveResult, resultParam);
 
         // 创建方法调用器
         AbstractInvoker invoke = new AsyncInvoker(proxy.getMethodHandle(), proxy.getService(),
                 listener, poolSize);
 
-        int timeout = (3600 / qps) - (10 >= qps ? 0 : 20);
+        int timeout = (3600 / qps) - (20 >= qps ? 0 : 50);
         // 发起调用
         if(timeout > 50) {
             log.info("start timeout faker invoke: " + fakerId);
             for (int index = 0; index < questNum; index++) {
                 invoke.invoke(paramProvider.fetchNextParam());
-                LockSupport.parkNanos(timeout * 1000);
+                LockSupport.parkNanos(timeout * 1_000);
             }
         }
         else {
@@ -70,7 +72,7 @@ public class FakerRequest {
             }
         }
 
-        invoke.destroy();
+        invoke.shutdownDelay();
 
         log.info("faker invoke done: " + fakerId);
 

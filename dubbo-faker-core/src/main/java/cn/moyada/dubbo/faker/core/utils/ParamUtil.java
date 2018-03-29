@@ -66,7 +66,7 @@ public class ParamUtil {
         }
         int iMax = array.length - 1;
         if (iMax == -1)
-            return null;
+            return "[]";
 
         StringBuilder b = new StringBuilder();
         b.append('[');

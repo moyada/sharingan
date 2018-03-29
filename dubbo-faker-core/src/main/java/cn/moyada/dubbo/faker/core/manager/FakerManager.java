@@ -114,4 +114,8 @@ public class FakerManager {
     public void saveLog(LogDO logDO) {
         fakerDAO.saveLog(logDO);
     }
+
+    public void saveLog(List<LogDO> logDO) {
+        fakerDAO.saveLogList(logDO);
+    }
 }

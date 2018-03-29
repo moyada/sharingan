@@ -18,6 +18,8 @@ public interface FakerDAO {
 
     void saveLog(LogDO logDO);
 
+    void saveLogList(@Param("list") List<LogDO> logDOs);
+
     List<MethodInvokeDO> findAllApp();
 
     List<String> findClassByApp(@Param("appId") int appId);

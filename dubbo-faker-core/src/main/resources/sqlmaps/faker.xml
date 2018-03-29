@@ -35,6 +35,17 @@
 		(#{fakerId}, #{invokeId}, #{realParam}, #{code}, #{result}, #{message}, #{spendTime}, #{invokeTime});
 	</insert>
 
+	<insert id="saveLogList">
+		INSERT INTO `faker_log`
+		(`faker_id`, `invoke_id`, `real_param`, `code`, `result`, `message`, `spend_time`, `invoke_time`)
+		<foreach collection="list" item="item" separator="," open="VALUES">
+			(
+			#{item.fakerId}, #{item.invokeId}, #{item.realParam}, #{item.code},
+	  		#{item.result}, #{item.message}, #{item.spendTime}, #{item.invokeTime}
+			)
+		</foreach>;
+	</insert>
+
 
 	<select id="findAllApp" resultType="methodInvokeDO">
 		SELECT `app_id`, `app_name`
@@ -65,11 +76,11 @@
 		SELECT a.`id`, `real_param`, `code`, `result`, `message`, `spend_time`, `invoke_time`
 		FROM `faker_log` a,
 		(
-		SELECT id
-		FROM `faker_log`
-		WHERE `faker_id` = #{fakerId}
-		ORDER BY `code` DESC, `spend_time` DESC
-		LIMIT ${offset}, ${pageSize}
+			SELECT id
+			FROM `faker_log`
+			WHERE `faker_id` = #{fakerId}
+			ORDER BY `code` DESC, `spend_time` DESC
+			LIMIT ${offset}, ${pageSize}
 		) b
 		WHERE a.`id` = b.`id`
 	</select>

@@ -432,7 +432,7 @@ class InvokeForm extends React.Component {
             </TabPane>
           </Tabs>
 
-          <Col span={4} key='poolSize'>
+          <Col span={3} key='poolSize'>
             <FormItem {...formItemLayout} label={`并发数`}>
               {getFieldDecorator(`poolSize`, {initFieldsValue: null})(
                 <InputNumber
@@ -454,7 +454,7 @@ class InvokeForm extends React.Component {
               )}
             </FormItem>
           </Col>
-          <Col span={4} key='loop'>
+          <Col span={3} key='loop'>
             <FormItem {...formItemLayout} label={`请求次数`}>
               {getFieldDecorator(`loop`, {initFieldsValue: null})(
                 <InputNumber
@@ -464,7 +464,7 @@ class InvokeForm extends React.Component {
               )}
             </FormItem>
           </Col>
-          <Col span={4} key='random'>
+          <Col span={3} key='random'>
             <FormItem {...formItemLayout} label={`遍历调用`}>
               {getFieldDecorator(`random`, {initFieldsValue: 1})(
                 <RadioGroup defaultValue={1}>
@@ -474,7 +474,7 @@ class InvokeForm extends React.Component {
               )}
             </FormItem>
           </Col>
-          <Col span={4} key='saveResult'>
+          <Col span={3} key='saveResult'>
             <FormItem {...formItemLayout} label={`保存结果`}>
               {getFieldDecorator(`saveResult`, {initFieldsValue: false})(
                 <RadioGroup >
@@ -484,7 +484,7 @@ class InvokeForm extends React.Component {
               )}
             </FormItem>
           </Col>
-          <Col span={5} key='resultParam'>
+          <Col span={6} key='resultParam'>
             <FormItem labelCol={{span: 8}} wrapperCol={{span: 16}}
                       label={`保存结果参数`}>
               {getFieldDecorator(`resultParam`, {initFieldsValue: null})(

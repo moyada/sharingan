@@ -1,32 +1,24 @@
 package cn.moyada.dubbo.faker.core.provider;
 
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 随机下标提供器
  * @author xueyikang
  * @create 2018-03-28 05:17
  */
-public class IndexProvider {
+public class RandomIndexProvider extends AbstractIndexProvider {
 
     private static final long BIT = 0x000000007fffL;
 
-    private final int threshold;
-    private int prime;
-    private final boolean random;
+    private final int prime;
 
-    private final AtomicInteger count;
-
-    public IndexProvider(int threshold, boolean random) {
-        this.threshold = threshold;
-        this.random = random;
-        this.count = new AtomicInteger(0);
-        if(random) {
-            this.prime = findPrime();
-        }
+    public RandomIndexProvider(int threshold) {
+        super(threshold);
+        this.prime = findPrime();
     }
 
-    private int findPrime() {
+    protected int findPrime() {
         int num, factor;
         for (num = threshold / 2; num > 0; num--) {
             if((num - 1) % 2 != 0) {
@@ -45,11 +37,6 @@ public class IndexProvider {
     }
 
     public int nextIndex() {
-        if(random) {
-            return ((int) (System.nanoTime() & BIT) + prime) % threshold;
-        }
-        else {
-            return count.getAndIncrement();
-        }
+        return ((int) (System.nanoTime() & BIT) + prime) % threshold;
     }
 }
