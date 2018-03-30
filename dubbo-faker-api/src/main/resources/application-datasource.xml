@@ -9,14 +9,10 @@
         <property name="url" value="${faker.jdbc.url}"/>
         <property name="username" value="${faker.jdbc.username}"/>
         <property name="password" value="${faker.jdbc.password}"/>
-        <property name="maxActive" value="50"/>
-        <property name="minIdle" value="5"/>
+        <property name="maxActive" value="5"/>
+        <property name="minIdle" value="1"/>
         <property name="maxWait" value="6000"/>
         <property name="initialSize" value="10"/>
-        <property name="validationQuery" value="SELECT 1"/>
-        <property name="testOnBorrow" value="false"/>
-        <property name="testOnReturn" value="false"/>
-        <property name="testWhileIdle" value="true"/>
         <property name="timeBetweenEvictionRunsMillis" value="60000"/>
         <property name="minEvictableIdleTimeMillis" value="300000"/>
         <property name="defaultAutoCommit" value="true"/>

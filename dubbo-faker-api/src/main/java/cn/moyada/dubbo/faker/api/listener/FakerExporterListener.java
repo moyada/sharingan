@@ -48,7 +48,7 @@ public class FakerExporterListener implements ExporterListener {
     }
 
     private String getAppName() {
-        String appName = PropertyUtil.getProperty("faker.appName", "faker.properties");
+        String appName = PropertyUtil.getPropertyOnFile("faker.appName", "faker.properties");
         if(null == appName) {
             throw FakerInitException.appNameNotFound;
         }

@@ -5,6 +5,7 @@ import cn.moyada.dubbo.faker.api.common.Context;
 import cn.moyada.dubbo.faker.api.domain.RealParamDO;
 import cn.moyada.dubbo.faker.api.manager.FakerManager;
 import cn.moyada.dubbo.faker.api.utils.JsonUtil;
+import cn.moyada.dubbo.faker.api.utils.PropertyUtil;
 import com.alibaba.dubbo.rpc.Invocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class BatchRecordListener {
     private static final Logger log = LoggerFactory.getLogger(BatchRecordListener.class);
 
-    // 参数临时保存空间
-    private int capacity = 1000;
+    private final int capacity;
 
     private final Set<RealParamDO> list1;
     private final Set<RealParamDO> list2;
@@ -35,20 +35,24 @@ public class BatchRecordListener {
     // 保存位置开关
     private final Switch lock;
 
-    // 最大线程数
-    private int maxThread = 10;
-
     @Autowired
     private FakerManager fakerManager;
 
     private final ExecutorService excutor;
 
     public BatchRecordListener() {
+        // 参数临时保存空间
+        capacity = PropertyUtil.getProperty("faker.capacity", 500);
+        // 最大线程数
+        int maxThread = PropertyUtil.getProperty("faker.maxThread", 10);
+        // 间隔毫秒数
+        long interval = PropertyUtil.getProperty("faker.interval", 1000L);
+
         this.excutor = new ThreadPoolExecutor(1, maxThread, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         this.list1 = new HashSet<>(capacity);
         this.list2 = new HashSet<>(capacity);
         this.lock = new Switch(true);
-        new Thread(new Consumer()).start();
+        new Thread(new Consumer(interval)).start();
     }
 
     public void saveRequest(Class<?> invokerInterface, Invocation invocation) {
@@ -60,11 +64,17 @@ public class BatchRecordListener {
      */
     class Consumer implements Runnable {
 
+        private final long interval;
+
+        public Consumer(long interval) {
+            this.interval = interval;
+        }
+
         @Override
         public void run() {
             for (;;) {
                 try {
-                    Thread.sleep(1000L);
+                    Thread.sleep(interval);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -211,13 +221,5 @@ public class BatchRecordListener {
         private boolean checkout(boolean status) {
             return this.status.compareAndSet(!status, status);
         }
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public void setMaxThread(int maxThread) {
-        this.maxThread = maxThread;
     }
 }

@@ -21,21 +21,8 @@ public class FakerFilter implements Filter {
     public FakerFilter() {
         log.info("init FakerFilter.");
         setListener();
-        String fakerNullable = PropertyUtil.getProperty("faker.nullable", "faker.properties");
-        if(null == fakerNullable || !fakerNullable.equals("true")) {
-            nullable = false;
-        }
-        else {
-            nullable = true;
-        }
-
-        String successEnable = PropertyUtil.getProperty("faker.success.enable", "faker.properties");
-        if(null == successEnable || !successEnable.equals("true")) {
-            exception = false;
-        }
-        else {
-            exception = true;
-        }
+        exception = PropertyUtil.getProperty("faker.exception.filter", true);
+        nullable = PropertyUtil.getProperty("faker.nullable", false);
     }
 
     @Override
