@@ -7,7 +7,8 @@ import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
 import com.alibaba.dubbo.rpc.RpcException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,9 +23,9 @@ import java.util.Map;
  * @author xueyikang
  * @create 2017-12-31 16:02
  */
-@Slf4j
 @Component
 public class MethodHandleProxy {
+    private static final Logger log = LoggerFactory.getLogger(MethodHandleProxy.class);
 
     @Autowired
     private AbstractHandler handle;
