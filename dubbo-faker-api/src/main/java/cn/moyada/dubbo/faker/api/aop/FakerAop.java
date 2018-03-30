@@ -1,6 +1,6 @@
 package cn.moyada.dubbo.faker.api.aop;
 
-import cn.moyada.dubbo.faker.api.annotation.Faker;
+import cn.moyada.dubbo.faker.api.annotation.Fetch;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
@@ -31,7 +31,7 @@ public class FakerAop {
     }
 
     @SuppressWarnings("unchecked")
-    public void questRecord(JoinPoint jp, Faker faker) throws NoSuchMethodException {
+    public void questRecord(JoinPoint jp, Fetch fetch) throws NoSuchMethodException {
         if(!enable) {
             return;
         }

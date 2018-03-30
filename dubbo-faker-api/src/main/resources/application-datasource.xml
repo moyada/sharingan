@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
+
+    <bean name="dataSource" id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="name" value="faker"/>
+        <property name="driverClassName" value="${faker.jdbc.driver}"/>
+        <property name="url" value="${faker.jdbc.url}"/>
+        <property name="username" value="${faker.jdbc.username}"/>
+        <property name="password" value="${faker.jdbc.password}"/>
+        <property name="maxActive" value="50"/>
+        <property name="minIdle" value="5"/>
+        <property name="maxWait" value="6000"/>
+        <property name="initialSize" value="10"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <property name="minEvictableIdleTimeMillis" value="300000"/>
+        <property name="defaultAutoCommit" value="true"/>
+        <property name="removeAbandoned" value="true"/>
+        <property name="removeAbandonedTimeout" value="60"/>
+        <property name="logAbandoned" value="true"/>
+        <property name="filters" value="stat"/>
+    </bean>
+</beans>

@@ -6,11 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 生成方法调用信息
  * Created by xueyikang on 2017/8/5.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Faker {
+public @interface Exporter {
 
+    /**
+     * 参数表达式 ["${appId.type1}", "${appId.type2.param}"]
+     */
     String value() default "";
 }

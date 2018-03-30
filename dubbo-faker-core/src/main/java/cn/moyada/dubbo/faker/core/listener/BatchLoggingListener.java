@@ -31,7 +31,7 @@ public class BatchLoggingListener extends AbstractListener {
         this.list2 = new ArrayList<>(500);
         this.lock = new Switch(true);
         this.stop = false;
-        this.excutor.submit(new Logger());
+        new Thread(new Logger()).start();
     }
 
     public void shutdownDelay() {
@@ -69,7 +69,7 @@ public class BatchLoggingListener extends AbstractListener {
         @Override
         public void run() {
             for (;;) {
-                LockSupport.parkNanos(1_000_000_000);
+                LockSupport.parkNanos(1_000_000_000L);
                 if (lock.close()) {
                     save(list1);
                 }

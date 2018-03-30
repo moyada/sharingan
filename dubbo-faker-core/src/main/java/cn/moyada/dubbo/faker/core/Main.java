@@ -62,7 +62,7 @@ public class Main {
             log.info("start timeout faker invoke: " + fakerId);
             for (int index = 0; index < questNum; index++) {
                 invoke.invoke(paramProvider.fetchNextParam());
-                LockSupport.parkNanos(timeout * 1_000);
+                LockSupport.parkNanos(timeout * 1_000L);
             }
         }
         else {

@@ -1,1 +1,1 @@
-fakerFilter = FakerFilter
+fakerFilter=cn.moyada.dubbo.faker.api.filter.FakerFilter

@@ -71,6 +71,16 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
 
 
 
+### 7. 使用拦截捕捉调用参数
 
+1. 进入`dubbo-faker-api`项目，编译打包
+
+2. 将`META-INF/dubbo/`下的配置文件拷入需要拦截项目
+
+3. 配置`<dubbo:provider listener="cn.moyada.dubbo.faker.api.listener.FakerExporterListener"/>`
+
+4. 参照resource目录下配置文件进行基本拦截设置
+
+5. 拦截项目引入`dubbo-faker-api`依赖，使用`Exporter`注解生成调用方法信息，使用`Fetch`注解并设置分类拦截请求参数。
 
 

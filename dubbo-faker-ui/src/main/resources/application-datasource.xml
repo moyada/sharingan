@@ -4,7 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.alibaba.com/schema/stat http://www.alibaba.com/schema/stat.xsd"
        default-autowire="byName" default-lazy-init="true">
 
-    <!-- 车型库数据源 -->
     <bean name="dataSource" id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <property name="name" value="faker"/>
         <property name="driverClassName" value="${jdbc.driver}"/>

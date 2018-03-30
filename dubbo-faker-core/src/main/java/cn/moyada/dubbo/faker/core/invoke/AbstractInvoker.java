@@ -57,7 +57,7 @@ public abstract class AbstractInvoker {
      */
     public void shutdownDelay() {
         while (count.longValue() != 0) {
-            LockSupport.parkNanos(1_000_000);
+            LockSupport.parkNanos(1_000_000L);
             if(Thread.currentThread().isInterrupted()) {
                 break;
             }

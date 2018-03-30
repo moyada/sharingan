@@ -18,7 +18,7 @@
 
     <aop:config expose-proxy="true">
         <aop:aspect ref="catchAspect">
-            <aop:before pointcut="execution(public * cn.moyada.dubbo.faker.api.*.*(..)) and @annotation(faker)"
+            <aop:before pointcut="execution(public * cn.moyada.dubbo.faker.api.*.*(..)) and @annotation(fetch)"
                         arg-names="jp, faker"
                         method="questRecord"/>
         </aop:aspect>
