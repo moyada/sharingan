@@ -49,8 +49,7 @@
 
 	<select id="findAllApp" resultType="methodInvokeDO">
 		SELECT `app_id`, `app_name`
-		FROM `method_invoke`
-		GROUP BY `app_id`
+		FROM `app_info`
 	</select>
 
 	<select id="findClassByApp" resultType="String">

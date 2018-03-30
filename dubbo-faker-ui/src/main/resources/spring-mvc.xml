@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:p="http://www.springframework.org/schema/p"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:context="http://www.springframework.org/schema/context"
   xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -19,20 +18,10 @@
     <context:component-scan base-package="cn.moyada.dubbo.faker.ui" />
 
     <mvc:annotation-driven />
+    <mvc:default-servlet-handler/>
 
-    <!--<bean class="com.mangofactory.swagger.configuration.SpringSwaggerConfig"/>-->
+    <mvc:resources mapping="**" location="META-INF/resources/" />
 
     <!-- swagger 配置 -->
     <bean class="cn.moyada.dubbo.faker.ui.config.Swagger2Config"/>
-
-    <!-- swagger ui resources-->
-    <mvc:resources mapping="/swagger/**" location="swagger/" />
-    <mvc:resources mapping="/**" location="resource/" />
-
-
-    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
-        <!--&lt;!&ndash; Example: a logical view name of 'showMessage' is mapped to '/WEB-INF/jsp/showMessage.jsp' &ndash;&gt;-->
-        <!--<property name="prefix" value="/WEB-INF/view/"/>-->
-        <!--<property name="suffix" value=".jsp"/>-->
-    <!--</bean>-->
 </beans>

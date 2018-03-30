@@ -15,12 +15,11 @@
     <artifactId>dubbo-faker-ui</artifactId>
 
     <properties>
+        <build.name>ROOT</build.name>
         <java.version>1.8</java.version>
-        <swagger.version>2.2.2</swagger.version>
         <project.encoding>utf-8</project.encoding>
         <maven.test.skip>true</maven.test.skip>
-        <swagger.version>1.5.17</swagger.version>
-        <io.springfox.version>2.7.0</io.springfox.version>
+        <io.springfox.version>2.8.0</io.springfox.version>
     </properties>
 
     <dependencies>
@@ -121,30 +120,6 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.fasterxml</groupId>-->
-            <!--<artifactId>classmate</artifactId>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>com.mangofactory</groupId>-->
-            <!--<artifactId>swagger-springmvc</artifactId>-->
-            <!--<version>1.0.2</version>-->
-            <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
-            <!--&lt;!&ndash;<exclusions>&ndash;&gt;-->
-                <!--&lt;!&ndash;<exclusion>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<groupId>com.fasterxml</groupId>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<artifactId>classmate</artifactId>&ndash;&gt;-->
-                <!--&lt;!&ndash;</exclusion>&ndash;&gt;-->
-            <!--&lt;!&ndash;</exclusions>&ndash;&gt;-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>io.swagger</groupId>-->
-            <!--<artifactId>swagger-core</artifactId>-->
-            <!--<version>${swagger.version}</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -190,7 +165,7 @@
     </dependencies>
 
     <build>
-        <finalName>ROOT</finalName>
+        <finalName>${build.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -221,6 +196,14 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>./target/classes</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+                                    <groupId>io.springfox</groupId>
+                                    <artifactId>springfox-swagger-ui</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>./target/${build.name}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, message } from 'antd';
+import { Select } from 'antd';
 import request from '../utils/request';
 
 const Option = Select.Option;
@@ -9,11 +9,10 @@ class InvokeSelect extends React.Component {
     super(props);
     request("faker/getAllInvoke").then(({data, err}) => {
       if(err) {
-        message.error(err)
-        return
+        return new Error(err);
       }
       this.setState({
-        data : data.map(({key, value}) => <Option key={key} value={key}>{value}</Option>)
+        data : data.data.map(({key, value}) => <Option key={key} value={key}>{value}</Option>)
       })
     })
   }

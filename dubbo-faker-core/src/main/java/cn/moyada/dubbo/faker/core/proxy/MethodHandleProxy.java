@@ -35,7 +35,7 @@ public class MethodHandleProxy {
     private final Map<Integer, SoftReference<MethodProxy>> proxyMap;
 
     public MethodHandleProxy() {
-        this.beanHolder = new BeanHolder("classpath*:**/application-dubbo.xml");
+        this.beanHolder = new BeanHolder("classpath:application-dubbo.xml");
         this.proxyMap = new HashMap<>();
     }
 

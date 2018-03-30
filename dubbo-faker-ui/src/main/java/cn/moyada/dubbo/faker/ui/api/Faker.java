@@ -65,8 +65,13 @@ public class Faker {
         }
         saveResult = null == saveResult ? false : saveResult;
         resultParam = null == resultParam || resultParam.trim().length() == 0 ? null : resultParam.trim();
-        String data = main.invoke(invokeId, invokeExpression, poolSize, qps, loop, random == 1, saveResult, resultParam);
-        return Result.success(data);
+        try {
+            String data = main.invoke(invokeId, invokeExpression, poolSize, qps, loop, random == 1, saveResult, resultParam);
+            return Result.success(data);
+        }
+        catch (Exception e) {
+            return Result.failed(500, e.getMessage());
+        }
     }
 
     @ApiOperation(value = "调用虚拟请求", httpMethod = "GET", produces = "application/json")
@@ -104,43 +109,61 @@ public class Faker {
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
     @RequestMapping(value = "getAllInvoke", method = RequestMethod.GET)
-    public List<SelectVO> getAllInvoke() {
-        List<MethodInvokeDO> all = fakerManager.getAll();
-        return all.stream()
+    public Result getAllInvoke() {
+        List<MethodInvokeDO> all;
+        try {
+            all = fakerManager.getAll();
+        } catch (Exception e) {
+            return Result.failed(500, e.getMessage());
+        }
+        return Result.success(all.stream()
                 .map(item -> new SelectVO(item.getId().toString(),
                         item.getClassName() + ", " +
                                 item.getMethodName() + ", " +
                                 item.getParamType() + ", " +
                                 item.getReturnType()
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @ApiOperation(value = "获取全部项目", httpMethod = "GET")
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
     @RequestMapping(value = "getAllApp", method = RequestMethod.GET)
-    public List<MethodInvokeDO> getAllApp() {
-        return fakerManager.getAllApp();
+    public Result getAllApp() {
+        try {
+            return Result.success(fakerManager.getAllApp());
+        } catch (Exception e) {
+            return Result.failed(500, e.getMessage());
+        }
     }
 
     @ApiOperation(value = "获取接口", httpMethod = "GET")
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
     @RequestMapping(value = "getClassByApp", method = RequestMethod.GET)
-    public List<SelectVO> getClassByApp(@ApiParam(name = "appId", required = true, value = "项目编号") @RequestParam("appId") int appId) {
-        List<String> classList = fakerManager.getClassByApp(appId);
-        return classList.stream()
+    public Result getClassByApp(@ApiParam(name = "appId", required = true, value = "项目编号") @RequestParam("appId") int appId) {
+        List<String> classList;
+        try {
+            classList = fakerManager.getClassByApp(appId);
+        } catch (Exception e) {
+            return Result.failed(500, e.getMessage());
+        }
+        return Result.success(classList.stream()
                 .map(c -> new SelectVO(c, c))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @ApiOperation(value = "获取方法", httpMethod = "GET")
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
     @RequestMapping(value = "getMethodByClass", method = RequestMethod.GET)
-    public List<MethodInvokeDO> getMethodByClass(@ApiParam(name = "className", required = true, value = "类名") @RequestParam("className") String className) {
-        return fakerManager.getMethodByClass(className);
+    public Result getMethodByClass(@ApiParam(name = "className", required = true, value = "类名") @RequestParam("className") String className) {
+        try {
+            return Result.success(fakerManager.getMethodByClass(className));
+        } catch (Exception e) {
+            return Result.failed(500, e.getMessage());
+        }
     }
 
     @ApiOperation(value = "获取结果", httpMethod = "GET")

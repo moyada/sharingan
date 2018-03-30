@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cascader, message } from 'antd';
+import { Cascader } from 'antd';
 import request from '../utils/request';
 
 class InvokeCascader extends React.Component {
@@ -7,11 +7,10 @@ class InvokeCascader extends React.Component {
     super(props);
     request("faker/getAllApp").then(({data, err}) => {
       if(err) {
-        message.error(err)
-        return
+        return new Error(err);
       }
       this.setState({
-        data : data.map(({appId, appName}) =>
+        data : data.data.map(({appId, appName}) =>
           ({
             value: appId,
             label: appName,
@@ -36,10 +35,9 @@ class InvokeCascader extends React.Component {
         request("faker/getClassByApp", {appId: selected.value})
           .then(({data, err}) => {
             if(err) {
-              message.error(err)
-              return
+              return new Error(err);
             }
-            const children = data.map(({key, value}) =>
+            const children = data.data.map(({key, value}) =>
               ({
                 value: key,
                 label: value,
@@ -58,10 +56,9 @@ class InvokeCascader extends React.Component {
         request("faker/getMethodByClass", {className: selected.value})
           .then(({data, err}) => {
             if(err) {
-              message.error(err)
-              return
+              return new Error(err);
             }
-            const children = data.map(({id, methodName, paramType, returnType, expression}) =>
+            const children = data.data.map(({id, methodName, paramType, returnType, expression}) =>
               ({
                 value: id + `-` + expression,
                 label: methodName + `, ` + paramType + `, ` + returnType,
