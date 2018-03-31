@@ -4,12 +4,11 @@ classes/
 *.iml
 *.log
 out/
-/dubbo-faker-ui/page/node_modules/
-/dubbo-faker-ui/target/
+/dubbo-faker-web/page/node_modules/
+/dubbo-faker-web/target/
 /dubbo-faker-api/target/
 /dubbo-faker-core/target/
-/dubbo-faker-ui/catalina.base_IS_UNDEFINED
+/dubbo-faker-web/catalina.base_IS_UNDEFINED
 .classpath
 .project
 .settings/
-/dubbo-faker-ui/src/main/webapp/swagger

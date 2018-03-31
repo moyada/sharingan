@@ -12,7 +12,7 @@
     <modules>
         <module>dubbo-faker-core</module>
         <module>dubbo-faker-filter</module>
-        <module>dubbo-faker-ui</module>
+        <module>dubbo-faker-web</module>
         <module>dubbo-faker-api</module>
     </modules>
 

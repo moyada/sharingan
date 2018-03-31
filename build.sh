@@ -2,7 +2,7 @@
 
 # 编译页面
 #HOME=$(pwd)
-#cd dubbo-faker-ui/src/page
+#cd dubbo-faker-web/src/page
 #npm run build
 #cd $HOME
 

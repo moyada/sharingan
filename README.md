@@ -191,6 +191,6 @@ FakerFilter=cn.moyada.dubbo.faker.filter.filter.FakerFilter
 
 * 使用`Fetch`注解并设置分类拦截请求参数。
 
-观察日志打印`Initializing FakerExporterListener.`和`Initializing FakerFilter.`则表示加入成功。
+启动服务方项目，观察日志打印`Initializing FakerExporterListener.`和`Initializing FakerFilter.`则表示加入成功。
 
 
