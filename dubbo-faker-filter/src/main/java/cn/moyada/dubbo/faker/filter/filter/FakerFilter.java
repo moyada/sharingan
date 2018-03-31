@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 服务请求拦截器
+ * @author xueyikang
+ * @create 2018-03-29 18:44
  */
 @Activate(group = Constants.PROVIDER, order = -999)
 public class FakerFilter implements Filter {
