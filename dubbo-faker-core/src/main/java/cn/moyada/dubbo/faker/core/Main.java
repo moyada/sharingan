@@ -6,7 +6,7 @@ import cn.moyada.dubbo.faker.core.invoke.AsyncInvoker;
 import cn.moyada.dubbo.faker.core.listener.BatchLoggingListener;
 import cn.moyada.dubbo.faker.core.listener.AbstractListener;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
-import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
+import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.provider.ParamProvider;
 import cn.moyada.dubbo.faker.core.proxy.MethodHandleProxy;

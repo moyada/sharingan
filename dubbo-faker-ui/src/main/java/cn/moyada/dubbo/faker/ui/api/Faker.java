@@ -1,24 +1,18 @@
 package cn.moyada.dubbo.faker.ui.api;
 
+import cn.moyada.dubbo.faker.core.Main;
 import cn.moyada.dubbo.faker.core.http.HttpInvoke;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
-import cn.moyada.dubbo.faker.core.model.LogDO;
-import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
-import cn.moyada.dubbo.faker.core.Main;
+import cn.moyada.dubbo.faker.core.model.domain.LogDO;
+import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
 import cn.moyada.dubbo.faker.ui.model.PageVO;
 import cn.moyada.dubbo.faker.ui.model.Result;
 import cn.moyada.dubbo.faker.ui.model.SelectVO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;

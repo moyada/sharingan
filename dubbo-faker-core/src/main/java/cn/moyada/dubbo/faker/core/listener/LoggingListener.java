@@ -2,9 +2,11 @@ package cn.moyada.dubbo.faker.core.listener;
 
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
-import cn.moyada.dubbo.faker.core.model.LogDO;
+import cn.moyada.dubbo.faker.core.model.domain.LogDO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * 结果保存监听器
@@ -23,6 +25,19 @@ public class LoggingListener extends AbstractListener {
     public void record(InvokeFuture result) {
         this.count.increment();
         this.excutor.submit(new InvokerConsumer(result));
+    }
+
+    @Override
+    public void shutdown() {
+        long value;
+        for (;;) {
+            value = count.longValue();
+            LockSupport.parkNanos(1_000_000_000L);
+            if(value == count.longValue()) {
+                excutor.shutdownNow();
+                break;
+            }
+        }
     }
 
     class InvokerConsumer implements Runnable {

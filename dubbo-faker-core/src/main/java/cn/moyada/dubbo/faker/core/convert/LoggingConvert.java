@@ -3,7 +3,7 @@ package cn.moyada.dubbo.faker.core.convert;
 import cn.moyada.dubbo.faker.core.common.Code;
 import cn.moyada.dubbo.faker.core.model.FutureResult;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
-import cn.moyada.dubbo.faker.core.model.LogDO;
+import cn.moyada.dubbo.faker.core.model.domain.LogDO;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
 

@@ -3,7 +3,7 @@ package cn.moyada.dubbo.faker.core.listener;
 import cn.moyada.dubbo.faker.core.common.Switch;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
-import cn.moyada.dubbo.faker.core.model.LogDO;
+import cn.moyada.dubbo.faker.core.model.domain.LogDO;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -42,6 +42,17 @@ public class BatchLoggingListener extends AbstractListener {
     @Override
     public void record(InvokeFuture result) {
         excutor.submit(new Converter(result));
+    }
+
+    @Override
+    public void shutdown() {
+        for (;;) {
+            LockSupport.parkNanos(1_000_000_000L);
+            if(list1.isEmpty() && list2.isEmpty()) {
+                excutor.shutdownNow();
+                break;
+            }
+        }
     }
 
     class Converter implements Runnable {

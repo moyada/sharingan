@@ -3,7 +3,7 @@ package cn.moyada.dubbo.faker.core.proxy;
 import cn.moyada.dubbo.faker.core.common.BeanHolder;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.handler.AbstractHandler;
-import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
+import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
 import com.alibaba.dubbo.rpc.RpcException;

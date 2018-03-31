@@ -1,7 +1,7 @@
 package cn.moyada.dubbo.faker.core.dao;
 
-import cn.moyada.dubbo.faker.core.model.LogDO;
-import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
+import cn.moyada.dubbo.faker.core.model.domain.LogDO;
+import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

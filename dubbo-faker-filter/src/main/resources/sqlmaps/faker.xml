@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.moyada.dubbo.faker.filter.dao.FakerDAO">
+
+	<select id="existsInvokeInfo" resultType="Integer">
+		SELECT COUNT(*) FROM `method_invoke`
+		WHERE app_id = #{appId}
+		AND app_name = #{appName}
+		AND class_name = #{className}
+		AND method_name = #{methodName}
+	    AND param_type = #{paramType}
+	    AND return_type = #{returnType}
+	</select>
+
+	<insert id="saveInvokeInfo">
+		INSERT INTO `method_invoke`
+		(`app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`)
+		VALUE
+		(#{appId}, #{appName}, #{className}, #{methodName}, #{paramType}, #{returnType}, #{expression});
+	</insert>
+
+	<select id="findAppId" resultType="Integer">
+		SELECT app_id FROM app_info WHERE app_name = #{appName} LIMIT 1;
+	</select>
+
+    <insert id="saveApp">
+        INSERT INTO `app_info` (`app_name`) VALUE (#{appName});
+    </insert>
+
+	<select id="findLastAppId" resultType="Integer">
+		SELECT MAX(app_id) FROM app_info;
+	</select>
+
+	<insert id="saveParam">
+		INSERT INTO `invoke_param`
+		(`app_id`, `type`, `param_value`, `date_create`)
+		<foreach collection="list" item="item" separator="," open="VALUES">
+			(
+			#{item.appId}, #{item.type}, #{item.paramValue}, #{data}
+			)
+		</foreach>
+		ON DUPLICATE KEY UPDATE date_create = VALUES(date_create)
+	</insert>
+</mapper>

@@ -13,4 +13,6 @@ public interface Listener {
      * @param result
      */
     void record(InvokeFuture result);
+
+    void shutdown();
 }

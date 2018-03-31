@@ -9,10 +9,7 @@ import cn.moyada.dubbo.faker.core.utils.ParamUtil;
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
@@ -37,7 +34,8 @@ public abstract class AbstractInvoker {
     public AbstractInvoker(MethodHandle handle, Object service,
                            AbstractListener abstractListener, int poolSize) {
         poolSize = poolSize > MAX_POOL_SIZE ? MAX_POOL_SIZE : poolSize;
-        this.excutor = new ThreadPoolExecutor(poolSize, MAX_POOL_SIZE, 30L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        this.excutor = new ThreadPoolExecutor(poolSize, MAX_POOL_SIZE, 30L, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(2000), new ShutdownRejected());
         this.poolSize = poolSize;
         // this.curIndex = new AtomicInteger(0);
         this.abstractListener = abstractListener;
@@ -127,5 +125,15 @@ public abstract class AbstractInvoker {
      */
     protected void callback(InvokeFuture result) {
         abstractListener.record(result);
+    }
+
+    public class ShutdownRejected implements RejectedExecutionHandler {
+
+        @Override
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+            executor.shutdownNow();
+            abstractListener.shutdown();
+            throw new RuntimeException("服务响应过慢，已强制关闭.");
+        }
     }
 }

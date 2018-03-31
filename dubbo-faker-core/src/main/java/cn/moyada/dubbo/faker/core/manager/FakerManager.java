@@ -2,8 +2,8 @@ package cn.moyada.dubbo.faker.core.manager;
 
 import cn.moyada.dubbo.faker.core.dao.FakerDAO;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
-import cn.moyada.dubbo.faker.core.model.LogDO;
-import cn.moyada.dubbo.faker.core.model.MethodInvokeDO;
+import cn.moyada.dubbo.faker.core.model.domain.LogDO;
+import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

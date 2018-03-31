@@ -467,7 +467,7 @@ class InvokeForm extends React.Component {
           <Col span={3} key='random'>
             <FormItem {...formItemLayout} label={`遍历调用`}>
               {getFieldDecorator(`random`, {initFieldsValue: 1})(
-                <RadioGroup defaultValue={1}>
+                <RadioGroup>
                   <RadioButton value={1}>否</RadioButton>
                   <RadioButton value={0}>是</RadioButton>
                 </RadioGroup>
