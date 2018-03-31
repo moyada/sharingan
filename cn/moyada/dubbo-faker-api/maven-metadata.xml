@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>cn.moyada</groupId>
+  <artifactId>dubbo-faker-api</artifactId>
+  <versioning>
+    <versions>
+      <version>1.0.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20180331212749</lastUpdated>
+  </versioning>
+</metadata>
