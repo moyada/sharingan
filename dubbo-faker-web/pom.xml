@@ -12,7 +12,7 @@
     <packaging>war</packaging>
 
     <groupId>cn.moyada</groupId>
-    <artifactId>dubbo-faker-ui</artifactId>
+    <artifactId>dubbo-faker-web</artifactId>
 
     <properties>
         <build.name>ROOT</build.name>
