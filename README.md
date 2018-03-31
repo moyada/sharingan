@@ -4,21 +4,29 @@ dubbo-faker是针对[dubbo](https://github.com/apache/incubator-dubbo)项目进�
 
 通过预设的参数表达式、qps等直接通过dubbo通信调用生产者服务，并生成测试报告。
 
-## 如何使用
+## 目录
 
-### 1. 下载项目
+* [构建界面](#构建界面)
+  * [下载源码](#下载源码)
+  * [创建数据库表结构](#创建数据库表结构)
+  * [编译打包](#编译打包)
+  * [启动项目](#启动项目)
+* [调用拦截器](#调用拦截器)
+  * [部署依赖模块](#部署依赖模块)
+  * [增加配置文件](#增加配置文件)
+  * [配置所需依赖](#配置所需依赖)
+  * [配置拦截器](#配置拦截器)
+  * [使用注解拦截请求](#使用注解拦截请求)
+
+## 构建界面
+
+### 下载源码
 
 ```sh
 git clone git@github.com:moyada/dubbo-faker.git
 ```
 
-### 2. 编译打包
-
-```sh
-sh build.sh
-```
-
-### 3. 修改`pom.xml`、`jdbc.properties`、`dubbo.properties`、`application-dubbo-import.xml`配置文件
+### 修改配置文件
 
 * 在`pom.xml`增加测试目标的`dubbo`服务方依赖:
 
@@ -40,10 +48,13 @@ sh build.sh
 <dubbo:reference id="dubboService" interface="com.company.project.DubboService" />
 ```
 
-### 4. 执行 `schema/faker.sql` 创建数据库表结构
+
+### 创建数据库表结构
+执行 `schema/faker.sql` 创建数据库表结构
 
 
-### 5. 导入测试参数
+### 导入测试数据
+或使用[拦截器](#调用拦截器)模块捕捉调用信息，具体配置可参考`dubbo-faker-filter`模块下的resources目录
 
 ```sql
 INSERT INTO `method_invoke` (`id`, `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`)
@@ -56,8 +67,11 @@ VALUES
 	(1, 1, 'param', '12345');
 ```
 
+### 编译打包
+执行 `build.sh` 即可
 
-### 6. 启动项目，打开 http://localhost:8080/index.html 进入测试页面，测试请求
+### 启动项目
+打开 http://localhost:8080/index.html 进入测试页面，测试请求
 
 接口地址: http://localhost:8080/swagger-ui.html
 
@@ -70,10 +84,12 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
 测试结果保存在`faker_log`表中，每次测试将生成一个唯一的`faker_id`，完成时打印日志信息`logging shutdown: {faker_id}`，并弹窗提示。
 
 
+## 调用拦截器
+通过扩展dubbo插件，配置项目引用，可直接获取实际调用请求信息保存。
 
-### 7. 使用拦截捕捉调用参数，具体配置可参考`dubbo-faker-filter`模块下的resources目录
 
-#### 1. 打包`dubbo-faker-api``dubbo-faker-filter`模块，并在使用项目中引入依赖。
+### 部署依赖模块
+打包`dubbo-faker-api``dubbo-faker-filter`模块，并在使用项目中引入依赖。
 ```xml
 <dependency>
     <artifactId>dubbo-faker-api</artifactId>
@@ -90,7 +106,9 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
 
 ```
 
-#### 2. 增加配置文件`faker.properties`并读入系统
+
+### 增加配置文件
+新增`faker.properties`文件
 ```properties
 # 项目名称
 faker.appName=test
@@ -109,11 +127,17 @@ faker.maxThread=10
 
 # 保存拦截参数间隔毫秒数
 faker.interval=1000
-
 ```
 
-#### 3. 配置所需依赖
+引入项目
 ```xml
+<context:property-placeholder order="0" location="classpath:faker.properties" ignore-unresolvable="true" />
+```
+
+
+### 配置所需依赖
+```xml
+    <!-- 配置数据库连接 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="mapperLocations" >
             <list>
@@ -127,36 +151,46 @@ faker.interval=1000
         <property name="mapperInterface" value="cn.moyada.dubbo.faker.filter.dao.FakerDAO"/>
         <property name="sqlSessionFactory" ref="sqlSessionFactory" />
     </bean>
-
-
-    <bean id="batchRecordListener" class="cn.moyada.dubbo.faker.filter.listener.BatchRecordListener" />
+    
+    <!-- 数据库操作实例 -->
     <bean id="fakerManager" class="cn.moyada.dubbo.faker.filter.manager.FakerManager" />
+
+    <!-- 参数监听器 -->
+    <bean id="batchRecordListener" class="cn.moyada.dubbo.faker.filter.listener.BatchRecordListener" />
 ```
 
-#### 4. 在资源路径下配置`META-INF/dubbo/com.alibaba.dubbo.rpc.ExporterListener`
+### 新建dubbo扩展配置文件
+
+在资源路径下配置`META-INF/dubbo/com.alibaba.dubbo.rpc.ExporterListener`
+
 ```txt
 FakerExporterListener=cn.moyada.dubbo.faker.filter.listener.FakerExporterListener
 ```
 
-   和`META-INF/dubbo/com.alibaba.dubbo.rpc.Filter`文件，
+和`META-INF/dubbo/com.alibaba.dubbo.rpc.Filter`文件，
 ```txt
 FakerFilter=cn.moyada.dubbo.faker.filter.filter.FakerFilter
 ```
 
-  * 确保编译打包项目后class目录下存在对应路径文件
+* 确保编译打包项目后class目录下存在对应路径文件
 
 
-#### 5. 增加dubbo拦截器
+### 配置拦截器
 ```xml
 <dubbo:provider filter="FakerFilter" ... />
+
 或
+
 <dubbo:service filter="FakerFilter" ... />
 
 ```
 
-#### 6. 配置注解拦截请求信息
+### 使用注解拦截请求
 
-使用`Exporter`注解生成调用方法信息，可设置默认参数表达式，使用`Fetch`注解并设置分类拦截请求参数。
+* 使用`Exporter`注解生成调用方法信息，可设置默认参数表达式
+
+* 使用`Fetch`注解并设置分类拦截请求参数。
+
 观察日志打印`Initializing FakerExporterListener.`和`Initializing FakerFilter.`则表示加入成功。
 
 

@@ -27,10 +27,9 @@
         <httpcore.version>4.4.8</httpcore.version>
         <httpmime.version>4.5.4</httpmime.version>
 
-        <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
 
-        <jackson.version>2.9.3</jackson.version>
+        <jackson.version>2.9.4</jackson.version>
 
         <guava.version>23.5-jre</guava.version>
 
