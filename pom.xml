@@ -48,10 +48,12 @@
 
         <classmate.version>1.3.4</classmate.version>
 
-        <servlet-api.version>4.0.0</servlet-api.version>
+        <servlet.version>4.0.0</servlet.version>
 
         <maven.test.skip>true</maven.test.skip>
         <junit.version>4.12</junit.version>
+
+        <github.global.server>github</github.global.server>
     </properties>
 
     <dependencyManagement>
@@ -127,6 +129,18 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient</artifactId>
                 <version>${httpasyncclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcore.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${httpclient.version}</version>
             </dependency>
 
             <dependency>
@@ -225,7 +239,7 @@
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
-                <version>${servlet-api.version}</version>
+                <version>${servlet.version}</version>
             </dependency>
 
             <dependency>
@@ -258,36 +272,49 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.17</version>
+                    <version>2.21.0</version>
                 </plugin>
+
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-eclipse-plugin</artifactId>
-                    <version>2.8</version>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
                     <configuration>
-                        <downloadSources>true</downloadSources>
-                        <downloadJavadocs>true</downloadJavadocs>
+                        <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
                     </configuration>
                 </plugin>
+
                 <plugin>
-                    <groupId>com.vlkan</groupId>
-                    <artifactId>quasar-maven-plugin</artifactId>
-                    <version>0.7.9</version>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>site-maven-plugin</artifactId>
+                    <version>0.12</version>
                     <configuration>
-                        <check>true</check>
-                        <debug>true</debug>
-                        <verbose>true</verbose>
+                        <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                        <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                        <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
+                        <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                        <includes><include>**/*</include></includes>
+                        <repositoryName>dubbo-faker</repositoryName>      <!-- github repo name -->
+                        <repositoryOwner>moyada</repositoryOwner>    <!-- github username  -->
                     </configuration>
                     <executions>
+                        <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
                         <execution>
-                            <phase>compile</phase>
                             <goals>
-                                <goal>instrument</goal>
+                                <goal>site</goal>
                             </goals>
+                            <phase>deploy</phase>
                         </execution>
                     </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+    </distributionManagement>
 </project>

@@ -34,6 +34,8 @@ public class Faker {
     @Autowired
     private FakerManager fakerManager;
 
+    private volatile boolean running = false;
+
     @ApiOperation(value = "调用虚拟请求", httpMethod = "GET", produces = "application/json")
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
@@ -48,6 +50,10 @@ public class Faker {
                        @ApiParam(name = "saveResult", value = "保存结果", defaultValue = "false") @RequestParam(value = "saveResult", required = false) Boolean saveResult,
                        @ApiParam(name = "resultParam", value = "选定保存结果参数") @RequestParam(value = "resultParam", required = false) String resultParam
                                 ) {
+        if(running) {
+            return Result.failed(401, "已有任务进行中");
+        }
+
         poolSize = null == poolSize || 1 > poolSize ? 1 : poolSize;
         qps = null == qps || 1 > qps ? 1 : qps;
         loop = null == loop || 1 > loop ? 1 : loop;
@@ -60,11 +66,15 @@ public class Faker {
         saveResult = null == saveResult ? false : saveResult;
         resultParam = null == resultParam || resultParam.trim().length() == 0 ? null : resultParam.trim();
         try {
+            running = true;
             String data = main.invoke(invokeId, invokeExpression, poolSize, qps, loop, random == 1, saveResult, resultParam);
             return Result.success(data);
         }
         catch (Exception e) {
             return Result.failed(500, e.getMessage());
+        }
+        finally {
+            running = false;
         }
     }
 
