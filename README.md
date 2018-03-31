@@ -89,20 +89,33 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
 
 
 ### 部署依赖模块
-打包`dubbo-faker-api``dubbo-faker-filter`模块，并在使用项目中引入依赖。
+
+加入依赖或者自行打包`dubbo-faker-api``dubbo-faker-filter`模块，在目标项目中引入依赖。
+
 ```xml
-<dependency>
-    <artifactId>dubbo-faker-api</artifactId>
-    <groupId>cn.moyada</groupId>
-    <version>1.0.1-SNAPSHOT</version>
-</dependency>
+
+<dependencies>
+    <dependency>
+        <artifactId>dubbo-faker-api</artifactId>
+        <groupId>cn.moyada</groupId>
+        <version>1.0.1-SNAPSHOT</version>
+    </dependency>
+    
+    
+    <dependency>
+        <artifactId>dubbo-faker-filter</artifactId>
+        <groupId>cn.moyada</groupId>
+        <version>1.0.1-SNAPSHOT</version>
+    </dependency>
+</dependencies>
 
 
-<dependency>
-    <artifactId>dubbo-faker-filter</artifactId>
-    <groupId>cn.moyada</groupId>
-    <version>1.0.1-SNAPSHOT</version>
-</dependency>
+<repositories>
+    <repository>
+        <id>moyada-maven-repo</id>
+        <url>https://raw.githubusercontent.com/moyada/dubbo-faker/mvn-repo</url>
+    </repository>
+</repositories>
 
 ```
 
