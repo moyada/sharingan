@@ -10,10 +10,10 @@
     <version>1.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>dubbo-faker-core</module>
-        <module>dubbo-faker-filter</module>
-        <module>dubbo-faker-web</module>
         <module>dubbo-faker-api</module>
+        <module>dubbo-faker-filter</module>
+        <module>dubbo-faker-core</module>
+        <module>dubbo-faker-web</module>
     </modules>
 
     <properties>
@@ -28,7 +28,6 @@
         <httpmime.version>4.5.4</httpmime.version>
 
         <logback.version>1.2.3</logback.version>
-
         <jackson.version>2.9.4</jackson.version>
 
         <guava.version>23.5-jre</guava.version>
@@ -161,10 +160,6 @@
                 <version>${dubbo.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <artifactId>spring</artifactId>
                         <groupId>org.springframework</groupId>
                     </exclusion>
@@ -256,6 +251,11 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.6.0</version>
                 </plugin>
@@ -266,55 +266,20 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.21.0</version>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.0.1</version>
                 </plugin>
-
                 <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                    <configuration>
-                        <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>com.github.github</groupId>
-                    <artifactId>site-maven-plugin</artifactId>
-                    <version>0.12</version>
-                    <configuration>
-                        <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
-                        <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-                        <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
-                        <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
-                        <includes><include>**/*</include></includes>
-                        <repositoryName>dubbo-faker</repositoryName>      <!-- github repo name -->
-                        <repositoryOwner>moyada</repositoryOwner>    <!-- github username  -->
-                    </configuration>
-                    <executions>
-                        <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
-                        <execution>
-                            <goals>
-                                <goal>site</goal>
-                            </goals>
-                            <phase>deploy</phase>
-                        </execution>
-                    </executions>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
-        </repository>
-    </distributionManagement>
 </project>

@@ -27,6 +27,25 @@
             <groupId>cn.moyada</groupId>
             <artifactId>dubbo-faker-core</artifactId>
             <version>1.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${io.springfox.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${io.springfox.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -60,18 +79,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${io.springfox.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${io.springfox.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
         </dependency>
@@ -79,6 +86,11 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
         </dependency>
 
         <dependency>
@@ -100,6 +112,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -109,7 +122,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -117,9 +129,9 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- 拷贝页面-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>unpack</id>
@@ -129,14 +141,13 @@
                         </goals>
                         <configuration>
                             <artifactItems>
-                                <artifactItem>
-                                    <groupId>cn.moyada</groupId>
-                                    <artifactId>dubbo-faker-core</artifactId>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>./target/classes</outputDirectory>
-                                </artifactItem>
-
+                                <!--<artifactItem>-->
+                                    <!--<groupId>cn.moyada</groupId>-->
+                                    <!--<artifactId>dubbo-faker-core</artifactId>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>./target/classes</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>io.springfox</groupId>
                                     <artifactId>springfox-swagger-ui</artifactId>
@@ -155,15 +166,15 @@
                         </goals>
                         <configuration>
                             <outputDirectory>./target/WEB-INF/lib</outputDirectory>
-                            <excludeGroupIds>cn.moyada</excludeGroupIds>
+                            <excludeArtifactIds>springfox-swagger-ui</excludeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
+                <!-- 拷贝文件-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>copy-resources</id>
@@ -173,32 +184,12 @@
                         </goals>
                         <configuration>
                             <encoding>UTF-8</encoding>
-                            <outputDirectory>./target/WEB-INF/classes</outputDirectory>
+                            <outputDirectory>${basedir}/target/${build.name}/WEB-INF/classes</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/src/main/resources</directory>
+                                    <directory>/Users/xueyikang/dubbo-faker/dubbo-faker-core/src/main/resources</directory>
                                     <includes>
                                         <include>**/*.properties</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <!-- 拷贝web.xml文件-->
-                    <execution>
-                        <id>copy-web-xml</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <outputDirectory>./target/WEB-INF</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>./src/main/webapp/WEB-INF</directory>
-                                    <includes>
                                         <include>**/*.xml</include>
                                     </includes>
                                     <filtering>true</filtering>
@@ -210,15 +201,6 @@
             </plugin>
         </plugins>
         <resources>
-            <!--<resource>-->
-                <!--<directory>src/main/resources</directory>-->
-                <!--&lt;!&ndash; 资源根目录排除各环境的配置，使用单独的资源目录来指定 &ndash;&gt;-->
-                <!--<excludes>-->
-                    <!--<exclude>properties/dev/*</exclude>-->
-                    <!--<exclude>properties/test/*</exclude>-->
-                    <!--<exclude>properties/prod/*</exclude>-->
-                <!--</excludes>-->
-            <!--</resource>-->
             <resource>
                 <directory>./src/main/resources</directory>
                 <includes>

@@ -6,19 +6,19 @@ dubbo-faker是针对[dubbo](https://github.com/apache/incubator-dubbo)项目进�
 
 ## 目录
 
-* [构建界面](#构建界面)
+* [构建后台](#构建后台)
   * [下载源码](#下载源码)
   * [创建数据库表结构](#创建数据库表结构)
   * [编译打包](#编译打包)
   * [启动项目](#启动项目)
 * [调用拦截器](#调用拦截器)
-  * [部署依赖模块](#部署依赖模块)
+  * [添加依赖](#添加依赖)
   * [增加配置文件](#增加配置文件)
   * [配置所需依赖](#配置所需依赖)
   * [配置拦截器](#配置拦截器)
   * [使用注解拦截请求](#使用注解拦截请求)
 
-## 构建界面
+## 构建后台
 
 ### 下载源码
 
@@ -34,7 +34,7 @@ git clone git@github.com:moyada/dubbo-faker.git
 <dependency>
     <groupId>com.company</groupId>
     <artifactId>project</artifactId>
-    <version>1.0.0.RELEASE</version>
+    <version>${project.version}</version>
 </dependency>
  ```
  
@@ -88,8 +88,9 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
 通过扩展dubbo插件，配置项目引用，可直接获取实际调用请求信息保存。
 
 
-### 部署依赖模块
-打包`dubbo-faker-api``dubbo-faker-filter`模块，并在使用项目中引入依赖。
+### 添加依赖
+
+添加依赖或者自行打包`dubbo-faker-api``dubbo-faker-filter`模块，在目标项目中引入依赖。
 ```xml
 <dependency>
     <artifactId>dubbo-faker-api</artifactId>
@@ -97,12 +98,19 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
     <version>1.0.1-SNAPSHOT</version>
 </dependency>
 
-
 <dependency>
     <artifactId>dubbo-faker-filter</artifactId>
     <groupId>cn.moyada</groupId>
     <version>1.0.1-SNAPSHOT</version>
 </dependency>
+
+
+<repositories>
+    <repository>
+        <id>moyada-maven-repo</id>
+        <url>https://raw.githubusercontent.com/moyada/dubbo-faker/mvn-repo</url>
+    </repository>
+</repositories>
 
 ```
 
