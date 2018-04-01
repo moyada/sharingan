@@ -10,10 +10,11 @@
     <version>1.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>dubbo-faker-core</module>
-        <module>dubbo-faker-filter</module>
-        <module>dubbo-faker-web</module>
         <module>dubbo-faker-api</module>
+        <module>dubbo-faker-filter</module>
+        <module>dubbo-faker-core</module>
+        <module>dubbo-faker-web</module>
+        <module>dubbo-faker-plugin</module>
     </modules>
 
     <properties>
@@ -28,7 +29,6 @@
         <httpmime.version>4.5.4</httpmime.version>
 
         <logback.version>1.2.3</logback.version>
-
         <jackson.version>2.9.4</jackson.version>
 
         <guava.version>23.5-jre</guava.version>
@@ -161,10 +161,6 @@
                 <version>${dubbo.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <artifactId>spring</artifactId>
                         <groupId>org.springframework</groupId>
                     </exclusion>
@@ -180,12 +176,6 @@
                 <!--<artifactId>netty-all</artifactId>-->
                 <!--<version>${netty.version}</version>-->
             <!--</dependency>-->
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -256,6 +246,11 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.6.0</version>
                 </plugin>
@@ -266,62 +261,20 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.21.0</version>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.0.1</version>
                 </plugin>
-
-                <!--<plugin>-->
-                    <!--<artifactId>maven-deploy-plugin</artifactId>-->
-                    <!--<version>2.8.2</version>-->
-                    <!--<configuration>-->
-                        <!--<skip>true</skip>-->
-                        <!--<url>file:/Users/xueyikang/repository/dubbo-faker/</url>-->
-                        <!--&lt;!&ndash;<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>&ndash;&gt;-->
-                    <!--</configuration>-->
-                <!--</plugin>-->
-
-                <!--<plugin>-->
-                    <!--<groupId>com.github.github</groupId>-->
-                    <!--<artifactId>site-maven-plugin</artifactId>-->
-                    <!--<version>0.12</version>-->
-                    <!--<configuration>-->
-                        <!--<message>Maven artifacts for ${project.version}</message>  &lt;!&ndash; git commit message &ndash;&gt;-->
-                        <!--<noJekyll>true</noJekyll>                                  &lt;!&ndash; disable webpage processing &ndash;&gt;-->
-                        <!--<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> &lt;!&ndash; matches distribution management repository url above &ndash;&gt;-->
-                        <!--<branch>refs/heads/mvn-repo</branch>                       &lt;!&ndash; remote branch name &ndash;&gt;-->
-                        <!--<includes><include>**/*</include></includes>-->
-                        <!--<repositoryName>dubbo-faker</repositoryName>      &lt;!&ndash; github repo name &ndash;&gt;-->
-                        <!--<repositoryOwner>moyada</repositoryOwner>    &lt;!&ndash; github username  &ndash;&gt;-->
-                    <!--</configuration>-->
-                    <!--<executions>-->
-                        <!--&lt;!&ndash; run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase &ndash;&gt;-->
-                        <!--<execution>-->
-                            <!--<goals>-->
-                                <!--<goal>site</goal>-->
-                            <!--</goals>-->
-                            <!--<phase>deploy</phase>-->
-                        <!--</execution>-->
-                    <!--</executions>-->
-                <!--</plugin>-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>maven-repo-master</id>
-            <url>file:/Users/xueyikang/repository/dubbo-faker/</url>
-            <name>Temporary Staging Repository</name>
-        </repository>
-        <!--<repository>-->
-            <!--<id>internal.repo</id>-->
-            <!--<name>Temporary Staging Repository</name>-->
-            <!--<url>file://${project.build.directory}/mvn-repo</url>-->
-        <!--</repository>-->
-    </distributionManagement>
 </project>
