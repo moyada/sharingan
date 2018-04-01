@@ -14,6 +14,7 @@
         <module>dubbo-faker-filter</module>
         <module>dubbo-faker-core</module>
         <module>dubbo-faker-web</module>
+        <module>dubbo-faker-plugin</module>
     </modules>
 
     <properties>
@@ -175,12 +176,6 @@
                 <!--<artifactId>netty-all</artifactId>-->
                 <!--<version>${netty.version}</version>-->
             <!--</dependency>-->
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
