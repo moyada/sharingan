@@ -28,7 +28,7 @@ git clone git@github.com:moyada/dubbo-faker.git
 
 ### 修改配置文件
 
-* 在`pom.xml`增加测试目标的`dubbo`服务方依赖:
+* 在`pom.xml`增加测试目标的`dubbo`服务依赖:
 
 ```xml
 <dependency>
@@ -42,7 +42,7 @@ git clone git@github.com:moyada/dubbo-faker.git
 
 * 修改`dubbo.properties`中zookeeper连接配置
 
-* 修改`application-dubbo-import.xml`增加测试接口引用
+* `application-dubbo-import.xml`中添加测试接口引用
 
 ```xml
 <dubbo:reference id="dubboService" interface="com.company.project.DubboService" />
@@ -68,7 +68,8 @@ VALUES
 ```
 
 ### 编译打包
-执行 `build.sh` 即可
+
+执行 `build.sh`，完成编译后，将`dubbo-faker-web`下tager目录内的ROOT放入tomcat启动。
 
 ### 启动项目
 打开 http://localhost:8080/index.html 进入测试页面，测试请求
@@ -85,13 +86,13 @@ invokeExpression 支持输入固定参数或参数表达式，需以`json`数组
 
 
 ## 调用拦截器
-
-通过扩展dubbo插件，配置项目引用，可直接获取实际调用请求信息保存使用。
+通过扩展dubbo插件，配置项目引用，可直接获取实际调用请求信息保存。
 
 
 ### 添加依赖
 
-添加依赖或者打包`dubbo-faker-api``dubbo-faker-filter`模块，在目标项目中引入依赖。
+添加依赖或者自行打包`dubbo-faker-api``dubbo-faker-filter`模块，在目标项目中引入依赖。
+
 ```xml
 <dependency>
     <artifactId>dubbo-faker-api</artifactId>

@@ -11,6 +11,7 @@
 
     <groupId>cn.moyada</groupId>
     <artifactId>dubbo-faker-core</artifactId>
+
     <build>
         <plugins>
             <plugin>
@@ -92,7 +93,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpasyncclient</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>org.javassist</groupId>
