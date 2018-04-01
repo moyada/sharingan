@@ -66,6 +66,7 @@ public class MethodHandleProxy {
                 try {
                     paramTypes[index] = ReflectUtil.getClassType(argsType[index]);
                 } catch (ClassNotFoundException e) {
+                    log.error("fetch service method error: " + e.getLocalizedMessage());
                     throw new InitializeInvokerException("获取参数类型失败: " + argsType[index]);
                 }
             }
@@ -80,6 +81,7 @@ public class MethodHandleProxy {
         try {
             classType = ReflectUtil.getClassType(invokeInfo.getClassName());
         } catch (ClassNotFoundException e) {
+            log.error("fetch service class error: " + e.getLocalizedMessage());
             throw new InitializeInvokerException("获取结果失败: " + invokeInfo.getClassName());
         }
 
@@ -93,6 +95,7 @@ public class MethodHandleProxy {
 //            }
         }
         catch (BeansException e) {
+            log.error("fetch service bean error: " + e.getLocalizedMessage());
             throw new RpcException("获取接口实例失败: " + invokeInfo.getClassName() + ".", e);
         }
 

@@ -1,6 +1,21 @@
 import fetch from 'dva/fetch';
 import querystring from 'querystring';
 
+
+// let host;
+// {
+//   const local = this.location.host
+//   const path = this.location.pathname
+//   const index = path.indexOf('/' , 1)
+//   if(-1 === index) {
+//     host = local
+//   }
+//   else {
+//     host = local + path.substring(0, index)
+//   }
+//   console.log(host)
+// }
+
 function parseJSON(response) {
   return response.json();
 }
@@ -25,7 +40,6 @@ export default function request(url, payload, method) {
   if(null == method) {
     method = 'GET';
   }
-
 
   switch (method) {
     case 'POST':

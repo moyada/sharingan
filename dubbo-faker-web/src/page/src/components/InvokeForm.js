@@ -1,6 +1,5 @@
 import React from 'react';
 import { Tabs, Form, Table, Row, Col, Input, InputNumber, Button, Radio, Modal, message, notification } from 'antd';
-import InvokeSelect from '../components/InvokeSelect';
 import InvokeCascader from '../components/InvokeCascader';
 import request from "../utils/request";
 

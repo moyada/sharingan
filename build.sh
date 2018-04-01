@@ -1,10 +1,20 @@
 #!/usr/bin/env sh
 
+HOME=$(pwd)
+
+# 编译调用核心
+cd dubbo-faker-core
+mvn clean install -Dmaven.test.skip=true
+
+cd $HOME
+
+sh build-web.sh
 # 编译页面
-#HOME=$(pwd)
+#cd dubbo-faker-web
+
 #cd dubbo-faker-web/src/page
 #npm run build
-#cd $HOME
+
 
 # 打包项目
-mvn clean package -Dmaven.test.skip=true
+#mvn clean package -Dmaven.test.skip=true

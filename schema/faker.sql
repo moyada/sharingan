@@ -4,7 +4,6 @@ CREATE TABLE `app_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE UNIQUE INDEX `uk_app` ON `app_info` (`app_id`);
 
 CREATE TABLE `method_invoke` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -15,10 +14,10 @@ CREATE TABLE `method_invoke` (
   `param_type` varchar(255) DEFAULT NULL COMMENT '参数类型以,分隔',
   `return_type` varchar(255) DEFAULT NULL COMMENT '返回值类型',
   `expression` varchar(255) DEFAULT NULL COMMENT '默认参数表达式',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_method` (`app_id`,`class_name`,`method_name`,`param_type`,`return_type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='调用方法表';
 
-CREATE UNIQUE INDEX `uk_method` ON `method_invoke` (`app_id`, `class_name`, `method_name`, `param_type`, `return_type`);
 
 CREATE TABLE `invoke_param` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -27,10 +26,10 @@ CREATE TABLE `invoke_param` (
   `param_value` varchar(255) DEFAULT NULL COMMENT '参数值',
   `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_param` (`app_id`,`type`,`param_value`),
   KEY `idx_type` (`app_id`,`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='调用参数表';
 
-CREATE UNIQUE INDEX `uk_param` ON `invoke_param` (`app_id`, `type`, `param_value`);
 
 CREATE TABLE `faker_log` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -42,7 +41,6 @@ CREATE TABLE `faker_log` (
   `message` text COMMENT '失败异常',
   `spend_time` int(11) DEFAULT NULL COMMENT '耗时',
   `invoke_time` timestamp NULL DEFAULT NULL COMMENT '请求时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_log` (`faker_id`,`code`,`spend_time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='调用结果表';
-
-CREATE INDEX `idx_log` ON `faker_log` (`faker_id`, `code`, `spend_time`);
