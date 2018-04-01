@@ -199,6 +199,25 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>cn.moyada</groupId>
+                <artifactId>replace-maven-plugin</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${basedir}/../dependency.xml</source>
+                    <target>${basedir}/pom.xml</target>
+                    <replacement>dependencies</replacement>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>
