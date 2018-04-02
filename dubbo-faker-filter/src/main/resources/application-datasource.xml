@@ -3,6 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-lazy-init="true">
 
+    <!-- 配置数据库连接池 -->
     <bean name="dataSource" id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <property name="name" value="faker"/>
         <property name="driverClassName" value="${faker.jdbc.driver}"/>

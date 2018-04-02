@@ -27,6 +27,7 @@ public class FiberInvoker extends AbstractInvoker {
                     execute(argsValue);
                     return null;
                 })
+                .setPriority(Thread.MAX_PRIORITY)
                 .start();
 
 //        for (;;) {

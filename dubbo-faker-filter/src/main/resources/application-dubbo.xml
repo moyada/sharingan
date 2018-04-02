@@ -8,5 +8,6 @@
     					http://code.alibabatech.com/schema/dubbo
     					http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:provider listener="cn.moyada.dubbo.faker.filter.listener.FakerExporterListener"/>
+    <!-- 配置dubbo拦截器 -->
+    <dubbo:provider filter="FakerListener" />
 </beans>

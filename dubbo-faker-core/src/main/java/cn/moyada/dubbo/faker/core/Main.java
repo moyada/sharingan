@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.locks.LockSupport;
 
+import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
+
 @Component
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
@@ -62,7 +64,7 @@ public class Main {
             log.info("start timeout faker invoke: " + fakerId);
             for (int index = 0; index < questNum; index++) {
                 invoke.invoke(paramProvider.fetchNextParam());
-                LockSupport.parkNanos(timeout * 1_000L);
+                LockSupport.parkNanos(timeout * NANO_PER_MILLIS);
             }
         }
         else {

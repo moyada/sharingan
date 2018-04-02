@@ -1,4 +1,4 @@
-package cn.moyada.dubbo.faker.filter.utils;
+package cn.moyada.dubbo.faker.core.utils;
 
 import java.sql.Timestamp;
 import java.time.Clock;
