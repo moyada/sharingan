@@ -65,8 +65,9 @@
                 </executions>
                 <configuration>
                     <source>${basedir}/../dependency.xml</source>
+                    <tag>dependencies</tag>
                     <target>${basedir}/pom.xml</target>
-                    <replacement>dependencies</replacement>
+                    <replacement>import</replacement>
                 </configuration>
             </plugin>
         </plugins>

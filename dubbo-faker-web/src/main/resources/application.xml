@@ -15,8 +15,8 @@
 		<!--&lt;!&ndash;<property name="ignoreUnresolvablePlaceholders" value="true"/>&ndash;&gt;-->
 	<!--</bean>-->
 
+	<import resource="classpath:application-datasource.xml"/>
 	<import resource="classpath:application-core.xml"/>
 
 	<!--<import resource="classpath:application-dubbo.xml"/>-->
-	<import resource="classpath:application-datasource.xml"/>
 </beans>
