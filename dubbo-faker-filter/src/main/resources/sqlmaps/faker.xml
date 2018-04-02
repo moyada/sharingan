@@ -17,6 +17,7 @@
 		(`app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`)
 		VALUE
 		(#{appId}, #{appName}, #{className}, #{methodName}, #{paramType}, #{returnType}, #{expression});
+		ON DUPLICATE KEY UPDATE expression = VALUES(expression)
 	</insert>
 
 	<select id="findAppId" resultType="Integer">

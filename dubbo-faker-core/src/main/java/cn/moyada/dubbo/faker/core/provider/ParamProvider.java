@@ -1,12 +1,12 @@
 package cn.moyada.dubbo.faker.core.provider;
 
 import cn.moyada.dubbo.faker.core.enums.ConvertType;
+import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.ParamMapping;
 import cn.moyada.dubbo.faker.core.utils.ConvertUtil;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
 import cn.moyada.dubbo.faker.core.utils.ParamUtil;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -139,6 +139,8 @@ public class ParamProvider {
             // 获取当前位置的替换参数
             paramMap = rebuildParamMap.get(index);
             if(null == paramMap) {
+                // 根据参数类型转换
+                argsValue[index] = convert(json, convertMap.get(index), paramTypes[index]);
                 continue;
             }
 
@@ -162,7 +164,8 @@ public class ParamProvider {
 //
 //                    fakerValue = fakerValueList.get(random.nextInt(fakerValueList.size()));
                     // 替换表达式
-                    json = StringUtils.replaceOnce(json, key, fakerValue);
+                    json = json.replace(key, fakerValue);
+//                        json = StringUtils.replaceOnce(json, key, fakerValue);
                 }
                 else {
                     // 存在对参数的复杂替换
@@ -183,20 +186,27 @@ public class ParamProvider {
                     for (; linkIndex < paramLink.length - 1; linkIndex++) {
                         if(null == jsonMap) {
                             // TODO throws exception?
-                            json = StringUtils.replaceOnce(json, key, "");
+                            json = json.replace(key, "");
+//                            json = StringUtils.replaceOnce(json, key, "");
                             break;
                         }
                         jsonMap = (Map<String, Object>) jsonMap.get(paramLink[linkIndex]);
                     }
                     if(null == jsonMap) {
                         // TODO throws exception?
-                        json = StringUtils.replaceOnce(json, key, "");
+                        json = json.replace(key, "");
+//                        json = StringUtils.replaceOnce(json, key, "");
                     }
                     else {
                         jsonObj = jsonMap.get(paramLink[linkIndex]);
 
                         // 替换表达式
-                        json = StringUtils.replaceOnce(json, key, JsonUtil.toJson(jsonObj));
+                        value = JsonUtil.toJson(jsonObj);
+                        if(null == value) {
+                            throw new InitializeInvokerException("数据序列化失败: " + jsonObj.toString());
+                        }
+                        json = json.replace(key, value);
+//                        json = StringUtils.replaceOnce(json, key, JsonUtil.toJson(jsonObj));
                     }
 //                    for (String link : paramLink) {
 //                        if(null == jsonObj) {
@@ -211,19 +221,30 @@ public class ParamProvider {
 //                    }
                 }
 
-                // 根据参数类型转换
-                if(ConvertType.OBJECT == convertMap.get(index)) {
-                    argsValue[index] = JsonUtil.toObject(json, paramTypes[index]);
-                }
-                else if(ConvertType.LIST == convertMap.get(index)) {
-                    argsValue[index] = JsonUtil.toList(json, Object.class);
-                }
-                else {
-                    argsValue[index] = JsonUtil.toArray(json, Object[].class);
-                }
+                argsValue[index] = convert(json, convertMap.get(index), paramTypes[index]);
             }
         }
         return argsValue;
+    }
+
+    /**
+     * 根据参数类型转换
+     * @param json
+     * @param convertType
+     * @param paramType
+     * @return
+     */
+    private Object convert(String json, ConvertType convertType, Class<?> paramType) {
+        // 根据参数类型转换
+        if(ConvertType.OBJECT == convertType) {
+            return JsonUtil.toObject(json, paramType);
+        }
+
+        if(ConvertType.LIST == convertType) {
+            return JsonUtil.toList(json, Object.class);
+        }
+
+        return JsonUtil.toArray(json, Object[].class);
     }
 
     /**
