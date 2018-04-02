@@ -172,34 +172,34 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--&lt;!&ndash; 拷贝文件&ndash;&gt;-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-resources-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-resources</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<encoding>UTF-8</encoding>-->
-                            <!--<outputDirectory>${basedir}/target/${build.name}/WEB-INF/classes</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--<resource>-->
-                                    <!--<directory>/Users/xueyikang/dubbo-faker/dubbo-faker-core/src/main/resources</directory>-->
-                                    <!--<includes>-->
-                                        <!--<include>**/*.properties</include>-->
-                                        <!--<include>**/*.xml</include>-->
-                                    <!--</includes>-->
-                                    <!--<filtering>true</filtering>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <!-- 拷贝文件-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <outputDirectory>${basedir}/target/${build.name}/WEB-INF/classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../dubbo-faker-core/src/main/resources</directory>
+                                    <includes>
+                                        <include>**/*.properties</include>
+                                        <include>**/*.xml</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!--<plugin>-->
                 <!--<groupId>cn.moyada</groupId>-->
                 <!--<artifactId>replace-maven-plugin</artifactId>-->
