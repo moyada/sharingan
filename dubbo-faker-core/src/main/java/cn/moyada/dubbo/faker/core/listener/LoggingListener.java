@@ -8,8 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.locks.LockSupport;
 
+import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
+
 /**
- * 结果保存监听器
+ * 记录结果监听器
  * @author xueyikang
  * @create 2018-03-18 17:32
  */
@@ -32,7 +34,7 @@ public class LoggingListener extends AbstractListener {
         long value;
         for (;;) {
             value = count.longValue();
-            LockSupport.parkNanos(1_000_000_000L);
+            LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
             if(value == count.longValue()) {
                 excutor.shutdownNow();
                 break;

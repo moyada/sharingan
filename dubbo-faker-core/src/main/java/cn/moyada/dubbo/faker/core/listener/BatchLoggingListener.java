@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
 
+import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
+
 /**
- * 结果合并保存监听器
+ * 批量保存结果监听器
  * @author xueyikang
  * @create 2018-03-18 17:32
  */
@@ -47,7 +49,7 @@ public class BatchLoggingListener extends AbstractListener {
     @Override
     public void shutdown() {
         for (;;) {
-            LockSupport.parkNanos(1_000_000_000L);
+            LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
             if(list1.isEmpty() && list2.isEmpty()) {
                 excutor.shutdownNow();
                 break;
@@ -80,7 +82,7 @@ public class BatchLoggingListener extends AbstractListener {
         @Override
         public void run() {
             for (;;) {
-                LockSupport.parkNanos(1_000_000_000L);
+                LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
                 if (lock.close()) {
                     save(list1);
                 }

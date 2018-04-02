@@ -4,14 +4,16 @@ import cn.moyada.dubbo.faker.core.exception.UnsupportedParamNumberException;
 import cn.moyada.dubbo.faker.core.listener.AbstractListener;
 import cn.moyada.dubbo.faker.core.model.FutureResult;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
+import cn.moyada.dubbo.faker.core.utils.DateUtil;
 import cn.moyada.dubbo.faker.core.utils.ParamUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
+
+import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
 
 public abstract class AbstractInvoker {
 
@@ -19,6 +21,12 @@ public abstract class AbstractInvoker {
     static {
         int cpuCore = Runtime.getRuntime().availableProcessors() * 2;
         MAX_POOL_SIZE = cpuCore % 8 == 0 ? cpuCore : cpuCore + (8 - cpuCore % 8);
+    }
+
+    private Long allowThreadSize() {
+        long memoryBytes = Runtime.getRuntime().freeMemory();
+        long stackBytes = 1024;
+        return (memoryBytes / stackBytes);
     }
 
     private final AbstractListener abstractListener;
@@ -33,9 +41,13 @@ public abstract class AbstractInvoker {
 
     public AbstractInvoker(MethodHandle handle, Object service,
                            AbstractListener abstractListener, int poolSize) {
+        int threadSize = allowThreadSize().intValue();
+        threadSize = 2000 > threadSize ? threadSize : 2000;
+
         poolSize = poolSize > MAX_POOL_SIZE ? MAX_POOL_SIZE : poolSize;
-        this.excutor = new ThreadPoolExecutor(poolSize, MAX_POOL_SIZE, 30L, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(2000), new ShutdownRejected());
+
+        this.excutor = new ThreadPoolExecutor(poolSize, MAX_POOL_SIZE, 10L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(threadSize), new ShutdownRejected());
         this.poolSize = poolSize;
         // this.curIndex = new AtomicInteger(0);
         this.abstractListener = abstractListener;
@@ -55,7 +67,7 @@ public abstract class AbstractInvoker {
      */
     public void shutdownDelay() {
         while (count.longValue() != 0) {
-            LockSupport.parkNanos(1_000_000L);
+            LockSupport.parkNanos(NANO_PER_MILLIS);
             if(Thread.currentThread().isInterrupted()) {
                 break;
             }
@@ -72,7 +84,7 @@ public abstract class AbstractInvoker {
 
         // 开始时间
         long start = System.nanoTime();
-        Timestamp invokeTime = Timestamp.from(Instant.now());
+        Timestamp invokeTime = DateUtil.now();
 
         FutureResult result;
         try {
@@ -114,7 +126,7 @@ public abstract class AbstractInvoker {
             result = FutureResult.failed(throwable.getMessage());
         }
         // 完成计算耗时
-        result.setSpend((System.nanoTime() - start) / 1_000_000);
+        result.setSpend((System.nanoTime() - start) / NANO_PER_MILLIS);
         callback(new InvokeFuture(result, invokeTime, ParamUtil.toString(argsValue)));
         count.decrement();
     }

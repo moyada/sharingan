@@ -24,10 +24,20 @@ public class FileReplace {
     }
 
     public void replace(String replacement, String contain) {
-        String tag = "<!--@" + replacement + "-->";
+        String tag = "<!--@".concat(replacement).concat("-->");
         String replace = file.fetch(tag, tag);
         if(null == replace) {
-            return;
+            tag = "<!--@ ".concat(replacement).concat(" -->");
+            try {
+                replace = new FileFetch(fileName).fetch(tag, tag);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
+            if(null == replace) {
+                System.out.println("can not find <!--@" + replacement + "--> replacement tag in file: " + fileName);
+                return;
+            }
         }
         String escape = findLastEscape(replace);
         replace = tag.concat(replace).concat(tag);

@@ -10,11 +10,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
+import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
+
 /**
+ * 监听器
  * @author xueyikang
  * @create 2018-03-18 17:12
  */
-public abstract class AbstractListener implements Listener {
+public abstract class AbstractListener implements ListenerAction {
 
     protected final ExecutorService excutor;
     protected final LongAdder count;
@@ -37,7 +40,7 @@ public abstract class AbstractListener implements Listener {
     public void shutdownDelay() {
         // 是否全部记录完了
         while (count.longValue() != total) {
-            LockSupport.parkNanos(1_000_000L);
+            LockSupport.parkNanos(NANO_PER_MILLIS);
         }
         this.excutor.shutdown();
     }

@@ -1,20 +1,18 @@
 package cn.moyada.dubbo.faker.core.thread;
 
 /**
+ * 优先级线程
  * @author xueyikang
  * @create 2018-03-29 10:53
  */
-public class PriorityThread implements Runnable{
+public class PriorityThread extends Thread {
 
-    private Runnable runnable;
-
-    public PriorityThread(Runnable runnable) {
-        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-        this.runnable = runnable;
+    public PriorityThread(Runnable target) {
+        this(target, Thread.MAX_PRIORITY);
     }
 
-    @Override
-    public void run() {
-        runnable.run();
+    public PriorityThread(Runnable target, int priority) {
+        super(target);
+        this.setPriority(priority);
     }
 }
