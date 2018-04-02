@@ -1,12 +1,12 @@
 package cn.moyada.dubbo.faker.filter.listener;
 
 
+import cn.moyada.dubbo.faker.api.annotation.Fetch;
 import cn.moyada.dubbo.faker.filter.common.Context;
 import cn.moyada.dubbo.faker.filter.domain.RealParamDO;
 import cn.moyada.dubbo.faker.filter.manager.FakerManager;
 import cn.moyada.dubbo.faker.filter.utils.JsonUtil;
 import cn.moyada.dubbo.faker.filter.utils.PropertyUtil;
-import cn.moyada.dubbo.faker.api.annotation.Fetch;
 import com.alibaba.dubbo.rpc.Invocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,6 +128,7 @@ public class BatchRecordListener {
             }
             realParamDO.setParamValue(args);
             save(realParamDO);
+            log.info("add " + realParamDO.getType() + " type param: " + args);
         }
 
         private void save(RealParamDO realParamDO) {

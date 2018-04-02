@@ -1,5 +1,7 @@
 package cn.moyada.dubbo.faker.core.utils;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
@@ -31,9 +33,17 @@ public class JsonUtil {
     private static final Map<String, MapType> mapTypeMap = new ConcurrentHashMap<>();
 
     static {
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
         mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.enable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
+        mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+        mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.enable(SerializationFeature.WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS);
+
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+
+        mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
     }
 
     public static String toJson(Object obj) {
@@ -100,7 +110,7 @@ public class JsonUtil {
             return null;
         }
     }
-    
+
     public static <C> C[] toArray(String json, Class<C[]> clazz) {
         C[] array;
         try {
@@ -111,7 +121,6 @@ public class JsonUtil {
         }
         return array;
     }
-
 
     public static <C> List<C> toList(String json, Class<C> clazz) {
         List<C> list;

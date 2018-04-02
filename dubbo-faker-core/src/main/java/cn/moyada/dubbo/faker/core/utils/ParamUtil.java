@@ -30,28 +30,32 @@ public class ParamUtil {
         int length = array.length;
 
         // 返回参数所含表达式集合
-        Map<Integer, Map<String, String>> rebuildParamMap = Maps.newHashMapWithExpectedSize(length);
+        Map<Integer, ParamMapping.Mapping> rebuildParamMap = Maps.newHashMapWithExpectedSize(length);
 
         // 返回参数所含查询集合
         Set<String> rebuildParamSet = Sets.newHashSetWithExpectedSize(length);
 
         Matcher m1, m2;
         String find, mapping;
-        Map<String, String> param;
+
+        ParamMapping.Mapping paramMapping;
         for (int index = 0; index < length; index++) {
+            // 查找表达式是否存在
             m1 = p1.matcher(array[index].toString());
-            param = Maps.newHashMap();
+            paramMapping = new ParamMapping.Mapping();
             for(; m1.find(); ) {
                 find = m1.group();
+                // 查找表达式
                 m2 = p2.matcher(find);
                 if(!m2.find()) {
                     continue;
                 }
                 mapping = m2.group();
-                param.put(find, mapping);
+                // 添加查询type
                 rebuildParamSet.add(mapping);
-                rebuildParamMap.put(index, param);
+                paramMapping.put(find, mapping);
             }
+            rebuildParamMap.put(index, paramMapping);
         }
 
         ParamMapping paramMappingProvider = new ParamMapping();

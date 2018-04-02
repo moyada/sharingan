@@ -21,7 +21,7 @@ public class ParamProvider {
     private final Object[] invokeValue;
     private final int length;
 
-    private Map<Integer, Map<String, String>> rebuildParamMap;
+    private Map<Integer, ParamMapping.Mapping> rebuildParamMap;
     private Map<String, List<String>> fakerParamMap;
     private Map<Integer, ConvertType> convertMap;
 
@@ -70,7 +70,7 @@ public class ParamProvider {
 
         String key, value;
         String[] paramLink;
-        Map<String, String> paramMap;
+        ParamMapping.Mapping paramMap;
 
         AbstractIndexProvider indexProvider;
         for (int index = 0; index < length; index++) {
@@ -81,12 +81,12 @@ public class ParamProvider {
                 continue;
             }
 
-            for(Map.Entry<String, String> entry : paramMap.entrySet()) {
+            for(Map.Entry<String, ParamMapping.TypeCount> entry : paramMap.getParamMap().entrySet()) {
 
                 // 参数中的表达式
                 key = entry.getKey();
                 // 提取参数的目标
-                value = entry.getValue();
+                value = entry.getValue().getType();
 
                 if(random) {
                     indexProvider = new RandomIndexProvider(fakerParamMap.get(value).size());
@@ -96,7 +96,7 @@ public class ParamProvider {
                 }
                 indexProviderMap.putIfAbsent(value, indexProvider);
 
-                        // 替换表达式
+                // 替换表达式
                 paramLink = findParamLink(key, value);
                 if(null != paramLink) {
                     linkMap.put(key, paramLink);
@@ -122,10 +122,11 @@ public class ParamProvider {
         Object[] argsValue = new Object[length];
 
         String json, key, value, fakerValue;
+        ParamMapping.TypeCount typeCount;
         Object jsonObj;
         String[] paramLink;
         Map<String, Object> jsonMap;
-        Map<String, String> paramMap;
+        ParamMapping.Mapping  paramMap;
         List<String> fakerValueList;
 
         for (int index = 0; index < length; index++) {
@@ -144,31 +145,32 @@ public class ParamProvider {
                 continue;
             }
 
-            for(Map.Entry<String, String> entry : paramMap.entrySet()) {
+//            json = json.replaceFirst(".", "\\.");
+            for(Map.Entry<String, ParamMapping.TypeCount> entry : paramMap.getParamMap().entrySet()) {
                 // 参数中的表达式
                 key = entry.getKey();
                 // 提取参数的目标
-                value = entry.getValue();
+                typeCount = entry.getValue();
+                value = typeCount.getType();
 
                 // 获取模拟参数集合
                 fakerValueList = fakerParamMap.get(value);
 
-//                fakerValue = fakerValueList.get(random.nextInt(fakerValueList.size()));
-                fakerValue = fakerValueList.get(indexProviderMap.get(value).nextIndex());
-
                 // 替换表达式
                 paramLink = linkMap.get(key);
-                if(null == paramLink) {
+                for (int i = 0; i < typeCount.getCount(); i++) {
+                    fakerValue = fakerValueList.get(indexProviderMap.get(value).nextIndex());
+
+                    if (null == paramLink) {
 //                    // 获取模拟参数集合
 //                    fakerValueList = fakerParamMap.get(value);
 //
 //                    fakerValue = fakerValueList.get(random.nextInt(fakerValueList.size()));
-                    // 替换表达式
-                    json = json.replace(key, fakerValue);
+                        // 替换表达式
+                        json = replaceFirst(json, key, fakerValue);
 //                        json = StringUtils.replaceOnce(json, key, fakerValue);
-                }
-                else {
-                    // 存在对参数的复杂替换
+                    } else {
+                        // 存在对参数的复杂替换
 
 //                    jsonObj = jsonMap.get(value);
 //                    if(null == jsonObj) {
@@ -179,35 +181,31 @@ public class ParamProvider {
 //                        jsonObj = JsonUtil.toObject(fakerValue, Object.class);
 //                        jsonMap.put(value, jsonObj);
 //                    }
-                    jsonMap = JsonUtil.toMap(fakerValue, String.class, Object.class);
+                        jsonMap = JsonUtil.toMap(fakerValue, String.class, Object.class);
 
-                    // 查询json对象参数
-                    int linkIndex = 0;
-                    for (; linkIndex < paramLink.length - 1; linkIndex++) {
-                        if(null == jsonMap) {
+                        // 查询json对象参数
+                        int linkIndex = 0;
+                        for (; linkIndex < paramLink.length - 1; linkIndex++) {
+                            if (null == jsonMap) {
+                                // TODO throws exception?
+                                json = replaceFirst(json, key, "");
+                                break;
+                            }
+                            jsonMap = (Map<String, Object>) jsonMap.get(paramLink[linkIndex]);
+                        }
+                        if (null == jsonMap) {
                             // TODO throws exception?
-                            json = json.replace(key, "");
-//                            json = StringUtils.replaceOnce(json, key, "");
-                            break;
-                        }
-                        jsonMap = (Map<String, Object>) jsonMap.get(paramLink[linkIndex]);
-                    }
-                    if(null == jsonMap) {
-                        // TODO throws exception?
-                        json = json.replace(key, "");
-//                        json = StringUtils.replaceOnce(json, key, "");
-                    }
-                    else {
-                        jsonObj = jsonMap.get(paramLink[linkIndex]);
+                            json = replaceFirst(json, key, "");
+                        } else {
+                            jsonObj = jsonMap.get(paramLink[linkIndex]);
 
-                        // 替换表达式
-                        value = JsonUtil.toJson(jsonObj);
-                        if(null == value) {
-                            throw new InitializeInvokerException("数据序列化失败: " + jsonObj.toString());
+                            // 替换表达式
+                            value = JsonUtil.toJson(jsonObj);
+                            if (null == value) {
+                                throw new InitializeInvokerException("数据序列化失败: " + jsonObj.toString());
+                            }
+                            json = replaceFirst(json, key, value);
                         }
-                        json = json.replace(key, value);
-//                        json = StringUtils.replaceOnce(json, key, JsonUtil.toJson(jsonObj));
-                    }
 //                    for (String link : paramLink) {
 //                        if(null == jsonObj) {
 //                            // TODO throws exception?
@@ -219,12 +217,42 @@ public class ParamProvider {
 //                         替换表达式
 //                        json = StringUtils.replaceOnce(json, key, JsonUtil.toJson(jsonObj));
 //                    }
+                    }
                 }
-
                 argsValue[index] = convert(json, convertMap.get(index), paramTypes[index]);
             }
         }
         return argsValue;
+    }
+
+    private static String replaceFirst(String str, String target, String replacement) {
+        int index = str.indexOf(target);
+        if(-1 == index) {
+            return str;
+        }
+        int length = str.length();
+        int eleLength = target.length();
+        if(length == eleLength) {
+            return replacement;
+        }
+        char[] chars = new char[length + eleLength];
+        int pos = 0;
+
+        index--;
+        for (int index1 = 0; index1 <= index; index1++) {
+            chars[pos++] = str.charAt(index1);
+        }
+
+        eleLength = replacement.length();
+        for (int index1 = 0; index1 < eleLength; index1++) {
+            chars[pos++] = replacement.charAt(index1);
+        }
+
+        for (int index1 = index + target.length() + 1; index1 < length; index1++) {
+            chars[pos++] = str.charAt(index1);
+        }
+        return new String(chars, 0, pos);
+        // return (str.substring(0, index) + replacement + str.substring(index + length)).intern();
     }
 
     /**
@@ -234,17 +262,18 @@ public class ParamProvider {
      * @param paramType
      * @return
      */
-    private Object convert(String json, ConvertType convertType, Class<?> paramType) {
+    @SuppressWarnings("unchecked")
+    private <T> T convert(String json, ConvertType convertType, Class<T> paramType) {
         // 根据参数类型转换
-        if(ConvertType.OBJECT == convertType) {
-            return JsonUtil.toObject(json, paramType);
-        }
+//        if(ConvertType.OBJECT == convertType) {
+//            return JsonUtil.toObject(json, paramType);
+//        }
 
         if(ConvertType.LIST == convertType) {
-            return JsonUtil.toList(json, Object.class);
+            return (T) JsonUtil.toList(json, paramType);
         }
-
-        return JsonUtil.toArray(json, Object[].class);
+        return JsonUtil.toObject(json, paramType);
+//        return (T) JsonUtil.toArray(json, paramType);
     }
 
     /**

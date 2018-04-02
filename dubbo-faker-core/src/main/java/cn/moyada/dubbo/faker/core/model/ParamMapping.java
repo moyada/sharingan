@@ -1,5 +1,6 @@
 package cn.moyada.dubbo.faker.core.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public class ParamMapping {
      * 每个位置参数的表达式映射关系
      * <序号, <参数表达式, 映射参数类别>>
      */
-    private Map<Integer, Map<String, String>> rebuildParamMap;
+    private Map<Integer, Mapping> rebuildParamMap;
 
     public Set<String> getRebuildParamSet() {
         return rebuildParamSet;
@@ -29,11 +30,50 @@ public class ParamMapping {
         this.rebuildParamSet = rebuildParamSet;
     }
 
-    public Map<Integer, Map<String, String>> getRebuildParamMap() {
+    public Map<Integer, Mapping> getRebuildParamMap() {
         return rebuildParamMap;
     }
 
-    public void setRebuildParamMap(Map<Integer, Map<String, String>> rebuildParamMap) {
+    public void setRebuildParamMap(Map<Integer, Mapping> rebuildParamMap) {
         this.rebuildParamMap = rebuildParamMap;
+    }
+
+    public static class Mapping {
+
+        private  Map<String, TypeCount> paramMap = new HashMap<>();
+
+        public void put(String find, String mapping) {
+            TypeCount typeCount = paramMap.get(find);
+            if(null == typeCount) {
+                paramMap.put(find, new TypeCount(mapping));
+                return;
+            }
+
+            typeCount.count = typeCount.count + 1;
+        }
+
+        public Map<String, TypeCount> getParamMap() {
+            return paramMap;
+        }
+    }
+
+    public static class TypeCount {
+
+        private String type;
+
+        private int count;
+
+        public TypeCount(String type) {
+            this.type = type;
+            this.count = 1;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public int getCount() {
+            return count;
+        }
     }
 }

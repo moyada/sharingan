@@ -24,7 +24,7 @@ CREATE TABLE `invoke_param` (
   `app_id` int(11) DEFAULT NULL COMMENT '项目编号',
   `type` varchar(11) DEFAULT NULL COMMENT '参数类别',
   `param_value` varchar(255) DEFAULT NULL COMMENT '参数值',
-  `create_date` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `date_create` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_param` (`app_id`,`type`,`param_value`),
   KEY `idx_type` (`app_id`,`type`)
