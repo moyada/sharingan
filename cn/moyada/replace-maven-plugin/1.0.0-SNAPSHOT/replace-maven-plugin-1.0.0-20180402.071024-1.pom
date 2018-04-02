@@ -18,8 +18,13 @@
     </properties>
 
     <dependencies>
-        <!--@dependencies-->
-        <!--@dependencies-->
+        <!--@import-->
+        <dependency>
+            <groupId>com.souche</groupId>
+            <artifactId>car-model-api</artifactId>
+            <version>1.2.1-SNAPSHOT</version>
+        </dependency>
+        <!--@import-->
 
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -65,8 +70,9 @@
                 </executions>
                 <configuration>
                     <source>${basedir}/../dependency.xml</source>
+                    <tag>dependencies</tag>
                     <target>${basedir}/pom.xml</target>
-                    <replacement>dependencies</replacement>
+                    <replacement>import</replacement>
                 </configuration>
             </plugin>
         </plugins>
