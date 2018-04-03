@@ -1,18 +1,16 @@
 package cn.moyada.dubbo.faker.core.invoke;
 
 import cn.moyada.dubbo.faker.core.listener.AbstractListener;
+import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.Suspendable;
-
-import java.lang.invoke.MethodHandle;
 
 public class FiberInvoker extends AbstractInvoker {
 
     private final FiberExecutorScheduler scheduler;
 
-    public FiberInvoker(MethodHandle handle, Object service,
-                        AbstractListener abstractListener, int poolSize) {
-        super(handle, service, abstractListener, poolSize);
+    public FiberInvoker(MethodProxy proxy, AbstractListener abstractListener, int poolSize) {
+        super(proxy, abstractListener, poolSize);
         this.scheduler = new FiberExecutorScheduler("fiber", super.excutor);
     }
 

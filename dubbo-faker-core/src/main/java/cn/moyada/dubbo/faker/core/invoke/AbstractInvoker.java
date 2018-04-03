@@ -4,12 +4,16 @@ import cn.moyada.dubbo.faker.core.exception.UnsupportedParamNumberException;
 import cn.moyada.dubbo.faker.core.listener.AbstractListener;
 import cn.moyada.dubbo.faker.core.model.FutureResult;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
+import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.utils.DateUtil;
 import cn.moyada.dubbo.faker.core.utils.ParamUtil;
+import cn.moyada.dubbo.faker.core.utils.RuntimeUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
@@ -17,43 +21,37 @@ import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
 
 public abstract class AbstractInvoker {
 
-    private final static int MAX_POOL_SIZE;
-    static {
-        int cpuCore = Runtime.getRuntime().availableProcessors() * 2;
-        MAX_POOL_SIZE = cpuCore % 8 == 0 ? cpuCore : cpuCore + (8 - cpuCore % 8);
-    }
-
-    private Long allowThreadSize() {
-        long memoryBytes = Runtime.getRuntime().freeMemory();
-        long stackBytes = 1024;
-        return (memoryBytes / stackBytes);
-    }
-
     private final AbstractListener abstractListener;
 
     protected final ExecutorService excutor;
     protected final LongAdder count;
 
-    protected final MethodHandle handle;
-    protected final Object service;
+//    protected final MethodHandle handle;
+//    protected final Object service;
+
+    protected final MethodHandle[] methodHandles;
+    protected final Object[] serviceAssembly;
+    protected final AtomicInteger curIndex;
     protected final int poolSize;
-    // protected final AtomicInteger curIndex;
 
-    public AbstractInvoker(MethodHandle handle, Object service,
-                           AbstractListener abstractListener, int poolSize) {
-        int threadSize = allowThreadSize().intValue();
-        threadSize = 2000 > threadSize ? threadSize : 2000;
 
-        poolSize = poolSize > MAX_POOL_SIZE ? MAX_POOL_SIZE : poolSize;
+    public AbstractInvoker(MethodProxy proxy, AbstractListener abstractListener, int poolSize) {
+        int threadSize = RuntimeUtil.getAllowThreadSize();
+        threadSize = 1000 > threadSize ? threadSize : 1000;
 
-        this.excutor = new ThreadPoolExecutor(poolSize, MAX_POOL_SIZE, 10L, TimeUnit.SECONDS,
+        this.excutor = new ThreadPoolExecutor(poolSize, RuntimeUtil.MAX_POOL_SIZE, 10L, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(threadSize), new ShutdownRejected());
-        this.poolSize = poolSize;
-        // this.curIndex = new AtomicInteger(0);
+
         this.abstractListener = abstractListener;
         this.count = new LongAdder();
-        this.handle = handle;
-        this.service = service;
+
+//        this.handle = proxy.getMethodHandle();
+//        this.service = proxy.getService();
+
+        this.methodHandles = proxy.getMethodHandle();
+        this.serviceAssembly = proxy.getService();
+        this.poolSize = poolSize;
+        this.curIndex = new AtomicInteger(0);
     }
 
     /**
@@ -81,10 +79,16 @@ public abstract class AbstractInvoker {
      */
     protected void execute(Object[] argsValue) {
         count.increment();
+        int index = curIndex.getAndIncrement() % poolSize;
+        Object service = serviceAssembly[index];
+        MethodHandle handle = methodHandles[index];
 
         // 开始时间
         long start = System.nanoTime();
-        Timestamp invokeTime = DateUtil.now();
+        System.out.println(Arrays.toString(argsValue) + "  " + start);
+        Timestamp invokeTime = DateUtil.nowTimestamp();
+//        Instant start = DateUtil.nowInstant();
+
 
         FutureResult result;
         try {
@@ -126,7 +130,9 @@ public abstract class AbstractInvoker {
             result = FutureResult.failed(throwable.getMessage());
         }
         // 完成计算耗时
+//        result.setSpend(DateUtil.afterInstant(start));
         result.setSpend((System.nanoTime() - start) / NANO_PER_MILLIS);
+        System.out.println(Arrays.toString(argsValue) + "  " + System.nanoTime());
         callback(new InvokeFuture(result, invokeTime, ParamUtil.toString(argsValue)));
         count.decrement();
     }
@@ -144,7 +150,7 @@ public abstract class AbstractInvoker {
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             executor.shutdownNow();
-            abstractListener.shutdown();
+            abstractListener.shutdownNow();
             throw new RuntimeException("服务响应过慢，已强制关闭.");
         }
     }

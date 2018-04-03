@@ -1,16 +1,15 @@
 package cn.moyada.dubbo.faker.core.invoke;
 
 import cn.moyada.dubbo.faker.core.listener.AbstractListener;
+import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.thread.PriorityThread;
 
-import java.lang.invoke.MethodHandle;
 import java.util.concurrent.CompletableFuture;
 
 public class AsyncInvoker extends AbstractInvoker {
 
-    public AsyncInvoker(MethodHandle handle, Object service,
-                        AbstractListener abstractListener, int poolSize) {
-        super(handle, service, abstractListener, poolSize);
+    public AsyncInvoker(MethodProxy proxy, AbstractListener abstractListener, int poolSize) {
+        super(proxy, abstractListener, poolSize);
     }
 
     @Override

@@ -3,8 +3,8 @@ package cn.moyada.dubbo.faker.core.proxy;
 import cn.moyada.dubbo.faker.core.common.BeanHolder;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.handler.AbstractHandler;
-import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
+import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
 import com.alibaba.dubbo.rpc.RpcException;
 import org.slf4j.Logger;
@@ -14,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.ref.SoftReference;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 调用代理生成器
@@ -32,26 +29,27 @@ public class MethodHandleProxy {
 
     private final BeanHolder beanHolder;
 
-    private final Map<Integer, SoftReference<MethodProxy>> proxyMap;
+//    private final Map<Integer, SoftReference<MethodProxy>> proxyMap;
 
     public MethodHandleProxy() {
         this.beanHolder = new BeanHolder("classpath:application-dubbo.xml");
-        this.proxyMap = new HashMap<>();
+//        this.proxyMap = new HashMap<>();
     }
 
-    public MethodProxy getProxy(MethodInvokeDO invokeInfo) { //, int poolSize) {
+    public MethodProxy getProxy(MethodInvokeDO invokeInfo, int poolSize) {
         MethodProxy proxy;
 
         log.info("init method proxy info.");
+        beanHolder.reset();
         // 检测是否已存在
-        Integer id = invokeInfo.getId();
-        SoftReference<MethodProxy> ref = proxyMap.get(id);
-        if(null != ref) {
-            proxy = ref.get();
-            if (null != proxy) { // && proxy.getService().length == poolSize) {
-                return proxy;
-            }
-        }
+//        Integer id = invokeInfo.getId();
+//        SoftReference<MethodProxy> ref = proxyMap.get(id);
+//        if(null != ref) {
+//            proxy = ref.get();
+//            if (null != proxy && proxy.getService().length == poolSize) {
+//                return proxy;
+//            }
+//        }
 
         // 获取参数类型
         Class<?>[] paramTypes;
@@ -73,11 +71,17 @@ public class MethodHandleProxy {
         }
 
         // 获取方法具柄
-        MethodHandle methodHandle = handle.fetchHandleInfo(invokeInfo.getClassName(),
-                invokeInfo.getMethodName(), invokeInfo.getReturnType(), paramTypes);
+//        MethodHandle methodHandle = handle.fetchHandleInfo(invokeInfo.getClassName(),
+//                invokeInfo.getMethodName(), invokeInfo.getReturnType(), paramTypes);
+        MethodHandle[] methodHandle = new MethodHandle[poolSize];
+        for (int index = 0; index < poolSize; index++) {
+            methodHandle[index] = handle.fetchHandleInfo(invokeInfo.getClassName(),
+                    invokeInfo.getMethodName(), invokeInfo.getReturnType(), paramTypes);
+        }
+
 
         // 获取接口
-        Class classType;
+        Class<?> classType;
         try {
             classType = ReflectUtil.getClassType(invokeInfo.getClassName());
         } catch (ClassNotFoundException e) {
@@ -86,13 +90,13 @@ public class MethodHandleProxy {
         }
 
         // 获取接口实例
-        Object serviceAssembly;
-//        Object[] serviceAssembly = new Object[poolSize];
+//        Object serviceAssembly;
+        Object[] serviceAssembly = new Object[poolSize];
         try {
-            serviceAssembly = beanHolder.getBean(classType);
-//            for (int index = 0; index < poolSize; index++) {
-//                serviceAssembly[index] = beanHelper.getBean(classType);
-//            }
+//            serviceAssembly = beanHolder.getBean(classType);
+            for (int index = 0; index < poolSize; index++) {
+                serviceAssembly[index] = beanHolder.getBean(index, classType);
+            }
         }
         catch (BeansException e) {
             log.error("fetch service bean error: " + e.getLocalizedMessage());
@@ -100,21 +104,22 @@ public class MethodHandleProxy {
         }
 
         // 初始化服务注册
-//        for (Object service : serviceAssembly) {
+        for (int index = 0; index < poolSize; index++) {
             try {
-                methodHandle.invoke(serviceAssembly, null);
+//                methodHandle.invoke(serviceAssembly, null);
+                methodHandle[index].invoke(serviceAssembly[index], null);
             } catch (Throwable throwable) {
             }
-//        }
+        }
 
         proxy = new MethodProxy();
         proxy.setParamTypes(paramTypes);
         proxy.setMethodHandle(methodHandle);
         proxy.setService(serviceAssembly);
 
-        // 缓存调用代理
-        ref = new SoftReference<>(proxy);
-        proxyMap.put(id, ref);
+//        // 缓存调用代理
+//        ref = new SoftReference<>(proxy);
+//        proxyMap.put(id, ref);
         return proxy;
     }
 }

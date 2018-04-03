@@ -2,11 +2,10 @@ package cn.moyada.dubbo.faker.core.listener;
 
 import cn.moyada.dubbo.faker.core.convert.LoggingConvert;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
+import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Queue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
@@ -28,6 +27,8 @@ public abstract class AbstractListener implements ListenerAction {
 
     protected final long total;
 
+    protected final Queue<InvokeFuture> futureQueue;
+
     protected AbstractListener(int poolSize, int maxPoolSize, long total, String fakerId, int invokeId, FakerManager fakerManager,
                                boolean saveResult, String resultParam) {
         this.excutor = new ThreadPoolExecutor(poolSize, maxPoolSize, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<>());
@@ -35,6 +36,15 @@ public abstract class AbstractListener implements ListenerAction {
         this.fakerManager = fakerManager;
         this.convert = new LoggingConvert(fakerId, invokeId, saveResult, resultParam);
         this.total = total;
+        this.futureQueue = new LinkedBlockingQueue<>();
+    }
+
+    /**
+     * 记录
+     * @param result
+     */
+    public void record(InvokeFuture result) {
+        futureQueue.offer(result);
     }
 
     public void shutdownDelay() {

@@ -1,5 +1,6 @@
 package cn.moyada.dubbo.faker.core;
 
+import cn.moyada.dubbo.faker.core.utils.RuntimeUtil;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.invoke.AbstractInvoker;
 import cn.moyada.dubbo.faker.core.invoke.AsyncInvoker;
@@ -34,9 +35,10 @@ public class Main {
     public String invoke(int invokeId, String invokeExpression, int poolSize,
                          int qps, long questNum, boolean random,
                          boolean saveResult, String resultParam) {
+        poolSize = RuntimeUtil.getActualSize(poolSize);
 
         MethodInvokeDO invokeInfo = fakerManager.getInvokeInfo(invokeId);
-        MethodProxy proxy = methodHandleProxy.getProxy(invokeInfo); //, poolSize);
+        MethodProxy proxy = methodHandleProxy.getProxy(invokeInfo, poolSize);
 
         Object[] values = JsonUtil.toArray(invokeExpression, Object[].class);
         Class<?>[] paramTypes = proxy.getParamTypes();
@@ -55,8 +57,7 @@ public class Main {
                 fakerManager, saveResult, resultParam);
 
         // 创建方法调用器
-        AbstractInvoker invoke = new AsyncInvoker(proxy.getMethodHandle(), proxy.getService(),
-                listener, poolSize);
+        AbstractInvoker invoke = new AsyncInvoker(proxy, listener, poolSize);
 
         int timeout = (3600 / qps) - (20 >= qps ? 0 : 50);
         // 发起调用

@@ -15,5 +15,8 @@ public interface ListenerAction {
      */
     void record(InvokeFuture result);
 
-    void shutdown();
+    /**
+     * 等待剩余任务完成结束
+     */
+    void shutdownNow();
 }

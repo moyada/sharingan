@@ -15,5 +15,3 @@ sh build-web.sh
 #sh build-page.sh
 #cd $HOME
 
-# 打包项目
-#mvn clean package -Dmaven.test.skip=true

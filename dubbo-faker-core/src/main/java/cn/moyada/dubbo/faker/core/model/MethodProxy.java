@@ -17,12 +17,14 @@ public class MethodProxy {
     /**
      * 方法具柄
      */
-    private MethodHandle methodHandle;
+//    private MethodHandle methodHandle;
+    private MethodHandle[] methodHandle;
 
     /**
      * 调用接口
      */
-    private Object service;
+//    private Object service;
+    private Object[] service;
 
     public Class<?>[] getParamTypes() {
         return paramTypes;
@@ -32,19 +34,35 @@ public class MethodProxy {
         this.paramTypes = paramTypes;
     }
 
-    public MethodHandle getMethodHandle() {
+//    public MethodHandle getMethodHandle() {
+//        return methodHandle;
+//    }
+//
+//    public void setMethodHandle(MethodHandle methodHandle) {
+//        this.methodHandle = methodHandle;
+//    }
+//
+//    public Object getService() {
+//        return service;
+//    }
+//
+//    public void setService(Object service) {
+//        this.service = service;
+//    }
+
+    public MethodHandle[] getMethodHandle() {
         return methodHandle;
     }
 
-    public void setMethodHandle(MethodHandle methodHandle) {
+    public void setMethodHandle(MethodHandle[] methodHandle) {
         this.methodHandle = methodHandle;
     }
 
-    public Object getService() {
+    public Object[] getService() {
         return service;
     }
 
-    public void setService(Object service) {
+    public void setService(Object[] service) {
         this.service = service;
     }
 }

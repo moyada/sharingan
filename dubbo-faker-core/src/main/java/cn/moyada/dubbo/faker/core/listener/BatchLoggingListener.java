@@ -28,11 +28,14 @@ public class BatchLoggingListener extends AbstractListener {
 
     public BatchLoggingListener(String fakerId, int invokeId, long total, FakerManager fakerManager,
                                 boolean saveResult, String resultParam) {
-        super(2, 5, total, fakerId, invokeId, fakerManager, saveResult, resultParam);
-        this.list1 = new ArrayList<>(500);
-        this.list2 = new ArrayList<>(500);
+        super(1, 1, total, fakerId, invokeId, fakerManager, saveResult, resultParam);
+        Long r = total / 1000;
+        int num = r == 0 ? 1: r.intValue();
+        this.list1 = new ArrayList<>(1000 * num);
+        this.list2 = new ArrayList<>(1000 * num);
         this.lock = new Switch(true);
         this.stop = false;
+        this.excutor.submit(new Converter());
         new Thread(new Logger()).start();
     }
 
@@ -42,12 +45,7 @@ public class BatchLoggingListener extends AbstractListener {
     }
 
     @Override
-    public void record(InvokeFuture result) {
-        excutor.submit(new Converter(result));
-    }
-
-    @Override
-    public void shutdown() {
+    public void shutdownNow() {
         for (;;) {
             LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
             if(list1.isEmpty() && list2.isEmpty()) {
@@ -59,20 +57,20 @@ public class BatchLoggingListener extends AbstractListener {
 
     class Converter implements Runnable {
 
-        private final InvokeFuture result;
-
-        Converter(InvokeFuture result) {
-            this.result = result;
-        }
-
         @Override
         public void run() {
-            count.increment();
-            if(lock.isOpen()) {
-                list1.add(convert.convertToLog(result));
-            }
-            else {
-                list2.add(convert.convertToLog(result));
+            for (;;) {
+                InvokeFuture future = futureQueue.poll();
+                if(null == future) {
+                    LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
+                    continue;
+                }
+                count.increment();
+                if (lock.isOpen()) {
+                    list1.add(convert.convertToLog(future));
+                } else {
+                    list2.add(convert.convertToLog(future));
+                }
             }
         }
     }
@@ -82,6 +80,7 @@ public class BatchLoggingListener extends AbstractListener {
         @Override
         public void run() {
             for (;;) {
+                // 每秒批量保存一次
                 LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
                 if (lock.close()) {
                     save(list1);

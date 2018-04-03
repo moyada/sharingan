@@ -20,17 +20,12 @@ public class LoggingListener extends AbstractListener {
 
     public LoggingListener(String fakerId, int invokeId, long total, FakerManager fakerManager,
                            boolean saveResult, String resultParam) {
-        super(1, 5, total, fakerId, invokeId, fakerManager, saveResult, resultParam);
+        super(1, 1, total, fakerId, invokeId, fakerManager, saveResult, resultParam);
+        this.excutor.submit(new Consumer());
     }
 
     @Override
-    public void record(InvokeFuture result) {
-        this.count.increment();
-        this.excutor.submit(new InvokerConsumer(result));
-    }
-
-    @Override
-    public void shutdown() {
+    public void shutdownNow() {
         long value;
         for (;;) {
             value = count.longValue();
@@ -42,21 +37,24 @@ public class LoggingListener extends AbstractListener {
         }
     }
 
-    class InvokerConsumer implements Runnable {
-
-        private final InvokeFuture future;
-
-        InvokerConsumer(InvokeFuture future) {
-            this.future = future;
-        }
+    class Consumer implements Runnable {
 
         @Override
         public void run() {
-            LogDO logDO = convert.convertToLog(future);
+            for (;;) {
+                InvokeFuture future = futureQueue.poll();
+                if(null == future) {
+                    LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
+                    continue;
+                }
+                count.increment();
 
-            log.info("save invoke result: " + convert.getFakerId());
+                LogDO logDO = convert.convertToLog(future);
 
-            fakerManager.saveLog(logDO);
+                log.info("save invoke result: " + convert.getFakerId());
+
+                fakerManager.saveLog(logDO);
+            }
         }
     }
 }

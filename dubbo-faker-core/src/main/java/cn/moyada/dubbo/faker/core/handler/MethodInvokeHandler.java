@@ -38,7 +38,7 @@ public class MethodInvokeHandler extends AbstractHandler {
         } catch (NoSuchMethodException e) {
             throw new InitializeInvokerException("方法不存在: " + methodName);
         }catch (IllegalAccessException e) {
-            throw new InitializeInvokerException("方法具柄获取失败");
+            throw new InitializeInvokerException("方法句柄获取失败");
         }
         return methodHandle;
     }
