@@ -236,6 +236,18 @@ class InvokeForm extends React.Component {
     });
   }
 
+  changePollSize(qpsInput, loopInput) {
+    const qps = null == qpsInput ? this.props.form.getFieldsValue(['qps']).qps : qpsInput
+    const loop = null == loopInput ? this.props.form.getFieldsValue(['loop']).loop : loopInput
+    if(qps === null || qps === undefined || qps < 1) {
+      return
+    }
+    if(loop === null || loop === undefined || loop < 1) {
+      return
+    }
+    this.props.form.setFieldsValue({'poolSize': Math.round(loop / qps)})
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
 
@@ -298,7 +310,7 @@ class InvokeForm extends React.Component {
             <TabPane tab="Dubbo" key="dubbo">
               <Col span={24} key='invokeId'>
                 <FormItem {...formItemRowLayout} style={{ marginRight: '100px', marginTop: '20px' }} label={`请求`}>
-                  {getFieldDecorator(`invokeId`, {initFieldsValue: null})(
+                  {getFieldDecorator(`invokeId`, {initialValue: null})(
                     <InvokeCascader
                       onChange={this.onSelectInvoke.bind(this)}
                     />
@@ -307,7 +319,7 @@ class InvokeForm extends React.Component {
               </Col>
               <Col span={24} key='invokeExpression'>
                 <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`参数表达式`}>
-                  {getFieldDecorator(`invokeExpression`, {initFieldsValue: null})(
+                  {getFieldDecorator(`invokeExpression`, {initialValue: null})(
                     <Input
                       placeholder='["${1.test}"]'
                     />
@@ -316,7 +328,7 @@ class InvokeForm extends React.Component {
               </Col>
             </TabPane>
 
-            <TabPane tab="Http" key="http">
+            <TabPane tab="Http" key="http" disabled>
               <Col span={24} key='invokeUrl'>
                 <Table
                   dataSource={this.state.data}
@@ -337,7 +349,7 @@ class InvokeForm extends React.Component {
                   <Row>
                     <Col span={24} key="url">
                       <FormItem {...formItemRowLayout} label={`请求链接`}>
-                        {getFieldDecorator(`url`, {initFieldsValue: null})(
+                        {getFieldDecorator(`url`, {initialValue: null})(
                           <Input
                             placeholder='http://'
                           />
@@ -346,7 +358,7 @@ class InvokeForm extends React.Component {
                     </Col>
                     <Col span={24} key="method">
                       <FormItem {...formItemRowLayout} label={`请求方法`}>
-                        {getFieldDecorator(`method`, {initFieldsValue: "get"})(
+                        {getFieldDecorator(`method`, {initialValue: "get"})(
                           <RadioGroup >
                             <RadioButton value="get">GET</RadioButton>
                             <RadioButton value="post">POST</RadioButton>
@@ -358,7 +370,7 @@ class InvokeForm extends React.Component {
                     </Col>
                     <Col span={24} key="header">
                       <FormItem {...formItemRowLayout} label={`请求头`}>
-                        {getFieldDecorator(`header`, {initFieldsValue: null})(
+                        {getFieldDecorator(`header`, {initialValue: null})(
                           <Input
                             placeholder='{"_token": "153957392783"}'
                           />
@@ -367,7 +379,7 @@ class InvokeForm extends React.Component {
                     </Col>
                     <Col span={24} key="cookie">
                       <FormItem {...formItemRowLayout} label={`cookie`}>
-                        {getFieldDecorator(`cookie`, {initFieldsValue: null})(
+                        {getFieldDecorator(`cookie`, {initialValue: null})(
                           <Input
                             placeholder='{"JSESSIONID": "ByOK3vjFD72aPnrF7C2HmdnV6TZcEbzWoWiBYEnLerjQ99zWpBng"}'
                           />
@@ -376,7 +388,7 @@ class InvokeForm extends React.Component {
                     </Col>
                     <Col span={24} key="param">
                       <FormItem {...formItemRowLayout} label={`请求参数`}>
-                        {getFieldDecorator(`param`, {initFieldsValue: null})(
+                        {getFieldDecorator(`param`, {initialValue: null})(
                           <Input
                             placeholder='{"id": "123"}'
                           />
@@ -389,7 +401,7 @@ class InvokeForm extends React.Component {
 
               <Col span={6} key='proxyHost'>
                 <FormItem {...formItemLayout} label={`代理主机`}>
-                  {getFieldDecorator(`proxyHost`, {initFieldsValue: null})(
+                  {getFieldDecorator(`proxyHost`, {initialValue: null})(
                     <Input
                       placeholder='127.0.0.1'
                     />
@@ -399,7 +411,7 @@ class InvokeForm extends React.Component {
 
               <Col span={6} key='proxyPort'>
                 <FormItem {...formItemLayout} label={`代理端口`}>
-                  {getFieldDecorator(`proxyPort`, {initFieldsValue: null})(
+                  {getFieldDecorator(`proxyPort`, {initialValue: null})(
                     <InputNumber
                       min={0}
                       precision={0}
@@ -411,7 +423,7 @@ class InvokeForm extends React.Component {
 
               <Col span={6} key='proxyUsername'>
                 <FormItem {...formItemLayout} label={`账号`}>
-                  {getFieldDecorator(`proxyUsername`, {initFieldsValue: null})(
+                  {getFieldDecorator(`proxyUsername`, {initialValue: null})(
                     <Input
                       placeholder='admin'
                     />
@@ -421,7 +433,7 @@ class InvokeForm extends React.Component {
 
               <Col span={6} key='proxyPassword'>
                 <FormItem {...formItemLayout} style={{ marginRight: '20px' }} label={`密码`}>
-                  {getFieldDecorator(`proxyPassword`, {initFieldsValue: null})(
+                  {getFieldDecorator(`proxyPassword`, {initialValue: null})(
                     <Input
                     />
                   )}
@@ -432,21 +444,23 @@ class InvokeForm extends React.Component {
           </Tabs>
 
           <Col span={3} key='poolSize'>
-            <FormItem {...formItemLayout} label={`并发数`}>
-              {getFieldDecorator(`poolSize`, {initFieldsValue: null})(
+            <FormItem {...formItemLayout} label={`并发数`} >
+              {getFieldDecorator(`poolSize`, {initialValue: null})(
                 <InputNumber
-                  min={0}
-                  max={1000}
+                  min={1}
+                  max={100}
                   precision={0}
+                  disabled
                 />
               )}
             </FormItem>
           </Col>
           <Col span={4} key='qps'>
             <FormItem {...formItemLayout} label={`每秒请求数`}>
-              {getFieldDecorator(`qps`, {initFieldsValue: null})(
+              {getFieldDecorator(`qps`, {initialValue: null})(
                 <InputNumber
-                  min={0}
+                  onChange={(qps) => this.changePollSize(qps, null)}
+                  min={1}
                   max={1000}
                   precision={0}
                 />
@@ -455,9 +469,11 @@ class InvokeForm extends React.Component {
           </Col>
           <Col span={3} key='loop'>
             <FormItem {...formItemLayout} label={`请求次数`}>
-              {getFieldDecorator(`loop`, {initFieldsValue: null})(
+              {getFieldDecorator(`loop`, {initialValue: null})(
                 <InputNumber
-                  min={0}
+                  onChange={(loop) =>this.changePollSize(null, loop)}
+                  min={1}
+                  max={10000}
                   precision={0}
                 />
               )}
@@ -465,8 +481,8 @@ class InvokeForm extends React.Component {
           </Col>
           <Col span={3} key='random'>
             <FormItem {...formItemLayout} label={`随机取参`}>
-              {getFieldDecorator(`random`, {initFieldsValue: 1 })(
-                <RadioGroup defaultValue={1}>
+              {getFieldDecorator(`random`, {initialValue: 1 })(
+                <RadioGroup >
                   <RadioButton value={1}>是</RadioButton>
                   <RadioButton value={0}>否</RadioButton>
                 </RadioGroup>
@@ -475,8 +491,8 @@ class InvokeForm extends React.Component {
           </Col>
           <Col span={3} key='saveResult'>
             <FormItem {...formItemLayout} label={`保存结果`}>
-              {getFieldDecorator(`saveResult`, {initFieldsValue: true })(
-                <RadioGroup defaultValue={true}>
+              {getFieldDecorator(`saveResult`, {initialValue: true })(
+                <RadioGroup >
                   <RadioButton value={true}>是</RadioButton>
                   <RadioButton value={false}>否</RadioButton>
                 </RadioGroup>
@@ -486,7 +502,7 @@ class InvokeForm extends React.Component {
           <Col span={6} key='resultParam'>
             <FormItem labelCol={{span: 8}} wrapperCol={{span: 16}}
                       label={`保存结果参数`}>
-              {getFieldDecorator(`resultParam`, {initFieldsValue: null})(
+              {getFieldDecorator(`resultParam`, {initialValue: null})(
                 <Input
                   disabled={!this.props.form.getFieldValue('saveResult')}
                 />

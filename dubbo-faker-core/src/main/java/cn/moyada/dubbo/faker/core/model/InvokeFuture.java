@@ -1,5 +1,7 @@
 package cn.moyada.dubbo.faker.core.model;
 
+import cn.moyada.dubbo.faker.core.model.padding.Bit5Padding;
+
 import java.sql.Timestamp;
 
 /**
@@ -7,7 +9,7 @@ import java.sql.Timestamp;
  * @author xueyikang
  * @create 2017-12-30 18:14
  */
-public class InvokeFuture {
+public class InvokeFuture extends Bit5Padding {
 
     /**
      * 请求结果

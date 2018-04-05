@@ -3,7 +3,9 @@ package cn.moyada.dubbo.faker.core.listener;
 import cn.moyada.dubbo.faker.core.common.Switch;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
+import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.domain.LogDO;
+import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -26,33 +28,31 @@ public class BatchLoggingListener extends AbstractListener {
     private final Switch lock;
     private volatile boolean stop;
 
-    public BatchLoggingListener(String fakerId, int invokeId, long total, FakerManager fakerManager,
-                                boolean saveResult, String resultParam) {
-        super(1, 1, total, fakerId, invokeId, fakerManager, saveResult, resultParam);
-        Long r = total / 1000;
-        int num = r == 0 ? 1: r.intValue();
+    public BatchLoggingListener(String fakerId, InvokerInfo invokerInfo,
+                                UnlockQueue<InvokeFuture> queue, FakerManager fakerManager) {
+        super(fakerId, invokerInfo, queue, fakerManager);
+        int num = invokerInfo.getQuestNum() / 1000;
+        num = num == 0 ? 1: num;
         this.list1 = new ArrayList<>(1000 * num);
         this.list2 = new ArrayList<>(1000 * num);
         this.lock = new Switch(true);
         this.stop = false;
-        this.excutor.submit(new Converter());
-        new Thread(new Logger()).start();
     }
 
-    public void shutdownDelay() {
-        super.shutdownDelay();
-        this.stop = true;
+    private void stopLogger() {
+        for(;;) {
+            if(list1.isEmpty() && list2.isEmpty()) {
+                break;
+            }
+            LockSupport.parkNanos(100 * NANO_PER_MILLIS);
+        }
+        stop = true;
     }
 
     @Override
-    public void shutdownNow() {
-        for (;;) {
-            LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
-            if(list1.isEmpty() && list2.isEmpty()) {
-                excutor.shutdownNow();
-                break;
-            }
-        }
+    public void startListener() {
+        new Thread(new Converter()).start();
+        new Thread(new Logger()).start();
     }
 
     class Converter implements Runnable {
@@ -62,16 +62,21 @@ public class BatchLoggingListener extends AbstractListener {
             for (;;) {
                 InvokeFuture future = futureQueue.poll();
                 if(null == future) {
+                    if(futureQueue.isDone()) {
+                        break;
+                    }
                     LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
                     continue;
                 }
-                count.increment();
+
                 if (lock.isOpen()) {
                     list1.add(convert.convertToLog(future));
                 } else {
                     list2.add(convert.convertToLog(future));
                 }
             }
+            stopLogger();
+            log.info("logging shutdown: " + convert.getFakerId());
         }
     }
 
@@ -99,7 +104,8 @@ public class BatchLoggingListener extends AbstractListener {
             if(logDOs.isEmpty()) {
                 return;
             }
-            log.info("batch save invoke result: " + convert.getFakerId() + ", size: " + logDOs.size());
+            int size = logDOs.size();
+            log.info("batch save invoke result. fakerId: " + convert.getFakerId() + ", size: " + size);
             fakerManager.saveLog(logDOs);
             logDOs.clear();
         }

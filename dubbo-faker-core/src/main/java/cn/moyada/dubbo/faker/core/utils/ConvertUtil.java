@@ -12,6 +12,11 @@ import java.util.Map;
  */
 public class ConvertUtil {
 
+    /**
+     * 获取参数的转换目标
+     * @param paramTypes
+     * @return
+     */
     public static Map<Integer, ConvertType> getConvertMap(Class<?>[] paramTypes) {
         int length = paramTypes.length;
         if(0 == length) {

@@ -14,6 +14,11 @@ public class DateUtil {
 
     private static final ZoneId zoneId = ZoneId.of("Asia/Shanghai");
 
+    /**
+     * 返回当前距离Instant多少毫秒
+     * @param start
+     * @return
+     */
     public static long afterInstant(Instant start) {
         return Duration.between(start, nowInstant()).toMillis();
     }
@@ -23,6 +28,6 @@ public class DateUtil {
     }
 
     public static Timestamp nowTimestamp() {
-        return Timestamp.from(Instant.now(Clock.system(zoneId)));
+        return Timestamp.from(nowInstant());
     }
 }

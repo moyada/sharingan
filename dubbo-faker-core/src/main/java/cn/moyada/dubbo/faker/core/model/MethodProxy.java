@@ -1,7 +1,5 @@
 package cn.moyada.dubbo.faker.core.model;
 
-import java.lang.invoke.MethodHandle;
-
 /**
  * 请求代理信息
  * @author xueyikang
@@ -10,21 +8,40 @@ import java.lang.invoke.MethodHandle;
 public class MethodProxy {
 
     /**
+     * 请求编号
+     */
+    private String fakerId;
+
+    /**
+     * 请求参数
+     */
+    private Object[] values;
+
+    /**
      * 方法参数类型
      */
     private Class<?>[] paramTypes;
 
     /**
-     * 方法具柄
+     * 调用代理
      */
-//    private MethodHandle methodHandle;
-    private MethodHandle[] methodHandle;
+    private InvokerProxy[] invokerProxy;
 
-    /**
-     * 调用接口
-     */
-//    private Object service;
-    private Object[] service;
+    public String getFakerId() {
+        return fakerId;
+    }
+
+    public void setFakerId(String fakerId) {
+        this.fakerId = fakerId;
+    }
+
+    public Object[] getValues() {
+        return values;
+    }
+
+    public void setValues(Object[] values) {
+        this.values = values;
+    }
 
     public Class<?>[] getParamTypes() {
         return paramTypes;
@@ -34,35 +51,11 @@ public class MethodProxy {
         this.paramTypes = paramTypes;
     }
 
-//    public MethodHandle getMethodHandle() {
-//        return methodHandle;
-//    }
-//
-//    public void setMethodHandle(MethodHandle methodHandle) {
-//        this.methodHandle = methodHandle;
-//    }
-//
-//    public Object getService() {
-//        return service;
-//    }
-//
-//    public void setService(Object service) {
-//        this.service = service;
-//    }
-
-    public MethodHandle[] getMethodHandle() {
-        return methodHandle;
+    public InvokerProxy[] getInvokerProxy() {
+        return invokerProxy;
     }
 
-    public void setMethodHandle(MethodHandle[] methodHandle) {
-        this.methodHandle = methodHandle;
-    }
-
-    public Object[] getService() {
-        return service;
-    }
-
-    public void setService(Object[] service) {
-        this.service = service;
+    public void setInvokerProxy(InvokerProxy[] invokerProxy) {
+        this.invokerProxy = invokerProxy;
     }
 }

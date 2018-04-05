@@ -18,7 +18,7 @@ public class ParamMapping {
 
     /**
      * 每个位置参数的表达式映射关系
-     * <序号, <参数表达式, 映射参数类别>>
+     * <序号, 映射规则>
      */
     private Map<Integer, Mapping> rebuildParamMap;
 
@@ -40,6 +40,9 @@ public class ParamMapping {
 
     public static class Mapping {
 
+        /**
+         * 参数表达式,映射集合
+         */
         private  Map<String, TypeCount> paramMap = new HashMap<>();
 
         public void put(String find, String mapping) {
@@ -59,8 +62,14 @@ public class ParamMapping {
 
     public static class TypeCount {
 
+        /**
+         * 映射类别
+         */
         private String type;
 
+        /**
+         * 映射次数
+         */
         private int count;
 
         public TypeCount(String type) {

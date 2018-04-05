@@ -13,25 +13,29 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 参数提供器
  * @author xueyikang
  * @create 2018-03-27 10:39
  */
 public class ParamProvider {
 
+    // 参数表达式
     private final Object[] invokeValue;
+    // 参数实际类型
+    private Class<?>[] paramTypes;
     private final int length;
 
+    // 参数映射规则
     private Map<Integer, ParamMapping.Mapping> rebuildParamMap;
-    private Map<String, List<String>> fakerParamMap;
+    // 参数类型映射
     private Map<Integer, ConvertType> convertMap;
 
-    private Class<?>[] paramTypes;
-
-//    private Map<String, Object> jsonMap;
+    // 参数类型数据集合
+    private Map<String, List<String>> fakerParamMap;
+    // 参数类型下标提供器
     private Map<String, AbstractIndexProvider> indexProviderMap;
 
-//    private Random random;
-
+    // 参数映射链
     private Map<String, String[]> linkMap;
 
     public ParamProvider(FakerManager fakerManager, Object[] invokeValue, Class<?>[] paramTypes, boolean random) {
@@ -51,8 +55,6 @@ public class ParamProvider {
             this.convertMap = ConvertUtil.getConvertMap(paramTypes);
 
             this.paramTypes = paramTypes;
-//            this.jsonMap = Maps.newHashMap();
-//            this.random = new Random();
             this.length = invokeValue.length;
 
             genParamLinkAndIndex(random);
@@ -159,28 +161,14 @@ public class ParamProvider {
                 // 替换表达式
                 paramLink = linkMap.get(key);
                 for (int i = 0; i < typeCount.getCount(); i++) {
+                    // 获取模拟参数集合
                     fakerValue = fakerValueList.get(indexProviderMap.get(value).nextIndex());
 
                     if (null == paramLink) {
-//                    // 获取模拟参数集合
-//                    fakerValueList = fakerParamMap.get(value);
-//
-//                    fakerValue = fakerValueList.get(random.nextInt(fakerValueList.size()));
                         // 替换表达式
                         json = replaceFirst(json, key, fakerValue);
-//                        json = StringUtils.replaceOnce(json, key, fakerValue);
                     } else {
                         // 存在对参数的复杂替换
-
-//                    jsonObj = jsonMap.get(value);
-//                    if(null == jsonObj) {
-//                        // 获取模拟参数集合
-//                        fakerValueList = fakerParamMap.get(value);
-//
-//                        fakerValue = fakerValueList.get(random.nextInt(fakerValueList.size()));
-//                        jsonObj = JsonUtil.toObject(fakerValue, Object.class);
-//                        jsonMap.put(value, jsonObj);
-//                    }
                         jsonMap = JsonUtil.toMap(fakerValue, String.class, Object.class);
 
                         // 查询json对象参数
@@ -193,6 +181,7 @@ public class ParamProvider {
                             }
                             jsonMap = (Map<String, Object>) jsonMap.get(paramLink[linkIndex]);
                         }
+
                         if (null == jsonMap) {
                             // TODO throws exception?
                             json = replaceFirst(json, key, "");
@@ -206,17 +195,6 @@ public class ParamProvider {
                             }
                             json = replaceFirst(json, key, value);
                         }
-//                    for (String link : paramLink) {
-//                        if(null == jsonObj) {
-//                            // TODO throws exception?
-//                            json = StringUtils.replaceOnce(json, key, "");
-//                            break;
-//                        }
-//                        jsonObj = ((Map<String, Object>)jsonObj).get(link);
-//                    }
-//                         替换表达式
-//                        json = StringUtils.replaceOnce(json, key, JsonUtil.toJson(jsonObj));
-//                    }
                     }
                 }
                 argsValue[index] = convert(json, convertMap.get(index), paramTypes[index]);

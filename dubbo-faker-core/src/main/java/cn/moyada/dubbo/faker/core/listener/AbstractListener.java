@@ -3,13 +3,8 @@ package cn.moyada.dubbo.faker.core.listener;
 import cn.moyada.dubbo.faker.core.convert.LoggingConvert;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
-
-import java.util.Queue;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.LongAdder;
-import java.util.concurrent.locks.LockSupport;
-
-import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
+import cn.moyada.dubbo.faker.core.model.InvokerInfo;
+import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
 
 /**
  * 监听器
@@ -18,40 +13,17 @@ import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
  */
 public abstract class AbstractListener implements ListenerAction {
 
-    protected final ExecutorService excutor;
-    protected final LongAdder count;
-
     protected final LoggingConvert convert;
 
     protected final FakerManager fakerManager;
 
-    protected final long total;
+    protected final UnlockQueue<InvokeFuture> futureQueue;
 
-    protected final Queue<InvokeFuture> futureQueue;
-
-    protected AbstractListener(int poolSize, int maxPoolSize, long total, String fakerId, int invokeId, FakerManager fakerManager,
-                               boolean saveResult, String resultParam) {
-        this.excutor = new ThreadPoolExecutor(poolSize, maxPoolSize, 5L, TimeUnit.SECONDS, new LinkedBlockingDeque<>());
-        this.count = new LongAdder();
+    protected AbstractListener(String fakerId, InvokerInfo invokerInfo,
+                               UnlockQueue<InvokeFuture> queue, FakerManager fakerManager) {
+        this.futureQueue = queue;
         this.fakerManager = fakerManager;
-        this.convert = new LoggingConvert(fakerId, invokeId, saveResult, resultParam);
-        this.total = total;
-        this.futureQueue = new LinkedBlockingQueue<>();
-    }
-
-    /**
-     * 记录
-     * @param result
-     */
-    public void record(InvokeFuture result) {
-        futureQueue.offer(result);
-    }
-
-    public void shutdownDelay() {
-        // 是否全部记录完了
-        while (count.longValue() != total) {
-            LockSupport.parkNanos(NANO_PER_MILLIS);
-        }
-        this.excutor.shutdown();
+        this.convert = new LoggingConvert(fakerId, invokerInfo.getInvokeId(),
+                invokerInfo.isSaveResult(), invokerInfo.getResultParam());
     }
 }

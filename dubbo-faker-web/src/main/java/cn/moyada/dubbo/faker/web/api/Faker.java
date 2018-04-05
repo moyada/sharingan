@@ -3,6 +3,7 @@ package cn.moyada.dubbo.faker.web.api;
 import cn.moyada.dubbo.faker.core.Main;
 import cn.moyada.dubbo.faker.core.http.HttpInvoke;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
+import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.domain.LogDO;
 import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
@@ -45,7 +46,7 @@ public class Faker {
                        @ApiParam(name = "invokeExpression", required = true, value = "参数表达式", defaultValue = "[\"${1.model}\"]") @RequestParam("invokeExpression") String invokeExpression,
                        @ApiParam(name = "poolSize", value = "并发数") @RequestParam(value = "poolSize", required = false) Integer poolSize,
                        @ApiParam(name = "qps", value = "每秒钟请求数") @RequestParam(value = "qps", required = false) Integer qps,
-                       @ApiParam(name = "loop", value = "请求次数") @RequestParam(value = "loop", required = false) Long loop,
+                       @ApiParam(name = "loop", value = "请求次数") @RequestParam(value = "loop", required = false) Integer loop,
                        @ApiParam(name = "random", value = "随机请求") @RequestParam(value = "random", required = false, defaultValue = "1") Integer random,
                        @ApiParam(name = "saveResult", value = "保存结果", defaultValue = "false") @RequestParam(value = "saveResult", required = false) Boolean saveResult,
                        @ApiParam(name = "resultParam", value = "选定保存结果参数") @RequestParam(value = "resultParam", required = false) String resultParam
@@ -54,9 +55,9 @@ public class Faker {
             return Result.failed(401, "已有任务进行中");
         }
 
-        poolSize = null == poolSize || 1 > poolSize ? 1 : poolSize;
         qps = null == qps || 1 > qps ? 1 : qps;
         loop = null == loop || 1 > loop ? 1 : loop;
+        poolSize = Math.round((loop * 1.0F) / qps);
         if(loop < poolSize) {
             return Result.failed(503, "请求次数必须大于并发数");
         }
@@ -65,9 +66,20 @@ public class Faker {
         }
         saveResult = null == saveResult ? false : saveResult;
         resultParam = null == resultParam || resultParam.trim().length() == 0 ? null : resultParam.trim();
+
+        InvokerInfo invokerInfo = new InvokerInfo();
+        invokerInfo.setInvokeId(invokeId);
+        invokerInfo.setInvokeExpression(invokeExpression);
+        invokerInfo.setPoolSize(poolSize);
+        invokerInfo.setQps(qps);
+        invokerInfo.setQuestNum(loop);
+        invokerInfo.setRandom(random == 1);
+        invokerInfo.setSaveResult(saveResult);
+        invokerInfo.setResultParam(resultParam);
+
+        running = true;
         try {
-            running = true;
-            String data = main.invoke(invokeId, invokeExpression, poolSize, qps, loop, random == 1, saveResult, resultParam);
+            String data = main.invoke(invokerInfo);
             return Result.success(data);
         }
         catch (Exception e) {

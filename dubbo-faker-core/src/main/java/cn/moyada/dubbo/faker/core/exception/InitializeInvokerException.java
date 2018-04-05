@@ -18,4 +18,8 @@ public class InitializeInvokerException extends RuntimeException {
     public InitializeInvokerException(String message) {
         super(message);
     }
+
+    public InitializeInvokerException(Throwable cause) {
+        super(cause);
+    }
 }

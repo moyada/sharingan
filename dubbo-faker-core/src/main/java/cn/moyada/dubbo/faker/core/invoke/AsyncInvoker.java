@@ -1,15 +1,19 @@
 package cn.moyada.dubbo.faker.core.invoke;
 
-import cn.moyada.dubbo.faker.core.listener.AbstractListener;
+import cn.moyada.dubbo.faker.core.model.InvokeFuture;
+import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
-import cn.moyada.dubbo.faker.core.thread.PriorityThread;
+import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * 异步调用器
+ */
 public class AsyncInvoker extends AbstractInvoker {
 
-    public AsyncInvoker(MethodProxy proxy, AbstractListener abstractListener, int poolSize) {
-        super(proxy, abstractListener, poolSize);
+    public AsyncInvoker(MethodProxy proxy, UnlockQueue<InvokeFuture> queue, InvokerInfo invokerInfo) {
+        super(proxy, queue, invokerInfo);
     }
 
     @Override
@@ -17,7 +21,7 @@ public class AsyncInvoker extends AbstractInvoker {
 //        super.count.increment();
 //        Timestamp invokeTime = Timestamp.from(Instant.now());
 
-        CompletableFuture.runAsync(new PriorityThread(() -> execute(argsValue)), excutor);
+        CompletableFuture.runAsync(() -> execute(argsValue), excutor);
 
 //        CompletableFuture.supplyAsync(() ->
 //                {

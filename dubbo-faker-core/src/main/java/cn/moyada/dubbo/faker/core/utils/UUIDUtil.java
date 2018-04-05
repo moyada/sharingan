@@ -8,6 +8,10 @@ import java.util.UUID;
  */
 public class UUIDUtil {
 
+    /**
+     * 生成唯一编号
+     * @return
+     */
     public static String getUUID(){
         String s = UUID.randomUUID().toString();
         //去掉“-”符号
