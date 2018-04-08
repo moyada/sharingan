@@ -48,7 +48,10 @@ public class FakerFilter implements Filter {
     }
 
     public void setListener() {
-        BatchRecordListener listener = ServiceBean.getSpringContext().getBean("batchRecordListener", BatchRecordListener.class);
+        BatchRecordListener listener = ServiceBean.getSpringContext().getBean(BatchRecordListener.class);
+        if(null == listener) {
+            throw new NullPointerException("can not find any listener bean instant.");
+        }
         this.listener = listener;
     }
 }

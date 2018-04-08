@@ -3,7 +3,7 @@ package cn.moyada.dubbo.faker.core.invoke;
 import cn.moyada.dubbo.faker.core.exception.UnsupportedParamNumberException;
 import cn.moyada.dubbo.faker.core.factory.GroupThreadFactory;
 import cn.moyada.dubbo.faker.core.model.*;
-import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
+import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
 import cn.moyada.dubbo.faker.core.utils.DateUtil;
 import cn.moyada.dubbo.faker.core.utils.ParamUtil;
 import cn.moyada.dubbo.faker.core.utils.RuntimeUtil;
@@ -19,15 +19,16 @@ import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
 
 public abstract class AbstractInvoker {
 
-    protected final UnlockQueue<InvokeFuture> queue;
+    protected final AbstractQueue<InvokeFuture> queue;
 
     protected final ExecutorService excutor;
     protected final LongAdder count;
 
-    protected final InvokerProxy[] invokerProxy;
+    protected final MethodHandle[] methodHandles;
+    protected final Object service;
     private final int questNum;
 
-    public AbstractInvoker(MethodProxy proxy, UnlockQueue<InvokeFuture> queue, InvokerInfo invokerInfo) {
+    public AbstractInvoker(MethodProxy proxy, AbstractQueue<InvokeFuture> queue, InvokerInfo invokerInfo) {
         int poolSize = invokerInfo.getPoolSize();
         int questNum = invokerInfo.getQuestNum();
         int threadSize = RuntimeUtil.getAllowThreadSize() - poolSize;
@@ -41,7 +42,8 @@ public abstract class AbstractInvoker {
         this.queue = queue;
         this.count = new LongAdder();
 
-        this.invokerProxy = proxy.getInvokerProxy();
+        this.methodHandles = proxy.getMethodHandle();
+        this.service = proxy.getService();
         this.questNum = questNum;
     }
 
@@ -75,10 +77,7 @@ public abstract class AbstractInvoker {
     protected void execute(Object[] argsValue) {
         int index = ThreadUtil.getInnerGroupId();// % poolSize;
 
-        InvokerProxy invokerProxy = this.invokerProxy[index];
-
-        Object service = invokerProxy.getService();
-        MethodHandle handle = invokerProxy.getMethodHandle();
+        MethodHandle handle = methodHandles[index];
 
         // 开始时间
         long start = System.nanoTime();
@@ -132,16 +131,19 @@ public abstract class AbstractInvoker {
 //        result.setSpend(DateUtil.afterInstant(start));
         result.setSpend((System.nanoTime() - start) / NANO_PER_MILLIS);
 //        System.out.println(Arrays.toString(argsValue) + "  " + System.nanoTime());
-        callback(index, new InvokeFuture(result, invokeTime, ParamUtil.toString(argsValue)));
+        callback(new InvokeFuture(result, invokeTime, ParamUtil.toString(argsValue)));
     }
 
     /**
      * 记录调用结果
      * @param result
      */
-    protected void callback(int producer, InvokeFuture result) {
-        queue.offer(producer, result);
+    protected void callback(InvokeFuture result) {
+        queue.offer(result);
     }
+//    protected void callback(int producer, InvokeFuture result) {
+//        queue.offer(producer, result);
+//    }
 
     public class ShutdownRejected implements RejectedExecutionHandler {
 

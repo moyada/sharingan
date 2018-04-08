@@ -1,5 +1,6 @@
 package cn.moyada.dubbo.faker.core.provider;
 
+import cn.moyada.dubbo.faker.core.common.BeanHolder;
 import cn.moyada.dubbo.faker.core.enums.ConvertType;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
@@ -38,7 +39,7 @@ public class ParamProvider {
     // 参数映射链
     private Map<String, String[]> linkMap;
 
-    public ParamProvider(FakerManager fakerManager, Object[] invokeValue, Class<?>[] paramTypes, boolean random) {
+    public ParamProvider(Object[] invokeValue, Class<?>[] paramTypes, boolean random) {
         ParamMapping paramMapping = ParamUtil.getRebuildParam(invokeValue);
 
         if(paramMapping.getRebuildParamSet().isEmpty()) {
@@ -49,6 +50,7 @@ public class ParamProvider {
             this.rebuildParamMap = paramMapping.getRebuildParamMap();
 
             // 获取替换数据
+            FakerManager fakerManager = BeanHolder.getBean(FakerManager.class);
             this.fakerParamMap = fakerManager.getFakerParamMapByRebuildParam(paramMapping.getRebuildParamSet());
 
             // 获取参数的转换类型

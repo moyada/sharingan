@@ -7,6 +7,7 @@ import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.domain.LogDO;
 import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.utils.JsonUtil;
+import cn.moyada.dubbo.faker.core.utils.ThreadUtil;
 import cn.moyada.dubbo.faker.web.model.PageVO;
 import cn.moyada.dubbo.faker.web.model.Result;
 import cn.moyada.dubbo.faker.web.model.SelectVO;
@@ -87,6 +88,7 @@ public class Faker {
         }
         finally {
             running = false;
+            ThreadUtil.clear();
         }
     }
 

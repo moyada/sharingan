@@ -1,11 +1,10 @@
 package cn.moyada.dubbo.faker.core.listener;
 
 import cn.moyada.dubbo.faker.core.common.Switch;
-import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.domain.LogDO;
-import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
+import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -29,8 +28,8 @@ public class BatchLoggingListener extends AbstractListener {
     private volatile boolean stop;
 
     public BatchLoggingListener(String fakerId, InvokerInfo invokerInfo,
-                                UnlockQueue<InvokeFuture> queue, FakerManager fakerManager) {
-        super(fakerId, invokerInfo, queue, fakerManager);
+                                AbstractQueue<InvokeFuture> queue) {
+        super(fakerId, invokerInfo, queue);
         int num = invokerInfo.getQuestNum() / 1000;
         num = num == 0 ? 1: num;
         this.list1 = new ArrayList<>(1000 * num);

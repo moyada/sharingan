@@ -3,7 +3,7 @@ package cn.moyada.dubbo.faker.core.invoke;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
-import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
+import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class AsyncInvoker extends AbstractInvoker {
 
-    public AsyncInvoker(MethodProxy proxy, UnlockQueue<InvokeFuture> queue, InvokerInfo invokerInfo) {
+    public AsyncInvoker(MethodProxy proxy, AbstractQueue<InvokeFuture> queue, InvokerInfo invokerInfo) {
         super(proxy, queue, invokerInfo);
     }
 

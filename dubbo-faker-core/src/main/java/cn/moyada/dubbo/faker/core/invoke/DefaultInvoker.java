@@ -3,7 +3,7 @@ package cn.moyada.dubbo.faker.core.invoke;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
-import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
+import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
 
 /**
  * 默认线程调用器
@@ -12,7 +12,7 @@ import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
  */
 public class DefaultInvoker extends AbstractInvoker {
 
-    public DefaultInvoker(MethodProxy proxy, UnlockQueue<InvokeFuture> queue, InvokerInfo invokerInfo) {
+    public DefaultInvoker(MethodProxy proxy, AbstractQueue<InvokeFuture> queue, InvokerInfo invokerInfo) {
         super(proxy, queue, invokerInfo);
     }
 

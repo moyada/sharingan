@@ -1,5 +1,7 @@
 package cn.moyada.dubbo.faker.core.model;
 
+import java.lang.invoke.MethodHandle;
+
 /**
  * 请求代理信息
  * @author xueyikang
@@ -23,9 +25,14 @@ public class MethodProxy {
     private Class<?>[] paramTypes;
 
     /**
-     * 调用代理
+     * 方法具柄
      */
-    private InvokerProxy[] invokerProxy;
+    private MethodHandle[] methodHandle;
+
+    /**
+     * 调用接口
+     */
+    private Object service;
 
     public String getFakerId() {
         return fakerId;
@@ -51,11 +58,19 @@ public class MethodProxy {
         this.paramTypes = paramTypes;
     }
 
-    public InvokerProxy[] getInvokerProxy() {
-        return invokerProxy;
+    public MethodHandle[] getMethodHandle() {
+        return methodHandle;
     }
 
-    public void setInvokerProxy(InvokerProxy[] invokerProxy) {
-        this.invokerProxy = invokerProxy;
+    public void setMethodHandle(MethodHandle[] methodHandle) {
+        this.methodHandle = methodHandle;
+    }
+
+    public Object getService() {
+        return service;
+    }
+
+    public void setService(Object service) {
+        this.service = service;
     }
 }

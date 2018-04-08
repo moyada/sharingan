@@ -16,5 +16,5 @@ public @interface Fetch {
     /**
      * 拦截参数归类
      */
-    String value() default "default";
+    String value();
 }

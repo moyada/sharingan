@@ -3,7 +3,6 @@ package cn.moyada.dubbo.faker.core.proxy;
 import cn.moyada.dubbo.faker.core.common.BeanHolder;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.handler.AbstractHandler;
-import cn.moyada.dubbo.faker.core.model.InvokerProxy;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
@@ -27,12 +26,6 @@ public class MethodHandleProxy {
 
     @Autowired
     private AbstractHandler handle;
-
-    private final BeanHolder beanHolder;
-
-    public MethodHandleProxy() {
-        this.beanHolder = new BeanHolder("classpath:application-dubbo.xml");
-    }
 
     public MethodProxy getProxy(MethodInvokeDO invokeInfo, int poolSize) {
         MethodProxy proxy;
@@ -78,34 +71,35 @@ public class MethodHandleProxy {
         }
 
         // 获取接口实例
-//        Object serviceAssembly;
-        Object[] serviceAssembly = new Object[poolSize];
+        Object serviceAssembly;
+//        Object[] serviceAssembly = new Object[poolSize];
         try {
-//            serviceAssembly = beanHolder.getBean(classType);
-            for (int index = 0; index < poolSize; index++) {
-                serviceAssembly[index] = beanHolder.getBean(index, classType);
-            }
+            serviceAssembly = BeanHolder.getBean(classType);
+//            for (int index = 0; index < poolSize; index++) {
+//                serviceAssembly[index] = beanHolder.getService(index, classType);
+//            }
         }
         catch (BeansException e) {
             log.error("fetch service bean error: " + e.getLocalizedMessage());
             throw new RpcException("获取接口实例失败: " + invokeInfo.getClassName(), e);
         }
 
-        InvokerProxy[] invokerProxy = new InvokerProxy[poolSize];
+//        InvokerProxy[] invokerProxy = new InvokerProxy[poolSize];
         // 初始化服务注册
-        for (int index = 0; index < poolSize; index++) {
+//        for (int index = 0; index < poolSize; index++) {
             try {
-                methodHandle[index].invoke(serviceAssembly[index], null);
+                methodHandle[0].invoke(serviceAssembly, null);
             } catch (Throwable throwable) {
             }
-            finally {
-                invokerProxy[index] = new InvokerProxy(methodHandle[index], serviceAssembly[index]);
-            }
-        }
+//            finally {
+//                invokerProxy[index] = new InvokerProxy(methodHandle[index], serviceAssembly);
+//            }
+//        }
 
         proxy = new MethodProxy();
         proxy.setParamTypes(paramTypes);
-        proxy.setInvokerProxy(invokerProxy);
+        proxy.setMethodHandle(methodHandle);
+        proxy.setService(serviceAssembly);
         return proxy;
     }
 }

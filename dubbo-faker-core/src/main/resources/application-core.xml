@@ -4,10 +4,16 @@
 	   xmlns:mvc="http://www.springframework.org/schema/mvc"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd"
 	   default-autowire="byName" default-lazy-init="true">
+
+	<context:property-placeholder order="0" location="classpath:/properties/*.properties" ignore-unresolvable="true"/>
+
 	<context:annotation-config/>
 
-	<!-- 扫描controller（controller层注入） -->
+	<!-- 扫描注入 -->
 	<context:component-scan base-package="cn.moyada.dubbo.faker.core" />
 
-	<!--<import resource="classpath:application-dubbo.xml"/>-->
+	<import resource="classpath:application-datasource.xml"/>
+	<import resource="classpath:application-dubbo.xml"/>
+
+	<bean class="cn.moyada.dubbo.faker.core.common.BeanHolder" lazy-init="false"/>
 </beans>

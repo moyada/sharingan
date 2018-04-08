@@ -88,7 +88,10 @@ public class FakerExporterListener extends ExporterListenerAdapter {
     }
 
     public void setFakerManager() {
-        FakerManager fakerManager = ServiceBean.getSpringContext().getBean("fakerManager", FakerManager.class);
+        FakerManager fakerManager = ServiceBean.getSpringContext().getBean(FakerManager.class);
+        if(null == fakerManager) {
+            throw new NullPointerException("can not find fakerManager bean instant.");
+        }
         this.fakerManager = fakerManager;
     }
 }

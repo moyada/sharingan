@@ -1,10 +1,9 @@
 package cn.moyada.dubbo.faker.core.listener;
 
-import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.domain.LogDO;
-import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
+import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +19,8 @@ import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
 public class LoggingListener extends AbstractListener {
     private static final Logger log = LoggerFactory.getLogger(LoggingListener.class);
 
-    public LoggingListener(String fakerId, InvokerInfo invokerInfo,
-                           UnlockQueue<InvokeFuture> queue, FakerManager fakerManager) {
-        super(fakerId, invokerInfo, queue, fakerManager);
+    public LoggingListener(String fakerId, InvokerInfo invokerInfo, AbstractQueue<InvokeFuture> queue) {
+        super(fakerId, invokerInfo, queue);
     }
 
     @Override

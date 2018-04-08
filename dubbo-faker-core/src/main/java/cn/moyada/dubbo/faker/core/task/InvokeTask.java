@@ -4,11 +4,13 @@ import cn.moyada.dubbo.faker.core.invoke.AbstractInvoker;
 import cn.moyada.dubbo.faker.core.invoke.DefaultInvoker;
 import cn.moyada.dubbo.faker.core.listener.AbstractListener;
 import cn.moyada.dubbo.faker.core.listener.BatchLoggingListener;
-import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.InvokerArgs;
 import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
+import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
+import cn.moyada.dubbo.faker.core.model.queue.ArrayQueue;
+import cn.moyada.dubbo.faker.core.model.queue.AtomicQueue;
 import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
 import cn.moyada.dubbo.faker.core.provider.ParamProvider;
 import org.slf4j.Logger;
@@ -39,17 +41,25 @@ public class InvokeTask {
 
     private final InvokerArgs[] argsList;
 
-    public InvokeTask(MethodProxy proxy, InvokerInfo invokerInfo, FakerManager fakerManager) {
+    public InvokeTask(MethodProxy proxy, InvokerInfo invokerInfo) {
         this.fakerId = proxy.getFakerId();
 
-        paramProvider = new ParamProvider(fakerManager, proxy.getValues(), proxy.getParamTypes(), invokerInfo.isRandom());
+        final AbstractQueue<InvokeFuture> queue;
+        if(invokerInfo.getPoolSize() == 1) {
+            queue = new ArrayQueue<>(invokerInfo.getQuestNum());
+        }
+        else if (invokerInfo.getPoolSize() == 2) {
+            queue = new AtomicQueue<>(invokerInfo.getQuestNum());
+        }
+        else {
+            queue = UnlockQueue.build(invokerInfo.getPoolSize(), invokerInfo.getQuestNum());
+        }
 
-        final UnlockQueue<InvokeFuture> queue = UnlockQueue.build(invokerInfo.getPoolSize(), invokerInfo.getQuestNum());
-
-        listener = new BatchLoggingListener(proxy.getFakerId(), invokerInfo, queue, fakerManager);
+        listener = new BatchLoggingListener(proxy.getFakerId(), invokerInfo, queue);
 
         invoker = new DefaultInvoker(proxy, queue, invokerInfo);
 
+        paramProvider = new ParamProvider(proxy.getValues(), proxy.getParamTypes(), invokerInfo.isRandom());
         argsList = new InvokerArgs[invokerInfo.getQuestNum()];
     }
 

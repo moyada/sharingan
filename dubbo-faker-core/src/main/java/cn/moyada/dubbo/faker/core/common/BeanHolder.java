@@ -1,40 +1,29 @@
 package cn.moyada.dubbo.faker.core.common;
 
-import org.jboss.netty.handler.codec.serialization.SoftReferenceMap;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.util.HashMap;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * 
  * @author xueyikang
  * @create 2018-03-27 13:09
  */
-public class BeanHolder {
+public class BeanHolder implements ApplicationContextAware {
 
-    private final String xmlPath;
+    private static ApplicationContext applicationContext;
 
-    private SoftReferenceMap<Integer, ApplicationContext> contextMap;
-
-    public BeanHolder(String xmlPath) {
-        this.xmlPath = xmlPath;
-        this.contextMap = new SoftReferenceMap<>(new HashMap<>());
-    }
-
-    public <T> T creteBean(Class<T> cls) throws BeansException {
-        return getBean(0, cls);
-    }
-
-    public <T> T getBean(int index, Class<T> cls) throws BeansException {
-        ApplicationContext context = contextMap.get(index);
-
-        if(null == context) {
-            context = new ClassPathXmlApplicationContext(new String[]{xmlPath});
-            contextMap.put(index, context);
+    public static <T> T getBean(Class<T> cls) throws BeansException {
+        T bean = applicationContext.getBean(cls);
+        if(null == bean) {
+            throw new NullPointerException(cls.getName() + "can not find any bean.");
         }
-        return context.getBean(cls);
+        return bean;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        BeanHolder.applicationContext = applicationContext;
     }
 
 //    public Object getBean(Class<?> cls) throws BeansException {

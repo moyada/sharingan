@@ -10,14 +10,11 @@
     					http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <import resource="application-dubbo-import.xml"/>
-    <import resource="application-dubbo-export.xml"/>
+    <!--<import resource="application-dubbo-export.xml"/>-->
 
-    <context:property-placeholder order="0" location="classpath:/properties/dubbo.properties" ignore-unresolvable="true"/>
-
-    <dubbo:application name="${dubbo.application}" />
-    <dubbo:registry address="${dubbo.registry}" backupProvider="${dubbo.provider.backup}"/>
-    <dubbo:provider export="${dubbo.export}" token="${dubbo.token}"/>
-    <dubbo:protocol name="dubbo" port="-1" host="intranet" />
-    <dubbo:monitor protocol="registry"/>
-    <dubbo:consumer timeout="3000" />
+    <dubbo:application name="${dubbo.application}" logger="slf4j"/>
+    <dubbo:registry address="${dubbo.registry}"/>
+    <!--<dubbo:provider token="${dubbo.token}"/>-->
+    <dubbo:protocol name="dubbo" port="-1" />
+    <dubbo:consumer timeout="3000" actives="100"/>
 </beans>

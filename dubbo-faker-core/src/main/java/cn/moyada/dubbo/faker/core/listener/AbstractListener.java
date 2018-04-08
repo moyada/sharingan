@@ -1,10 +1,11 @@
 package cn.moyada.dubbo.faker.core.listener;
 
+import cn.moyada.dubbo.faker.core.common.BeanHolder;
 import cn.moyada.dubbo.faker.core.convert.LoggingConvert;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.InvokerInfo;
-import cn.moyada.dubbo.faker.core.model.queue.UnlockQueue;
+import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
 
 /**
  * 监听器
@@ -15,15 +16,18 @@ public abstract class AbstractListener implements ListenerAction {
 
     protected final LoggingConvert convert;
 
-    protected final FakerManager fakerManager;
+    protected FakerManager fakerManager;
 
-    protected final UnlockQueue<InvokeFuture> futureQueue;
+    protected final AbstractQueue<InvokeFuture> futureQueue;
 
-    protected AbstractListener(String fakerId, InvokerInfo invokerInfo,
-                               UnlockQueue<InvokeFuture> queue, FakerManager fakerManager) {
+    protected AbstractListener(String fakerId, InvokerInfo invokerInfo, AbstractQueue<InvokeFuture> queue) {
         this.futureQueue = queue;
-        this.fakerManager = fakerManager;
         this.convert = new LoggingConvert(fakerId, invokerInfo.getInvokeId(),
                 invokerInfo.isSaveResult(), invokerInfo.getResultParam());
+        setFakerManager();
+    }
+
+    private void setFakerManager() {
+        this.fakerManager = BeanHolder.getBean(FakerManager.class);
     }
 }

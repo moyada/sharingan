@@ -27,12 +27,6 @@
         <property name="filters" value="stat"/>
     </bean>
 
-    <!--事务-->
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-    <bean id="transactionDefinition" class="org.springframework.transaction.support.DefaultTransactionDefinition"/>
-
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="mapperLocations" >
             <list>
@@ -48,7 +42,6 @@
         <!--<property name="basePackage" value="com.souche.car.model.dao"/>-->
         <!--<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />-->
     <!--</bean>-->
-
 
     <bean id="fakerMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface" value="cn.moyada.dubbo.faker.core.dao.FakerDAO"/>
