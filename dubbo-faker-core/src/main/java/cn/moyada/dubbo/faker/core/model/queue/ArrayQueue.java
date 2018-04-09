@@ -32,10 +32,11 @@ public class ArrayQueue<E> extends AbstractQueue<E> {
     @Override
     public E poll() {
         if(readIndex == size) {
-            throw new IndexOutOfBoundsException("total size is " + size + ", but read index is " + readIndex);
+            return null;
         }
         Node<E> node = values[readIndex];
         if(null == node) {
+            done();
             return null;
         }
         readIndex = readIndex+1;

@@ -75,9 +75,15 @@ public abstract class AbstractInvoker {
      * @param argsValue 参数
      */
     protected void execute(Object[] argsValue) {
-        int index = ThreadUtil.getInnerGroupId();// % poolSize;
 
-        MethodHandle handle = methodHandles[index];
+        MethodHandle handle;
+        if(methodHandles.length == 1) {
+            handle = methodHandles[0];
+        }
+        else {
+            int index = ThreadUtil.getInnerGroupId();// % poolSize;
+            handle = methodHandles[index];
+        }
 
         // 开始时间
         long start = System.nanoTime();
