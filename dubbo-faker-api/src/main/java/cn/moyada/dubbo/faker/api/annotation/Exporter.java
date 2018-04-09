@@ -17,4 +17,10 @@ public @interface Exporter {
      * 参数表达式 ["${appId.type1}", "${appId.type2.param}"]
      */
     String value() default "";
+
+    /**
+     * 覆盖原有参数表达式
+     * @return
+     */
+    boolean override() default true;
 }

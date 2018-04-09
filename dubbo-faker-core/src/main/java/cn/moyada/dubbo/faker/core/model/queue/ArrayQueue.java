@@ -34,8 +34,11 @@ public class ArrayQueue<E> extends AbstractQueue<E> {
         if(readIndex == size) {
             throw new IndexOutOfBoundsException("total size is " + size + ", but read index is " + readIndex);
         }
-        Node<E> value = values[readIndex];
+        Node<E> node = values[readIndex];
+        if(null == node) {
+            return null;
+        }
         readIndex = readIndex+1;
-        return value.value;
+        return node.value;
     }
 }

@@ -13,11 +13,13 @@
 	</select>
 
 	<insert id="saveInvokeInfo">
-		INSERT INTO `method_invoke`
+		INSERT IGNORE INTO `method_invoke`
 		(`app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`)
 		VALUE
 		(#{appId}, #{appName}, #{className}, #{methodName}, #{paramType}, #{returnType}, #{expression});
-		ON DUPLICATE KEY UPDATE expression = VALUES(expression)
+		<if test="override">
+			ON DUPLICATE KEY UPDATE expression = VALUES(expression)
+		</if>
 	</insert>
 
 	<select id="findAppId" resultType="Integer">

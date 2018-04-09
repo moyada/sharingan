@@ -84,6 +84,7 @@ public class FakerExporterListener extends ExporterListenerAdapter {
 
         cn.moyada.dubbo.faker.api.annotation.Exporter annotation = method.getAnnotation(cn.moyada.dubbo.faker.api.annotation.Exporter.class);
         methodInvokeDO.setExpression(annotation.value());
+        methodInvokeDO.setOverride(annotation.override());
         return methodInvokeDO;
     }
 

@@ -43,6 +43,11 @@ public class MethodInvokeDO {
      */
     private String expression;
 
+    /**
+     * 是否覆盖表达式
+     */
+    private boolean override;
+
     public Integer getAppId() {
         return appId;
     }
@@ -97,5 +102,13 @@ public class MethodInvokeDO {
 
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    public boolean isOverride() {
+        return override;
+    }
+
+    public void setOverride(boolean override) {
+        this.override = override;
     }
 }

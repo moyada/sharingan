@@ -43,6 +43,11 @@ public class AtomicQueue<E> extends AbstractQueue<E> {
         if(i == size) {
             throw new IndexOutOfBoundsException("total size is " + size + ", but read index is " + i);
         }
-        return values[i].value;
+        Node<E> node = values[i];
+        if(null == node) {
+            readIndex.decrementAndGet();
+            return null;
+        }
+        return node.value;
     }
 }
