@@ -130,14 +130,15 @@ public abstract class AbstractInvoker {
 //            throwable.printStackTrace();
             result = FutureResult.failed(throwable.getMessage());
         }
-        finally {
-            count.increment();
-        }
+//        finally {
+//            count.increment();
+//        }
         // 完成计算耗时
 //        result.setSpend(DateUtil.afterInstant(start));
         result.setSpend((System.nanoTime() - start) / NANO_PER_MILLIS);
 //        System.out.println(Arrays.toString(argsValue) + "  " + System.nanoTime());
         callback(new InvokeFuture(result, invokeTime, ParamUtil.toString(argsValue)));
+        count.increment();
     }
 
     /**
