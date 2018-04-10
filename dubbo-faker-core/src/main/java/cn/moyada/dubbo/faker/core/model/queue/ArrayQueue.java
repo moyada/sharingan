@@ -36,7 +36,7 @@ public class ArrayQueue<E> extends AbstractQueue<E> {
         }
         Node<E> node = values[readIndex];
         if(null == node) {
-            done();
+//            done();
             return null;
         }
         readIndex = readIndex+1;
