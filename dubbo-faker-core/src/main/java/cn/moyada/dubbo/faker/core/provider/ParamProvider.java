@@ -143,7 +143,7 @@ public class ParamProvider {
 
             // 获取当前位置的替换参数
             paramMap = rebuildParamMap.get(index);
-            if(null == paramMap) {
+            if(null == paramMap || paramMap.getParamMap().isEmpty()) {
                 // 根据参数类型转换
                 argsValue[index] = convert(json, convertMap.get(index), paramTypes[index]);
                 continue;
