@@ -42,8 +42,15 @@ public class ParamProvider {
     public ParamProvider(Object[] invokeValue, Class<?>[] paramTypes, boolean random) {
         ParamMapping paramMapping = ParamUtil.getRebuildParam(invokeValue);
 
+        // 获取参数的转换类型
+        this.convertMap = ConvertUtil.getConvertMap(paramTypes);
+
+        this.paramTypes = paramTypes;
+        this.length = invokeValue.length;
+        this.invokeValue = invokeValue;
+
         if(paramMapping.getRebuildParamSet().isEmpty()) {
-            this.length = -1;
+            this.rebuildParamMap = null;
         }
         else {
             // 获取参数的替换目标
@@ -53,16 +60,8 @@ public class ParamProvider {
             FakerManager fakerManager = BeanHolder.getBean(FakerManager.class);
             this.fakerParamMap = fakerManager.getFakerParamMapByRebuildParam(paramMapping.getRebuildParamSet());
 
-            // 获取参数的转换类型
-            this.convertMap = ConvertUtil.getConvertMap(paramTypes);
-
-            this.paramTypes = paramTypes;
-            this.length = invokeValue.length;
-
             genParamLinkAndIndex(random);
         }
-
-        this.invokeValue = invokeValue;
     }
 
     /**
@@ -119,11 +118,13 @@ public class ParamProvider {
             return null;
         }
 
-        if(-1 == length) {
-            return invokeValue;
-        }
-
         Object[] argsValue = new Object[length];
+        if(null == rebuildParamMap) {
+            for (int index = 0; index < length; index++) {
+                argsValue[index] = convert(JsonUtil.toJson(invokeValue[index]), convertMap.get(index), paramTypes[index]);
+            }
+            return argsValue;
+        }
 
         String json, key, value, fakerValue;
         ParamMapping.TypeCount typeCount;
