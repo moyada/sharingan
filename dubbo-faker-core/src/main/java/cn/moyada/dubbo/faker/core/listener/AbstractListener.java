@@ -14,9 +14,9 @@ import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
  */
 public abstract class AbstractListener implements ListenerAction {
 
-    protected final LoggingConvert convert;
-
     protected FakerManager fakerManager;
+
+    protected final LoggingConvert convert;
 
     protected final AbstractQueue<InvokeFuture> futureQueue;
 

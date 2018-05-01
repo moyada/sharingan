@@ -152,6 +152,7 @@ public class Faker {
         try {
             return Result.success(fakerManager.getAllApp());
         } catch (Exception e) {
+            e.printStackTrace();
             return Result.failed(500, e.getMessage());
         }
     }

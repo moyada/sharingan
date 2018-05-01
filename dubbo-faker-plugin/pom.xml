@@ -5,21 +5,31 @@
     <parent>
         <artifactId>dubbo-faker</artifactId>
         <groupId>cn.moyada</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>replace-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <properties>
         <plugin.version>3.0</plugin.version>
     </properties>
 
     <dependencies>
-        <!--@dependencies-->
-        <!--@dependencies-->
+        <!--@import-->
+        <dependency>
+            <groupId>com.souche</groupId>
+            <artifactId>car-model-api</artifactId>
+            <version>1.2.1-SNAPSHOT</version>
+        </dependency>
+        <!--@import-->
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>

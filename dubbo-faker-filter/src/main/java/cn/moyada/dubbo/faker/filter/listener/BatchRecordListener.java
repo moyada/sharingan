@@ -5,7 +5,6 @@ import cn.moyada.dubbo.faker.api.annotation.Fetch;
 import cn.moyada.dubbo.faker.filter.common.Context;
 import cn.moyada.dubbo.faker.filter.domain.RealParamDO;
 import cn.moyada.dubbo.faker.filter.manager.FakerManager;
-import cn.moyada.dubbo.faker.filter.utils.JsonUtil;
 import cn.moyada.dubbo.faker.filter.utils.PropertyUtil;
 import com.alibaba.dubbo.rpc.Invocation;
 import org.slf4j.Logger;
@@ -22,11 +21,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 参数监听器
+ * 数据库参数监听器
  * @author xueyikang
  * @create 2018-03-30 02:44
  */
-public class BatchRecordListener {
+public class BatchRecordListener extends AbstractRecordListener {
     private static final Logger log = LoggerFactory.getLogger(BatchRecordListener.class);
 
     private final int capacity;
@@ -114,7 +113,7 @@ public class BatchRecordListener {
 
         @Override
         public void run() {
-            Method method = check(invokerInterface, invocation);
+            Method method = fetchMethod(invokerInterface, invocation);
             if (null == method) {
                 return;
             }
@@ -150,46 +149,6 @@ public class BatchRecordListener {
                     list1.add(realParamDO);
                 }
             }
-        }
-
-        /**
-         * 检测是否需要进行参数保存
-         * @param invokerInterface
-         * @param invocation
-         * @return
-         */
-        private Method check(Class<?> invokerInterface, Invocation invocation) {
-            Method method;
-            try {
-                method = invokerInterface.getMethod(invocation.getMethodName(), invocation.getParameterTypes());
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            if (!method.isAnnotationPresent(Fetch.class)) {
-                return null;
-            }
-            return method;
-        }
-
-        /**
-         * 转换参数
-         * @param arguments
-         * @return
-         */
-        private String getArgs(Object[] arguments) {
-            String args;
-            if (null == arguments) {
-                args = null;
-            } else {
-                if (arguments.length == 1) {
-                    args = JsonUtil.toJson(arguments[0]);
-                } else {
-                    args = JsonUtil.toJson(arguments);
-                }
-            }
-            return args;
         }
     }
 

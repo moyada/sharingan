@@ -71,7 +71,7 @@ public class LoggingConvert {
         }
         else {
             logDO.setCode(Code.ERROR);
-            logDO.setMessage(result.getResult().toString());
+            logDO.setMessage(String.valueOf(result.getResult()));
         }
 
         logDO.setFakerId(fakerId);

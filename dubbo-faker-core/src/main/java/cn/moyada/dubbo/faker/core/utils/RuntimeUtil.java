@@ -34,4 +34,33 @@ public class RuntimeUtil {
         long memoryBytes = Runtime.getRuntime().freeMemory();
         return (memoryBytes / size);
     }
+
+//    private static Method add;
+//    static {
+//        try {
+//            add = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+//        } catch (NoSuchMethodException e) {
+//            throw new ArithmeticException(e.getMessage());
+//        }
+//        add.setAccessible(true);
+//    }
+//
+//    public static boolean addJarToSystemClassLoader(String url) {
+//        try {
+//            return addJarToClassLoader(new URL(url), (URLClassLoader) ClassLoader.getSystemClassLoader());
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+//
+//    private static boolean addJarToClassLoader(URL url, URLClassLoader classLoader) {
+//        try {
+//            add.invoke(classLoader, url);
+//        } catch ( InvocationTargetException | IllegalAccessException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//        return true;
+//    }
 }

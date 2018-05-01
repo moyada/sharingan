@@ -1,7 +1,9 @@
 package cn.moyada.dubbo.faker.core.handler;
 
+import cn.moyada.dubbo.faker.core.loader.Dependency;
+import cn.moyada.dubbo.faker.core.loader.ModuleLoader;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
-import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandle;
@@ -11,25 +13,29 @@ import java.lang.invoke.MethodType;
 @Component
 public class MethodInvokeHandler extends AbstractHandler {
 
+    @Autowired
+    private ModuleLoader moduleLoader;
+
     @Override
-    public MethodHandle fetchHandleInfo(String className, String methodName, String returnType, Class<?> paramClass[]) {
+    public MethodHandle fetchHandleInfo(Dependency dependency, String className, String methodName,
+                                        String returnType, Class<?>[] paramClass) {
         Class<?> classType, returnClassType;
 
         try {
-            classType = ReflectUtil.getClassType(className);
+//            classType = ReflectUtil.getClassType(className);
+            classType = moduleLoader.getClass(dependency, className);
         } catch (ClassNotFoundException e) {
             throw new InitializeInvokerException("接口类型不存在: " + returnType);
         }
 
         try {
-            returnClassType = ReflectUtil.getClassType(returnType);
+            returnClassType = moduleLoader.getClass(dependency, returnType);
         } catch (ClassNotFoundException e) {
             throw new InitializeInvokerException("结果类型不存在: " + returnType);
         }
 
         MethodHandle methodHandle;
-
-        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandles.Lookup lookup = moduleLoader.getMethodLookup(dependency);
         try {
             // 创建方法信息
             MethodType methodType = MethodType.methodType(returnClassType, paramClass);
@@ -38,6 +44,7 @@ public class MethodInvokeHandler extends AbstractHandler {
         } catch (NoSuchMethodException e) {
             throw new InitializeInvokerException("方法不存在: " + methodName);
         }catch (IllegalAccessException e) {
+            e.printStackTrace();
             throw new InitializeInvokerException("方法句柄获取失败");
         }
         return methodHandle;

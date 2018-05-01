@@ -5,7 +5,7 @@
     <parent>
         <artifactId>dubbo-faker</artifactId>
         <groupId>cn.moyada</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -19,7 +19,7 @@
         <java.version>1.8</java.version>
         <project.encoding>utf-8</project.encoding>
         <maven.test.skip>true</maven.test.skip>
-        <faker-core.version>1.0.1-SNAPSHOT</faker-core.version>
+        <faker-core.version>1.1.0-SNAPSHOT</faker-core.version>
         <io.springfox.version>2.8.0</io.springfox.version>
     </properties>
 
@@ -30,9 +30,24 @@
         <dependency>
             <groupId>cn.moyada</groupId>
             <artifactId>dubbo-faker-core</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>${faker-core.version}</version>
             <scope>system</scope>
             <systemPath>${user.home}/.m2/repository/cn/moyada/dubbo-faker-core/${faker-core.version}/dubbo-faker-core-${faker-core.version}.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.101tec</groupId>
+            <artifactId>zkclient</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
         </dependency>
 
         <dependency>

@@ -2,6 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.moyada.dubbo.faker.core.dao.FakerDAO">
 
+	<select id="findAllApp" resultType="AppInfoDO">
+		SELECT `app_id`, `app_name`, `group_id`, `artifact_id`, `version`, `url`
+		FROM `app_info`
+	</select>
+
+	<select id="findAppById" resultType="AppInfoDO">
+		SELECT `app_id`, `app_name`, `group_id`, `artifact_id`, `version`, `url`
+		FROM `app_info`
+		WHERE app_id = #{appId}
+		LIMIT 1
+	</select>
+
+	<update id="updateUrl">
+		UPDATE app_info SET url = #{url} WHERE group_id = #{groupId} and artifact_id = #{artifactId}
+	</update>
+
 	<insert id="saveInvokeInfo">
 		INSERT INTO `method_invoke`
 		(`app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`)
@@ -45,12 +61,6 @@
 			)
 		</foreach>;
 	</insert>
-
-
-	<select id="findAllApp" resultType="methodInvokeDO">
-		SELECT `app_id`, `app_name`
-		FROM `app_info`
-	</select>
 
 	<select id="findClassByApp" resultType="String">
 		SELECT `class_name`

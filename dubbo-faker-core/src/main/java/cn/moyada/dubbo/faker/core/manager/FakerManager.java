@@ -2,6 +2,7 @@ package cn.moyada.dubbo.faker.core.manager;
 
 import cn.moyada.dubbo.faker.core.dao.FakerDAO;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
+import cn.moyada.dubbo.faker.core.model.domain.AppInfoDO;
 import cn.moyada.dubbo.faker.core.model.domain.LogDO;
 import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import com.google.common.collect.Maps;
@@ -30,8 +31,16 @@ public class FakerManager {
         return fakerDAO.findAll();
     }
 
-    public List<MethodInvokeDO> getAllApp() {
+    public List<AppInfoDO> getAllApp() {
         return fakerDAO.findAllApp();
+    }
+
+    public void updateUrl(String groupId, String artifactId, String url) {
+        fakerDAO.updateUrl(groupId, artifactId, url);
+    }
+
+    public AppInfoDO getAppById(int id) {
+        return fakerDAO.findAppById(id);
     }
 
     public List<String> getClassByApp(int appId) {
