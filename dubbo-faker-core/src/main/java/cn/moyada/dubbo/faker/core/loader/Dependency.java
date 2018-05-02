@@ -1,5 +1,7 @@
 package cn.moyada.dubbo.faker.core.loader;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,6 +25,11 @@ public final class Dependency {
      */
     private String url;
 
+    /**
+     * 依赖
+     */
+    private List<Dependency> dependencyList;
+
     public Dependency() {
     }
 
@@ -31,6 +38,13 @@ public final class Dependency {
         this.artifactId = artifactId;
         this.version = version;
         this.url = url;
+    }
+
+    public void addDependency(Dependency dependency) {
+        if(null == dependencyList) {
+            dependencyList = new ArrayList<>();
+        }
+        dependencyList.add(dependency);
     }
 
     @Override
@@ -77,6 +91,10 @@ public final class Dependency {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public List<Dependency> getDependencyList() {
+        return dependencyList;
     }
 
     @Override

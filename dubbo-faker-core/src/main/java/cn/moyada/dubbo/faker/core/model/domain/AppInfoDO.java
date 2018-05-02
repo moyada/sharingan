@@ -18,12 +18,7 @@ public class AppInfoDO {
 
     private String url;
 
-    public String buildUrl(String host) {
-        return host + "/" +
-                this.groupId + "/" +
-                this.artifactId + "-" +
-                this.version + ".jar";
-    }
+    private String dependencies;
 
     public Integer getAppId() {
         return appId;
@@ -71,5 +66,13 @@ public class AppInfoDO {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(String dependencies) {
+        this.dependencies = dependencies;
     }
 }

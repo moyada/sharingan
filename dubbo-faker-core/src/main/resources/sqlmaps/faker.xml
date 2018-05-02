@@ -8,10 +8,19 @@
 	</select>
 
 	<select id="findAppById" resultType="AppInfoDO">
-		SELECT `app_id`, `app_name`, `group_id`, `artifact_id`, `version`, `url`
+		SELECT `app_id`, `app_name`, `group_id`, `artifact_id`, `version`, `url`, `dependencies`
 		FROM `app_info`
 		WHERE app_id = #{appId}
 		LIMIT 1
+	</select>
+
+	<select id="findDependencyById" resultType="AppInfoDO">
+		SELECT `name` appName, `group_id`, `artifact_id`, `version`, `url`
+		FROM `dependency`
+		WHERE id IN
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
 	</select>
 
 	<update id="updateUrl">

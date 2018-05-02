@@ -2,6 +2,7 @@ package cn.moyada.dubbo.faker.core.manager;
 
 import cn.moyada.dubbo.faker.core.dao.FakerDAO;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
+import cn.moyada.dubbo.faker.core.loader.Dependency;
 import cn.moyada.dubbo.faker.core.model.domain.AppInfoDO;
 import cn.moyada.dubbo.faker.core.model.domain.LogDO;
 import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
@@ -39,8 +40,39 @@ public class FakerManager {
         fakerDAO.updateUrl(groupId, artifactId, url);
     }
 
-    public AppInfoDO getAppById(int id) {
-        return fakerDAO.findAppById(id);
+    public Dependency getDependencyByAppId(int id) {
+        AppInfoDO appInfo = fakerDAO.findAppById(id);
+        if(null == appInfo) {
+            return null;
+        }
+        Dependency dependency = new Dependency(appInfo.getGroupId(), appInfo.getArtifactId(), appInfo.getVersion(), appInfo.getUrl());
+        String dependencies = appInfo.getDependencies();
+        if(null != dependencies && !dependencies.equals("")) {
+            int[] ints = convertInt(dependencies.split(","));
+            if(null != ints) {
+                List<AppInfoDO> dependenciesApp = fakerDAO.findDependencyById(ints);
+                for (AppInfoDO appInfoDO : dependenciesApp) {
+                    dependency.addDependency(new Dependency(appInfoDO.getGroupId(), appInfoDO.getArtifactId(), appInfoDO.getVersion(), appInfoDO.getUrl()));
+                }
+            }
+        }
+        return dependency;
+    }
+
+    private static int[] convertInt(String[] strs) {
+        if(null == strs) {
+            return null;
+        }
+        int length = strs.length;
+        if(0 == length) {
+            return null;
+        }
+        int[] ints = new int[length];
+        int index = 0;
+        for (String str : strs) {
+            ints[index++] = Integer.valueOf(str);
+        }
+        return ints;
     }
 
     public List<String> getClassByApp(int appId) {

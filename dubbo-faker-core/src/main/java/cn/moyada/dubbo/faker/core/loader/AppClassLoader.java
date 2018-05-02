@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 /**
  * 项目加载器
@@ -39,7 +40,7 @@ public class AppClassLoader extends URLClassLoader {
 
         // 尝试查找
         try {
-            clazz = findClass(name);
+            clazz = this.findClass(name);
         }
         catch (ClassNotFoundException e) {
             clazz = null;
@@ -60,10 +61,24 @@ public class AppClassLoader extends URLClassLoader {
         return MethodHandles.lookup();
     }
 
-    public AppClassLoader(String jarUrl, String version, URLClassLoader parent) throws MalformedURLException {
-        super(new URL[]{new URL(jarUrl)}, parent);
+    public AppClassLoader(String jarUrl, List<String> dependencies, String version, URLClassLoader parent) throws MalformedURLException {
+        super(buildURL(jarUrl, dependencies), parent);
         this.url = jarUrl;
         this.version = version;
+    }
+
+    protected static URL[] buildURL(String jarUrl, List<String> dependencies) throws MalformedURLException {
+        if(null == dependencies) {
+            return new URL[]{new URL(jarUrl)};
+        }
+        URL[] urls = new URL[dependencies.size() + 1];
+        urls[0] = new URL(jarUrl);
+
+        int index = 1;
+        for (String dependency : dependencies) {
+            urls[index++] = new URL(dependency);
+        }
+        return urls;
     }
 
     public String getVersion() {

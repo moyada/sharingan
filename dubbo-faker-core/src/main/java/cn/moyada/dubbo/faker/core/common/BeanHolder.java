@@ -68,12 +68,20 @@ public class BeanHolder implements ApplicationContextAware {
         consumer = new ConsumerConfig();
         consumer.setTimeout(3000);
         consumer.setActives(100);
+        consumer.setLazy(false);
 
         beanMap = new SoftReferenceMap<>(new HashMap<>());
     }
 
     public static <T> T getBean(Class<T> cls) throws BeansException {
-        T bean = applicationContext.getBean(cls);
+        T bean;
+        try {
+            bean = applicationContext.getBean(cls);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            bean = null;
+        }
         if(null == bean) {
             throw new NullPointerException(cls.getName() + "can not find any bean.");
         }

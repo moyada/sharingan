@@ -1,9 +1,23 @@
 CREATE TABLE `app_info` (
   `app_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '项目编号',
   `app_name` varchar(100) DEFAULT NULL COMMENT '项目名',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `group_id` varchar(50) DEFAULT NULL COMMENT '依赖分组',
+  `artifact_id` varchar(50) DEFAULT NULL COMMENT '依赖名',
+  `version` varchar(50) DEFAULT NULL COMMENT '版本号',
+  `url` varchar(255) DEFAULT NULL COMMENT '直接链接',
+  `dependencies` varchar(100) DEFAULT NULL COMMENT '包含依赖,关联dependency表',
+  PRIMARY KEY (`app_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='项目信息表';
 
+CREATE TABLE `dependency` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '依赖编号',
+  `app_name` varchar(100) DEFAULT NULL COMMENT '依赖名',
+  `group_id` varchar(50) DEFAULT NULL COMMENT '依赖分组',
+  `artifact_id` varchar(50) DEFAULT NULL COMMENT '依赖名',
+  `version` varchar(50) DEFAULT NULL COMMENT '版本号',
+  `url` varchar(255) DEFAULT NULL COMMENT '直接链接'
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='依赖表';
 
 CREATE TABLE `method_invoke` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',

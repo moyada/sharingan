@@ -1,13 +1,12 @@
 package cn.moyada.dubbo.faker.core.proxy;
 
-import cn.moyada.dubbo.faker.core.loader.Dependency;
-import cn.moyada.dubbo.faker.core.loader.ModuleLoader;
 import cn.moyada.dubbo.faker.core.common.BeanHolder;
 import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
 import cn.moyada.dubbo.faker.core.handler.AbstractHandler;
+import cn.moyada.dubbo.faker.core.loader.Dependency;
+import cn.moyada.dubbo.faker.core.loader.ModuleLoader;
 import cn.moyada.dubbo.faker.core.manager.FakerManager;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
-import cn.moyada.dubbo.faker.core.model.domain.AppInfoDO;
 import cn.moyada.dubbo.faker.core.model.domain.MethodInvokeDO;
 import com.alibaba.dubbo.rpc.RpcException;
 import org.slf4j.Logger;
@@ -44,11 +43,10 @@ public class MethodHandleProxy {
 
         log.info("init method proxy info.");
 
-        AppInfoDO appInfo = fakerManager.getAppById(invokeInfo.getAppId());
-        if(null == appInfo) {
+        Dependency dependency = fakerManager.getDependencyByAppId(invokeInfo.getAppId());
+        if(null == dependency) {
             throw new InitializeInvokerException("获取应用信息失败: " + invokeInfo.getAppId());
         }
-        Dependency dependency = new Dependency(appInfo.getGroupId(), appInfo.getArtifactId(), appInfo.getVersion(), appInfo.getUrl());
 
         // 获取参数类型
         Class<?>[] paramTypes;
@@ -89,12 +87,8 @@ public class MethodHandleProxy {
 
         // 获取接口实例
         Object serviceAssembly;
-//        Object[] serviceAssembly = new Object[poolSize];
         try {
             serviceAssembly = beanHolder.getDubboBean(moduleLoader.getClassLoader(dependency), classType);
-//            for (int index = 0; index < poolSize; index++) {
-//                serviceAssembly[index] = beanHolder.getService(index, classType);
-//            }
         }
         catch (BeansException e) {
             log.error("fetch service bean error: " + e.getLocalizedMessage());

@@ -19,6 +19,8 @@ public interface FakerDAO {
 
     AppInfoDO findAppById(@Param("appId") int id);
 
+    List<AppInfoDO> findDependencyById(@Param("ids") int[]ids);
+
     MethodInvokeDO findInvokeInfoById(@Param("id") int id);
 
     List<String> findParamByType(@Param("appId") int appId, @Param("type") String type);

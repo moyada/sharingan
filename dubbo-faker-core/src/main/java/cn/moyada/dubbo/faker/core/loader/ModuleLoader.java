@@ -1,6 +1,7 @@
 package cn.moyada.dubbo.faker.core.loader;
 
 import cn.moyada.dubbo.faker.core.common.BeanHolder;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -106,7 +108,7 @@ public class ModuleLoader {
         }
 
         try {
-            classLoader = newClassLoader(jarUrl, dependency.getVersion());
+            classLoader = newClassLoader(jarUrl, getUrls(dependency.getDependencyList()), dependency.getVersion());
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return false;
@@ -119,6 +121,22 @@ public class ModuleLoader {
         classLoader.setTimestamp(System.currentTimeMillis());
         loaderMap.put(dependency, classLoader);
         return true;
+    }
+
+    private List<String> getUrls(List<Dependency> dependencyList) {
+        if(null == dependencyList) {
+            return null;
+        }
+
+        List<String> dependencies = Lists.newArrayListWithExpectedSize(dependencyList.size());
+        for(Dependency dependency : dependencyList) {
+            String jarUrl = dependency.getUrl();
+            if(null == jarUrl) {
+                jarUrl = fetchLastJar.getJarUrl(dependency);
+            }
+            dependencies.add(jarUrl);
+        }
+        return dependencies;
     }
 
     /**
@@ -146,8 +164,8 @@ public class ModuleLoader {
      * 获取类加载器
      * @return
      */
-    private AppClassLoader newClassLoader(String jarUrl, String version) throws MalformedURLException {
-        return new AppClassLoader(jarUrl, version, BeanHolder.getSpringClassLoader());
+    private AppClassLoader newClassLoader(String jarUrl, List<String> dependencies, String version) throws MalformedURLException {
+        return new AppClassLoader(jarUrl, dependencies, version, BeanHolder.getSpringClassLoader());
 //        return new AppClassLoader(jarUrl, version, (URLClassLoader) ClassLoader.getSystemClassLoader());
     }
 
