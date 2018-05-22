@@ -12,19 +12,19 @@ public class ReflectUtil {
     private static final Map<String, SoftReference<Class>> classMap = new HashMap<>();
 
     public static Class getClassType(String className) throws ClassNotFoundException {
-        Class<?> aClass = get(classMap, className);
+        Class<?> aClass = SoftReferenceUtil.get(classMap, className);
         if(null != aClass) {
             return aClass;
         }
 
         aClass = Class.forName(className);
-        put(classMap, className, aClass);
+        SoftReferenceUtil.put(classMap, className, aClass);
         return aClass;
     }
 
     private static Field getField(Class cls, String fieldName) {
         String key = cls.getName() + fieldName;
-        Field field = get(fieldMap, key);
+        Field field = SoftReferenceUtil.get(fieldMap, key);
         if(null != field) {
             return field;
         }
@@ -42,7 +42,7 @@ public class ReflectUtil {
         }
         while (null == field);
         field.setAccessible(true);
-        put(fieldMap, key, field);
+        SoftReferenceUtil.put(fieldMap, key, field);
         return field;
     }
 
@@ -59,17 +59,5 @@ public class ReflectUtil {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private static <T> T get(Map<String, SoftReference<T>> map, String key) {
-        SoftReference<T> reference = map.get(key);
-        if(null == reference) {
-            return null;
-        }
-        return reference.get();
-    }
-
-    private static <T> void put(Map<String, SoftReference<T>> map, String key, T value) {
-        map.put(key, new SoftReference<>(value));
     }
 }

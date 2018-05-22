@@ -1,6 +1,7 @@
 package cn.moyada.dubbo.faker.core.common;
 
 import cn.moyada.dubbo.faker.core.loader.AppClassLoader;
+import cn.moyada.dubbo.faker.core.utils.SoftReferenceUtil;
 import com.alibaba.dubbo.common.bytecode.Proxy;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ConsumerConfig;
@@ -9,7 +10,6 @@ import com.alibaba.dubbo.config.RegistryConfig;
 import javassist.*;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
-import org.jboss.netty.handler.codec.serialization.SoftReferenceMap;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -18,11 +18,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -36,7 +38,7 @@ public class BeanHolder implements ApplicationContextAware {
 //    @Autowired
 //    private ClassLoaderAspect classLoaderAspect;
 
-    private static volatile SoftReferenceMap<Class<?>, ReferenceConfig<?>> beanMap;
+    private static volatile Map<Class<?>, SoftReference<ReferenceConfig<?>>> beanMap;
 
     private static ApplicationContext applicationContext;
 
@@ -70,7 +72,7 @@ public class BeanHolder implements ApplicationContextAware {
         consumer.setActives(100);
         consumer.setLazy(false);
 
-        beanMap = new SoftReferenceMap<>(new HashMap<>());
+        beanMap = new HashMap<>();
     }
 
     public static <T> T getBean(Class<T> cls) throws BeansException {
@@ -89,7 +91,7 @@ public class BeanHolder implements ApplicationContextAware {
     }
 
     public Object getDubboBean(AppClassLoader classLoader, Class<?> cls) {
-        ReferenceConfig<?> reference = beanMap.get(cls);
+        ReferenceConfig<?> reference = SoftReferenceUtil.get(beanMap, cls);
         if(null != reference) {
             return reference.get();
         }
@@ -120,7 +122,7 @@ public class BeanHolder implements ApplicationContextAware {
 //        finally {
 //            Thread.currentThread().setContextClassLoader(contextClassLoader);
 //        }
-        beanMap.put(cls, reference);
+        SoftReferenceUtil.put(beanMap, cls, reference);
         return service;
     }
 
