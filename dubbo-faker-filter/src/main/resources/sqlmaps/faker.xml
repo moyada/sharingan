@@ -2,6 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.moyada.dubbo.faker.filter.dao.FakerDAO">
 
+	<resultMap id="appInfoMap" type="cn.moyada.dubbo.faker.filter.domain.AppInfoDO">
+		<id column="app_id" property="appId"/>
+		<result column="app_name" property="appName"/>
+		<result column="group_id" property="groupId"/>
+		<result column="artifact_id" property="artifactId"/>
+		<result column="version" property="version"/>
+	</resultMap>
+
 	<select id="existsInvokeInfo" resultType="Integer">
 		SELECT COUNT(*) FROM `method_invoke`
 		WHERE app_id = #{appId}

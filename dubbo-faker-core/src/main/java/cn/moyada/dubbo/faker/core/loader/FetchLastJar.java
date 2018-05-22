@@ -204,6 +204,10 @@ public class FetchLastJar {
         else {
             version = "\""+ version + "\"";
         }
+//        return MessageFormat.format(LIST_QUEST,
+//                dependency.getGroupId(),
+//                dependency.getArtifactId(),
+//                version);
         return String.format(LIST_QUEST,
                 dependency.getGroupId(),
                 dependency.getArtifactId(),
@@ -217,6 +221,12 @@ public class FetchLastJar {
      * @return
      */
     private String AssertQuest(Dependency dependency, Assert assertInfo) {
+//        return MessageFormat.format(ASSERT_QUEST,
+//                assertInfo.getRepositoryName(),
+//                assertInfo.getComponentId(),
+//                dependency.getArtifactId(),
+//                dependency.getGroupId(),
+//                assertInfo.getComponentVersion());
         return String.format(ASSERT_QUEST,
                 assertInfo.getRepositoryName(),
                 assertInfo.getComponentId(),

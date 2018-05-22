@@ -38,14 +38,16 @@ public class AppClassLoader extends URLClassLoader {
             return clazz;
         }
 
-        // 尝试查找
-        try {
-            clazz = this.findClass(name);
-        }
-        catch (ClassNotFoundException e) {
-            clazz = null;
+        synchronized (this) {
+            // 尝试查找
+            try {
+                clazz = this.findClass(name);
+            } catch (Exception e) {
+                clazz = null;
+            }
         }
         if(null != clazz) {
+            resolveClass(clazz);
             return clazz;
         }
 

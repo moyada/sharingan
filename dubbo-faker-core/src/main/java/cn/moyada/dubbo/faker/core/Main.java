@@ -39,8 +39,7 @@ public class Main {
         proxy.setFakerId(fakerId);
         proxy.setValues(values);
 
-        InvokeTask invokeTask = new InvokeTask(proxy, invokerInfo)
-                .build();
+        InvokeTask invokeTask = new InvokeTask(proxy, invokerInfo).build();
 
         int qps = invokerInfo.getQps();
         int timeout = (3600 / qps) - (20 >= qps ? 0 : 50);

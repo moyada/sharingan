@@ -100,6 +100,11 @@ public class BeanHolder implements ApplicationContextAware {
         reference.setRegistry(registry); // 多个注册中心可以用setRegistries()
         reference.setInterface(cls);
 
+        //获取dubbo提供的缓存
+//        ReferenceConfigCache cache = ReferenceConfigCache.getCache();
+        // cache.get方法中会缓存 reference对象，并且调用reference.get方法启动ReferenceConfig，并返回经过代理后的服务接口的对象
+//        Object service = cache.get(reference);
+
         // 切换类加载器
 //        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Object service;
