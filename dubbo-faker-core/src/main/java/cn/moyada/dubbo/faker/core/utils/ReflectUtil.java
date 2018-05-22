@@ -1,30 +1,30 @@
 package cn.moyada.dubbo.faker.core.utils;
 
 
-import org.jboss.netty.handler.codec.serialization.SoftReferenceMap;
-
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ReflectUtil {
 
-    private static final SoftReferenceMap<String, Field> fieldMap = new SoftReferenceMap<>(new HashMap<>());
-    private static final SoftReferenceMap<String, Class> classMap = new SoftReferenceMap<>(new HashMap<>());
+    private static final Map<String, SoftReference<Field>> fieldMap = new HashMap<>();
+    private static final Map<String, SoftReference<Class>> classMap = new HashMap<>();
 
     public static Class getClassType(String className) throws ClassNotFoundException {
-        Class<?> aClass = classMap.get(className);
+        Class<?> aClass = get(classMap, className);
         if(null != aClass) {
             return aClass;
         }
 
         aClass = Class.forName(className);
-        classMap.put(className, aClass);
+        put(classMap, className, aClass);
         return aClass;
     }
 
     private static Field getField(Class cls, String fieldName) {
         String key = cls.getName() + fieldName;
-        Field field = fieldMap.get(key);
+        Field field = get(fieldMap, key);
         if(null != field) {
             return field;
         }
@@ -42,7 +42,7 @@ public class ReflectUtil {
         }
         while (null == field);
         field.setAccessible(true);
-        fieldMap.put(key, field);
+        put(fieldMap, key, field);
         return field;
     }
 
@@ -59,5 +59,17 @@ public class ReflectUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static <T> T get(Map<String, SoftReference<T>> map, String key) {
+        SoftReference<T> reference = map.get(key);
+        if(null == reference) {
+            return null;
+        }
+        return reference.get();
+    }
+
+    private static <T> void put(Map<String, SoftReference<T>> map, String key, T value) {
+        map.put(key, new SoftReference<>(value));
     }
 }
