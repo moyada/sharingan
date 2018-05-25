@@ -1,7 +1,7 @@
 package cn.moyada.dubbo.faker.core.task;
 
 import cn.moyada.dubbo.faker.core.invoke.AbstractInvoker;
-import cn.moyada.dubbo.faker.core.invoke.FiberInvoker;
+import cn.moyada.dubbo.faker.core.invoke.DefaultInvoker;
 import cn.moyada.dubbo.faker.core.listener.AbstractListener;
 import cn.moyada.dubbo.faker.core.listener.BatchLoggingListener;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
@@ -57,7 +57,7 @@ public class InvokeTask {
 
         listener = new BatchLoggingListener(proxy.getFakerId(), invokerInfo, queue);
 
-        invoker = new FiberInvoker(proxy, queue, invokerInfo);
+        invoker = new DefaultInvoker(proxy, queue, invokerInfo);
 
         paramProvider = new ParamProvider(proxy.getValues(), proxy.getParamTypes(), invokerInfo.isRandom());
         argsList = new InvokerArgs[invokerInfo.getQuestNum()];

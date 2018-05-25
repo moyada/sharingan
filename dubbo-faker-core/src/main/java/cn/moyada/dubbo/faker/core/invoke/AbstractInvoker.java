@@ -128,7 +128,7 @@ public abstract class AbstractInvoker {
             }
         } catch (Throwable throwable) {
 //            throwable.printStackTrace();
-            result = FutureResult.failed(throwable.getMessage());
+            result = FutureResult.failed(throwable.toString());
         }
 //        finally {
 //            count.increment();

@@ -38,10 +38,10 @@ public class Faker {
 
     private volatile boolean running = false;
 
-    @ApiOperation(value = "调用虚拟请求", httpMethod = "GET", produces = "application/json")
+    @ApiOperation(value = "调用虚拟请求", produces = "application/json")
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
-    @RequestMapping(value = "invokeDubbo", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "invokeDubbo", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json")
     public Result invokeDubbo(
                        @ApiParam(name = "invokeId", required = true, value = "请求编号", defaultValue = "1") @RequestParam("invokeId") int invokeId,
                        @ApiParam(name = "invokeExpression", required = true, value = "参数表达式", defaultValue = "[\"${1.model}\"]") @RequestParam("invokeExpression") String invokeExpression,
@@ -95,7 +95,7 @@ public class Faker {
     @ApiOperation(value = "调用虚拟请求", httpMethod = "GET", produces = "application/json")
     @ApiResponse(code = 200, message = "success", response = Result.class)
     @ResponseBody
-    @RequestMapping(value = "invokeHttp", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "invokeHttp", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json")
     public Result invokeHttp(
                        @ApiParam(name = "invokeInfo", required = true, value = "请求信息，多个以逗号分隔",
                                defaultValue = "[{ \"url\": \"http://test.dubbo-faker/api/get\", \"method\": \"get\", \"header\": \"\", \"cookie\": \"{\"JSESSIONID\": \"ByOK3vjFD72aPnrF7C2HmdnV6TZcEbzWoWiBYEnLerjQ99zWpBng\"}\", \"param\": \"\"}]")

@@ -13,6 +13,16 @@ const columns = [{
   dataIndex: 'realParam',
   width: '22%',
   render(data) {
+    if(data && data.length > 200) {
+      return (
+        <div>
+          {data.substring(0, 250)}
+          <Popover placement="topRight" trigger="hover" content={data}>
+            <Button>详细</Button>
+          </Popover>
+        </div>
+      )
+    }
     return <div style={{paddingLeft: 10}}> {data} </div>
   }
 }, {

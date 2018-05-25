@@ -3,6 +3,7 @@ import { Tabs, Form, Table, Row, Col, Input, InputNumber, Button, Radio, Modal, 
 import InvokeCascader from '../components/InvokeCascader';
 import request from "../utils/request";
 
+const TextArea = Input.TextArea;
 const TabPane = Tabs.TabPane;
 const FormItem = Form.Item;
 const RadioButton = Radio.Button;
@@ -62,7 +63,7 @@ class InvokeForm extends React.Component {
 
           message.success("生成测试请求")
 
-          request("faker/invokeDubbo", payload)
+          request("faker/invokeDubbo", payload, 'POST')
             .then(resp => {
               if(resp.err) {
                 message.error(resp.err.message, 10)
@@ -320,8 +321,10 @@ class InvokeForm extends React.Component {
               <Col span={24} key='invokeExpression'>
                 <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`参数表达式`}>
                   {getFieldDecorator(`invokeExpression`, {initialValue: null})(
-                    <Input
+                    <TextArea
+                      maxLength={20000}
                       placeholder='["${1.test}"]'
+                      autosize
                     />
                   )}
                 </FormItem>
