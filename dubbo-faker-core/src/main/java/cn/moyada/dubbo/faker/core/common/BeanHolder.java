@@ -107,12 +107,10 @@ public class BeanHolder implements ApplicationContextAware {
         // cache.get方法中会缓存 reference对象，并且调用reference.get方法启动ReferenceConfig，并返回经过代理后的服务接口的对象
 //        Object service = cache.get(reference);
 
-        // 切换类加载器
-//        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Object service;
         try {
+            // 切换类加载器
             Thread.currentThread().setContextClassLoader(classLoader);
-//            classLoaderAspect.setClassLoader(classLoader);
             service = reference.get();
         }
         catch (Exception e) {

@@ -1,10 +1,12 @@
 package cn.moyada.dubbo.faker.core.loader;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * 项目加载器
@@ -69,6 +71,13 @@ public class AppClassLoader extends URLClassLoader {
         this.version = version;
     }
 
+    /**
+     * 封装依赖包路径
+     * @param jarUrl
+     * @param dependencies
+     * @return
+     * @throws MalformedURLException
+     */
     protected static URL[] buildURL(String jarUrl, List<String> dependencies) throws MalformedURLException {
         if(null == dependencies) {
             return new URL[]{new URL(jarUrl)};
@@ -81,6 +90,18 @@ public class AppClassLoader extends URLClassLoader {
             urls[index++] = new URL(dependency);
         }
         return urls;
+    }
+
+    /**
+     * 卸载类加载器
+     */
+    public void destroy() {
+        ResourceBundle.clearCache(this);
+        try {
+            this.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getVersion() {

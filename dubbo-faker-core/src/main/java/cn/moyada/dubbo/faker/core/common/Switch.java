@@ -1,21 +1,19 @@
 package cn.moyada.dubbo.faker.core.common;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * @author xueyikang
  * @create 2018-03-29 12:59
  */
 public class Switch {
 
-    private final AtomicBoolean status;
+    private volatile boolean status;
 
     public Switch(boolean initStatus) {
-        this.status = new AtomicBoolean(initStatus);
+        this.status = initStatus;
     }
 
     public boolean isOpen() {
-        return this.status.compareAndSet(true, true);
+        return status;
     }
 
     public boolean open() {
@@ -27,6 +25,6 @@ public class Switch {
     }
 
     private boolean checkout(boolean status) {
-        return this.status.compareAndSet(!status, status);
+        return this.status = status;
     }
 }

@@ -13,6 +13,8 @@ import cn.moyada.dubbo.faker.core.utils.ReflectUtil;
  */
 public class LoggingConvert {
 
+    private static final int TIMEOUT_MILLISECONDS = 1000;
+
     private String fakerId;
 
     private String resultParam;
@@ -48,7 +50,7 @@ public class LoggingConvert {
                         logDO.setResult("null");
                     }
                     else {
-                        logDO.setCode(spend > 1000 ? Code.TIME_OUT : Code.OK);
+                        logDO.setCode(spend > TIMEOUT_MILLISECONDS ? Code.TIME_OUT : Code.OK);
                         logDO.setResult(invokeResult);
                     }
                 }
@@ -57,21 +59,24 @@ public class LoggingConvert {
                     Object param = ReflectUtil.getValue(result.getResult(), resultParam);
                     if (null == param) {
                         logDO.setCode(Code.NULL);
-                        logDO.setResult(resultParam + ": null");
+                        logDO.setResult(resultParam.concat(": null"));
                     }
                     else {
-                        logDO.setCode(spend > 1000 ? Code.TIME_OUT : Code.OK);
+                        logDO.setCode(spend > TIMEOUT_MILLISECONDS ? Code.TIME_OUT : Code.OK);
                         logDO.setResult(param.toString());
                     }
                 }
             }
             else {
-                logDO.setCode(spend > 1000 ? Code.TIME_OUT : Code.OK);
+                logDO.setCode(spend > TIMEOUT_MILLISECONDS ? Code.TIME_OUT : Code.OK);
             }
         }
         else {
             logDO.setCode(Code.ERROR);
-            logDO.setMessage(String.valueOf(result.getResult()));
+            Object error = result.getResult();
+            if(null != error) {
+                logDO.setMessage(error.toString());
+            }
         }
 
         logDO.setFakerId(fakerId);

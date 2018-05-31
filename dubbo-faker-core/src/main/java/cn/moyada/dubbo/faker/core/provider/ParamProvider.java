@@ -12,6 +12,7 @@ import cn.moyada.dubbo.faker.core.utils.ParamUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 参数提供器
@@ -22,9 +23,14 @@ public class ParamProvider {
 
     // 参数表达式
     private final Object[] invokeValue;
+
+    private Object[] defaultArgsValue;
+
     // 参数实际类型
     private Class<?>[] paramTypes;
     private final int length;
+
+    private Set<String> fakerParamType;
 
     // 参数映射规则
     private Map<Integer, ParamMapping.Mapping> rebuildParamMap;
@@ -38,6 +44,9 @@ public class ParamProvider {
 
     // 参数映射链
     private Map<String, String[]> linkMap;
+
+    private int count = 0;
+    private char[] chars = new char[32];
 
     public ParamProvider(Object[] invokeValue, Class<?>[] paramTypes, boolean random) {
         ParamMapping paramMapping = ParamUtil.getRebuildParam(invokeValue);
@@ -58,7 +67,8 @@ public class ParamProvider {
 
             // 获取替换数据
             FakerManager fakerManager = BeanHolder.getBean(FakerManager.class);
-            this.fakerParamMap = fakerManager.getFakerParamMapByRebuildParam(paramMapping.getRebuildParamSet());
+            this.fakerParamType = paramMapping.getRebuildParamSet();
+            this.fakerParamMap = fakerManager.getFakerParamMapByRebuildParam(fakerParamType);
 
             genParamLinkAndIndex(random);
         }
@@ -108,23 +118,89 @@ public class ParamProvider {
         }
     }
 
+    private void reGenParam() {
+        System.out.println("reGenParam");
+        // 获取替换数据
+        FakerManager fakerManager = BeanHolder.getBean(FakerManager.class);
+        Map<String, List<String>> fakerParam = fakerManager.getFakerParamMapByRebuildParam(fakerParamType);
+
+        boolean random = true;
+        boolean check = true;
+        String value;
+        ParamMapping.Mapping paramMap;
+
+        int size = indexProviderMap.size();
+        Map<String, AbstractIndexProvider> indexProviderMap = new HashMap<>(size);
+        AbstractIndexProvider indexProvider;
+        for (int index = 0; index < length; index++) {
+
+            // 获取当前位置的替换参数
+            paramMap = rebuildParamMap.get(index);
+            if(null == paramMap) {
+                continue;
+            }
+
+            for(Map.Entry<String, ParamMapping.TypeCount> entry : paramMap.getParamMap().entrySet()) {
+
+                // 提取参数的目标
+                value = entry.getValue().getType();
+
+                if(check) {
+                    random = (this.indexProviderMap.get(value)) instanceof RandomIndexProvider;
+                    check = false;
+                }
+
+                if(random) {
+                    indexProvider = new RandomIndexProvider(fakerParam.get(value).size());
+                }
+                else {
+                    indexProvider = new OrderIndexProvider(fakerParam.get(value).size());
+                }
+                indexProviderMap.putIfAbsent(value, indexProvider);
+            }
+        }
+
+        this.count = 0;
+        this.fakerParamMap = fakerParam;
+        this.indexProviderMap = indexProviderMap;
+    }
+
     /**
      * 获取下一个实际参数
      * @return
      */
-    @SuppressWarnings("unchecked")
     public Object[] fetchNextParam() {
         if(0 == length) {
             return null;
         }
 
-        Object[] argsValue = new Object[length];
+        Object[] argsValue;
         if(null == rebuildParamMap) {
+            if(null != defaultArgsValue) {
+                return defaultArgsValue;
+            }
+            argsValue = new Object[length];
             for (int index = 0; index < length; index++) {
                 argsValue[index] = convert(JsonUtil.toJson(invokeValue[index]), convertMap.get(index), paramTypes[index]);
             }
+            defaultArgsValue = argsValue;
             return argsValue;
         }
+
+        if(count == 1000) {
+            reGenParam();
+        }
+        argsValue = getParam();
+        count++;
+        return argsValue;
+    }
+
+    /**
+     * 获取实际参数
+     */
+    @SuppressWarnings("unchecked")
+    private Object[] getParam() {
+        Object[] argsValue = new Object[length];
 
         String json, key, value, fakerValue;
         ParamMapping.TypeCount typeCount;
@@ -206,7 +282,14 @@ public class ParamProvider {
         return argsValue;
     }
 
-    private static String replaceFirst(String str, String target, String replacement) {
+    /**
+     * 参数表达式替换
+     * @param str 参数
+     * @param target 表达式
+     * @param replacement 替换参数
+     * @return 实际请求参数
+     */
+    private String replaceFirst(String str, String target, String replacement) {
         int index = str.indexOf(target);
         if(-1 == index) {
             return str;
@@ -216,7 +299,10 @@ public class ParamProvider {
         if(length == eleLength) {
             return replacement;
         }
-        char[] chars = new char[length + eleLength];
+        if(chars.length < length + eleLength) {
+            chars = new char[length + eleLength];
+        }
+        // char[] chars = new char[length + eleLength];
         int pos = 0;
 
         index--;
@@ -232,7 +318,7 @@ public class ParamProvider {
         for (int index1 = index + target.length() + 1; index1 < length; index1++) {
             chars[pos++] = str.charAt(index1);
         }
-        return new String(chars, 0, pos);
+        return new String(chars, 0, pos).intern();
         // return (str.substring(0, index) + replacement + str.substring(index + length)).intern();
     }
 

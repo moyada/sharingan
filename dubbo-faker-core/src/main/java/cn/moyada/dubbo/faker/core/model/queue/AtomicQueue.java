@@ -12,12 +12,12 @@ public class AtomicQueue<E> extends AbstractQueue<E> {
     private final AtomicInteger insertIndex;
     private final AtomicInteger readIndex;
 
-    private final Node<E>[] values;
+    private final Object[] values;
 
     @SuppressWarnings("unchecked")
     public AtomicQueue(int size) {
         super(size);
-        this.values = new Node[size];
+        this.values = new Object[size];
         this.insertIndex = new AtomicInteger(0);
         this.readIndex = new AtomicInteger(0);
     }
@@ -29,10 +29,11 @@ public class AtomicQueue<E> extends AbstractQueue<E> {
         if(i == size) {
             throw new IndexOutOfBoundsException("total size is " + size + ", but insert index is " + i);
         }
-        values[i] = new Node<>(value);
+        values[i] = value;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public E poll() {
         int i = readIndex.getAndIncrement();
         if(insertIndex.compareAndSet(i, i)) {
@@ -44,11 +45,11 @@ public class AtomicQueue<E> extends AbstractQueue<E> {
             done();
             return null;
         }
-        Node<E> node = values[i];
+        Object node = values[i];
         if(null == node) {
             readIndex.decrementAndGet();
             return null;
         }
-        return node.value;
+        return (E) node;
     }
 }

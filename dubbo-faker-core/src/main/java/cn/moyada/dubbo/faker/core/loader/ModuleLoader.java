@@ -103,7 +103,7 @@ public class ModuleLoader {
                 return true;
             }
             else {
-                unload(classLoader);
+                classLoader.destroy();
             }
         }
 
@@ -137,14 +137,6 @@ public class ModuleLoader {
             dependencies.add(jarUrl);
         }
         return dependencies;
-    }
-
-    /**
-     * 卸载jar包
-     * @param classLoader 依赖类加载器
-     */
-    private void unload(AppClassLoader classLoader) {
-        clear(classLoader);
     }
 
     /**
@@ -228,6 +220,6 @@ public class ModuleLoader {
         dependency.setArtifactId("car-model-api");
         Class aClass = moduleLoader.getClass(dependency, "com.souche.car.model.api.model.ModelService");
         System.out.println(aClass);
-        moduleLoader.unload(moduleLoader.getClassLoader(dependency));
+        moduleLoader.getClassLoader(dependency).destroy();
     }
 }

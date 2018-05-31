@@ -21,12 +21,12 @@ public class SequenceQueue<E> extends AbstractQueue<E> {
     private AtomicInteger readIndex;
 
     // 元素数组
-    private Node<E>[] nodes;
+    private Object[] nodes;
 
     @SuppressWarnings("unchecked")
     public SequenceQueue(int size) {
         super(size);
-        this.nodes = new Node[size];
+        this.nodes = new Object[size];
         this.insertIndex = new AtomicInteger(0);
         this.readIndex = new AtomicInteger(0);
         this.insertLoop = false;
@@ -42,13 +42,14 @@ public class SequenceQueue<E> extends AbstractQueue<E> {
             throw new IndexOutOfBoundsException("Sequence free size is full, total size is " + size
                     + ", insert index is " + index + ", but read index is " + readIndex.intValue());
         }
-        nodes[index] = new Node<>(e);
+        nodes[index] = e;
         if(insertIndex.compareAndSet(size - 1, index) && insertIndex.compareAndSet(index, 0)) {
             insertLoop = true;
         }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public E poll() {
         // 读标记等于写标记并且循环中
         int index = readIndex.getAndIncrement();
@@ -56,7 +57,7 @@ public class SequenceQueue<E> extends AbstractQueue<E> {
             readIndex.decrementAndGet();
             return null;
         }
-        Node<E> node = nodes[index];
+        Object node = nodes[index];
         if(null == node) {
             readIndex.decrementAndGet();
             return null;
@@ -65,6 +66,6 @@ public class SequenceQueue<E> extends AbstractQueue<E> {
         if(readIndex.compareAndSet(size - 1, index) && readIndex.compareAndSet(index, 0)) {
             readLoop = true;
         }
-        return node.value;
+        return (E) node;
     }
 }

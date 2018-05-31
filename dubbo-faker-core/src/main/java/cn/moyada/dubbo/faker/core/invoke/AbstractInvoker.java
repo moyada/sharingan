@@ -2,7 +2,10 @@ package cn.moyada.dubbo.faker.core.invoke;
 
 import cn.moyada.dubbo.faker.core.exception.UnsupportedParamNumberException;
 import cn.moyada.dubbo.faker.core.factory.GroupThreadFactory;
-import cn.moyada.dubbo.faker.core.model.*;
+import cn.moyada.dubbo.faker.core.model.FutureResult;
+import cn.moyada.dubbo.faker.core.model.InvokeFuture;
+import cn.moyada.dubbo.faker.core.model.InvokerInfo;
+import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
 import cn.moyada.dubbo.faker.core.utils.DateUtil;
 import cn.moyada.dubbo.faker.core.utils.ParamUtil;
@@ -128,7 +131,7 @@ public abstract class AbstractInvoker {
             }
         } catch (Throwable throwable) {
 //            throwable.printStackTrace();
-            result = FutureResult.failed(throwable.toString());
+            result = FutureResult.failed(throwable);
         }
 //        finally {
 //            count.increment();
@@ -136,7 +139,6 @@ public abstract class AbstractInvoker {
         // 完成计算耗时
 //        result.setSpend(DateUtil.afterInstant(start));
         result.setSpend((System.nanoTime() - start) / NANO_PER_MILLIS);
-//        System.out.println(Arrays.toString(argsValue) + "  " + System.nanoTime());
         callback(new InvokeFuture(result, invokeTime, ParamUtil.toString(argsValue)));
         count.increment();
     }
@@ -159,6 +161,7 @@ public abstract class AbstractInvoker {
             System.out.println("reject!");
             executor.shutdownNow();
             queue.done();
+            System.gc();
             throw new RuntimeException("服务响应过慢，已强制关闭.");
         }
     }

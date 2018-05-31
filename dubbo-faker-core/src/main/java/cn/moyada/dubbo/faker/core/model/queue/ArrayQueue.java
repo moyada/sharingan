@@ -7,7 +7,7 @@ package cn.moyada.dubbo.faker.core.model.queue;
  */
 public class ArrayQueue<E> extends AbstractQueue<E> {
 
-    private final Node<E>[] values;
+    private Object[] values;
 
     private int readIndex;
     private int insertIndex;
@@ -15,7 +15,7 @@ public class ArrayQueue<E> extends AbstractQueue<E> {
     @SuppressWarnings("unchecked")
     public ArrayQueue(int size) {
         super(size);
-        this.values = new Node[size];
+        this.values = new Object[size];
         this.insertIndex = 0;
         this.readIndex = 0;
     }
@@ -25,21 +25,22 @@ public class ArrayQueue<E> extends AbstractQueue<E> {
         if(insertIndex == size) {
             throw new IndexOutOfBoundsException("total size is " + size + ", but insert index is " + insertIndex);
         }
-        values[insertIndex] = new Node<>(value);
+        values[insertIndex] = value;
         insertIndex = insertIndex+1;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public E poll() {
         if(readIndex == size) {
             return null;
         }
-        Node<E> node = values[readIndex];
+        Object node = values[readIndex];
         if(null == node) {
 //            done();
             return null;
         }
         readIndex = readIndex+1;
-        return node.value;
+        return (E) node;
     }
 }

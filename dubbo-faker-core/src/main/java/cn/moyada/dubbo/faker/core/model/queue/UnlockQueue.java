@@ -85,7 +85,7 @@ public class UnlockQueue<E> extends AbstractQueue<E> {
 
     static class FairUnlockQueue<U> extends UnlockQueue<U> {
         FairUnlockQueue(int producer, int size) {
-            super(producer, (size * 3) / (producer * 2));
+            super(producer, (size * 5 / 3) / producer);
         }
     }
 

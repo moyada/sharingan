@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -112,15 +113,22 @@ public class FakerManager {
         return methodInvoke;
     }
 
-    public List<String> getFakerParam(int appId, String type) {
-        return fakerDAO.findParamByType(appId, type);
-    }
-
     public List<String> getFakerParamByRebuildParam(String param) {
         String[] split = param.split("\\.");
         Integer appId = Integer.valueOf(split[0]);
         String type = split[1];
-        return fakerDAO.findParamByType(appId, type);
+        int count = fakerDAO.countParamByType(appId, type);
+        int limit, page;
+        if(count < 1000) {
+            limit = 0;
+            page = count;
+        }
+        else {
+            limit = new Random().nextInt(count - 1000);
+            page = 1000;
+        }
+
+        return fakerDAO.findParamByType(appId, type, limit, page);
     }
 
     /**

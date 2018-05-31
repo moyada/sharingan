@@ -2,7 +2,7 @@ package cn.moyada.dubbo.faker.core.model.queue;
 
 import cn.moyada.dubbo.faker.core.model.padding.Bit4Padding;
 
-import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 单线程循环队列
@@ -20,20 +20,20 @@ class Sequence<E> extends Bit4Padding {
     private final int size;
 
     // 下次插入下标
-    private LongAdder insertIndex;
+    private AtomicInteger insertIndex;
 
     // 下次读取下标
-    private LongAdder readIndex;
+    private AtomicInteger readIndex;
 
     // 元素数组
-    private Node<E>[] nodes;
+    private Object[] nodes;
 
     @SuppressWarnings("unchecked")
     Sequence(int size) {
-        this.nodes = new Node[size];
+        this.nodes = new Object[size];
         this.size = size;
-        this.insertIndex = new LongAdder();
-        this.readIndex = new LongAdder();
+        this.insertIndex = new AtomicInteger(0);
+        this.readIndex = new AtomicInteger(0);
         this.insertLoop = false;
         this.readLoop = false;
     }
@@ -45,34 +45,35 @@ class Sequence<E> extends Bit4Padding {
             throw new IndexOutOfBoundsException("Sequence free size is full, total size is " + size
                     + ", insert index is " + index + ", but read index is " + readIndex.intValue());
         }
-        nodes[index] = new Node<>(e);
+        nodes[index] = e;
         if(size == index + 1) {
-            insertIndex.reset();
+            insertIndex.set(0);
             insertLoop = true;
         }
         else {
-            insertIndex.increment();
+            insertIndex.incrementAndGet();
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected E next() {
         // 读标记等于写标记并且循环中
         int index = readIndex.intValue();
         if(index == insertIndex.intValue() && readLoop) {
             return null;
         }
-        Node<E> node = nodes[index];
+        Object node = nodes[index];
         if(null == node) {
             return null;
         }
 
         if(size == index + 1) {
-            readIndex.reset();
+            readIndex.set(0);
             readLoop = true;
         }
         else {
-            readIndex.increment();
+            readIndex.incrementAndGet();
         }
-        return node.value;
+        return (E) node;
     }
 }

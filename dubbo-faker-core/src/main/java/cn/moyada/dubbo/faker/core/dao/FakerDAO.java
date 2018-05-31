@@ -23,7 +23,10 @@ public interface FakerDAO {
 
     MethodInvokeDO findInvokeInfoById(@Param("id") int id);
 
-    List<String> findParamByType(@Param("appId") int appId, @Param("type") String type);
+    int countParamByType(@Param("appId") int appId, @Param("type") String type);
+
+    List<String> findParamByType(@Param("appId") int appId, @Param("type") String type,
+                                 @Param("limit") int limit, @Param("size") int size);
 
     void saveLog(LogDO logDO);
 

@@ -5,7 +5,6 @@ import cn.moyada.dubbo.faker.core.invoke.DefaultInvoker;
 import cn.moyada.dubbo.faker.core.listener.AbstractListener;
 import cn.moyada.dubbo.faker.core.listener.BatchLoggingListener;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
-import cn.moyada.dubbo.faker.core.model.InvokerArgs;
 import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.MethodProxy;
 import cn.moyada.dubbo.faker.core.model.queue.AbstractQueue;
@@ -30,6 +29,8 @@ public class InvokeTask {
 
     private final String fakerId;
 
+    private final int questNum;
+
     // 参数提供器
     private final ParamProvider paramProvider;
 
@@ -39,20 +40,20 @@ public class InvokeTask {
     // 结果监听器
     private final AbstractListener listener;
 
-    private final InvokerArgs[] argsList;
-
     public InvokeTask(MethodProxy proxy, InvokerInfo invokerInfo) {
         this.fakerId = proxy.getFakerId();
+        this.questNum = invokerInfo.getQuestNum();
 
         final AbstractQueue<InvokeFuture> queue;
-        if(invokerInfo.getPoolSize() == 1) {
-            queue = new ArrayQueue<>(invokerInfo.getQuestNum());
-        }
-        else if (invokerInfo.getPoolSize() == 2) {
-            queue = new AtomicQueue<>(invokerInfo.getQuestNum());
-        }
-        else {
-            queue = UnlockQueue.build(invokerInfo.getPoolSize(), invokerInfo.getQuestNum());
+        switch (invokerInfo.getPoolSize()) {
+            case 1:
+                queue = new ArrayQueue<>(invokerInfo.getQuestNum());
+                break;
+            case 2:
+                queue = new AtomicQueue<>(invokerInfo.getQuestNum());
+                break;
+            default:
+                queue = UnlockQueue.build(invokerInfo.getPoolSize(), invokerInfo.getQuestNum());
         }
 
         listener = new BatchLoggingListener(proxy.getFakerId(), invokerInfo, queue);
@@ -60,16 +61,6 @@ public class InvokeTask {
         invoker = new DefaultInvoker(proxy, queue, invokerInfo);
 
         paramProvider = new ParamProvider(proxy.getValues(), proxy.getParamTypes(), invokerInfo.isRandom());
-        argsList = new InvokerArgs[invokerInfo.getQuestNum()];
-    }
-
-    public InvokeTask build() {
-        int length = argsList.length;
-        log.info("prepare invoke arguments.");
-        for (int index = 0; index < length; index++) {
-            argsList[index] = new InvokerArgs(paramProvider.fetchNextParam());
-        }
-        return this;
     }
 
     public void shutdown() {
@@ -84,19 +75,17 @@ public class InvokeTask {
 
     public void start() {
         listener();
-        int questNum = argsList.length;
         log.info("start faker invoke: " + fakerId);
         for (int index = 0; index < questNum; index++) {
-            invoker.invoke(argsList[index].getArgsValue());
+            invoker.invoke(paramProvider.fetchNextParam());
         }
     }
 
     public void start(int timeout) {
         listener();
-        int questNum = argsList.length;
         log.info("start timeout faker invoke: " + fakerId);
         for (int index = 0; index < questNum; index++) {
-            invoker.invoke(argsList[index].getArgsValue());
+            invoker.invoke(paramProvider.fetchNextParam());
             LockSupport.parkNanos(timeout * NANO_PER_MILLIS);
         }
     }

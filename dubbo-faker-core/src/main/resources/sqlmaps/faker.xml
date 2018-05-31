@@ -45,12 +45,19 @@
 		WHERE id = #{id};
 	</select>
 
+	<select id="countParamByType" resultType="int">
+		SELECT COUNT(*)
+		FROM `invoke_param`
+		WHERE app_id = #{appId}
+		AND `type` = #{type}
+	</select>
+
 	<select id="findParamByType" resultType="String">
 		SELECT `param_value`
 		FROM `invoke_param`
 		WHERE app_id = #{appId}
 		AND `type` = #{type}
-		ORDER BY id;
+		LIMIT ${limit}, ${size}
 	</select>
 
 	<insert id="saveLog">
