@@ -1,6 +1,5 @@
 package cn.moyada.dubbo.faker.core.listener;
 
-import cn.moyada.dubbo.faker.core.common.Switch;
 import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.dubbo.faker.core.model.InvokerInfo;
 import cn.moyada.dubbo.faker.core.model.domain.LogDO;
@@ -9,9 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.LockSupport;
-
-import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 批量保存结果监听器
@@ -21,10 +19,8 @@ import static cn.moyada.dubbo.faker.core.common.Constant.NANO_PER_MILLIS;
 public class BatchLoggingListener extends AbstractListener {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(BatchLoggingListener.class);
 
-    private final List<LogDO> list1;
-    private final List<LogDO> list2;
+    private final AtomicReference<List<LogDO>> list;
 
-    private final Switch lock;
     private volatile boolean stop;
 
     public BatchLoggingListener(String fakerId, InvokerInfo invokerInfo,
@@ -32,18 +28,20 @@ public class BatchLoggingListener extends AbstractListener {
         super(fakerId, invokerInfo, queue);
         int num = invokerInfo.getQuestNum() / 1000;
         num = num == 0 ? 1: num;
-        this.list1 = new ArrayList<>(1000 * num);
-        this.list2 = new ArrayList<>(1000 * num);
-        this.lock = new Switch(true);
+        this.list = new AtomicReference<>(new ArrayList<>(1000 * num));
         this.stop = false;
     }
 
     private void stopLogger() {
         for(;;) {
-            if(list1.isEmpty() && list2.isEmpty()) {
+            if(list.get().isEmpty()) {
                 break;
             }
-            LockSupport.parkNanos(100 * NANO_PER_MILLIS);
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
         stop = true;
     }
@@ -58,21 +56,24 @@ public class BatchLoggingListener extends AbstractListener {
 
         @Override
         public void run() {
+            LogDO logDO;
             for (;;) {
                 InvokeFuture future = futureQueue.poll();
                 if(null == future) {
                     if(futureQueue.isDone()) {
                         break;
                     }
-                    LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(100);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     continue;
                 }
 
-                if (lock.isOpen()) {
-                    list1.add(convert.convertToLog(future));
-                } else {
-                    list2.add(convert.convertToLog(future));
-                }
+                logDO = convert.convertToLog(future);
+                list.get().add(logDO);
+
             }
             stopLogger();
             log.info("logging shutdown: " + convert.getFakerId());
@@ -81,17 +82,20 @@ public class BatchLoggingListener extends AbstractListener {
 
     class Logger implements Runnable {
 
+        private List<LogDO> saveList = new ArrayList<>(1000);
+
         @Override
         public void run() {
             for (;;) {
                 // 每秒批量保存一次
-                LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
-                if (lock.close()) {
-                    save(list1);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
-                else if (lock.open()) {
-                    save(list2);
-                }
+
+                saveList = list.getAndSet(saveList);
+                save(saveList);
 
                 if(stop) {
                     break;
