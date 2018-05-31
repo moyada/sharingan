@@ -2,7 +2,7 @@
 
 dubbo-faker是针对[dubbo](https://github.com/apache/incubator-dubbo)项目进行服务测试的工程，用于快速检测代码变更的正确性。
 
-通过预设的参数表达式、qps等直接通过dubbo通信调用生产者服务，并生成测试报告。
+项目依赖zookeeper、nexus私服，通过预设的参数表达式、qps等直接通过dubbo通信调用生产者服务，并生成测试报告。
 
 ## 目录
 
@@ -28,27 +28,24 @@ git clone git@github.com:moyada/dubbo-faker.git
 
 ### 修改配置文件
 
-* 在`pom.xml`增加测试目标的`dubbo`服务依赖:
-
-```xml
-<dependency>
-    <groupId>com.company</groupId>
-    <artifactId>project</artifactId>
-    <version>${project.version}</version>
-</dependency>
- ```
+* 修改`maven.properties`中maven私服配置
  
 * 修改`jdbc.properties`中mysql数据库连接配置
 
 * 修改`dubbo.properties`中zookeeper连接配置
 
-* `application-dubbo-import.xml`中添加测试接口引用
 
-```xml
-<dubbo:reference id="dubboService" interface="com.company.project.DubboService" />
 ```
+由于项目使用nexus，使用前先替换repo.maven.com确认获取资源的访问
 
+curl 'https://repo.maven.com/service/extdirect' -H 'Content-Type: application/json' -H 'Accept: */*' 
+--data-binary '{"action":"coreui_Search","method":"read","data":[{"page":1,"start":0,"limit":1,"sort":[{"property":"version","direction":"DESC"}],
+"filter":[{"property":"format","value":"maven2"},
+{"property":"attributes.maven2.groupId","value":"cn.moyada"},
+{"property":"attributes.maven2.artifactId","value":"faker-api"},
+{property: "attributes.maven2.baseVersion", value: null}]}],"type":"rpc","tid":0}'
 
+```
 ### 创建数据库表结构
 执行 `schema/faker.sql` 创建数据库表结构
 
