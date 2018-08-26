@@ -1,15 +1,13 @@
 package cn.moyada.dubbo.faker.core.common;
 
 import cn.moyada.dubbo.faker.core.loader.AppClassLoader;
+import cn.moyada.dubbo.faker.core.model.CleanerReference;
+import cn.moyada.dubbo.faker.core.utils.CleanerUtil;
 import cn.moyada.dubbo.faker.core.utils.SoftReferenceUtil;
-import com.alibaba.dubbo.common.bytecode.Proxy;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ConsumerConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
-import javassist.*;
-import javassist.expr.ExprEditor;
-import javassist.expr.MethodCall;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -17,17 +15,13 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.lang.ref.SoftReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
+ * 实例管理器
  * @author xueyikang
  * @create 2018-03-27 13:09
  */
@@ -35,10 +29,7 @@ import java.util.Map;
 @Lazy(false)
 public class BeanHolder implements ApplicationContextAware {
 
-//    @Autowired
-//    private ClassLoaderAspect classLoaderAspect;
-
-    private static volatile Map<Class<?>, SoftReference<ReferenceConfig<?>>> beanMap;
+    private static volatile Map<Class<?>, SoftReference<CleanerReference<ReferenceConfig<?>>>> beanMap;
 
     private static ApplicationContext applicationContext;
 
@@ -75,6 +66,13 @@ public class BeanHolder implements ApplicationContextAware {
         beanMap = new HashMap<>();
     }
 
+    /**
+     * 获取spring实例
+     * @param cls
+     * @param <T>
+     * @return
+     * @throws BeansException
+     */
     public static <T> T getBean(Class<T> cls) throws BeansException {
         T bean;
         try {
@@ -90,10 +88,22 @@ public class BeanHolder implements ApplicationContextAware {
         return bean;
     }
 
+    /**
+     * 获取dubbo实例
+     * @param classLoader
+     * @param cls
+     * @return
+     */
     public Object getDubboBean(AppClassLoader classLoader, Class<?> cls) {
-        ReferenceConfig<?> reference = SoftReferenceUtil.get(beanMap, cls);
-        if(null != reference) {
-            return reference.get();
+        Object service;
+        ReferenceConfig<?> reference;
+        CleanerReference<ReferenceConfig<?>> cleanerReference = SoftReferenceUtil.get(beanMap, cls);
+        if(null != cleanerReference) {
+            reference = cleanerReference.getReference();
+            if (null != reference && (service = reference.get()) != null) {
+                return service;
+            }
+            CleanerUtil.cleaner(cleanerReference);
         }
 
         reference = new ReferenceConfig<>(); // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
@@ -107,7 +117,6 @@ public class BeanHolder implements ApplicationContextAware {
         // cache.get方法中会缓存 reference对象，并且调用reference.get方法启动ReferenceConfig，并返回经过代理后的服务接口的对象
 //        Object service = cache.get(reference);
 
-        Object service;
         try {
             // 切换类加载器
             Thread.currentThread().setContextClassLoader(classLoader);
@@ -120,7 +129,10 @@ public class BeanHolder implements ApplicationContextAware {
 //        finally {
 //            Thread.currentThread().setContextClassLoader(contextClassLoader);
 //        }
-        SoftReferenceUtil.put(beanMap, cls, reference);
+        if(null != service) {
+            cleanerReference = CleanerUtil.create(reference);
+            SoftReferenceUtil.put(beanMap, cls, cleanerReference);
+        }
         return service;
     }
 
@@ -131,66 +143,5 @@ public class BeanHolder implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         BeanHolder.applicationContext = applicationContext;
-    }
-
-//    static {
-//        try {
-//            replaceGetProxy();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    /**
-     * 动态修改Dubbo Proxy getProxy方法
-     */
-    @SuppressWarnings("unchecked")
-    protected static void replaceGetProxy() throws NotFoundException, CannotCompileException, NoSuchMethodException, IOException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, NoSuchFieldException, InstantiationException {
-        String className = "com.alibaba.dubbo.common.bytecode.Proxy";
-
-        ClassPool classPool = ClassPool.getDefault();
-        ClassClassPath classPath = new ClassClassPath(Proxy.class);
-        classPool.insertClassPath(classPath);
-
-        CtClass ctClass = classPool.getCtClass(className);
-        CtClass paramType = classPool.getCtClass("java.lang.Class[]");
-        CtMethod ctMethod = ctClass.getDeclaredMethod("getProxy", new CtClass[]{paramType});
-
-        // 替换为获取当前线程类加载器
-        ctMethod.instrument(
-                new ExprEditor() {
-                    public void edit(MethodCall m) throws CannotCompileException {
-                        m.replace("$_ = getProxy(Thread.currentThread().getContextClassLoader(), $sig);");
-                    }
-                });
-        ctClass.writeFile();
-        byte[] bytes = ctClass.toBytecode();
-
-        Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-        defineClass.setAccessible(true);
-
-        // 清除已加载类信息
-        Class<?> proxyClass = Class.forName(className);
-
-        URLClassLoader classLoader = (URLClassLoader) proxyClass.getClassLoader();
-        URL[] urLs = classLoader.getURLs();
-
-        URLClassLoader urlClassLoader = URLClassLoader.newInstance(urLs, classLoader.getParent());
-
-//        Field classes = ClassLoader.class.getDeclaredField("classes");
-//        classes.setAccessible(true);
-//
-//        Vector<Class<?>> oldClasses = (Vector<Class<?>>) classes.get(classLoader);
-//        Vector<Class<?>> newClasses = new Vector<>(oldClasses.size());
-//        for (Class<?> clazz : oldClasses) {
-//            if(clazz.getName().equals(className)) {
-//                continue;
-//            }
-//            newClasses.add(clazz);
-//        }
-//        classes.set(classLoader, newClasses);
-
-        // 重新载入字节码
-        defineClass.invoke(urlClassLoader, className, bytes, 0, bytes.length);
     }
 }

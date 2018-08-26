@@ -1,6 +1,7 @@
 package cn.moyada.dubbo.faker.filter.manager;
 
 import cn.moyada.dubbo.faker.filter.dao.FakerDAO;
+import cn.moyada.dubbo.faker.filter.domain.AppInfoDO;
 import cn.moyada.dubbo.faker.filter.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.filter.domain.RealParamDO;
 import cn.moyada.dubbo.faker.filter.utils.DateUtil;
@@ -30,16 +31,16 @@ public class FakerManager {
 
     /**
      * 获取项目编号
-     * @param appName
+     * @param appInfoDO
      * @return
      */
-    public Integer getAppId(String appName) {
-        Integer appId = fakerDAO.findAppId(appName);
+    public Integer getAppId(AppInfoDO appInfoDO) {
+        Integer appId = fakerDAO.findAppId(appInfoDO.getAppName());
+        fakerDAO.saveApp(appInfoDO);
         if(null != appId) {
             return appId;
         }
-        fakerDAO.saveApp(appName);
-        return fakerDAO.findAppId(appName);
+        return fakerDAO.findAppId(appInfoDO.getAppName());
     }
 
     /**

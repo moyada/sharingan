@@ -23,4 +23,16 @@ public @interface Exporter {
      * @return
      */
     boolean override() default true;
+
+    /**
+     * 创建参数表达式
+     * @return
+     */
+    boolean build() default true;
+
+    /**
+     * 指定参数表达式名称
+     * @return
+     */
+    String[] variablesName();
 }

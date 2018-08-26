@@ -35,7 +35,10 @@
 	</select>
 
     <insert id="saveApp">
-        INSERT INTO `app_info` (`app_name`) VALUE (#{appName});
+		INSERT INTO `app_info` (`app_name`, `group_id`, `artifact_id`, `version`, `url`)
+		VALUES
+			(#{appName}, #{groupId}, #{artifactId}, #{version}, #{url}, #{dependencies})
+		ON DUPLICATE KEY UPDATE version = VALUES(version), url = VALUES(url)
     </insert>
 
 	<select id="findLastAppId" resultType="Integer">

@@ -1,10 +1,16 @@
 package cn.moyada.dubbo.faker.core.http;
 
+import org.apache.http.client.methods.HttpPost;
+
+import java.net.URI;
+
 /**
  * @author xueyikang
  * @create 2018-01-05 00:45
  */
 public class HttpInvoke {
+
+    private String key;
 
     private String url;
 
@@ -15,6 +21,14 @@ public class HttpInvoke {
     private String cookie;
 
     private String param;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getUrl() {
         return url;

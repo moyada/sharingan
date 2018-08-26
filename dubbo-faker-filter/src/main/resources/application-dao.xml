@@ -13,15 +13,15 @@
         <property name="typeAliasesPackage" value="cn.moyada.dubbo.faker.filter.domain" />
     </bean>
 
-    <!-- 配置扫描DAO接口包，动态实现DAO接口注入 -->
+    <!--&lt;!&ndash; 配置扫描DAO接口包，动态实现DAO接口注入 &ndash;&gt;-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
         <property name="basePackage" value="cn.moyada.dubbo.faker.filter.dao"/>
     </bean>
 
     <!-- 配置单个DAO接口实现，注入spring容器 -->
-    <bean id="fakerMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory" />
-        <property name="mapperInterface" value="cn.moyada.dubbo.faker.filter.dao.FakerDAO"/>
-    </bean>
+    <!--<bean id="fakerMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+        <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
+        <!--<property name="mapperInterface" value="cn.moyada.dubbo.faker.filter.dao.FakerDAO"/>-->
+    <!--</bean>-->
 </beans>

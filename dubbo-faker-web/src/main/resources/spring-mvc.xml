@@ -24,4 +24,15 @@
 
     <!-- swagger 配置 -->
     <bean class="cn.moyada.dubbo.faker.web.config.Swagger2Config"/>
+
+    <!-- swagger ui resources-->
+    <mvc:resources mapping="/swagger/**" location="swagger/" />
+    <mvc:resources mapping="/**" location="resource/" />
+
+
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+        <!--&lt;!&ndash; Example: a logical view name of 'showMessage' is mapped to '/WEB-INF/jsp/showMessage.jsp' &ndash;&gt;-->
+        <!--<property name="prefix" value="/WEB-INF/view/"/>-->
+        <!--<property name="suffix" value=".jsp"/>-->
+    <!--</bean>-->
 </beans>

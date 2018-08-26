@@ -36,7 +36,6 @@ public abstract class AbstractInvoker {
         int questNum = invokerInfo.getQuestNum();
         int threadSize = RuntimeUtil.getAllowThreadSize() - poolSize;
         threadSize = questNum > threadSize ? threadSize : questNum;
-
         this.excutor = new ThreadPoolExecutor(poolSize, poolSize, 10L, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(threadSize),
                 new GroupThreadFactory("invoker", proxy.getFakerId(), Thread.MAX_PRIORITY),

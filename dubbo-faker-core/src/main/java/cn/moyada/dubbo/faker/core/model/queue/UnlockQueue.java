@@ -16,6 +16,7 @@ public class UnlockQueue<E> extends AbstractQueue<E> {
 
     // 上次获取元素的分组下标
     private int index;
+    private final int length;
 
     @SuppressWarnings("unchecked")
     private UnlockQueue(int producer, int size) {
@@ -27,6 +28,7 @@ public class UnlockQueue<E> extends AbstractQueue<E> {
             this.itemDone[index] = false;
         }
         this.index = 0;
+        this.length = itemDone.length;
     }
 
     @Override
@@ -40,19 +42,14 @@ public class UnlockQueue<E> extends AbstractQueue<E> {
 
     @Override
     public E poll() {
-        // 检查上次分组
-        E next = sequences[index].next();
-        if(null != next) {
-            return next;
-        }
-        // 检查剩余分组
+        E next;
         int nextIndex = index;
-        int length = itemDone.length;
-        for(int i = 1; i < length; i++) {
+        // 轮询数据块
+        for(int i = 0; i < length; i++) {
             nextIndex = (nextIndex + i) % length;
             next = sequences[nextIndex].next();
             if(null != next) {
-                index = nextIndex;
+                this.index = nextIndex;
                 return next;
             }
         }

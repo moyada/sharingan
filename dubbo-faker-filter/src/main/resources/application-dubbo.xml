@@ -9,5 +9,5 @@
     					http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
     <!-- 配置dubbo拦截器 -->
-    <dubbo:provider filter="FakerListener" />
+    <!--<dubbo:provider filter="FakerListener" />-->
 </beans>

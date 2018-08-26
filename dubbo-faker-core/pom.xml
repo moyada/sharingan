@@ -28,10 +28,9 @@
                 <!--<version>1.1.0-SNAPSHOT</version>-->
                 <!--<executions>-->
                     <!--<execution>-->
-                        <!--<phase>compile</phase>-->
-                        <!--&lt;!&ndash;<phase>initialize</phase>&ndash;&gt;-->
+                        <!--<phase>package</phase>-->
                         <!--<goals>-->
-                            <!--<goal>replaceBody</goal>-->
+                        <!--<goal>replaceBody</goal>-->
                         <!--</goals>-->
                     <!--</execution>-->
                 <!--</executions>-->
@@ -39,7 +38,7 @@
                     <!--<className>com.alibaba.dubbo.common.bytecode.Proxy</className>-->
                     <!--<method>getProxy</method>-->
                     <!--<param>java.lang.Class[]</param>-->
-                    <!--<body>return getProxy(Thread.currentThread().getContextClassLoader(), ics);</body>-->
+                    <!--<body>$_ = getProxy(Thread.currentThread().getContextClassLoader(), $sig);</body>-->
                 <!--</configuration>-->
             <!--</plugin>-->
         </plugins>
@@ -52,11 +51,14 @@
     </properties>
 
     <dependencies>
+        <!--@import-->
+        <!--@import-->
+
         <!-- 添加你需要测试的服务依赖 -->
         <!--<dependency>-->
-            <!--<groupId>com.company</groupId>-->
-            <!--<artifactId>project</artifactId>-->
-            <!--<version>1.0.0-SNAPSHOT</version>-->
+        <!--<groupId>com.company</groupId>-->
+        <!--<artifactId>project</artifactId>-->
+        <!--<version>1.0.0-SNAPSHOT</version>-->
         <!--</dependency>-->
 
         <dependency>
@@ -144,10 +146,10 @@
         <!--<resources>-->
             <!--<resource>-->
             <!--<directory>${basedir}/src/main/resources</directory>-->
-                <!--<includes>-->
-                    <!--<include>**/*.xml</include>-->
-                    <!--<include>**/*.properties</include>-->
-                <!--</includes>-->
+            <!--<includes>-->
+                <!--<include>**/*.xml</include>-->
+                <!--<include>**/*.properties</include>-->
+            <!--</includes>-->
             <!--</resource>-->
         <!--</resources>-->
         <!--<plugins>-->

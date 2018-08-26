@@ -1,6 +1,7 @@
 package cn.moyada.dubbo.faker.filter.listener;
 
 import cn.moyada.dubbo.faker.filter.common.Context;
+import cn.moyada.dubbo.faker.filter.domain.AppInfoDO;
 import cn.moyada.dubbo.faker.filter.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.filter.exception.FakerInitException;
 import cn.moyada.dubbo.faker.filter.manager.FakerManager;
@@ -38,9 +39,9 @@ public class FakerExporterListener extends ExporterListenerAdapter {
             setFakerManager();
         }
         // 获取项目信息保存上下文
-        String appName = getAppName();
-        Integer appId = fakerManager.getAppId(appName);
-        Context.setAppInfo(appId, appName);
+        AppInfoDO appInfoDO = getAppInfo();
+        Integer appId = fakerManager.getAppId(appInfoDO);
+        Context.setAppInfo(appId, appInfoDO.getAppName());
 
         Class<?> anInterface = exporter.getInvoker().getInterface();
         Method[] methods = anInterface.getMethods();
@@ -51,12 +52,32 @@ public class FakerExporterListener extends ExporterListenerAdapter {
         }
     }
 
-    private String getAppName() {
+    /**
+     * 获取项目信息
+     * @return
+     */
+    private AppInfoDO getAppInfo() {
         String appName = PropertyUtil.getPropertyOnFile("faker.appName", "faker.properties");
         if(null == appName) {
             throw FakerInitException.appNameNotFound;
         }
-        return appName;
+        String groupId = PropertyUtil.getPropertyOnFile("faker.groupId", "faker.properties");
+        if(null == groupId) {
+            throw FakerInitException.groupIdNotFound;
+        }
+        String artifactId = PropertyUtil.getPropertyOnFile("faker.artifactId", "faker.properties");
+        if(null == artifactId) {
+            throw FakerInitException.artifactIdNotFound;
+        }
+        String version = PropertyUtil.getPropertyOnFile("faker.version", "faker.properties");
+        String url = PropertyUtil.getPropertyOnFile("faker.url", "faker.properties");
+        AppInfoDO appInfoDO = new AppInfoDO();
+        appInfoDO.setAppName(appName);
+        appInfoDO.setGroupId(groupId);
+        appInfoDO.setArtifactId(artifactId);
+        appInfoDO.setVersion(version);
+        appInfoDO.setUrl(url);
+        return appInfoDO;
     }
 
     /**

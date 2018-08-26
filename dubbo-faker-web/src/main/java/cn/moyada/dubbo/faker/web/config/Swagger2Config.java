@@ -4,6 +4,8 @@ package cn.moyada.dubbo.faker.web.config;
  * Created by xueyikang on 2017/12/22.
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -23,6 +25,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableWebMvc
 @EnableSwagger2
 public class Swagger2Config implements WebMvcConfigurer {
+    Logger log = LoggerFactory.getLogger(Swagger2Config.class);
+
+    public Swagger2Config() {
+        log.info("init swagger page.");
+    }
 
     @Bean
     public Docket ProductApi() {

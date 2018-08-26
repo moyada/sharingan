@@ -18,6 +18,43 @@ public class ParamUtil {
     private static final String typeRegex = "_?\\d+\\.\\w+";
     private static final String expressionRegex = "\\$\\{_?\\d+\\.\\w+(\\.\\w+)*\\}";
 
+
+    private static final int ZERO = 48;
+    public static String paddingZero(int value, int fullLength) {
+        if(value < 0) {
+            throw new IllegalArgumentException("only support positive number.");
+        }
+        if(fullLength < 1) {
+            throw new IllegalArgumentException("only support positive number.");
+        }
+
+        byte[] bytes = new byte[fullLength--];
+
+        int remainder;
+        for (;;) {
+            remainder = value % 10;
+            bytes[fullLength--] = (byte) (ZERO + remainder);
+            if(fullLength == -1) {
+                return new String(bytes);
+            }
+
+            if((value /= 10) == 0) {
+                break;
+            }
+        }
+
+        for (; fullLength > -1; fullLength--) {
+            bytes[fullLength] = ZERO;
+        }
+
+        return new String(bytes);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(paddingZero(0, 5));
+        System.out.println(paddingZero(324, 5));
+        System.out.println(paddingZero(12, 5));
+    }
     /**
      * 查询包含的表达式
      * @param array

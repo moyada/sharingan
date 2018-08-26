@@ -31,8 +31,8 @@
             <groupId>cn.moyada</groupId>
             <artifactId>dubbo-faker-core</artifactId>
             <version>${faker-core.version}</version>
-            <scope>system</scope>
-            <systemPath>${user.home}/.m2/repository/cn/moyada/dubbo-faker-core/${faker-core.version}/dubbo-faker-core-${faker-core.version}.jar</systemPath>
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${user.home}/.m2/repository/cn/moyada/dubbo-faker-core/${faker-core.version}/dubbo-faker-core-${faker-core.version}.jar</systemPath>-->
         </dependency>
 
         <dependency>
@@ -123,7 +123,7 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
-        <dependency><!-- spring对测试框架的简单封装功能 -->
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
@@ -141,6 +141,13 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>${java.version}</source>
@@ -148,6 +155,13 @@
                     <encoding>${project.encoding}</encoding>
                 </configuration>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-resources-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<encoding>${project.encoding}</encoding>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <!-- 拷贝页面-->
                 <groupId>org.apache.maven.plugins</groupId>
@@ -161,13 +175,13 @@
                         </goals>
                         <configuration>
                             <artifactItems>
-                                <artifactItem>
-                                    <groupId>cn.moyada</groupId>
-                                    <artifactId>dubbo-faker-core</artifactId>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>./target/classes</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>cn.moyada</groupId>-->
+                                    <!--<artifactId>dubbo-faker-core</artifactId>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>./target/classes</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>io.springfox</groupId>
                                     <artifactId>springfox-swagger-ui</artifactId>
@@ -191,34 +205,34 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <!-- 拷贝文件-->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <outputDirectory>${basedir}/target/${build.name}/WEB-INF/classes</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/../dubbo-faker-core/src/main/resources</directory>
-                                    <includes>
-                                        <include>**/*.properties</include>
-                                        <include>**/*.xml</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--&lt;!&ndash; 拷贝文件&ndash;&gt;-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-resources-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>copy-resources</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>copy-resources</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<encoding>UTF-8</encoding>-->
+                            <!--<outputDirectory>${basedir}/target/${build.name}/WEB-INF/classes</outputDirectory>-->
+                            <!--<resources>-->
+                                <!--<resource>-->
+                                    <!--<directory>${basedir}/../dubbo-faker-core/src/main/resources</directory>-->
+                                    <!--<includes>-->
+                                        <!--<include>**/*.properties</include>-->
+                                        <!--<include>**/*.xml</include>-->
+                                    <!--</includes>-->
+                                    <!--<filtering>true</filtering>-->
+                                <!--</resource>-->
+                            <!--</resources>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
             <!--<plugin>-->
                 <!--<groupId>cn.moyada</groupId>-->
                 <!--<artifactId>replace-maven-plugin</artifactId>-->
@@ -242,6 +256,13 @@
         <resources>
             <resource>
                 <directory>./src/main/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>../dubbo-faker-core/src/main/resources</directory>
                 <includes>
                     <include>**/*.xml</include>
                     <include>**/*.properties</include>

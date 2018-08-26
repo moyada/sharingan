@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>faker</artifactId>
+        <groupId>cn.moyada</groupId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>faker-rpc</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>faker-rpc-dubbo</module>
+        <module>faker-rpc-api</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.moyada</groupId>
+            <artifactId>faker-rpc-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.moyada</groupId>
+            <artifactId>faker-rpc-dubbo</artifactId>
+        </dependency>
+    </dependencies>
+</project>

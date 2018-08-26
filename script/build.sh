@@ -5,6 +5,7 @@ HOME=$(pwd)
 
 # 编译调用核心
 cd dubbo-faker-core
+
 mvn clean install -Dmaven.test.skip=true
 
 cd $HOME/script

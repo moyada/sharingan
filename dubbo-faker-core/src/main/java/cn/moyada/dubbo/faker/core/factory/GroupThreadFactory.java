@@ -36,4 +36,16 @@ public class GroupThreadFactory implements ThreadFactory {
         thread.setName("pool-" + threadGroup.getName() + "-thread-" + order.getAndIncrement());
         return thread;
     }
+
+    public static void main(String[] args) {
+        ExecutorService pool = new ThreadPoolExecutor(10, 10, 10L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(100), new GroupThreadFactory("haha", "test"));
+
+        for (int index = 0; index < 100; index++) {
+            pool.execute(() -> {
+                System.out.println(Thread.currentThread().getName());
+                LockSupport.parkNanos(100_000_000);
+            });
+        }
+    }
 }

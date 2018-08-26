@@ -1,5 +1,6 @@
 package cn.moyada.dubbo.faker.filter.dao;
 
+import cn.moyada.dubbo.faker.filter.domain.AppInfoDO;
 import cn.moyada.dubbo.faker.filter.domain.MethodInvokeDO;
 import cn.moyada.dubbo.faker.filter.domain.RealParamDO;
 import org.apache.ibatis.annotations.Param;
@@ -36,9 +37,9 @@ public interface FakerDAO {
 
     /**
      * 创建项目信息
-     * @param appName
+     * @param appInfoDO
      */
-    void saveApp(String appName);
+    void saveApp(AppInfoDO appInfoDO);
 
     /**
      * 查询最大项目编号

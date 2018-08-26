@@ -29,7 +29,7 @@ public class FakerAop {
 //    }
 //
 //    @SuppressWarnings("unchecked")
-//    public void questRecord(JoinPoint jp, Fetch fetch) throws NoSuchMethodException {
+//    public void questRecord(JoinPoint jp, Fetch fetchMethod) throws NoSuchMethodException {
 //        if(!enable) {
 //            return;
 //        }
