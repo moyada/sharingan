@@ -5,8 +5,11 @@ import cn.moyada.faker.common.utils.JsonUtil;
 import cn.moyada.faker.common.utils.UUIDUtil;
 import cn.moyada.faker.core.common.QuestInfo;
 import cn.moyada.faker.core.convert.AppInfoConverter;
+import cn.moyada.faker.core.invoke.DefaultExecutor;
+import cn.moyada.faker.core.invoke.JobAction;
 import cn.moyada.faker.core.listener.AbstractListener;
 import cn.moyada.faker.core.listener.BatchLoggingListener;
+import cn.moyada.faker.core.provider.ParamProvider;
 import cn.moyada.faker.core.queue.AbstractQueue;
 import cn.moyada.faker.core.queue.ArrayQueue;
 import cn.moyada.faker.core.queue.AtomicQueue;
@@ -21,7 +24,6 @@ import cn.moyada.faker.module.InvokeMetadata;
 import cn.moyada.faker.module.fetch.MetadataFetch;
 import cn.moyada.faker.module.handler.MetadataWrapper;
 import cn.moyada.faker.rpc.api.invoke.InvocationMetaDate;
-import cn.moyada.faker.rpc.api.invoke.Result;
 import cn.moyada.faker.rpc.dubbo.invocation.DubboInvoke;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,31 +53,28 @@ public class InvocationTask implements TaskActivity {
     @Override
     public String runTask(QuestInfo questInfo) throws InitializeInvokerException {
         TaskEnvironment environment = generateEnv(questInfo);
+        Object[] values = JsonUtil.toArray(questInfo.getInvokeExpression(), Object[].class);
 
         metadataFetch.checkoutClassLoader(environment.getDependency());
 
         // 生成调用报告序号
-        environment.setFakerId(UUIDUtil.getUUID());
+        String fakerId = UUIDUtil.getUUID();
+        environment.setFakerId(fakerId);
 
         final AbstractQueue<LogDO> queue = buildQueue(environment.getQuestInfo());
 
         AbstractListener listener = new BatchLoggingListener(environment, queue);
 
-        InvokeTask invokeTask = new InvokeTask(proxy, questInfo);
+        ParamProvider paramProvider = new ParamProvider(values, environment.getInvokeMetadata().getParamTypes(), questInfo.isRandom());
+
+        JobAction action = new DefaultExecutor(questInfo, fakerId);
 
         InvocationMetaDate invocationMetaDate = getMetaDate(environment.getInvokeMetadata());
         dubboInvoker.prepare(invocationMetaDate);
 
-        int qps = questInfo.getQps();
-        int timeout = (3600 / qps) - (20 >= qps ? 0 : 50);
-        // 发起调用
-        if (timeout > 50) {
-            invokeTask.start(timeout);
-        } else {
-            invokeTask.start();
-        }
+        AbstractTaskActivity taskActivity = new AbstractTaskActivity(dubboInvoker, listener, paramProvider, action);
 
-        invokeTask.shutdown();
+        taskActivity.start(questInfo);
 
         metadataFetch.recover();
 

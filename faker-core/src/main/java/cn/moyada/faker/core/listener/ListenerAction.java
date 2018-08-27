@@ -7,4 +7,6 @@ package cn.moyada.faker.core.listener;
 public interface ListenerAction {
 
     void startListener();
+
+    void finish();
 }
