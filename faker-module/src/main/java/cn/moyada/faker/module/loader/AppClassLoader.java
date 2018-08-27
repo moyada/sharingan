@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
  * @author xueyikang
  * @create 2018-04-28 08:17
  */
-public class AppClassLoader extends URLClassLoader implements ClassLoaderFetch {
+public class AppClassLoader extends URLClassLoader implements ClassLoaderAction {
 
     /**
      * 版本
@@ -84,7 +84,8 @@ public class AppClassLoader extends URLClassLoader implements ClassLoaderFetch {
         return MethodHandles.lookup();
     }
 
-    void destroy() {
+    @Override
+    public void destroy() {
         ResourceBundle.clearCache(this);
         try {
             this.close();

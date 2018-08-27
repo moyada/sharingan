@@ -9,13 +9,10 @@ import cn.moyada.faker.manager.FakerManager;
 import cn.moyada.faker.manager.domain.AppInfoDO;
 import cn.moyada.faker.manager.domain.MethodInvokeDO;
 import cn.moyada.faker.module.Dependency;
-import cn.moyada.faker.module.loader.ModuleFetch;
-import com.alibaba.dubbo.rpc.RpcException;
+import cn.moyada.faker.module.fetch.MetadataFetch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandle;
@@ -34,7 +31,7 @@ public class MethodHandleProxy {
     private FakerManager fakerManager;
 
     @Autowired
-    private ModuleFetch moduleFetch;
+    private MetadataFetch metadataFetch;
 
     @Autowired
     private AbstractHandler handle;
@@ -55,7 +52,7 @@ public class MethodHandleProxy {
         // 获取接口
         Class<?> classType;
         try {
-            classType = moduleFetch.getClass(dependency, invokeInfo.getClassName());
+            classType = metadataFetch.getClass(dependency, invokeInfo.getClassName());
         } catch (ClassNotFoundException e) {
             log.error("fetch service class error: " + e.getLocalizedMessage());
             throw new InitializeInvokerException("获取结果失败: " + invokeInfo.getClassName());
@@ -64,7 +61,6 @@ public class MethodHandleProxy {
         proxy = new MethodProxy();
         proxy.setParamTypes(paramTypes);
         proxy.setMethodHandle(methodHandle);
-        proxy.setService(serviceAssembly);
         return proxy;
     }
 
@@ -87,7 +83,7 @@ public class MethodHandleProxy {
         Class<?>[] paramTypes = new Class[length];
         for (int index = 0; index < length; index++) {
             try {
-                paramTypes[index] = moduleFetch.getClass(dependency, argsType[index]);
+                paramTypes[index] = metadataFetch.getClass(dependency, argsType[index]);
             } catch (ClassNotFoundException e) {
                 log.error("fetch service method error: " + e.getLocalizedMessage());
                 throw new InitializeInvokerException("获取参数类型失败: " + argsType[index]);

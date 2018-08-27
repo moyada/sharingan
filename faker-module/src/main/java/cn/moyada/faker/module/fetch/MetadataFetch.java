@@ -1,10 +1,12 @@
-package cn.moyada.faker.module.loader;
+package cn.moyada.faker.module.fetch;
 
 import cn.moyada.faker.module.Dependency;
 
 import java.lang.invoke.MethodHandles;
 
-public interface ModuleFetch {
+public interface MetadataFetch {
+
+    void checkoutClassLoader(Dependency dependency);
 
     /**
      * 根据依赖获取类

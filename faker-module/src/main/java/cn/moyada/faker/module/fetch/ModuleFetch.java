@@ -1,7 +1,8 @@
-package cn.moyada.faker.module.loader;
+package cn.moyada.faker.module.fetch;
 
 import cn.moyada.faker.module.Dependency;
-import cn.moyada.faker.module.fetch.DependencyFetch;
+import cn.moyada.faker.module.loader.AppClassLoader;
+import cn.moyada.faker.module.loader.ClassLoaderAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ import java.util.Map;
  * @create 2018-04-27 16:33
  */
 @Component
-public class ModuleLoader implements ModuleFetch {
+public class ModuleFetch extends DirectionFetch implements MetadataFetch {
 
     private static final int CACHE_TIME = 720000;
 
@@ -29,14 +30,23 @@ public class ModuleLoader implements ModuleFetch {
     @Autowired
     private DependencyFetch dependencyFetch;
 
-    public ModuleLoader(ClassLoader parent) {
+    public ModuleFetch(ClassLoader parent) {
         this.parent = parent;
         this.loaderMap = new HashMap<>();
     }
 
     @Override
+    public void checkoutClassLoader(Dependency dependency) {
+        AppClassLoader classLoader = getClassLoader(dependency);
+        if(null == classLoader) {
+            return;
+        }
+        Thread.currentThread().setContextClassLoader(classLoader);
+    }
+
+    @Override
     public Class getClass(Dependency dependency, String className) throws ClassNotFoundException {
-        ClassLoaderFetch classLoader = getClassLoader(dependency);
+        ClassLoaderAction classLoader = getClassLoader(dependency);
         if(null == classLoader) {
             throw new ClassNotFoundException(dependency + ", " + className);
         }
@@ -45,7 +55,7 @@ public class ModuleLoader implements ModuleFetch {
 
     @Override
     public MethodHandles.Lookup getMethodLookup(Dependency dependency) {
-        ClassLoaderFetch classLoader = getClassLoader(dependency);
+        ClassLoaderAction classLoader = getClassLoader(dependency);
         if(null == classLoader) {
             return MethodHandles.lookup();
         }
@@ -166,12 +176,12 @@ public class ModuleLoader implements ModuleFetch {
     public static void main(String[] args) throws ClassNotFoundException {
         System.setProperty("maven.host", "https://repo.souche-inc.com");
         System.setProperty("maven.version", "maven2");
-        ModuleLoader moduleLoader = new ModuleLoader(ClassLoader.getSystemClassLoader());
+        ModuleFetch moduleFetch = new ModuleFetch(ClassLoader.getSystemClassLoader());
         Dependency dependency = new Dependency();
         dependency.setGroupId("com.souche");
         dependency.setArtifactId("car-model-api");
-        Class aClass = moduleLoader.getClass(dependency, "com.souche.car.model.api.model.ModelService");
+        Class aClass = moduleFetch.getClass(dependency, "com.souche.car.model.api.model.ModelService");
         System.out.println(aClass);
-        moduleLoader.getClassLoader(dependency).destroy();
+        moduleFetch.getClassLoader(dependency).destroy();
     }
 }

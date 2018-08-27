@@ -1,10 +1,10 @@
-package cn.moyada.faker.module.loader;
+package cn.moyada.faker.module.fetch;
 
 import cn.moyada.faker.module.Dependency;
 
 import java.lang.invoke.MethodHandles;
 
-public class DirctionFetch implements ModuleFetch {
+public abstract class DirectionFetch implements MetadataFetch {
 
     @Override
     public Class getClass(Dependency dependency, String className) throws ClassNotFoundException {

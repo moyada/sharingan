@@ -2,7 +2,7 @@ package cn.moyada.faker.module.loader;
 
 import java.lang.invoke.MethodHandles;
 
-public interface ClassLoaderFetch {
+public interface ClassLoaderAction {
 
     /**
      * 查找类，先从当前类加载器中寻找，再通过双亲委托模型获取
@@ -17,4 +17,6 @@ public interface ClassLoaderFetch {
      * @return
      */
     MethodHandles.Lookup getMethodLookup();
+
+    void destroy();
 }

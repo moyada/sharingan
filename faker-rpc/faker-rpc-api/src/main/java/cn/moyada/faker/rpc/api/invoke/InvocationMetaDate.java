@@ -4,19 +4,9 @@ import java.lang.invoke.MethodHandle;
 
 public class InvocationMetaDate {
 
-    private ClassLoader classLoader;
-
     private Class service;
 
     private MethodHandle methodHandle;
-
-    public ClassLoader getClassLoader() {
-        return classLoader;
-    }
-
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-    }
 
     public Class getService() {
         return service;
