@@ -1,4 +1,4 @@
-package cn.moyada.faker.common.model.queue;
+package cn.moyada.faker.core.queue;
 
 import cn.moyada.dubbo.faker.core.utils.ThreadUtil;
 

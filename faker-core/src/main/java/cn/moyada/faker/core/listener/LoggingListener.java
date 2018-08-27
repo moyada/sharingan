@@ -3,10 +3,9 @@ package cn.moyada.faker.core.listener;
 
 
 import cn.moyada.faker.common.model.InvokeFuture;
-import cn.moyada.faker.common.model.queue.AbstractQueue;
+import cn.moyada.faker.core.queue.AbstractQueue;
 import cn.moyada.faker.manager.domain.LogDO;
 import cn.moyada.faker.rpc.api.invoke.InvokeCallback;
-import cn.moyada.faker.rpc.api.invoke.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

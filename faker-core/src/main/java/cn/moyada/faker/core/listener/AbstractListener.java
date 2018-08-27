@@ -1,10 +1,10 @@
 package cn.moyada.faker.core.listener;
 
 
-import cn.moyada.faker.common.model.queue.AbstractQueue;
-import cn.moyada.faker.core.QuestInfo;
+import cn.moyada.faker.core.common.QuestInfo;
 import cn.moyada.faker.core.handler.InvokeRecordHandler;
 import cn.moyada.faker.core.handler.RecordHandler;
+import cn.moyada.faker.core.queue.AbstractQueue;
 import cn.moyada.faker.core.task.TaskEnvironment;
 import cn.moyada.faker.manager.FakerManager;
 import cn.moyada.faker.manager.domain.LogDO;
@@ -17,29 +17,25 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author xueyikang
  * @create 2018-03-18 17:12
  */
-public abstract class AbstractListener<T> implements ListenerAction, InvokeCallback {
+public abstract class AbstractListener implements ListenerAction, InvokeCallback {
 
     @Autowired
     protected FakerManager fakerManager;
 
-    protected RecordHandler recordHandler;
+    protected RecordHandler<LogDO> recordHandler;
 
     protected final AbstractQueue<LogDO> queue;
 
-    protected AbstractListener(AbstractQueue<LogDO> queue) {
+    protected AbstractListener(TaskEnvironment env, AbstractQueue<LogDO> queue) {
+        QuestInfo invokerInfo = env.getQuestInfo();
+        this.recordHandler = new InvokeRecordHandler(env.getFakerId(), invokerInfo.getInvokeId(),
+                invokerInfo.isSaveResult(), invokerInfo.getResultParam());
         this.queue = queue;
     }
 
     @Override
-    public void startListener(TaskEnvironment env) {
-        QuestInfo invokerInfo = env.getQuestInfo();
-        this.recordHandler = new InvokeRecordHandler(env.getFakerId(), invokerInfo.getInvokeId(),
-                invokerInfo.isSaveResult(), invokerInfo.getResultParam());
-    }
-
-    @Override
     public void callback(Result result) {
-        LogDO logDO = recordHandler.receive(result);
-        queue.offer(logDO);
+        LogDO receive = recordHandler.receive(result);
+        queue.offer(receive);
     }
 }

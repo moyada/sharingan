@@ -1,11 +1,9 @@
 package cn.moyada.faker.core.listener;
 
-import cn.moyada.dubbo.faker.core.model.InvokeFuture;
-import cn.moyada.faker.common.model.queue.AbstractQueue;
-import cn.moyada.faker.core.QuestInfo;
+import cn.moyada.faker.core.queue.AbstractQueue;
+import cn.moyada.faker.core.task.TaskEnvironment;
 import cn.moyada.faker.manager.domain.LogDO;
 import cn.moyada.faker.rpc.api.invoke.InvokeCallback;
-import cn.moyada.faker.rpc.api.invoke.Result;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -25,10 +23,10 @@ public class BatchLoggingListener extends AbstractListener implements InvokeCall
 
     private volatile boolean stop;
 
-    public BatchLoggingListener(String fakerId, QuestInfo invokerInfo,
-                                AbstractQueue<InvokeFuture> queue) {
-        super(fakerId, invokerInfo, queue);
-        int num = invokerInfo.getQuestNum() / 1000;
+    public BatchLoggingListener(TaskEnvironment env,
+                                AbstractQueue<LogDO> queue) {
+        super(env, queue);
+        int num = env.getQuestInfo().getQuestNum() / 1000;
         num = num == 0 ? 1: num;
         this.list = new AtomicReference<>(new ArrayList<>(1000 * num));
         this.stop = false;
@@ -54,15 +52,15 @@ public class BatchLoggingListener extends AbstractListener implements InvokeCall
         new Thread(new Logger()).start();
     }
 
-    class Converter implements Runnable {
+    final class Converter implements Runnable {
 
         @Override
         public void run() {
             LogDO logDO;
             for (;;) {
-                InvokeFuture future = futureQueue.poll();
-                if(null == future) {
-                    if(futureQueue.isDone()) {
+                logDO = queue.poll();
+                if(null == logDO) {
+                    if(queue.isDone()) {
                         break;
                     }
                     try {
@@ -73,16 +71,14 @@ public class BatchLoggingListener extends AbstractListener implements InvokeCall
                     continue;
                 }
 
-                logDO = convert.convertToLog(future);
                 list.get().add(logDO);
-
             }
             stopLogger();
-            log.info("logging shutdown: " + convert.getFakerId());
+            log.info("logging shutdown: " + recordHandler.getFakerId());
         }
     }
 
-    class Logger implements Runnable {
+    final class Logger implements Runnable {
 
         private List<LogDO> saveList = new ArrayList<>(1000);
 
@@ -110,7 +106,7 @@ public class BatchLoggingListener extends AbstractListener implements InvokeCall
                 return;
             }
             int size = logDOs.size();
-            log.info("batch save invoke result. fakerId: " + convert.getFakerId() + ", size: " + size);
+            log.info("batch save invoke result. fakerId: " + recordHandler.getFakerId() + ", size: " + size);
             fakerManager.saveLog(logDOs);
             logDOs.clear();
         }

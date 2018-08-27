@@ -3,7 +3,7 @@ package cn.moyada.faker.dashboard.view;
 
 import cn.moyada.faker.common.utils.ThreadUtil;
 import cn.moyada.faker.core.Main;
-import cn.moyada.faker.core.QuestInfo;
+import cn.moyada.faker.core.common.QuestInfo;
 import cn.moyada.faker.dashboard.vo.PageVO;
 import cn.moyada.faker.dashboard.vo.Result;
 import cn.moyada.faker.dashboard.vo.SelectVO;

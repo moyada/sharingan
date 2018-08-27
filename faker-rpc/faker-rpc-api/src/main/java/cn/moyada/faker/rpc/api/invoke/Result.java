@@ -6,7 +6,7 @@ public class Result<T> {
 
     private boolean success;
 
-    private String args;
+    private String arguments;
 
     private T result;
 
@@ -20,7 +20,7 @@ public class Result<T> {
         return new Result<>(data);
     }
 
-    public static <T> Result failed(String msg) {
+    public static Result failed(String msg) {
         return new Result<>(msg);
     }
 
@@ -38,12 +38,12 @@ public class Result<T> {
         this.responseTime = responseTime;
     }
 
-    public String getArgs() {
-        return args;
+    public String getArguments() {
+        return arguments;
     }
 
-    public void setArgs(String args) {
-        this.args = args;
+    public void setArguments(String arguments) {
+        this.arguments = arguments;
     }
 
     public boolean isSuccess() {

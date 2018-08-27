@@ -1,4 +1,4 @@
-package cn.moyada.faker.common.factory;
+package cn.moyada.faker.core.factory;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;

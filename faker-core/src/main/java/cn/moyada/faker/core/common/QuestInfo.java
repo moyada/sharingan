@@ -1,4 +1,4 @@
-package cn.moyada.faker.core;
+package cn.moyada.faker.core.common;
 
 /**
  * 调用信息

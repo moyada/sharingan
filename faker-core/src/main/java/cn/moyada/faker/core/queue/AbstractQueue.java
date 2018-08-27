@@ -1,4 +1,4 @@
-package cn.moyada.faker.common.model.queue;
+package cn.moyada.faker.core.queue;
 
 /**
  * @author xueyikang

@@ -9,7 +9,7 @@ import cn.moyada.faker.rpc.api.invoke.Result;
  * @author xueyikang
  * @create 2018-08-27 14:53
  */
-public class InvokeRecordHandler implements RecordHandler {
+public class InvokeRecordHandler implements RecordHandler<LogDO> {
 
     private static final Integer OK = 200;
     private static final Integer NULL = 404;
@@ -35,6 +35,7 @@ public class InvokeRecordHandler implements RecordHandler {
         this.saveResult = saveResult;
     }
 
+    @Override
     public String getFakerId() {
         return fakerId;
     }
@@ -51,7 +52,7 @@ public class InvokeRecordHandler implements RecordHandler {
 
         logDO.setFakerId(fakerId);
         logDO.setInvokeId(invokeId);
-        logDO.setRealParam(result.getArgs());
+        logDO.setRealParam(result.getArguments());
         logDO.setInvokeTime(result.getStartTime());
 
         return logDO;

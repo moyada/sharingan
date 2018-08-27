@@ -1,6 +1,6 @@
 package cn.moyada.faker.core.task;
 
-import cn.moyada.faker.core.QuestInfo;
+import cn.moyada.faker.core.common.QuestInfo;
 
 /**
  * @author xueyikang

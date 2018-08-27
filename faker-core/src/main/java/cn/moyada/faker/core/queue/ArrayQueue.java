@@ -1,4 +1,4 @@
-package cn.moyada.faker.common.model.queue;
+package cn.moyada.faker.core.queue;
 
 /**
  * 单线程队列

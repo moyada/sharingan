@@ -14,7 +14,7 @@ public abstract class AsyncMethodInvoke extends MethodInvoke implements AsyncInv
     @Override
     public void call(Invocation invocation) {
         Result result = super.execute(invocation);
-        result.setArgs(ParamUtil.toString(invocation.getArgsValue()));
+        result.setArguments(ParamUtil.toString(invocation.getArgsValue()));
         invokeCallback.callback(result);
     }
 }
