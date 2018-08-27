@@ -2,15 +2,25 @@ package cn.moyada.faker.core.task;
 
 import cn.moyada.faker.core.QuestInfo;
 import cn.moyada.faker.module.Dependency;
-import cn.moyada.faker.module.handler.InvokeMetadata;
+import cn.moyada.faker.module.InvokeMetadata;
 
 public class TaskEnvironment {
+
+    private String fakerId;
 
     private QuestInfo questInfo;
 
     private Dependency dependency;
 
     private InvokeMetadata invokeMetadata;
+
+    public String getFakerId() {
+        return fakerId;
+    }
+
+    public void setFakerId(String fakerId) {
+        this.fakerId = fakerId;
+    }
 
     public QuestInfo getQuestInfo() {
         return questInfo;

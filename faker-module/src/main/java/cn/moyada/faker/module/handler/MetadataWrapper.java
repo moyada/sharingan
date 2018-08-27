@@ -3,6 +3,8 @@ package cn.moyada.faker.module.handler;
 
 import cn.moyada.faker.common.exception.InitializeInvokerException;
 import cn.moyada.faker.module.Dependency;
+import cn.moyada.faker.module.InvokeInfo;
+import cn.moyada.faker.module.InvokeMetadata;
 import cn.moyada.faker.module.fetch.MetadataFetch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

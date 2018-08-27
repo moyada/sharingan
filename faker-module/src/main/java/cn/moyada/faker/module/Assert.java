@@ -1,4 +1,4 @@
-package cn.moyada.faker.module.fetch;
+package cn.moyada.faker.module;
 
 /**
  * Nexus Maven依赖信息

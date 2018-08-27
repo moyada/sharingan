@@ -4,6 +4,8 @@ import cn.moyada.dubbo.faker.core.model.InvokeFuture;
 import cn.moyada.faker.common.model.queue.AbstractQueue;
 import cn.moyada.faker.core.QuestInfo;
 import cn.moyada.faker.manager.domain.LogDO;
+import cn.moyada.faker.rpc.api.invoke.InvokeCallback;
+import cn.moyada.faker.rpc.api.invoke.Result;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author xueyikang
  * @create 2018-03-18 17:32
  */
-public class BatchLoggingListener extends AbstractListener {
+public class BatchLoggingListener extends AbstractListener implements InvokeCallback {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(BatchLoggingListener.class);
 
     private final AtomicReference<List<LogDO>> list;

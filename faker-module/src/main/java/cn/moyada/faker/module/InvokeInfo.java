@@ -1,4 +1,4 @@
-package cn.moyada.faker.module.handler;
+package cn.moyada.faker.module;
 
 /**
  * @author xueyikang

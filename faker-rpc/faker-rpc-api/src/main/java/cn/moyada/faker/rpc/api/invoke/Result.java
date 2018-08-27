@@ -1,5 +1,7 @@
 package cn.moyada.faker.rpc.api.invoke;
 
+import java.sql.Timestamp;
+
 public class Result<T> {
 
     private boolean success;
@@ -9,6 +11,8 @@ public class Result<T> {
     private T result;
 
     private String exception;
+
+    private Timestamp startTime;
 
     private long responseTime;
 
@@ -52,6 +56,14 @@ public class Result<T> {
 
     public String getException() {
         return exception;
+    }
+
+    public Timestamp getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
     }
 
     public long getResponseTime() {

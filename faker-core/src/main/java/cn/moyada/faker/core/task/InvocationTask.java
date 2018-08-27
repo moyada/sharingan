@@ -10,8 +10,8 @@ import cn.moyada.faker.manager.domain.AppInfoDO;
 import cn.moyada.faker.manager.domain.MethodInvokeDO;
 import cn.moyada.faker.module.Dependency;
 import cn.moyada.faker.module.fetch.MetadataFetch;
-import cn.moyada.faker.module.handler.InvokeInfo;
-import cn.moyada.faker.module.handler.InvokeMetadata;
+import cn.moyada.faker.module.InvokeInfo;
+import cn.moyada.faker.module.InvokeMetadata;
 import cn.moyada.faker.module.handler.MetadataWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class InvocationTask {
+public class InvocationTask implements TaskActivity {
     private static final Logger log = LoggerFactory.getLogger(InvocationTask.class);
 
     @Autowired
@@ -33,8 +33,9 @@ public class InvocationTask {
     @Autowired
     private MetadataFetch metadataFetch;
 
+    @Override
     public String runTask(QuestInfo questInfo) throws InitializeInvokerException {
-        TaskEnvironment environment = getEnvironment(questInfo);
+        TaskEnvironment environment = generateEnv(questInfo);
 
         metadataFetch.checkoutClassLoader(environment.getDependency());
 
@@ -59,7 +60,7 @@ public class InvocationTask {
         return "请求结果序号：" + fakerId;
     }
 
-    public TaskEnvironment getEnvironment(QuestInfo questInfo) throws InitializeInvokerException {
+    private TaskEnvironment generateEnv(QuestInfo questInfo) throws InitializeInvokerException {
         MethodInvokeDO methodInvokeDO = fakerManager.getInvokeInfo(questInfo.getInvokeId());
 
         Dependency dependency = getDependency(methodInvokeDO.getAppId());

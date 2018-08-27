@@ -1,4 +1,4 @@
-package cn.moyada.faker.core.convert;
+package cn.moyada.faker.core.handler;
 
 import cn.moyada.faker.common.utils.JsonUtil;
 import cn.moyada.faker.common.utils.ReflectUtil;
@@ -7,9 +7,9 @@ import cn.moyada.faker.rpc.api.invoke.Result;
 
 /**
  * @author xueyikang
- * @create 2018-03-29 11:55
+ * @create 2018-08-27 14:53
  */
-public class LoggingConvert {
+public class InvokeRecordHandler implements RecordHandler {
 
     private static final Integer OK = 200;
     private static final Integer NULL = 404;
@@ -28,7 +28,7 @@ public class LoggingConvert {
 
     private boolean saveResult;
 
-    public LoggingConvert(String fakerId, Integer invokeId, boolean saveResult, String resultParam) {
+    public InvokeRecordHandler(String fakerId, Integer invokeId, boolean saveResult, String resultParam) {
         this.fakerId = fakerId;
         this.resultParam = resultParam;
         this.invokeId = invokeId;
@@ -39,7 +39,8 @@ public class LoggingConvert {
         return fakerId;
     }
 
-    public LogDO convertToLog(Result result) {
+    @Override
+    public LogDO receive(Result result) {
         LogDO logDO = new LogDO();
 
         if (result.isSuccess()) {

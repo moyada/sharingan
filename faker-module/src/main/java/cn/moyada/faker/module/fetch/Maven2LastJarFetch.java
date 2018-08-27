@@ -3,6 +3,7 @@ package cn.moyada.faker.module.fetch;
 
 import cn.moyada.faker.common.utils.JsonUtil;
 import cn.moyada.faker.common.utils.StringUtil;
+import cn.moyada.faker.module.Assert;
 import cn.moyada.faker.module.Dependency;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
