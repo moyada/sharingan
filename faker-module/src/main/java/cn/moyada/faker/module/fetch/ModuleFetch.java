@@ -27,6 +27,8 @@ public class ModuleFetch extends DirectionFetch implements MetadataFetch {
 
     private final Map<Dependency, AppClassLoader> loaderMap;
 
+    private ClassLoader classLoader;
+
     @Autowired
     private DependencyFetch dependencyFetch;
 
@@ -41,6 +43,12 @@ public class ModuleFetch extends DirectionFetch implements MetadataFetch {
         if(null == classLoader) {
             return;
         }
+        this.classLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+    }
+
+    @Override
+    public void recover() {
         Thread.currentThread().setContextClassLoader(classLoader);
     }
 

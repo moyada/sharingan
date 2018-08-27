@@ -8,6 +8,8 @@ public interface MetadataFetch {
 
     void checkoutClassLoader(Dependency dependency);
 
+    void recover();
+
     /**
      * 根据依赖获取类
      * @param dependency 依赖
