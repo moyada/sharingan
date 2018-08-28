@@ -11,6 +11,7 @@ import cn.moyada.faker.manager.FakerManager;
 import cn.moyada.faker.manager.domain.LogDO;
 import cn.moyada.faker.manager.domain.MethodInvokeDO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -21,7 +22,8 @@ import java.util.stream.Collectors;
 /**
  * Created by xueyikang on 2017/12/22.
  */
-@RestController("/faker")
+@RestController(value = "/faker")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class FakerController {
 
     @Autowired
@@ -32,8 +34,7 @@ public class FakerController {
 
     private volatile boolean running = false;
 
-    @ResponseBody
-    @RequestMapping(value = "invokeDubbo", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json")
+    @RequestMapping(value = "invokeDubbo.json", method = {RequestMethod.GET, RequestMethod.POST})
     public Result invokeDubbo(@RequestParam("invokeId") int invokeId,
                               @RequestParam("invokeExpression") String invokeExpression,
                               @RequestParam(value = "poolSize", required = false) Integer poolSize,
@@ -82,8 +83,7 @@ public class FakerController {
         }
     }
 
-    @ResponseBody
-    @RequestMapping(value = "getAllInvoke", method = RequestMethod.GET)
+    @RequestMapping(value = "getAllInvoke.json", method = RequestMethod.GET)
     public Result getAllInvoke() {
         List<MethodInvokeDO> all;
         try {
@@ -101,8 +101,7 @@ public class FakerController {
                 .collect(Collectors.toList()));
     }
 
-    @ResponseBody
-    @RequestMapping(value = "getAllApp", method = RequestMethod.GET)
+    @RequestMapping(value = "getAllApp.json", method = RequestMethod.GET)
     public Result getAllApp() {
         try {
             return Result.success(fakerManager.getAllApp());
@@ -112,8 +111,8 @@ public class FakerController {
         }
     }
 
-    @ResponseBody
-    @RequestMapping(value = "getClassByApp", method = RequestMethod.GET)
+
+    @RequestMapping(value = "getClassByApp.json", method = RequestMethod.GET)
     public Result getClassByApp(@RequestParam("appId") int appId) {
         List<String> classList;
         try {
@@ -126,8 +125,7 @@ public class FakerController {
                 .collect(Collectors.toList()));
     }
 
-    @ResponseBody
-    @RequestMapping(value = "getMethodByClass", method = RequestMethod.GET)
+    @RequestMapping(value = "getMethodByClass.json", method = RequestMethod.GET)
     public Result getMethodByClass(@RequestParam("className") String className) {
         try {
             return Result.success(fakerManager.getMethodByClass(className));
@@ -136,8 +134,7 @@ public class FakerController {
         }
     }
 
-    @ResponseBody
-    @RequestMapping(value = "getMethodByFakerId", method = RequestMethod.GET)
+    @RequestMapping(value = "getMethodByFakerId.json", method = RequestMethod.GET)
     public PageVO<LogDO> getMethodByFakerId(@RequestParam("fakerId") String fakerId,
                                             @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
@@ -159,7 +156,6 @@ public class FakerController {
         return page;
     }
 
-    @ResponseBody
     @RequestMapping(value = "kill/{fakerId}", method = RequestMethod.GET)
     public Result kill(@PathVariable(value = "fakerId", required = true) String fakerId) {
         try {

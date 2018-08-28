@@ -32,11 +32,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/resources/");
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/");
     }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+//        registry.addViewController("/").setViewName("redirect:/index.html");
         registry.addViewController("/").setViewName("forward:/index.html");
     }
 
@@ -44,7 +45,7 @@ public class WebConfig implements WebMvcConfigurer {
 //    public FilterRegistrationBean sentinelFilterRegistration() {
 //        logger.info("sentinelFilterRegistration(), add CommonFilter");
 //        FilterRegistrationBean registration = new FilterRegistrationBean();
-//        registration.setFilter();
+////        registration.setFilter();
 //        registration.addUrlPatterns("/*");
 //        registration.addInitParameter("paramName", "paramValue");
 //        registration.setName("sentinelFilter");

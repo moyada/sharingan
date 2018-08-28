@@ -1,8 +1,8 @@
 package cn.moyada.faker.dashboard;
 
 import cn.moyada.faker.dashboard.config.WebConfig;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -12,7 +12,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableWebMvc
 @ImportAutoConfiguration(WebConfig.class)
-@ComponentScan("classpath*:cn.moyada.faker")
+@ComponentScan("cn.moyada.faker")
+@MapperScan(basePackages = "cn.moyada.faker.manager.dao")
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 

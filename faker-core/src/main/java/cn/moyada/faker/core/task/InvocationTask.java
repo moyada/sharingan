@@ -28,6 +28,7 @@ import cn.moyada.faker.rpc.dubbo.invocation.DubboInvoke;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class InvocationTask implements TaskActivity {
     @Autowired
     private MetadataWrapper metadataWrapper;
 
+    @Qualifier("moduleFetch")
     @Autowired
     private MetadataFetch metadataFetch;
 

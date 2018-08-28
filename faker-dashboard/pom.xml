@@ -14,6 +14,27 @@
 
     <build>
         <plugins>
+            <!-- 合并多个war -->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-war-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<overlays>-->
+                        <!--<overlay>-->
+                            <!--<groupId>cn.moyada</groupId>-->
+                            <!--<artifactId>faker-core</artifactId>-->
+                        <!--</overlay>-->
+                        <!--<overlay>-->
+                            <!--<groupId>cn.moyada</groupId>-->
+                            <!--<artifactId>faker-manager</artifactId>-->
+                        <!--</overlay>-->
+                        <!--<overlay>-->
+                            <!--<groupId>cn.moyada</groupId>-->
+                            <!--<artifactId>faker-module</artifactId>-->
+                        <!--</overlay>-->
+                    <!--</overlays>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

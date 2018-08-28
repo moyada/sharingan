@@ -3,7 +3,10 @@ package cn.moyada.faker.module.fetch;
 import cn.moyada.faker.module.Dependency;
 import cn.moyada.faker.module.loader.AppClassLoader;
 import cn.moyada.faker.module.loader.ClassLoaderAction;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
@@ -18,24 +21,17 @@ import java.util.Map;
  * @author xueyikang
  * @create 2018-04-27 16:33
  */
-@Component
-public class ModuleFetch extends DirectionFetch implements MetadataFetch {
+@Component("moduleFetch")
+public class ModuleFetch extends DirectionFetch implements ApplicationContextAware, MetadataFetch {
 
     private static final int CACHE_TIME = 720000;
 
-    private final ClassLoader parent;
+    private ClassLoader parent;
 
-    private final Map<Dependency, AppClassLoader> loaderMap;
-
-    private ClassLoader classLoader;
+    private final Map<Dependency, AppClassLoader> loaderMap = new HashMap<>();
 
     @Autowired
     private DependencyFetch dependencyFetch;
-
-    public ModuleFetch(ClassLoader parent) {
-        this.parent = parent;
-        this.loaderMap = new HashMap<>();
-    }
 
     @Override
     public void checkoutClassLoader(Dependency dependency) {
@@ -43,13 +39,12 @@ public class ModuleFetch extends DirectionFetch implements MetadataFetch {
         if(null == classLoader) {
             return;
         }
-        this.classLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
     }
 
     @Override
     public void recover() {
-        Thread.currentThread().setContextClassLoader(classLoader);
+        Thread.currentThread().setContextClassLoader(parent);
     }
 
     @Override
@@ -184,12 +179,17 @@ public class ModuleFetch extends DirectionFetch implements MetadataFetch {
     public static void main(String[] args) throws ClassNotFoundException {
         System.setProperty("maven.host", "https://repo.souche-inc.com");
         System.setProperty("maven.version", "maven2");
-        ModuleFetch moduleFetch = new ModuleFetch(ClassLoader.getSystemClassLoader());
+        ModuleFetch moduleFetch = new ModuleFetch();
         Dependency dependency = new Dependency();
         dependency.setGroupId("com.souche");
         dependency.setArtifactId("car-model-api");
         Class aClass = moduleFetch.getClass(dependency, "com.souche.car.model.api.model.ModelService");
         System.out.println(aClass);
         moduleFetch.getClassLoader(dependency).destroy();
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.parent = applicationContext.getClassLoader();
     }
 }
