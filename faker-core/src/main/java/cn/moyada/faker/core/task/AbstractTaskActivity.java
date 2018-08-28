@@ -3,7 +3,6 @@ package cn.moyada.faker.core.task;
 import cn.moyada.faker.common.constant.TimeConstant;
 import cn.moyada.faker.core.common.QuestInfo;
 import cn.moyada.faker.core.invoke.JobAction;
-import cn.moyada.faker.core.listener.AbstractListener;
 import cn.moyada.faker.core.listener.ListenerAction;
 import cn.moyada.faker.core.provider.ParamProvider;
 import cn.moyada.faker.rpc.api.invoke.AsyncInvoke;
@@ -26,7 +25,7 @@ public class AbstractTaskActivity {
     // 结果监听器
     private final ListenerAction listener;
 
-    public AbstractTaskActivity(AsyncInvoke invoke, AbstractListener listener,
+    public AbstractTaskActivity(AsyncInvoke invoke, ListenerAction listener,
                                 ParamProvider paramProvider, JobAction jobAction) {
         invoke.register(listener);
         this.invoke = invoke;
@@ -51,6 +50,8 @@ public class AbstractTaskActivity {
         } else {
             run(questNum);
         }
+
+        listener.waitFinish();
     }
 
     private void genParam(int num) {

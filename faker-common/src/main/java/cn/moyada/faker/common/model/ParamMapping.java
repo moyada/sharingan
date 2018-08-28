@@ -1,4 +1,4 @@
-package cn.moyada.faker.core.provider;
+package cn.moyada.faker.common.model;
 
 import java.util.HashMap;
 import java.util.Map;

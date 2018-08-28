@@ -10,8 +10,30 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>faker-core</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>quasar-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>comsat-httpclient</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>cn.moyada</groupId>
             <artifactId>faker-module</artifactId>
@@ -25,12 +47,6 @@
         <dependency>
             <groupId>cn.moyada</groupId>
             <artifactId>faker-rpc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.moyada</groupId>
-            <artifactId>dubbo-faker-core</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

@@ -4,8 +4,8 @@ import cn.moyada.faker.core.common.QuestInfo;
 
 public class DefaultExecutor extends AbstractExecutor implements JobAction {
 
-    public DefaultExecutor(QuestInfo questInfo, String fakerId) {
-        super(getThreadPool(questInfo, fakerId));
+    public DefaultExecutor(String fakerId, QuestInfo questInfo) {
+        super(getThreadPool(fakerId, questInfo));
     }
 
     @Override

@@ -7,8 +7,8 @@ import cn.moyada.faker.core.common.QuestInfo;
 import cn.moyada.faker.core.convert.AppInfoConverter;
 import cn.moyada.faker.core.invoke.DefaultExecutor;
 import cn.moyada.faker.core.invoke.JobAction;
-import cn.moyada.faker.core.listener.AbstractListener;
 import cn.moyada.faker.core.listener.BatchLoggingListener;
+import cn.moyada.faker.core.listener.ListenerAction;
 import cn.moyada.faker.core.provider.ParamProvider;
 import cn.moyada.faker.core.queue.AbstractQueue;
 import cn.moyada.faker.core.queue.ArrayQueue;
@@ -58,18 +58,19 @@ public class InvocationTask implements TaskActivity {
         metadataFetch.checkoutClassLoader(environment.getDependency());
 
         // 生成调用报告序号
-        String fakerId = UUIDUtil.getUUID();
+        final String fakerId = UUIDUtil.getUUID();
         environment.setFakerId(fakerId);
 
         final AbstractQueue<LogDO> queue = buildQueue(environment.getQuestInfo());
 
-        AbstractListener listener = new BatchLoggingListener(environment, queue);
+        final ListenerAction listener = new BatchLoggingListener(environment, queue);
 
         ParamProvider paramProvider = new ParamProvider(values, environment.getInvokeMetadata().getParamTypes(), questInfo.isRandom());
 
-        JobAction action = new DefaultExecutor(questInfo, fakerId);
+        final JobAction action = new DefaultExecutor(fakerId, questInfo);
 
-        InvocationMetaDate invocationMetaDate = getMetaDate(environment.getInvokeMetadata());
+        final InvocationMetaDate invocationMetaDate = getMetaDate(environment.getInvokeMetadata());
+
         dubboInvoker.prepare(invocationMetaDate);
 
         AbstractTaskActivity taskActivity = new AbstractTaskActivity(dubboInvoker, listener, paramProvider, action);

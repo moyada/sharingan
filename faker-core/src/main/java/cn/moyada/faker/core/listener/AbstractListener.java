@@ -54,14 +54,16 @@ public abstract class AbstractListener implements ListenerAction, InvokeCallback
         if (current == total) {
             isFinish = true;
         }
+
         if (sleepThread != null) {
-            LockSupport.unpark(sleepThread);
+            LockSupport.unpark(this.sleepThread);
         }
     }
 
     @Override
-    public void finish() {
+    public void waitFinish() {
         while (!isFinish) {
+            this.sleepThread = Thread.currentThread();
             LockSupport.park();
         }
     }

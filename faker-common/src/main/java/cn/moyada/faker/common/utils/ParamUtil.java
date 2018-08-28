@@ -50,11 +50,6 @@ public class ParamUtil {
         return new String(bytes);
     }
 
-    public static void main(String[] args) {
-        System.out.println(paddingZero(0, 5));
-        System.out.println(paddingZero(324, 5));
-        System.out.println(paddingZero(12, 5));
-    }
     /**
      * 查询包含的表达式
      * @param array

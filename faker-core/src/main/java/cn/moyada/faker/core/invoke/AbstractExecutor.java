@@ -1,13 +1,10 @@
 package cn.moyada.faker.core.invoke;
 
-import cn.moyada.dubbo.faker.core.factory.GroupThreadFactory;
-import cn.moyada.dubbo.faker.core.utils.RuntimeUtil;
+import cn.moyada.faker.common.utils.RuntimeUtil;
 import cn.moyada.faker.core.common.QuestInfo;
+import cn.moyada.faker.core.factory.GroupThreadFactory;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public abstract class AbstractExecutor implements JobAction {
 
@@ -17,7 +14,7 @@ public abstract class AbstractExecutor implements JobAction {
         this.executor = executor;
     }
 
-    protected static ExecutorService getThreadPool(QuestInfo questInfo, String fakerId) {
+    protected static ExecutorService getThreadPool(String fakerId, QuestInfo questInfo) {
         int poolSize = questInfo.getPoolSize();
         int questNum = questInfo.getQuestNum();
         int threadSize = RuntimeUtil.getAllowThreadSize() - poolSize;

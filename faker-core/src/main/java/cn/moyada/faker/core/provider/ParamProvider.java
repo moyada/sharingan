@@ -1,13 +1,13 @@
 package cn.moyada.faker.core.provider;
 
-import cn.moyada.dubbo.faker.core.common.BeanHolder;
-import cn.moyada.dubbo.faker.core.enums.ConvertType;
-import cn.moyada.dubbo.faker.core.exception.InitializeInvokerException;
-import cn.moyada.dubbo.faker.core.manager.FakerManager;
-import cn.moyada.dubbo.faker.core.model.ParamMapping;
-import cn.moyada.dubbo.faker.core.utils.ConvertUtil;
-import cn.moyada.dubbo.faker.core.utils.JsonUtil;
-import cn.moyada.dubbo.faker.core.utils.ParamUtil;
+
+import cn.moyada.faker.common.enums.ConvertType;
+import cn.moyada.faker.common.exception.InitializeInvokerException;
+import cn.moyada.faker.common.model.ParamMapping;
+import cn.moyada.faker.common.utils.ConvertUtil;
+import cn.moyada.faker.common.utils.JsonUtil;
+import cn.moyada.faker.common.utils.ParamUtil;
+import cn.moyada.faker.manager.FakerManager;
 
 import java.util.HashMap;
 import java.util.List;
