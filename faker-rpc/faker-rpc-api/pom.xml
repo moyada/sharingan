@@ -11,6 +11,10 @@
 
     <artifactId>faker-rpc-api</artifactId>
 
+    <properties>
+        <skip_maven_deploy>false</skip_maven_deploy>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>cn.moyada</groupId>

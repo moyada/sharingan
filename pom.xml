@@ -10,11 +10,11 @@
     <version>1.2.0-SNAPSHOT</version>
 
     <modules>
-        <module>dubbo-faker-api</module>
-        <module>dubbo-faker-filter</module>
-        <module>dubbo-faker-core</module>
-        <module>dubbo-faker-web</module>
-        <module>dubbo-faker-plugin</module>
+        <!--<module>dubbo-faker-api</module>-->
+        <!--<module>dubbo-faker-filter</module>-->
+        <!--<module>dubbo-faker-core</module>-->
+        <!--<module>dubbo-faker-web</module>-->
+        <!--<module>dubbo-faker-plugin</module>-->
         <module>faker-common</module>
         <module>faker-rpc</module>
         <module>faker-core</module>
@@ -61,9 +61,22 @@
         <spring-boot.version>2.0.4.RELEASE</spring-boot.version>
         <servlet.version>4.0.0</servlet.version>
 
+        <!-- for maven compiler plugin -->
+        <java_source_version>1.8</java_source_version>
+        <java_target_version>1.8</java_target_version>
+        <file_encoding>UTF-8</file_encoding>
+        <!-- Maven plugins -->
+        <maven_jar_version>3.0.2</maven_jar_version>
+        <!--<maven_surefire_version>2.19.1</maven_surefire_version>-->
+        <!--<maven_deploy_version>2.8.2</maven_deploy_version>-->
+        <maven_compiler_version>3.8.0</maven_compiler_version>
+        <!--<maven_source_version>3.0.1</maven_source_version>-->
+        <!--<maven_javadoc_version>3.0.1</maven_javadoc_version>-->
+        <!--<maven_jetty_version>9.4.11.v20180605</maven_jetty_version>-->
+        <!--<maven_checkstyle_version>3.0.0</maven_checkstyle_version>-->
+        <!--<maven_jacoco_version>0.8.1</maven_jacoco_version>-->
         <maven.test.skip>true</maven.test.skip>
         <junit.version>4.12</junit.version>
-
     </properties>
 
     <dependencyManagement>
@@ -77,12 +90,6 @@
             <dependency>
                 <groupId>cn.moyada</groupId>
                 <artifactId>faker-module</artifactId>
-                <version>${faker.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.moyada</groupId>
-                <artifactId>faker-rpc</artifactId>
                 <version>${faker.version}</version>
             </dependency>
 
@@ -266,11 +273,13 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework.boot</groupId>
@@ -282,6 +291,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework.boot</groupId>
@@ -293,6 +303,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-actuator</artifactId>
+                <version>${spring-boot.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework.boot</groupId>
@@ -304,21 +315,25 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-log4j2</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-tomcat</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-devtools</artifactId>
+                <version>${parent.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
 
 
@@ -345,24 +360,21 @@
 
     <build>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-war-plugin</artifactId>-->
-                <!--<version>3.0.0</version>-->
-                <!--<configuration>-->
-                    <!--<overlays>-->
-                        <!--<overlay>-->
-                            <!--<groupId>cn.moyada</groupId>-->
-                            <!--<artifactId>dubbo-faker-core</artifactId>-->
-                        <!--</overlay>-->
-                        <!--<overlay>-->
-                            <!--<groupId>cn.moyada</groupId>-->
-                            <!--<artifactId>dubbo-faker-web</artifactId>-->
-                        <!--</overlay>-->
-                    <!--</overlays>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven_compiler_version}</version>
+                <configuration>
+                    <compilerArgument>-proc:none</compilerArgument>
+                    <fork>true</fork>
+                    <source>${java_source_version}</source>
+                    <target>${java_target_version}</target>
+                    <encoding>${file_encoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.0</version>
                 <executions>
@@ -374,9 +386,11 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven_jar_version}</version>
                 <configuration>
                     <archive>
                         <addMavenDescriptor>true</addMavenDescriptor>
@@ -385,18 +399,11 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Specification-Version>${project.version}</Specification-Version>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
                     </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <fork>true</fork>
-                    <source>java8</source>
-                    <target>java8</target>
-                    <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
@@ -437,40 +444,6 @@
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.0.2</version>
                 </plugin>
-
-                <!--<plugin>-->
-                    <!--<artifactId>maven-deploy-plugin</artifactId>-->
-                    <!--<version>2.8.2</version>-->
-                    <!--<configuration>-->
-                        <!--<skip>true</skip>-->
-                        <!--<url>file:/Users/xueyikang/repository/dubbo-faker/</url>-->
-                        <!--&lt;!&ndash;<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>&ndash;&gt;-->
-                    <!--</configuration>-->
-                <!--</plugin>-->
-
-                <!--<plugin>-->
-                    <!--<groupId>com.github.github</groupId>-->
-                    <!--<artifactId>site-maven-plugin</artifactId>-->
-                    <!--<version>0.12</version>-->
-                    <!--<configuration>-->
-                        <!--<message>Maven artifacts for ${project.version}</message>  &lt;!&ndash; git commit message &ndash;&gt;-->
-                        <!--<noJekyll>true</noJekyll>                                  &lt;!&ndash; disable webpage processing &ndash;&gt;-->
-                        <!--<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> &lt;!&ndash; matches distribution management repository url above &ndash;&gt;-->
-                        <!--<branch>refs/heads/mvn-repo</branch>                       &lt;!&ndash; remote branch name &ndash;&gt;-->
-                        <!--<includes><include>**/*</include></includes>-->
-                        <!--<repositoryName>dubbo-faker</repositoryName>      &lt;!&ndash; github repo name &ndash;&gt;-->
-                        <!--<repositoryOwner>moyada</repositoryOwner>    &lt;!&ndash; github username  &ndash;&gt;-->
-                    <!--</configuration>-->
-                    <!--<executions>-->
-                        <!--&lt;!&ndash; run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase &ndash;&gt;-->
-                        <!--<execution>-->
-                            <!--<goals>-->
-                                <!--<goal>site</goal>-->
-                            <!--</goals>-->
-                            <!--<phase>deploy</phase>-->
-                        <!--</execution>-->
-                    <!--</executions>-->
-                <!--</plugin>-->
             </plugins>
         </pluginManagement>
     </build>

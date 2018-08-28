@@ -25,7 +25,7 @@ public abstract class AbstractListener implements ListenerAction, InvokeCallback
     @Autowired
     protected FakerManager fakerManager;
 
-    private final RecordHandler<LogDO> recordHandler;
+    protected final RecordHandler<LogDO> recordHandler;
 
     protected final AbstractQueue<LogDO> queue;
 

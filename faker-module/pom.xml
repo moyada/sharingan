@@ -11,6 +11,8 @@
 
     <artifactId>faker-module</artifactId>
 
+    <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

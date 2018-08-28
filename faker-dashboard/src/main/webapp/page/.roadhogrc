@@ -1,0 +1,24 @@
+{
+  "entry": "src/index.js",
+  "disableCSSModules": false,
+  "publicPath": "",
+  "outputPath": "../main/webapp/META-INF/resources",
+  "autoprefixer": null,
+  "env": {
+    "development": {
+      "extraBabelPlugins": [
+        "transform-decorators-legacy",
+        "dva-hmr",
+        "transform-runtime",
+        ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }]
+      ]
+    },
+    "production": {
+      "extraBabelPlugins": [
+        "transform-decorators-legacy",
+        "transform-runtime",
+        ["import", {"libraryName": "antd", "style": "css"}]
+      ]
+    }
+  }
+}

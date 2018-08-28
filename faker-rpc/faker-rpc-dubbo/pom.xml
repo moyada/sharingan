@@ -11,6 +11,8 @@
 
     <artifactId>faker-rpc-dubbo</artifactId>
 
+    <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>com.alibaba</groupId>

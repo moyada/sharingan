@@ -1,7 +1,6 @@
 package cn.moyada.faker.common.utils;
 
 import cn.moyada.faker.common.model.CleanerReference;
-import com.sun.istack.internal.Nullable;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -30,7 +29,6 @@ public class CleanerUtil {
     public static <T> boolean cleaner(CleanerReference<T> cleaner) {
         return AccessController.doPrivileged(new PrivilegedAction<T>() {
             @Override
-            @Nullable
             public T run() {
                 try {
                     cleaner.cleaner();

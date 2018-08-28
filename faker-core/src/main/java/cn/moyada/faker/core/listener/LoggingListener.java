@@ -1,9 +1,9 @@
 package cn.moyada.faker.core.listener;
 
 
-
-import cn.moyada.faker.common.model.InvokeFuture;
+import cn.moyada.faker.common.constant.TimeConstant;
 import cn.moyada.faker.core.queue.AbstractQueue;
+import cn.moyada.faker.core.task.TaskEnvironment;
 import cn.moyada.faker.manager.domain.LogDO;
 import cn.moyada.faker.rpc.api.invoke.InvokeCallback;
 import org.slf4j.Logger;
@@ -20,8 +20,8 @@ import java.util.concurrent.locks.LockSupport;
 public class LoggingListener extends AbstractListener implements InvokeCallback {
     private static final Logger log = LoggerFactory.getLogger(LoggingListener.class);
 
-    public LoggingListener(String fakerId, InvokerInfo invokerInfo, AbstractQueue<InvokeFuture> queue) {
-        super(fakerId, invokerInfo, queue);
+    public LoggingListener(TaskEnvironment env, AbstractQueue<LogDO> queue) {
+        super(env, queue);
     }
 
     @Override
@@ -33,23 +33,24 @@ public class LoggingListener extends AbstractListener implements InvokeCallback 
 
         @Override
         public void run() {
+            LogDO logDO;
+
             for (;;) {
-                InvokeFuture future = futureQueue.poll();
-                if(null == future) {
-                    if(futureQueue.isDone()) {
+                logDO = queue.poll();
+                if(null == logDO) {
+                    if(queue.isDone()) {
                         break;
                     }
-                    LockSupport.parkNanos(1_000 * NANO_PER_MILLIS);
+                    LockSupport.parkNanos(1_000 * TimeConstant.NANO_PER_MILLIS);
                     continue;
                 }
 
-                LogDO logDO = convert.convertToLog(future);
 
-                log.info("save invoke result: " + convert.getFakerId());
+                log.info("save invoke result: " + recordHandler.getFakerId());
 
                 fakerManager.saveLog(logDO);
             }
-            log.info("logging shutdown: " + convert.getFakerId());
+            log.info("logging shutdown: " + recordHandler.getFakerId());
         }
     }
 }

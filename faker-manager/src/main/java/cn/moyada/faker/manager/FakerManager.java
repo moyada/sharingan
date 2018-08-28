@@ -87,7 +87,7 @@ public class FakerManager {
         MethodInvokeDO methodInvoke = fakerDAO.findInvokeInfoById(id);
         if(null == methodInvoke) {
             log.error("unknow invokeId: " + id);
-            throw InitializeInvokerException.methodError;
+            throw new InitializeInvokerException("unknow invokeId: " + id);
         }
         return methodInvoke;
     }

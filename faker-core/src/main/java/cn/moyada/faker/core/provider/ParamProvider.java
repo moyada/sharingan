@@ -66,7 +66,7 @@ public class ParamProvider {
             this.rebuildParamMap = paramMapping.getRebuildParamMap();
 
             // 获取替换数据
-            FakerManager fakerManager = BeanHolder.getBean(FakerManager.class);
+            FakerManager fakerManager=null;// = BeanHolder.getBean(FakerManager.class);
             this.fakerParamType = paramMapping.getRebuildParamSet();
             this.fakerParamMap = fakerManager.getFakerParamMapByRebuildParam(fakerParamType);
 
@@ -121,7 +121,7 @@ public class ParamProvider {
     private void reGenParam() {
         System.out.println("reGenParam");
         // 获取替换数据
-        FakerManager fakerManager = BeanHolder.getBean(FakerManager.class);
+        FakerManager fakerManager = null;//BeanHolder.getBean(FakerManager.class);
         Map<String, List<String>> fakerParam = fakerManager.getFakerParamMapByRebuildParam(fakerParamType);
 
         boolean random = true;

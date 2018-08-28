@@ -11,6 +11,8 @@
 
     <artifactId>faker-manager</artifactId>
 
+    <packaging>jar</packaging>
+
     <dependencies>
 
         <dependency>

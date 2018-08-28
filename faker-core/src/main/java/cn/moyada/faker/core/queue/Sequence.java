@@ -1,7 +1,5 @@
 package cn.moyada.faker.core.queue;
 
-import cn.moyada.dubbo.faker.core.model.padding.Bit4Padding;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -9,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author xueyikang
  * @create 2018-04-03 16:14
  */
-class Sequence<E> extends Bit4Padding {
+class Sequence<E> {
 
     // 是否重头插入
     private boolean insertLoop;

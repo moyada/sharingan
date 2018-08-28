@@ -16,16 +16,4 @@
         <module>faker-rpc-dubbo</module>
         <module>faker-rpc-api</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>cn.moyada</groupId>
-            <artifactId>faker-rpc-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.moyada</groupId>
-            <artifactId>faker-rpc-dubbo</artifactId>
-        </dependency>
-    </dependencies>
 </project>
