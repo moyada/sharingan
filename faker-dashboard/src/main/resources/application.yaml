@@ -1,6 +1,9 @@
 server:
   port: 8080
 
+maven:
+  host: nexus.manven.com
+
 
 logging:
   config:

@@ -43,7 +43,6 @@ public class InvocationTask implements TaskActivity {
     @Autowired
     private MetadataWrapper metadataWrapper;
 
-    @Qualifier("moduleFetch")
     @Autowired
     private MetadataFetch metadataFetch;
 

@@ -7,6 +7,7 @@ import cn.moyada.faker.module.Assert;
 import cn.moyada.faker.module.Dependency;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -41,7 +42,7 @@ public class Maven2LastJarFetch extends AbstractFetchLastJar implements Dependen
             "{\"property\":\"componentVersion\",\"value\":\"%s\"}" +
             "]}],\"type\":\"rpc\",\"tid\":0}]";
 
-    public Maven2LastJarFetch(String host) {
+    public Maven2LastJarFetch(@Value("${maven.host}") String host) {
         if(StringUtil.isEmpty(host)) {
             throw new NullPointerException("unknow maven.host properties.");
         }
