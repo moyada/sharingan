@@ -2,19 +2,49 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.moyada.faker.manager.dao.FakerDAO">
 
-	<select id="findAllApp" resultType="AppInfoDO">
+	<resultMap id="appInfoDO" type="cn.moyada.faker.manager.domain.AppInfoDO">
+		<id column="app_id" property="appId"/>
+		<result column="app_name" property="appName"/>
+		<result column="group_id" property="groupId"/>
+		<result column="artifact_id" property="artifactId"/>
+		<result column="version" property="version"/>
+		<result column="url" property="url"/>
+	</resultMap>
+
+	<resultMap id="methodInvokeDO" type="cn.moyada.faker.manager.domain.MethodInvokeDO">
+		<id column="id" property="id"/>
+		<id column="app_id" property="appId"/>
+		<result column="app_name" property="appName"/>
+		<result column="class_name" property="className"/>
+		<result column="method_name" property="methodName"/>
+		<result column="param_type" property="paramType"/>
+		<result column="return_type" property="returnType"/>
+		<result column="expression" property="expression"/>
+	</resultMap>
+
+	<resultMap id="logDO" type="cn.moyada.faker.manager.domain.LogDO">
+		<id column="id" property="id"/>
+		<result column="real_param" property="realParam"/>
+		<result column="code" property="code"/>
+		<result column="result" property="result"/>
+		<result column="message" property="message"/>
+		<result column="spend_time" property="spendTime"/>
+		<result column="invoke_time" property="invokeTime"/>
+	</resultMap>
+
+	<select id="findAllApp" resultMap="appInfoDO">
 		SELECT `app_id`, `app_name`, `group_id`, `artifact_id`, `version`, `url`
 		FROM `app_info`
 	</select>
 
-	<select id="findAppById" resultType="AppInfoDO">
+	<select id="findAppById" resultMap="appInfoDO">
 		SELECT `app_id`, `app_name`, `group_id`, `artifact_id`, `version`, `url`, `dependencies`
 		FROM `app_info`
 		WHERE app_id = #{appId}
 		LIMIT 1
 	</select>
 
-	<select id="findDependencyById" resultType="AppInfoDO">
+	<select id="findDependencyById" resultMap="appInfoDO">
 		SELECT `name` appName, `group_id`, `artifact_id`, `version`, `url`
 		FROM `dependency`
 		WHERE id IN
@@ -34,12 +64,12 @@
 		(#{appId}, #{appName}, #{className}, #{methodName}, #{paramType}, #{returnType}, #{expression});
 	</insert>
 
-	<select id="findAll" resultType="methodInvokeDO">
+	<select id="findAll" resultMap="methodInvokeDO">
 		SELECT `id`, `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`
 		FROM `method_invoke`;
 	</select>
 
-	<select id="findInvokeInfoById" resultType="methodInvokeDO">
+	<select id="findInvokeInfoById" resultMap="methodInvokeDO">
 		SELECT `id`, `app_id`, `app_name`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`
 		FROM `method_invoke`
 		WHERE id = #{id};
@@ -85,7 +115,7 @@
 		GROUP BY `class_name`
 	</select>
 
-	<select id="findMethodByClass" resultType="methodInvokeDO">
+	<select id="findMethodByClass" resultMap="methodInvokeDO">
 		SELECT `id`, `method_name`, `param_type`, `return_type`, `expression`
 		FROM `method_invoke`
 		WHERE `class_name` = #{className}
@@ -97,7 +127,7 @@
 		WHERE `faker_id` = #{fakerId}
 	</select>
 
-	<select id="findMethodByFakerId" resultType="logDO">
+	<select id="findMethodByFakerId" resultMap="logDO">
 		SELECT a.`id`, `real_param`, `code`, `result`, `message`, `spend_time`, `invoke_time`
 		FROM `faker_log` a,
 		(

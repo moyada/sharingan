@@ -1,6 +1,5 @@
 package cn.moyada.faker.rpc.api.invoke;
 
-import cn.moyada.faker.common.constant.TimeConstant;
 import cn.moyada.faker.common.exception.UnsupportedParamNumberException;
 import cn.moyada.faker.common.utils.TimeUtil;
 
@@ -17,8 +16,7 @@ public abstract class MethodInvoke implements Invoke {
     public Result execute(Invocation invocation) {
         Object[] argsValue = invocation.getArgsValue();
 
-        long begin = System.nanoTime();
-        Timestamp startTime = TimeUtil.now();
+        long begin = TimeUtil.currentTimeMillis();
 
         Result result;
         try {
@@ -59,9 +57,9 @@ public abstract class MethodInvoke implements Invoke {
             result = Result.failed(throwable.getMessage());
         }
 
-        result.setStartTime(startTime);
+        result.setStartTime(new Timestamp(begin));
         // 完成计算耗时
-        result.setResponseTime((System.nanoTime() - begin) / TimeConstant.NANO_PER_MILLIS);
+        result.setResponseTime(TimeUtil.currentTimeMillis() - begin);
         return result;
     }
 }

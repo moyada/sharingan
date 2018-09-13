@@ -20,7 +20,6 @@
         <module>faker-core</module>
         <module>faker-dashboard</module>
         <module>faker-module</module>
-        <module>faker-war</module>
         <module>faker-manager</module>
     </modules>
 
