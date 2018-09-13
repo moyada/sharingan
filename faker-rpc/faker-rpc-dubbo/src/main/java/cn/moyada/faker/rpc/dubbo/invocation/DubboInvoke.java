@@ -70,7 +70,7 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
             this.instance = reference.get();
         }
         catch (Exception e) {
-            throw new InstanceNotFountException();
+            throw new InstanceNotFountException(e.getMessage());
         }
     }
 }
