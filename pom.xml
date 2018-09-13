@@ -15,10 +15,10 @@
         <!--<module>dubbo-faker-core</module>-->
         <!--<module>dubbo-faker-web</module>-->
         <!--<module>dubbo-faker-plugin</module>-->
+        <module>faker-console</module>
         <module>faker-common</module>
         <module>faker-rpc</module>
         <module>faker-core</module>
-        <module>faker-dashboard</module>
         <module>faker-module</module>
         <module>faker-manager</module>
     </modules>
