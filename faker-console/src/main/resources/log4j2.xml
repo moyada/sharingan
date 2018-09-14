@@ -14,22 +14,33 @@
 
 
     <!-- Rolling File Appender -->
-    <Appenders name="FileAppender"
-                 fileName="${LOG_DIR}/faker.log"
-                 filePattern="${LOG_DIR}/faker-${DATA}-%i.log">
-        <PatternLayout>
-            <Pattern>${LOG_PATTERN}</Pattern>
-        </PatternLayout>
-        <Policies>
-            <SizeBasedTriggeringPolicy size="10MB" />
-        </Policies>
-        <DefaultRolloverStrategy max="10"/>
-    </Appenders>
-
     <Appenders>
+
         <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
+
+        <!-- Rolling File Appender -->
+        <RollingFile name="FileAppender" fileName="${LOG_DIR}/faker.log"
+                     filePattern="${LOG_DIR}/faker-${DATA}-%i.log">
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+            <!--<JsonLayout complete="false" compact="true">
+                <KeyValuePair key="timestamp" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSZ}" />
+            </JsonLayout>-->
+            <!--<Filters>-->
+                <!--&lt;!&ndash; 只记录ERROR级别日志信息，程序打印的其他信息不会被记录 &ndash;&gt;-->
+                <!--&lt;!&ndash; 此level设置的日志级别，是过滤日志文件中打印出的日志信息，和Root的level有所区别 &ndash;&gt;-->
+                <!--<ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />-->
+            <!--</Filters>-->
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB" />
+                <!-- 每天创建一个日志文件 -->
+                <TimeBasedTriggeringPolicy interval="1" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
     </Appenders>
 
     <Loggers>

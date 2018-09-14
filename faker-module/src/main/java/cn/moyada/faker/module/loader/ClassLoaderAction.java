@@ -18,5 +18,8 @@ public interface ClassLoaderAction {
      */
     MethodHandles.Lookup getMethodLookup();
 
+    /**
+     * 卸载类加载器
+     */
     void destroy();
 }

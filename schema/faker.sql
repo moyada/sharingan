@@ -1,8 +1,8 @@
 CREATE TABLE `app_info` (
   `app_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '项目编号',
-  `app_name` varchar(100) DEFAULT NULL COMMENT '项目名',
-  `group_id` varchar(50) DEFAULT NULL COMMENT '依赖分组',
-  `artifact_id` varchar(50) DEFAULT NULL COMMENT '依赖名',
+  `app_name` varchar(100) NOT NULL COMMENT '项目名',
+  `group_id` varchar(50) NOT NULL COMMENT '依赖分组',
+  `artifact_id` varchar(50) NOT NULL COMMENT '依赖名',
   `version` varchar(50) DEFAULT NULL COMMENT '版本号',
   `url` varchar(255) DEFAULT NULL COMMENT '直接链接',
   `dependencies` varchar(100) DEFAULT NULL COMMENT '包含依赖,关联dependency表',

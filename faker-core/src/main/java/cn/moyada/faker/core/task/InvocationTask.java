@@ -101,7 +101,6 @@ public class InvocationTask implements TaskActivity {
         env.setQuestInfo(questInfo);
         env.setDependency(dependency);
         env.setInvokeMetadata(invokeMetadata);
-
         return env;
     }
 

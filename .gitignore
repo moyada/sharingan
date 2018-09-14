@@ -3,6 +3,7 @@ classes/
 .idea
 *.iml
 *.log
+conf/faker-test.properties
 out/
 /dubbo-faker-web/page/node_modules/
 /dubbo-faker-web/target/

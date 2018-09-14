@@ -8,14 +8,8 @@ logging:
 
 spring:
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/faker?useUnicode=true&amp&characterEncoding=UTF-8&useSSL=false
-#    url=jdbc:mysql://115.29.10.121:3306/car_model?useUnicode=true&amp&characterEncoding=UTF-8
-    username: root
-    password: root
-#    password: dpjA8Z6XPXbvos
-
 
 mybatis:
 #  config-location: classpath*:mybatis-config.xml
@@ -23,12 +17,3 @@ mybatis:
   type-aliases-package: cn.moyada.faker.manager.domain
   configuration:
     use-column-label: true
-
-
-maven:
-  host: https://repo.souche-inc.com
-
-dubbo:
-  registry: zookeeper://dev1.zk.scsite.net:2181
-  username: super
-  password: souche-all
