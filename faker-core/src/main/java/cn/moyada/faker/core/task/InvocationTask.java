@@ -62,8 +62,9 @@ public class InvocationTask implements TaskActivity {
         final AbstractQueue<LogDO> queue = buildQueue(environment.getQuestInfo());
 
         final ListenerAction listener = new BatchLoggingListener(environment, queue);
+        listener.setFakerManager(fakerManager);
 
-        final ParamProvider paramProvider = new ParamProvider(values, environment.getInvokeMetadata().getParamTypes(), questInfo.isRandom());
+        final ParamProvider paramProvider = new ParamProvider(values, environment.getInvokeMetadata().getParamTypes(), fakerManager, questInfo.isRandom());
 
         final JobAction action = new DefaultExecutor(fakerId, questInfo);
 
@@ -73,6 +74,7 @@ public class InvocationTask implements TaskActivity {
 
         AbstractTaskActivity taskActivity = new AbstractTaskActivity(dubboInvoker, listener, paramProvider, action);
 
+        log.info("start task: " + fakerId);
         taskActivity.start(questInfo);
 
         metadataFetch.recover();

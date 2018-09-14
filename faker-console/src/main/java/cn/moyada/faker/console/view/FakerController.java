@@ -81,6 +81,7 @@ public class FakerController {
             return Result.success(data);
         }
         catch (Exception e) {
+            e.printStackTrace();
             return Result.failed(500, e.getMessage());
         }
         finally {

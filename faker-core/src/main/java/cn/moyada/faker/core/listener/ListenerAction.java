@@ -1,5 +1,6 @@
 package cn.moyada.faker.core.listener;
 
+import cn.moyada.faker.manager.FakerManager;
 import cn.moyada.faker.rpc.api.invoke.InvokeCallback;
 
 /**
@@ -11,4 +12,6 @@ public interface ListenerAction extends InvokeCallback {
     void startListener();
 
     void waitFinish();
+
+    void setFakerManager(FakerManager fakerManager);
 }

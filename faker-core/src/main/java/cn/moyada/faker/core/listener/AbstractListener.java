@@ -10,7 +10,6 @@ import cn.moyada.faker.manager.FakerManager;
 import cn.moyada.faker.manager.domain.LogDO;
 import cn.moyada.faker.rpc.api.invoke.InvokeCallback;
 import cn.moyada.faker.rpc.api.invoke.Result;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
@@ -22,7 +21,6 @@ import java.util.concurrent.locks.LockSupport;
  */
 public abstract class AbstractListener implements ListenerAction, InvokeCallback {
 
-    @Autowired
     protected FakerManager fakerManager;
 
     protected final RecordHandler<LogDO> recordHandler;
@@ -35,6 +33,11 @@ public abstract class AbstractListener implements ListenerAction, InvokeCallback
     private final AtomicInteger countDown;
 
     private Thread sleepThread;
+
+    @Override
+    public void setFakerManager(FakerManager fakerManager) {
+        this.fakerManager = fakerManager;
+    }
 
     protected AbstractListener(TaskEnvironment env, AbstractQueue<LogDO> queue) {
         QuestInfo invokerInfo = env.getQuestInfo();

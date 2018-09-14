@@ -10,6 +10,7 @@ import cn.moyada.faker.rpc.api.invoke.Invocation;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.LockSupport;
 
 public class AbstractTaskActivity {
@@ -24,6 +25,8 @@ public class AbstractTaskActivity {
 
     // 结果监听器
     private final ListenerAction listener;
+
+    private Semaphore semaphore;
 
     public AbstractTaskActivity(AsyncInvoke invoke, ListenerAction listener,
                                 ParamProvider paramProvider, JobAction jobAction) {
@@ -44,6 +47,8 @@ public class AbstractTaskActivity {
 
         listener.startListener();
 
+        this.semaphore = new Semaphore(questInfo.getPoolSize());
+
         // 发起调用
         if (timeout > 50) {
             run(questNum, timeout);
@@ -58,6 +63,9 @@ public class AbstractTaskActivity {
         Thread thread = new Thread(() -> {
             for (int i = 0; i < num; i++) {
                 Object[] param = paramProvider.fetchNextParam();
+                if (null == param) {
+                    continue;
+                }
                 Invocation invocation = new Invocation();
                 invocation.setArgsValue(param);
 
@@ -92,6 +100,13 @@ public class AbstractTaskActivity {
     }
 
     protected void execute(Invocation invocation) {
-        jobAction.run(() -> invoke.call(invocation));
+        try {
+            semaphore.acquire();
+            jobAction.run(() -> invoke.call(invocation));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            semaphore.release();
+        }
     }
 }

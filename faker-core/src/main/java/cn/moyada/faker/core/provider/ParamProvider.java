@@ -21,6 +21,8 @@ import java.util.Set;
  */
 public class ParamProvider {
 
+    private FakerManager fakerManager;
+
     // 参数表达式
     private final Object[] invokeValue;
 
@@ -48,7 +50,7 @@ public class ParamProvider {
     private int count = 0;
     private char[] chars = new char[32];
 
-    public ParamProvider(Object[] invokeValue, Class<?>[] paramTypes, boolean random) {
+    public ParamProvider(Object[] invokeValue, Class<?>[] paramTypes, FakerManager fakerManager, boolean random) {
         ParamMapping paramMapping = ParamUtil.getRebuildParam(invokeValue);
 
         // 获取参数的转换类型
@@ -57,6 +59,7 @@ public class ParamProvider {
         this.paramTypes = paramTypes;
         this.length = invokeValue.length;
         this.invokeValue = invokeValue;
+        this.fakerManager = fakerManager;
 
         if(paramMapping.getRebuildParamSet().isEmpty()) {
             this.rebuildParamMap = null;
@@ -66,11 +69,11 @@ public class ParamProvider {
             this.rebuildParamMap = paramMapping.getRebuildParamMap();
 
             // 获取替换数据
-            FakerManager fakerManager=null;// = BeanHolder.getBean(FakerManager.class);
             this.fakerParamType = paramMapping.getRebuildParamSet();
             this.fakerParamMap = fakerManager.getFakerParamMapByRebuildParam(fakerParamType);
 
             genParamLinkAndIndex(random);
+            reGenParam();
         }
     }
 
@@ -119,9 +122,8 @@ public class ParamProvider {
     }
 
     private void reGenParam() {
-        System.out.println("reGenParam");
+//        System.out.println("reGenParam");
         // 获取替换数据
-        FakerManager fakerManager = null;//BeanHolder.getBean(FakerManager.class);
         Map<String, List<String>> fakerParam = fakerManager.getFakerParamMapByRebuildParam(fakerParamType);
 
         boolean random = true;
