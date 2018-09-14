@@ -43,7 +43,7 @@ public abstract class AbstractFetchLastJar {
 
     protected HttpPost getHttpPost(String request) {
         HttpPost httpPost = new HttpPost(request);
-        httpPost.setHeader("ContentType", MimeTypeUtils.APPLICATION_JSON_VALUE);
+        httpPost.setHeader("Content-Type", MimeTypeUtils.APPLICATION_JSON_VALUE);
         return httpPost;
     }
 }

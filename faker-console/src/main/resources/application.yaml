@@ -1,13 +1,10 @@
+name: faker
+
 server:
   port: 8080
 
-maven:
-  host: nexus.manven.com
-
-
 logging:
-  config:
-
+  config: classpath:log4j2.xml
 
 spring:
   datasource:
@@ -26,3 +23,12 @@ mybatis:
   type-aliases-package: cn.moyada.faker.manager.domain
   configuration:
     use-column-label: true
+
+
+maven:
+  host: https://repo.souche-inc.com
+
+dubbo:
+  registry: zookeeper://dev1.zk.scsite.net:2181
+  username: super
+  password: souche-all

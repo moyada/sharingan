@@ -32,7 +32,7 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
 
     @PostConstruct
     public void initConfig() {
-        if (StringUtil.isEmpty(dubboConfig.getRegister())) {
+        if (StringUtil.isEmpty(dubboConfig.getRegistry())) {
             return;
         }
 
@@ -43,10 +43,10 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
         // 连接注册中心配置
         registry = new RegistryConfig();
         registry.setProtocol("dubbo");
-        registry.setAddress(dubboConfig.getRegister());
+        registry.setAddress(dubboConfig.getRegistry());
         registry.setPort(-1);
         registry.setRegister(false);
-        registry.setSubscribe(false);
+        registry.setSubscribe(true);
         registry.setUsername(dubboConfig.getUsername());
         registry.setPassword(dubboConfig.getPassword());
 

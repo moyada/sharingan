@@ -28,7 +28,6 @@ import cn.moyada.faker.rpc.dubbo.invocation.DubboInvoke;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -64,7 +63,7 @@ public class InvocationTask implements TaskActivity {
 
         final ListenerAction listener = new BatchLoggingListener(environment, queue);
 
-        ParamProvider paramProvider = new ParamProvider(values, environment.getInvokeMetadata().getParamTypes(), questInfo.isRandom());
+        final ParamProvider paramProvider = new ParamProvider(values, environment.getInvokeMetadata().getParamTypes(), questInfo.isRandom());
 
         final JobAction action = new DefaultExecutor(fakerId, questInfo);
 
@@ -100,6 +99,7 @@ public class InvocationTask implements TaskActivity {
         env.setQuestInfo(questInfo);
         env.setDependency(dependency);
         env.setInvokeMetadata(invokeMetadata);
+
         return env;
     }
 

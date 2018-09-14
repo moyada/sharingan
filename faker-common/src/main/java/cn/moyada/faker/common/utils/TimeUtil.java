@@ -1,9 +1,5 @@
 package cn.moyada.faker.common.utils;
 
-import java.sql.Timestamp;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -12,35 +8,39 @@ import java.util.concurrent.TimeUnit;
  */
 public class TimeUtil {
 
-    private static Instant INSTANT = Instant.now(Clock.system(ZoneId.of("Asia/Shanghai")));
-
     private static volatile long currentTimeMillis;
+
+    private static boolean runnable;
 
     static {
         currentTimeMillis = System.currentTimeMillis();
-        Thread daemon = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    currentTimeMillis = System.currentTimeMillis();
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(1);
-                    } catch (Throwable e) {
+    }
 
-                    }
+    public static void doTimekeeping() {
+        runnable = true;
+
+        Thread work = new Thread(() -> {
+            while (runnable) {
+                currentTimeMillis = System.currentTimeMillis();
+
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1L);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
         });
-        daemon.setDaemon(true);
-        daemon.setName("time-tick-thread");
-        daemon.start();
+        work.setDaemon(true);
+        work.setName("time-tick-thread");
+        work.start();
+    }
+
+    public static void stopTimekeeping() {
+        runnable = false;
+        currentTimeMillis = 0L;
     }
 
     public static long currentTimeMillis() {
         return currentTimeMillis;
-    }
-
-    public static Timestamp now() {
-        return Timestamp.from(INSTANT);
     }
 }

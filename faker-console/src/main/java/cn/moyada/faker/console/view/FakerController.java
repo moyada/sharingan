@@ -2,14 +2,17 @@ package cn.moyada.faker.console.view;
 
 
 import cn.moyada.faker.common.utils.ThreadUtil;
-import cn.moyada.faker.core.Main;
-import cn.moyada.faker.core.common.QuestInfo;
+import cn.moyada.faker.common.utils.TimeUtil;
 import cn.moyada.faker.console.vo.PageVO;
 import cn.moyada.faker.console.vo.Result;
 import cn.moyada.faker.console.vo.SelectVO;
+import cn.moyada.faker.core.Main;
+import cn.moyada.faker.core.common.QuestInfo;
 import cn.moyada.faker.manager.FakerManager;
 import cn.moyada.faker.manager.domain.LogDO;
 import cn.moyada.faker.manager.domain.MethodInvokeDO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/faker", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FakerController {
+
+    private static final Logger logger = LogManager.getLogger(FakerController.class);
 
     @Autowired
     private Main main;
@@ -70,6 +75,7 @@ public class FakerController {
         invokerInfo.setResultParam(resultParam);
 
         running = true;
+        TimeUtil.doTimekeeping();
         try {
             String data = main.invoke(invokerInfo);
             return Result.success(data);
@@ -79,6 +85,7 @@ public class FakerController {
         }
         finally {
             running = false;
+            TimeUtil.stopTimekeeping();
             ThreadUtil.clear();
         }
     }

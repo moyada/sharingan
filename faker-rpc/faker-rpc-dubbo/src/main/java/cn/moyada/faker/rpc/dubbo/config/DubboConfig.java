@@ -8,18 +8,18 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "dubbo")
 public class DubboConfig {
 
-    private String register;
+    private String registry;
 
     private String username;
 
     private String password;
 
-    public String getRegister() {
-        return register;
+    public String getRegistry() {
+        return registry;
     }
 
-    public void setRegister(String register) {
-        this.register = register;
+    public void setRegistry(String registry) {
+        this.registry = registry;
     }
 
     public String getUsername() {

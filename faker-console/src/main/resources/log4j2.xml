@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <property name="LOG_DIR" value="logs"/>
+
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
+        </Property>
+
+        <property name="DATA">
+            %d{yyyy-MM-dd}
+        </property>
+    </Properties>
+
+
+    <!-- Rolling File Appender -->
+    <Appenders name="FileAppender"
+                 fileName="${LOG_DIR}/faker.log"
+                 filePattern="${LOG_DIR}/faker-${DATA}-%i.log">
+        <PatternLayout>
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </PatternLayout>
+        <Policies>
+            <SizeBasedTriggeringPolicy size="10MB" />
+        </Policies>
+        <DefaultRolloverStrategy max="10"/>
+    </Appenders>
+
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <AsyncLogger name="cn.moyada.faker" level="info" additivity="false">
+            <AppenderRef ref="FileAppender" />
+            <!--<AppenderRef ref="ConsoleAppender" />-->
+        </AsyncLogger>
+
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender" />
+        </Root>
+    </Loggers>
+</Configuration>

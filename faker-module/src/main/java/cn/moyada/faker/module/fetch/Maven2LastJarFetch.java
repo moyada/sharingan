@@ -28,8 +28,8 @@ public class Maven2LastJarFetch extends AbstractFetchLastJar implements Dependen
     // 列表链接
     private static String LIST_QUEST = "{\"action\":\"coreui_Search\",\"method\":\"read\",\"data\":[{\"page\":1,\"start\":0,\"limit\":1,\"sort\":[{\"property\":\"version\",\"direction\":\"DESC\"}],\"filter\":[" +
             "{\"property\":\"format\",\"value\":\"maven2\"}," +
-            "{\"property\":\"attributes.mavenVersion.groupId\",\"value\":\"%s\"}," +
-            "{\"property\":\"attributes.mavenVersion.artifactId\",\"value\":\"%s\"}," +
+            "{\"property\":\"attributes.maven2.groupId\",\"value\":\"%s\"}," +
+            "{\"property\":\"attributes.maven2.artifactId\",\"value\":\"%s\"}," +
             "{property: \"attributes.maven2.baseVersion\", value: %s}" +
             "]}],\"type\":\"rpc\",\"tid\":0}";
 
