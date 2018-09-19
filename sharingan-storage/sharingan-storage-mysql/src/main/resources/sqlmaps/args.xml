@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.moyada.sharingan.storage.mysql.dao.ArgsDAO">
+
+	<select id="countByAppAndDomain" resultType="int">
+		SELECT COUNT(*)
+		FROM `invoke_param`
+		WHERE app_id = #{appId}
+		AND `domain` = #{domain}
+	</select>
+
+	<select id="findByAppAndDomain" resultType="String">
+		SELECT `param_value`
+		FROM `invoke_param`
+		WHERE app_id = #{appId}
+		AND `domain` = #{domain}
+		LIMIT ${limit}, ${size}
+	</select>
+</mapper>

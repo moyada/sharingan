@@ -1,1 +1,0 @@
-java -jar target/faker-console-1.2.0-SNAPSHOT.jar -Dspring.config.location=/Users/xueyikang/JavaProjects/faker/conf/faker.properties

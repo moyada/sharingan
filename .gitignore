@@ -3,13 +3,10 @@ classes/
 .idea
 *.iml
 *.log
-conf/faker-test.properties
+config/conf-test.properties
+deploy/sharingan-manager.jar
 out/
-/dubbo-faker-web/page/node_modules/
-/dubbo-faker-web/target/
-/dubbo-faker-api/target/
-/dubbo-faker-core/target/
-/dubbo-faker-web/catalina.base_IS_UNDEFINED
+/sharingan-manager/page/node_modules/
 .classpath
 .project
 .settings/

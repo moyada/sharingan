@@ -1,8 +1,8 @@
 package cn.moyada.faker.manager;
 
-import cn.moyada.faker.common.exception.InitializeInvokerException;
-import cn.moyada.faker.common.utils.ConvertUtil;
-import cn.moyada.faker.common.utils.StringUtil;
+import cn.moyada.sharingan.common.exception.InitializeInvokerException;
+import cn.moyada.sharingan.common.utils.ConvertUtil;
+import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.faker.manager.dao.FakerDAO;
 import cn.moyada.faker.manager.domain.AppInfoDO;
 import cn.moyada.faker.manager.domain.LogDO;

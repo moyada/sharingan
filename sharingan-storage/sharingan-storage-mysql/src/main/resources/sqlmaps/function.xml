@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.moyada.sharingan.storage.mysql.dao.FunctionDAO">
+
+	<resultMap id="functionDO" type="cn.moyada.sharingan.storage.api.domain.FunctionDO">
+		<id column="id" property="id"/>
+		<result column="app_id" property="appId"/>
+		<result column="service_id" property="serviceId"/>
+		<result column="class_name" property="className"/>
+		<result column="method_name" property="methodName"/>
+		<result column="param_type" property="paramType"/>
+		<result column="return_type" property="returnType"/>
+		<result column="expression" property="expression"/>
+	</resultMap>
+
+	<sql id="baseColumn">
+		`id`, `app_id`, `service_id`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`
+	</sql>
+
+	<insert id="save">
+		INSERT INTO `function_info`
+		(<include refid="baseColumn"/>)
+		VALUE
+		(NULL, #{appId}, #{serviceId}, #{className}, #{methodName}, #{paramType}, #{returnType}, #{expression});
+	</insert>
+
+	<select id="findByService" resultMap="functionDO">
+		SELECT <include refid="baseColumn"/>
+		FROM `function_info`
+		WHERE service_id = #{serviceId};
+	</select>
+
+	<select id="findById" resultMap="functionDO">
+		SELECT <include refid="baseColumn"/>
+		FROM `function_info`
+		WHERE id = #{funId} LIMIT 1;
+	</select>
+</mapper>

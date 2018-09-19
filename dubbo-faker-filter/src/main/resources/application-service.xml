@@ -9,5 +9,5 @@
     <bean id="batchRecordListener" class="cn.moyada.dubbo.faker.filter.listener.BatchRecordListener"/>
 
     <!-- 注入数据库操作对象 -->
-    <bean id="fakerManager" class="cn.moyada.dubbo.faker.filter.manager.FakerManager"/>
+    <bean id="fakerManager" class="cn.moyada.dubbo.faker.filter.manager.Manager"/>
 </beans>

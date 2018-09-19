@@ -5,27 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.moyada</groupId>
-    <artifactId>faker</artifactId>
+    <artifactId>sharingan</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-        <!--<module>dubbo-faker-api</module>-->
-        <!--<module>dubbo-faker-filter</module>-->
-        <!--<module>dubbo-faker-core</module>-->
-        <!--<module>dubbo-faker-web</module>-->
-        <!--<module>dubbo-faker-plugin</module>-->
-        <module>faker-console</module>
-        <module>faker-common</module>
-        <module>faker-rpc</module>
-        <module>faker-core</module>
-        <module>faker-module</module>
-        <module>faker-manager</module>
+        <module>sharingan-common</module>
+        <module>sharingan-rpc</module>
+        <module>sharingan-core</module>
+        <module>sharingan-module</module>
+        <module>sharingan-manager</module>
+        <module>sharingan-storage</module>
     </modules>
 
     <properties>
         <project.encoding>utf-8</project.encoding>
-        <faker.version>1.2.0-SNAPSHOT</faker.version>
+        <sharingan.version>0.0.1-SNAPSHOT</sharingan.version>
 
         <dubbo.version>2.6.2</dubbo.version>
         <netty.version>4.1.17.Final</netty.version>
@@ -51,8 +46,6 @@
 
         <quasar.version>0.7.9</quasar.version>
         <comsat.version>0.7.0</comsat.version>
-
-        <apache.commons.version>3.7</apache.commons.version>
 
         <spring.version>5.0.2.RELEASE</spring.version>
         <security.version>5.0.0.RELEASE</security.version>
@@ -84,43 +77,43 @@
         <dependencies>
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>faker-dashboard</artifactId>
-                <version>${faker.version}</version>
+                <artifactId>sharingan-module</artifactId>
+                <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>faker-module</artifactId>
-                <version>${faker.version}</version>
+                <artifactId>sharingan-storage-api</artifactId>
+                <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>faker-rpc-api</artifactId>
-                <version>${faker.version}</version>
+                <artifactId>sharingan-rpc-api</artifactId>
+                <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>faker-rpc-dubbo</artifactId>
-                <version>${faker.version}</version>
+                <artifactId>sharingan-rpc-dubbo</artifactId>
+                <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>faker-common</artifactId>
+                <artifactId>sharingan-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>faker-core</artifactId>
+                <artifactId>sharingan-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>faker-manager</artifactId>
+                <artifactId>sharingan-storage-mysql</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -146,24 +139,6 @@
                 <groupId>co.paralleluniverse</groupId>
                 <artifactId>comsat-httpclient</artifactId>
                 <version>${comsat.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${apache.commons.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
             </dependency>
 
             <dependency>
@@ -209,18 +184,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.101tec</groupId>
-                <artifactId>zkclient</artifactId>
-                <version>0.10</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-framework</artifactId>
                 <version>${curator.version}</version>
@@ -243,10 +206,10 @@
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
                     </exclusion>
-                    <!--<exclusion>-->
-                        <!--<groupId>org.javassist</groupId>-->
-                        <!--<artifactId>javassist</artifactId>-->
-                    <!--</exclusion>-->
+                    <exclusion>
+                        <groupId>org.javassist</groupId>
+                        <artifactId>javassist</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -383,20 +346,6 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${maven_jar_version}</version>
                 <configuration>
@@ -448,11 +397,6 @@
                     <artifactId>maven-source-plugin</artifactId>
                     <version>3.0.1</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -460,7 +404,7 @@
     <distributionManagement>
         <repository>
             <id>maven-repo-master</id>
-            <url>file:/Users/xueyikang/repository/dubbo-faker/</url>
+            <url>file:/Users/xueyikang/repository/dubbo-sharingan/</url>
             <name>Temporary Staging Repository</name>
         </repository>
         <!--<repository>-->

@@ -47,7 +47,7 @@ curl 'https://repo.maven.com/service/extdirect' -H 'Content-Type: application/js
 
 ```
 ### 创建数据库表结构
-执行 `schema/faker.sql` 创建数据库表结构
+执行 `schema/invoke.sql` 创建数据库表结构
 
 
 ### 导入测试数据
@@ -73,7 +73,7 @@ VALUES
 
 接口地址: http://localhost:8080/swagger-ui.html
 
-invokeId 输入`method_invoke`的主键(如1)
+funcId 输入`method_invoke`的主键(如1)
 
 invokeExpression 支持输入固定参数或参数表达式，需以`json`数组的格式(如["${1.test}"]、["12345"])
 
@@ -160,7 +160,7 @@ faker.interval=1000
     </bean>
     
     <!-- 数据库操作实例 -->
-    <bean id="fakerManager" class="cn.moyada.dubbo.faker.filter.manager.FakerManager" />
+    <bean id="fakerManager" class="cn.moyada.dubbo.faker.filter.manager.Manager" />
 
     <!-- 参数监听器 -->
     <bean id="batchRecordListener" class="cn.moyada.dubbo.faker.filter.listener.BatchRecordListener" />
