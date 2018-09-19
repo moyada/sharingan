@@ -19,7 +19,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!--<outputDirectory>../deploy</outputDirectory>-->
+                    <outputDirectory>../deploy</outputDirectory>
                     <fork>true</fork>
                     <mainClass>cn.moyada.sharingan.Application</mainClass>
                 </configuration>

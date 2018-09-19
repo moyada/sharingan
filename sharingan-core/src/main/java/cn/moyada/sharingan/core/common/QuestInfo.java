@@ -1,5 +1,7 @@
 package cn.moyada.sharingan.core.common;
 
+import cn.moyada.sharingan.common.utils.StringUtil;
+
 import java.io.Serializable;
 
 /**
@@ -134,6 +136,8 @@ public class QuestInfo implements Serializable {
     }
 
     public void setResultParam(String resultParam) {
-        this.resultParam = resultParam;
+        if (!StringUtil.isEmpty(resultParam)) {
+            this.resultParam = resultParam;
+        }
     }
 }

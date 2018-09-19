@@ -10,10 +10,10 @@ class InvokeCascader extends React.Component {
         return new Error(err);
       }
       this.setState({
-        data : data.data.map(({appId, appName}) =>
+        data : data.data.map(({key, value}) =>
           ({
-            value: appId,
-            label: appName,
+            value: key,
+            label: value,
             children: null,
             isLeaf: false,
             type: 'app'
@@ -32,7 +32,7 @@ class InvokeCascader extends React.Component {
 
     switch (selected.type) {
       case "app" :
-        request("faker/getClassByApp.json", {appId: selected.value})
+        request("faker/getServiceByApp.json", {appId: selected.value})
           .then(({data, err}) => {
             if(err) {
               return new Error(err);
@@ -53,7 +53,7 @@ class InvokeCascader extends React.Component {
         })
         break
       case "class":
-        request("faker/getMethodByClass.json", {className: selected.value})
+        request("faker/getMethodByService.json", {serviceId: selected.value})
           .then(({data, err}) => {
             if(err) {
               return new Error(err);

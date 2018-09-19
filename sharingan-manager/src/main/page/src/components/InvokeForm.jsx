@@ -18,6 +18,7 @@ class InvokeForm extends React.Component {
     index: 1,
   }
 
+  // 校验表达式是否为json格式
   static isJSON(str) {
     if (typeof str === 'string') {
       try {
@@ -44,15 +45,15 @@ class InvokeForm extends React.Component {
             message.error("请选择调用请求")
             return
           }
-          if(null == values.invokeExpression || values.invokeExpression === undefined ||
-          values.invokeExpression.charAt(0) !== '[' || !InvokeForm.isJSON(values.invokeExpression)) {
+          if(null == values.expression || values.expression === undefined ||
+          values.expression.charAt(0) !== '[' || !InvokeForm.isJSON(values.expression)) {
             message.error("请输入正确的参数表达式")
             return
           }
 
           payload = {
             invokeId: values.invokeId[2].split(`-`)[0],
-            invokeExpression: values.invokeExpression,
+            expression: values.expression,
             poolSize: values.poolSize,
             qps: values.qps,
             random: values.random,
@@ -63,7 +64,7 @@ class InvokeForm extends React.Component {
 
           message.success("生成测试请求")
 
-          request("faker/invokeDubbo.json", payload, 'POST')
+          request("faker/invoke.json", payload, 'POST')
             .then(resp => {
               if(resp.err) {
                 message.error(resp.err.message, 10)
@@ -135,7 +136,7 @@ class InvokeForm extends React.Component {
       let values = value[2].split(`-`)
       if(value !== undefined && null !== value) {
         this.props.form.setFieldsValue({
-          invokeExpression: values[1],
+          expression: values[1],
         })
       }
     }
@@ -317,9 +318,9 @@ class InvokeForm extends React.Component {
                   )}
                 </FormItem>
               </Col>
-              <Col span={24} key='invokeExpression'>
+              <Col span={24} key='expression'>
                 <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`参数表达式`}>
-                  {getFieldDecorator(`invokeExpression`, {initialValue: null})(
+                  {getFieldDecorator(`expression`, {initialValue: null})(
                     <TextArea
                       maxLength={20000}
                       placeholder='["${1.test}"]'
@@ -483,10 +484,10 @@ class InvokeForm extends React.Component {
           </Col>
           <Col span={3} key='random'>
             <FormItem {...formItemLayout} label={`随机取参`}>
-              {getFieldDecorator(`random`, {initialValue: 1 })(
+              {getFieldDecorator(`random`, {initialValue: true })(
                 <RadioGroup >
-                  <RadioButton value={1}>是</RadioButton>
-                  <RadioButton value={0}>否</RadioButton>
+                  <RadioButton value={true}>是</RadioButton>
+                  <RadioButton value={false}>否</RadioButton>
                 </RadioGroup>
               )}
             </FormItem>

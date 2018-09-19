@@ -23,8 +23,6 @@ public class InvokeContext {
      */
     private String protocol;
 
-    private QuestInfo questInfo;
-
     private Dependency dependency;
 
     private InvokeMetaData invokeMetaData;
@@ -51,14 +49,6 @@ public class InvokeContext {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
-    }
-
-    public QuestInfo getQuestInfo() {
-        return questInfo;
-    }
-
-    public void setQuestInfo(QuestInfo questInfo) {
-        this.questInfo = questInfo;
     }
 
     public Dependency getDependency() {

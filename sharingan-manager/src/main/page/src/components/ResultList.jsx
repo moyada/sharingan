@@ -110,7 +110,7 @@ class ResultList extends React.Component {
     const payload = {fakerId: fakerId, pageIndex: pageIndex, pageSize: pageSize };
     this.setState({loading: true})
 
-    request('faker/getMethodByFakerId.json', payload)
+    request('faker/getResult.json', payload)
       .then(({data, err}) => {
         if(err) {
           message.error(err)

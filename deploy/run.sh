@@ -1,1 +1,1 @@
-java -jar sharingan-manager.jar -Dspring.config.location=../config/conf-test.properties
+java -jar sharingan-manager.jar --spring.config.additional-location=../config/conf.properties

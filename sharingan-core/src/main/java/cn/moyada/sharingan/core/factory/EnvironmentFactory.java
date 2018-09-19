@@ -54,7 +54,7 @@ public class EnvironmentFactory {
         }
 
         InvokeContext env = new InvokeContext();
-        env.setQuestInfo(questInfo);
+        env.setProtocol(serviceDO.getProtocol());
         env.setDependency(dependency);
         env.setInvokeMetaData(invokeMetaData);
         return env;

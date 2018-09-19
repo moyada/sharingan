@@ -10,10 +10,7 @@ import cn.moyada.sharingan.manager.vo.Result;
 import cn.moyada.sharingan.manager.vo.SelectVO;
 import cn.moyada.sharingan.storage.api.InvocationRepository;
 import cn.moyada.sharingan.storage.api.MetadataRepository;
-import cn.moyada.sharingan.storage.api.domain.FunctionDO;
-import cn.moyada.sharingan.storage.api.domain.InvocationReportDO;
-import cn.moyada.sharingan.storage.api.domain.InvocationResultDO;
-import cn.moyada.sharingan.storage.api.domain.ServiceDO;
+import cn.moyada.sharingan.storage.api.domain.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +43,26 @@ public class FakerController {
     private volatile boolean running = false;
 
     @RequestMapping(value = "/invoke.json", method = {RequestMethod.GET, RequestMethod.POST})
-    public Result invoke(@RequestBody(required = false) QuestInfo questInfo) {
+    public Result invoke(@RequestParam("invokeId") int invokeId,
+                         @RequestParam("expression") String expression,
+//                         @RequestParam(value = "poolSize", required = false) Integer poolSize,
+                         @RequestParam(value = "qps", required = false) Integer qps,
+                         @RequestParam(value = "loop", required = false) Integer loop,
+                         @RequestParam(value = "random", required = false) Boolean random,
+                         @RequestParam(value = "saveResult", required = false) Boolean saveResult,
+                         @RequestParam(value = "resultParam", required = false) String resultParam) {
         if(running) {
             return Result.failed(401, "已有任务进行中.");
         }
-        if (null == questInfo) {
-            return Result.failed(503, "请求参数缺失.");
-        }
+        QuestInfo questInfo = new QuestInfo();
+        questInfo.setFuncId(invokeId);
+        questInfo.setExpression(expression);
+        questInfo.setQps(qps);
+        questInfo.setQuestNum(loop);
+        questInfo.setRandom(random);
+        questInfo.setSaveResult(saveResult);
+        questInfo.setResultParam(resultParam);
+
         String msg = questInfo.checkoutSelf();
         if (null != msg) {
             return Result.failed(503, msg);
@@ -148,17 +158,21 @@ public class FakerController {
 
     @RequestMapping(value = "/getAllApp.json", method = RequestMethod.GET)
     public Result getAllApp() {
+        List<AppDO> apps;
         try {
-            return Result.success(metadataRepository.findAllApp());
+            apps = metadataRepository.findAllApp();
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failed(500, e.getMessage());
         }
+        return Result.success(apps.stream()
+                .map(c -> new SelectVO(c.getId().toString(), c.getName()))
+                .collect(Collectors.toList()));
     }
 
 
-    @RequestMapping(value = "/getClassByApp.json", method = RequestMethod.GET)
-    public Result getClassByApp(@RequestParam("appId") int appId) {
+    @RequestMapping(value = "/getServiceByApp.json", method = RequestMethod.GET)
+    public Result getClassByApp(@RequestParam(value = "appId") int appId) {
         List<ServiceDO> services;
         try {
             services = metadataRepository.findServiceByApp(appId);
@@ -170,16 +184,18 @@ public class FakerController {
                 .collect(Collectors.toList()));
     }
 
-    @RequestMapping(value = "/getMethodByClass.json", method = RequestMethod.GET)
-    public Result getMethodByClass(@RequestParam("className") String className) {
+    @RequestMapping(value = "/getMethodByService.json", method = RequestMethod.GET)
+    public Result getMethodByClass(@RequestParam("serviceId") int serviceId) {
+        List<FunctionDO> functions;
         try {
-            return Result.success(metadataRepository.findAppByName(className));
+            functions = metadataRepository.findFunctionByService(serviceId);
         } catch (Exception e) {
             return Result.failed(500, e.getMessage());
         }
+        return Result.success(functions);
     }
 
-    @RequestMapping(value = "/getMethodByFakerId.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/getResult.json", method = RequestMethod.GET)
     public PageVO<InvocationResultDO> getMethodByFakerId(@RequestParam("fakerId") String fakerId,
                                                          @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                                          @RequestParam(value = "pageSize", required = false) Integer pageSize) {
@@ -189,7 +205,6 @@ public class FakerController {
         PageVO<InvocationResultDO> page = new PageVO<>();
         page.setPageIndex(pageIndex);
         page.setPageSize(pageSize);
-
 
         InvocationReportDO report = invocationRepository.findReport(fakerId);
         if (null == report) {
