@@ -3,7 +3,8 @@ classes/
 .idea
 *.iml
 *.log
-config/conf-test.properties
+sharingan-manager/src/main/resources/application.yaml
+deploy/config/conf-test.properties
 deploy/sharingan-manager.jar
 out/
 /sharingan-manager/page/node_modules/

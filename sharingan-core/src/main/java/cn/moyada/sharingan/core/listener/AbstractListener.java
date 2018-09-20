@@ -64,10 +64,10 @@ public abstract class AbstractListener implements ListenerAction, InvokeCallback
      */
     protected InvocationResultDO pickUp() {
         Result result = queue.poll();
-        InvocationResultDO receive = recordHandler.receive(result);
-        if (null == receive) {
+        if (null == result) {
             return null;
         }
+        InvocationResultDO receive = recordHandler.receive(result);
         return receive;
     }
 

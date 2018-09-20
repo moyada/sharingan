@@ -42,6 +42,7 @@ public class BatchLoggingListener extends AbstractListener implements InvokeCall
             }
 
             invocationRepository.saveResult(results);
+            results.clear();
             if (release(size)) {
                 break;
             }

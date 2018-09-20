@@ -54,7 +54,7 @@
 		(<include refid="resultColumn"/>)
 		<foreach collection="list" item="item" separator="," open="VALUES">
 			(NULL, #{item.fakerId}, #{item.realArgs}, #{item.code}, #{item.result},
-			#{item.errorMsg}, #{item.responseTime}, #{item.invokeTime});
+			#{item.errorMsg}, #{item.responseTime}, #{item.invokeTime})
 		</foreach>;
 	</insert>
 

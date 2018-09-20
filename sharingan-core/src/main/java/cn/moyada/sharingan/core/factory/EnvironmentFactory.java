@@ -44,16 +44,17 @@ public class EnvironmentFactory {
 
         InvokeMetaData invokeMetaData = invokeAdapter.wrapper(dependency, invokeInfo);
 
-        String[] values = JsonUtil.toArray(questInfo.getExpression(), String[].class);
+        String[] expression = JsonUtil.toArray(questInfo.getExpression(), String[].class);
         Class<?>[] paramTypes = invokeMetaData.getParamTypes();
-        if(null == values && null != paramTypes) {
+        if(null == expression && null != paramTypes) {
             throw new InitializeInvokerException("input expression param number cannot match with function param.");
         }
-        else if(paramTypes.length != values.length) {
+        else if(paramTypes.length != expression.length) {
             throw new InitializeInvokerException("input expression param number cannot match with function param.");
         }
 
         InvokeContext env = new InvokeContext();
+        env.setExpression(expression);
         env.setProtocol(serviceDO.getProtocol());
         env.setDependency(dependency);
         env.setInvokeMetaData(invokeMetaData);
