@@ -64,8 +64,10 @@ public class ListenerReport implements ReportAction {
 
     @Override
     public ListenerReport buildReport() {
-        this.successRate = totalInvoke * 1.0D / (totalInvoke - errorInvoke);
-        this.avgResponseTime = totalResponseTime / totalInvoke;
+        if (totalInvoke != errorInvoke) {
+            successRate = totalInvoke * 1.0D / (totalInvoke - errorInvoke);
+        }
+        avgResponseTime = totalResponseTime / totalInvoke;
         return this;
     }
 
