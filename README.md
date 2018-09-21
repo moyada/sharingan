@@ -1,12 +1,23 @@
-### Sharingan
+## Sharingan
 
-### 背景
-在项目快速迭代时期，由于工期紧凑、逻辑复杂、测试范围不全等原因可能疏忽程序中异常情况。
+## 简介
+sharingan 是用来快速检测回归RPC服务`可用性`的Java工程。通过定义`参数表达式`对服务进行模拟调用，生成测试报告，检测程序中可能存在的各种异常。
 
-`sharingan`可用于快速检测回归服务`可用性`，通过定义策略对边界值进行检查，保障代码的可靠性。
+在项目快速迭代时期，由于工期紧凑、逻辑复杂、测试覆盖范围不全等原因程序中往往可能存在疏忽的异常情况。
 
 
-### 快速开始
+## 功能特性
+
+* 动态类加载，无需引入依赖jar包，运行期从版本仓库中获取最新依赖，隔离不同项目依赖。
+
+* 参数表达式，配置路由规则动态生成请求参数。
+
+* rpc协议支持，目前支持[dubbo](https://github.com/apache/incubator-dubbo)，计划加入协议`Spring Cloud`、`Sofa`、`Istio`。
+
+* 监听项目接口调用，对运行项目引入agent，生成项目领域数据，将请求的数据保存用于参数表达式使用。(开发中)
+
+
+## 快速开始
 
 1. 项目需要`jdk1.8`以上版本，通过[这里](https://github.com/moyada/sharingan/releases) 下载 sharingan-manager 压缩包进行解压。
 
@@ -33,12 +44,10 @@ dubbo.password =
 
 5. 访问链接 `htto://127.0.0.1:8080/index.html` 进入管理界面。
 
-### 功能
 
-1. 动态进行类加载，通过配置`app_info`的项目仓库坐标，运行期从`nexus`版本仓库中获取最新依赖。
+## 使用指南
 
-2. 参数表达式，配置`function_info`中`expression`来指定规则动态生成请求参数，表达式格式为`${项目名称.数据领域}`，默认项目名称为`app_info`表中的`name`、数据领域为`invoke_param`中的`domain`。
+* 动态进行类加载: 通过`MetadataRepository`查找`AppDO`来获取项目的仓库坐标，从版本仓库中获取最新依赖。
 
-3. rpc协议支持，目前支持[dubbo](https://github.com/apache/incubator-dubbo)，计划加入协议`Spring Cloud`、`Sofa`、`Istio`。
-
-4. 监听项目接口调用，将请求的数据保存用于参数表达式使用。(开发中)
+* 参数表达式: `MetadataRepository`查询的`FunctionDO`中`expression`字段来指定规则动态生成请求参数，表达式格式为`${项目名称.数据领域}`。
+  mysql中，项目名称为`app_info`表中的`name`、数据领域为`invoke_param`中的`domain`。
