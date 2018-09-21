@@ -54,6 +54,7 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
         consumer.setTimeout(3000);
         consumer.setActives(100);
         consumer.setLazy(false);
+        consumer.setRetries(0);
     }
 
     @Override
