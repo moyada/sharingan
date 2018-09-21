@@ -196,9 +196,9 @@ public class FakerController {
     }
 
     @RequestMapping(value = "/getResult.json", method = RequestMethod.GET)
-    public PageVO<InvocationResultDO> getMethodByFakerId(@RequestParam("fakerId") String fakerId,
-                                                         @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-                                                         @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+    public PageVO<InvocationResultDO> getResult(@RequestParam("fakerId") String fakerId,
+                                                @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+                                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         pageIndex = null == pageIndex || pageIndex < 1 ? 1 : pageIndex;
         pageSize = null == pageSize || pageSize < 20 ? 20 : pageSize;
 

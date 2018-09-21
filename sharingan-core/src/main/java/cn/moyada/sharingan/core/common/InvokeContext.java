@@ -14,6 +14,21 @@ public class InvokeContext {
     private String fakerId;
 
     /**
+     * 项目编号
+     */
+    private Integer appId;
+
+    /**
+     * 服务编号
+     */
+    private Integer serviceId;
+
+    /**
+     * 方法编号
+     */
+    private Integer funcId;
+
+    /**
      * 参数表达式
      */
     private String[] expression;
@@ -33,6 +48,30 @@ public class InvokeContext {
 
     public void setFakerId(String fakerId) {
         this.fakerId = fakerId;
+    }
+
+    public Integer getAppId() {
+        return appId;
+    }
+
+    public void setAppId(Integer appId) {
+        this.appId = appId;
+    }
+
+    public Integer getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Integer serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public Integer getFuncId() {
+        return funcId;
+    }
+
+    public void setFuncId(Integer funcId) {
+        this.funcId = funcId;
     }
 
     public String[] getExpression() {

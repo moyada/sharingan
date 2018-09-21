@@ -2,6 +2,7 @@ package cn.moyada.sharingan.storage.mysql.dao;
 
 
 import cn.moyada.sharingan.storage.api.domain.AppDO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -11,9 +12,9 @@ public interface AppDAO {
 
     List<AppDO> findAll();
 
-    AppDO findById(int appId);
+    AppDO findById(@Param("appId") int appId);
 
-    AppDO findByName(String appName);
+    AppDO findByName(@Param("appName") String appName);
 
-    List<AppDO> findByIds(int[] ids);
+    List<AppDO> findByIds(@Param("ids") int[] ids);
 }

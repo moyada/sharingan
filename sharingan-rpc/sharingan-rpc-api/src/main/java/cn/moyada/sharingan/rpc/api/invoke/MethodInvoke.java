@@ -59,7 +59,7 @@ public abstract class MethodInvoke implements Invoke {
 
         result.setStartTime(new Timestamp(begin));
         // 完成计算耗时
-        result.setResponseTime(TimeUtil.currentTimeMillis() - begin);
+        result.setResponseTime((int) (TimeUtil.currentTimeMillis() - begin));
         return result;
     }
 }

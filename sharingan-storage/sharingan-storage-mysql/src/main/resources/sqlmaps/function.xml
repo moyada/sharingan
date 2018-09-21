@@ -33,6 +33,6 @@
 	<select id="findById" resultMap="functionDO">
 		SELECT <include refid="baseColumn"/>
 		FROM `function_info`
-		WHERE id = #{funId} LIMIT 1;
+		WHERE id = #{funcId} LIMIT 1;
 	</select>
 </mapper>

@@ -10,7 +10,7 @@ moment.locale('zh-cn');
 
 const columns = [{
   title: '请求参数',
-  dataIndex: 'realParam',
+  dataIndex: 'realArgs',
   width: '22%',
   render(data) {
     if(data && data.length > 200) {
@@ -57,7 +57,7 @@ const columns = [{
   }
 }, {
   title: '异常信息',
-  dataIndex: 'message',
+  dataIndex: 'errorMsg',
   width: '20%',
   render(data) {
     if(data && data.length > 255) {
@@ -74,7 +74,7 @@ const columns = [{
   }
 }, {
   title: '耗时',
-  dataIndex: 'spendTime',
+  dataIndex: 'responseTime',
   width: '8%',
 }, {
   title: '请求时间',
@@ -121,11 +121,11 @@ class ResultList extends React.Component {
         let dataSource = data.data.map(item =>
           ({
             key: item.id,
-            realParam: item.realParam,
+            realArgs: item.realArgs,
             code: item.code,
             result: item.result,
-            message: item.message,
-            spendTime: item.spendTime,
+            errorMsg: item.errorMsg,
+            responseTime: item.responseTime,
             invokeTime: item.invokeTime,
           })
         )

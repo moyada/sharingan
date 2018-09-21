@@ -20,6 +20,7 @@
 		<result column="func_id" property="funcId"/>
 		<result column="total_invoke" property="totalInvoke"/>
 		<result column="response_invoke" property="responseInvoke"/>
+		<result column="success_rate" property="successRate"/>
 		<result column="min_response_time" property="minResponseTime"/>
 		<result column="max_response_time" property="maxResponseTime"/>
 		<result column="avg_response_time" property="avgResponseTime"/>
@@ -31,14 +32,15 @@
 	</sql>
 
 	<sql id="reportColumn">
-		`faker_id`, `app_id`, `service_id`, `func_id`, `total_invoke`, `response_invoke`, `min_response_time`, `max_response_time`, `avg_response_time`, `date_create`
+		`faker_id`, `app_id`, `service_id`, `func_id`, `total_invoke`, `response_invoke`, `success_rate`,
+		`min_response_time`, `max_response_time`, `avg_response_time`, `date_create`
 	</sql>
 
 	<insert id="saveReport">
 		INSERT INTO `invocation_report`
 		(<include refid="reportColumn"/>)
 		VALUE
-		(#{fakerId}, #{appId}, #{serviceId}, #{funcId}, #{totalInvoke}, #{responseInvoke},
+		(#{fakerId}, #{appId}, #{serviceId}, #{funcId}, #{totalInvoke}, #{responseInvoke}, #{successRate},
 		#{minResponseTime}, #{maxResponseTime}, #{avgResponseTime}, #{dateCreate});
 	</insert>
 
@@ -64,8 +66,21 @@
 		WHERE `faker_id` = #{fakerId}
 	</select>
 
+	<!--<select id="findResult" resultMap="resultDO">-->
+		<!--SELECT <include refid="resultColumn"/>-->
+		<!--FROM `invocation_result`-->
+		<!--WHERE id IN-->
+		<!--(-->
+			<!--SELECT id-->
+			<!--FROM `invocation_result`-->
+			<!--WHERE `faker_id` = #{fakerId}-->
+			<!--ORDER BY `code` DESC, `response_time` DESC-->
+			<!--LIMIT ${offset}, ${pageSize}-->
+		<!--)-->
+	<!--</select>-->
+
 	<select id="findResult" resultMap="resultDO">
-		SELECT <include refid="resultColumn"/>
+		SELECT a.`id`, `real_args`, `code`, `result`, `error_msg`, `response_time`, `invoke_time`
 		FROM `invocation_result` a,
 		(
 			SELECT id

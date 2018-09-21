@@ -41,14 +41,19 @@ public class InvocationReportDO implements Serializable {
     private Integer responseInvoke;
 
     /**
+     * 成功比率
+     */
+    private Double successRate;
+
+    /**
      * 最小耗时
      */
-    private Long minResponseTime;
+    private Integer minResponseTime;
 
     /**
      * 最大耗时
      */
-    private Long maxResponseTime;
+    private Integer maxResponseTime;
 
     /**
      * 平均耗时
@@ -108,19 +113,27 @@ public class InvocationReportDO implements Serializable {
         this.responseInvoke = responseInvoke;
     }
 
-    public Long getMinResponseTime() {
+    public Double getSuccessRate() {
+        return successRate;
+    }
+
+    public void setSuccessRate(Double successRate) {
+        this.successRate = successRate;
+    }
+
+    public Integer getMinResponseTime() {
         return minResponseTime;
     }
 
-    public void setMinResponseTime(Long minResponseTime) {
+    public void setMinResponseTime(Integer minResponseTime) {
         this.minResponseTime = minResponseTime;
     }
 
-    public Long getMaxResponseTime() {
+    public Integer getMaxResponseTime() {
         return maxResponseTime;
     }
 
-    public void setMaxResponseTime(Long maxResponseTime) {
+    public void setMaxResponseTime(Integer maxResponseTime) {
         this.maxResponseTime = maxResponseTime;
     }
 

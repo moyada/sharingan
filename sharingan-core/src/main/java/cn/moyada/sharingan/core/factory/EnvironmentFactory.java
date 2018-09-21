@@ -54,6 +54,10 @@ public class EnvironmentFactory {
         }
 
         InvokeContext env = new InvokeContext();
+        env.setAppId(serviceDO.getAppId());
+        env.setServiceId(serviceId);
+        env.setFuncId(funcId);
+
         env.setExpression(expression);
         env.setProtocol(serviceDO.getProtocol());
         env.setDependency(dependency);

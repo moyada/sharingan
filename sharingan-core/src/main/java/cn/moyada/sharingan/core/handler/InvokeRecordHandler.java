@@ -56,7 +56,7 @@ public class InvokeRecordHandler implements RecordHandler<InvocationResultDO> {
     }
 
     private void buildSuccess(InvocationResultDO resultDO, Result result) {
-        long rt = result.getResponseTime();
+        int rt = result.getResponseTime();
         resultDO.setResponseTime(rt);
 
         if (saveResult) {

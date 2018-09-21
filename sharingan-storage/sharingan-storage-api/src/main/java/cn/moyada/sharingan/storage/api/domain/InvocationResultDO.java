@@ -43,7 +43,7 @@ public class InvocationResultDO implements Serializable {
     /**
      * 耗时
      */
-    private Long responseTime;
+    private Integer responseTime;
 
     /**
      * 请求时间
@@ -98,11 +98,11 @@ public class InvocationResultDO implements Serializable {
         this.errorMsg = errorMsg;
     }
 
-    public Long getResponseTime() {
+    public Integer getResponseTime() {
         return responseTime;
     }
 
-    public void setResponseTime(Long responseTime) {
+    public void setResponseTime(Integer responseTime) {
         this.responseTime = responseTime;
     }
 

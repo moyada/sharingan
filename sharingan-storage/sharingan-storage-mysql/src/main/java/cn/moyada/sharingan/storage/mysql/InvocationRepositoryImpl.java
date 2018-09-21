@@ -37,7 +37,7 @@ public class InvocationRepositoryImpl implements InvocationRepository {
 
     @Override
     public List<InvocationResultDO> findResult(String fakerId, int pageIndex, int pageSize) {
-        int limit = pageIndex * pageSize;
+        int limit = (pageIndex - 1) * pageSize;
         return invocationDAO.findResult(fakerId, limit, pageSize);
     }
 }

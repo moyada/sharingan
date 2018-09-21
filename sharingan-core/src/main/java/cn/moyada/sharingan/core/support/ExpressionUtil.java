@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  */
 public class ExpressionUtil {
 
-    private static final String expressionRegex = "\\$\\{\\w+\\.\\w+(\\.\\w+)*\\}";
+    private static final String expressionRegex = "\\$\\{[\\w\\-]+\\.[\\w\\-]+(\\.[\\w\\-]+)*\\}";
 
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile(expressionRegex);
 
@@ -34,6 +34,6 @@ public class ExpressionUtil {
         if (!expression.contains(".")) {
             return null;
         }
-        return expression.split("\\.");
+        return expression.substring(2, expression.length()-1).split("\\.");
     }
 }

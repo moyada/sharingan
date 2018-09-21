@@ -1,12 +1,12 @@
 CREATE TABLE `invoke_param` (
-  `id` big int(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `app_id` int(11) unsigned NOT NULL COMMENT '项目编号',
   `domain` varchar(11) NOT NULL COMMENT '参数领域',
   `param_value` varchar(255) NOT NULL COMMENT '参数值',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_param` (`app_id`,`type`,`param_value`),
   KEY `idx_type` (`app_id`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='参数表达式映射表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='参数表达式映射表';
 
 CREATE TABLE `invocation_report` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',

@@ -35,7 +35,7 @@
 
 	<select id="findByName" resultMap="appDO">
 		SELECT <include refid="baseColumn"/> FROM `app_info`
-		WHERE app_name = #{appName} LIMIT 1
+		WHERE name = #{appName} LIMIT 1
 	</select>
 
 	<select id="findByIds" resultMap="appDO">

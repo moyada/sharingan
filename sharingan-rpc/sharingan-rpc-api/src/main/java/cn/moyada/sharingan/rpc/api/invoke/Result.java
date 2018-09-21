@@ -14,7 +14,7 @@ public class Result<T> {
 
     private Timestamp startTime;
 
-    private long responseTime;
+    private int responseTime;
 
     public static <T> Result success(T data) {
         return new Result<>(data);
@@ -34,7 +34,7 @@ public class Result<T> {
         this.success = false;
     }
 
-    public void setResponseTime(long responseTime) {
+    public void setResponseTime(int responseTime) {
         this.responseTime = responseTime;
     }
 
@@ -66,7 +66,7 @@ public class Result<T> {
         this.startTime = startTime;
     }
 
-    public long getResponseTime() {
+    public int getResponseTime() {
         return responseTime;
     }
 }

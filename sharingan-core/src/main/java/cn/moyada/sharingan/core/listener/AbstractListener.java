@@ -18,7 +18,7 @@ import java.util.concurrent.locks.LockSupport;
  * @author xueyikang
  * @create 2018-03-18 17:12
  */
-public abstract class AbstractListener implements ListenerAction, InvokeCallback {
+public abstract class AbstractListener extends ListenerReport implements ListenerAction, InvokeCallback {
 
     private static final Logger log = LogManager.getLogger(AbstractListener.class);
 
@@ -48,6 +48,7 @@ public abstract class AbstractListener implements ListenerAction, InvokeCallback
     private volatile Thread currentThread = null;
 
     protected AbstractListener(InvokeRecordHandler recordHandler, Queue<Result> queue, int totalCount) {
+        super(totalCount);
         this.recordHandler = recordHandler;
         this.queue = queue;
         this.countDown = totalCount;
@@ -68,6 +69,7 @@ public abstract class AbstractListener implements ListenerAction, InvokeCallback
             return null;
         }
         InvocationResultDO receive = recordHandler.receive(result);
+        record(receive);
         return receive;
     }
 
