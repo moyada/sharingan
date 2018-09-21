@@ -10,16 +10,17 @@ CREATE TABLE `invoke_param` (
 
 CREATE TABLE `invocation_report` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `faker_id` int(11) NOT NULL COMMENT '测试序号',
+  `faker_id` varchar(32) NOT NULL DEFAULT '' COMMENT '测试序号',
   `app_id` int(11) unsigned NOT NULL COMMENT '项目编号',
   `service_id` int(11) unsigned NOT NULL COMMENT '服务编号',
   `func_id` int(11) unsigned NOT NULL COMMENT '调用方法编号',
   `total_invoke` int(11) unsigned DEFAULT NULL COMMENT '请求次数',
   `response_invoke` int(11) unsigned DEFAULT NULL COMMENT '响应次数',
+  `success_rate` double DEFAULT NULL COMMENT '成功率',
   `min_response_time` int(11) unsigned DEFAULT NULL COMMENT '最小耗时',
   `max_response_time` int(11) unsigned DEFAULT NULL COMMENT '最大耗时',
   `avg_response_time` int(11) unsigned DEFAULT NULL COMMENT '平均耗时',
-  `data_create` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `date_create` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_id` (`faker_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='调用报告表';
