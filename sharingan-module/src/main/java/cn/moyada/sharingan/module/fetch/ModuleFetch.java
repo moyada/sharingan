@@ -49,11 +49,17 @@ public class ModuleFetch extends DirectionFetch implements ApplicationContextAwa
 
     @Override
     public Class getClass(Dependency dependency, String className) throws ClassNotFoundException {
+        Class<?> clazz = PrimitiveClass.forName(className);
+        if (null != clazz) {
+            return clazz;
+        }
+
         ClassLoaderAction classLoader = getClassLoader(dependency);
         if(null == classLoader) {
             throw new ClassNotFoundException(dependency + ", " + className);
         }
-        return classLoader.loadLocalClass(className);
+        clazz = classLoader.loadLocalClass(className);
+        return clazz;
     }
 
     @Override
