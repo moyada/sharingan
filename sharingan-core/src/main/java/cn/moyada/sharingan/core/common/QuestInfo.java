@@ -53,7 +53,11 @@ public class QuestInfo implements Serializable {
      */
     private String resultParam;
 
-    public String checkoutSelf() {
+    /**
+     * 检查对象是否合法
+     * @return
+     */
+    public String checkIllegal() {
         if (null == funcId) {
             return "调用方法不能为空";
         }

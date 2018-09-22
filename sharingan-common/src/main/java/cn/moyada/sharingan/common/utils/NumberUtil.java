@@ -12,4 +12,24 @@ public class NumberUtil {
 
         return num;
     }
+
+    public static Integer toInt(String input) {
+        Integer value;
+        try {
+            value = Integer.valueOf(input);
+        } catch (NumberFormatException e) {
+            value = null;
+        }
+        return value;
+    }
+
+    public static Double toDouble(String input) {
+        Double value;
+        try {
+            value = Double.valueOf(input);
+        } catch (NumberFormatException e) {
+            value = null;
+        }
+        return value;
+    }
 }

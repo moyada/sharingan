@@ -2,7 +2,7 @@ package cn.moyada.sharingan.core.task;
 
 import cn.moyada.sharingan.common.constant.TimeConstant;
 import cn.moyada.sharingan.core.common.QuestInfo;
-import cn.moyada.sharingan.core.invoke.JobAction;
+import cn.moyada.sharingan.core.invoke.JobExecutor;
 import cn.moyada.sharingan.core.listener.ListenerAction;
 import cn.moyada.sharingan.core.support.ArgsProviderContainer;
 import cn.moyada.sharingan.rpc.api.invoke.AsyncInvoke;
@@ -16,7 +16,7 @@ import java.util.concurrent.locks.LockSupport;
 public class TaskExecutor {
 
     private final AsyncInvoke invoke;
-    private final JobAction jobAction;
+    private final JobExecutor jobExecutor;
 
     // 参数提供器
     private final ArgsProviderContainer container;
@@ -24,7 +24,7 @@ public class TaskExecutor {
     // 结果监听器
     private final ListenerAction listener;
 
-    public TaskExecutor(AsyncInvoke invoke, ListenerAction listener, JobAction jobAction,
+    public TaskExecutor(AsyncInvoke invoke, ListenerAction listener, JobExecutor jobExecutor,
                         ArgsProviderContainer container) {
         // 注册监听者
         invoke.register(listener);
@@ -32,7 +32,7 @@ public class TaskExecutor {
         this.invoke = invoke;
         this.container = container;
         this.listener = listener;
-        this.jobAction = jobAction;
+        this.jobExecutor = jobExecutor;
     }
 
     /**
@@ -63,7 +63,7 @@ public class TaskExecutor {
             Invocation invocation = new Invocation();
             invocation.setArgsValue(param);
 
-            jobAction.run(() -> invoke.call(invocation));
+            jobExecutor.run(() -> invoke.call(invocation));
         }
     }
 
@@ -74,7 +74,7 @@ public class TaskExecutor {
             Invocation invocation = new Invocation();
             invocation.setArgsValue(param);
 
-            jobAction.run(() -> invoke.call(invocation));
+            jobExecutor.run(() -> invoke.call(invocation));
 
             LockSupport.parkNanos(timeout * TimeConstant.NANO_PER_MILLIS);
         }

@@ -1,5 +1,6 @@
 package cn.moyada.sharingan.core.factory;
 
+import cn.moyada.sharingan.core.provider.*;
 import cn.moyada.sharingan.core.support.*;
 import cn.moyada.sharingan.storage.api.ArgsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,13 @@ public class ProviderFactory {
     @Autowired
     private ArgsRepository argsRepository;
 
+    /**
+     * 生成参数提供者
+     * @param params
+     * @param paramTypes
+     * @param isRandom
+     * @return
+     */
     public ArgsProviderContainer genArgsProvider(String[] params, Class<?>[] paramTypes, boolean isRandom) {
         if (null == params) {
             return ArgsProviderContainer.emptyContainer();
@@ -27,16 +35,40 @@ public class ProviderFactory {
         ArgsProvider[] providers = new ArgsProvider[length];
         String param;
         RouteInfo route;
+        IntRange intRange;
+        DoubleRange doubleRange;
 
         for (int index = 0; index < length; index++) {
             param = params[index];
             route = routeProcessor.getRoute(param);
-            if (null == route) {
-                providers[index] = new ConstantProvider(param, paramTypes[index]);
+            if (null != route) {
+                providers[index] = new ReplacementProvider(param, paramTypes[index], route, argsRepository, isRandom);
                 continue;
             }
 
-            providers[index] = new ReplacementProvider(param, paramTypes[index], route, argsRepository, isRandom);
+            intRange = routeProcessor.getIntRange(param);
+            if (null != intRange) {
+                if (intRange.isConstant()) {
+                    providers[index] = new ConstantProvider(String.valueOf(intRange.getStart()), paramTypes[index]);
+                }
+                else {
+                    providers[index] = new IntProvider(param, paramTypes[index], intRange);
+                }
+                continue;
+            }
+
+            doubleRange = routeProcessor.getDoubleRange(param);
+            if (null != doubleRange) {
+                if (doubleRange.isConstant()) {
+                    providers[index] = new ConstantProvider(String.valueOf(doubleRange.getStart()), paramTypes[index]);
+                }
+                else {
+                    providers[index] = new DoubleProvider(param, paramTypes[index], doubleRange);
+                }
+                continue;
+            }
+
+            providers[index] = new ConstantProvider(param, paramTypes[index]);
         }
 
         ArgsProviderContainer container = ArgsProviderContainer.emptyContainer();

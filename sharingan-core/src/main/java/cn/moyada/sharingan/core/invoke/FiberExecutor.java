@@ -3,10 +3,11 @@ package cn.moyada.sharingan.core.invoke;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 
 /**
+ * 纤线程调用器
  * @author xueyikang
  * @create 2018-08-28 10:27
  */
-public class FiberExecutor extends DefaultExecutor implements JobAction {
+public class FiberExecutor extends DefaultExecutor implements JobExecutor {
 
     private final FiberExecutorScheduler scheduler;
 

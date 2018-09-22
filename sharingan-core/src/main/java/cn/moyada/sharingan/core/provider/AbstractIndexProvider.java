@@ -1,4 +1,4 @@
-package cn.moyada.sharingan.core.support;
+package cn.moyada.sharingan.core.provider;
 
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
 import cn.moyada.sharingan.common.utils.NumberUtil;
@@ -10,6 +10,9 @@ import cn.moyada.sharingan.common.utils.NumberUtil;
  */
 public abstract class AbstractIndexProvider implements IndexProvider {
 
+    /**
+     * 2的N次幂-1
+     */
     protected final int threshold;
 
     public AbstractIndexProvider(int threshold) {

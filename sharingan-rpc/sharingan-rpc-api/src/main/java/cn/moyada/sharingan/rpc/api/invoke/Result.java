@@ -2,18 +2,28 @@ package cn.moyada.sharingan.rpc.api.invoke;
 
 import java.sql.Timestamp;
 
+/**
+ * 调用结果
+ * @param <T>
+ */
 public class Result<T> {
 
+    // 正常响应
     private boolean success;
 
+    // 调用参数json串
     private String arguments;
 
+    // 请求结果
     private T result;
 
+    // 异常信息
     private String exception;
 
+    // 请求时间
     private Timestamp startTime;
 
+    // 响应时间
     private int responseTime;
 
     public static <T> Result success(T data) {

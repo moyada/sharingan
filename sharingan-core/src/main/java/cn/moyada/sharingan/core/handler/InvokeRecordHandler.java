@@ -34,11 +34,6 @@ public class InvokeRecordHandler implements RecordHandler<InvocationResultDO> {
     }
 
     @Override
-    public String getFakerId() {
-        return fakerId;
-    }
-
-    @Override
     public InvocationResultDO receive(Result result) {
         InvocationResultDO resultDO = new InvocationResultDO();
 

@@ -10,14 +10,14 @@ import cn.moyada.sharingan.core.factory.EnvironmentFactory;
 import cn.moyada.sharingan.core.factory.ListenerFactory;
 import cn.moyada.sharingan.core.factory.ProviderFactory;
 import cn.moyada.sharingan.core.invoke.DefaultExecutor;
-import cn.moyada.sharingan.core.invoke.JobAction;
-import cn.moyada.sharingan.core.listener.AbstractListener;
+import cn.moyada.sharingan.core.invoke.JobExecutor;
+import cn.moyada.sharingan.core.listener.ListenerAction;
 import cn.moyada.sharingan.core.listener.ListenerReport;
 import cn.moyada.sharingan.core.proxy.RpcInvokeProxy;
 import cn.moyada.sharingan.core.support.ArgsProviderContainer;
 import cn.moyada.sharingan.core.task.TaskExecutor;
 import cn.moyada.sharingan.module.InvokeMetaData;
-import cn.moyada.sharingan.module.fetch.MetadataFetch;
+import cn.moyada.sharingan.module.support.ClassLoaderSwitcher;
 import cn.moyada.sharingan.rpc.api.invoke.InvocationMetaDate;
 import cn.moyada.sharingan.rpc.api.invoke.InvokeProxy;
 import cn.moyada.sharingan.storage.api.InvocationRepository;
@@ -43,7 +43,7 @@ public class Main {
     private EnvironmentFactory environmentFactory;
 
     @Autowired
-    private MetadataFetch metadataFetch;
+    private ClassLoaderSwitcher classLoaderSwitcher;
 
     @Autowired
     private InvocationRepository invocationRepository;
@@ -54,23 +54,23 @@ public class Main {
     public String invoke(QuestInfo questInfo) throws InitializeInvokerException {
         questInfo.setPoolSize(RuntimeUtil.getActualSize(questInfo.getPoolSize()));
 
-        InvokeContext environment = environmentFactory.buildEnv(questInfo);
+        InvokeContext environment = environmentFactory.getEnv(questInfo);
         InvokeMetaData invokeMetaData = environment.getInvokeMetaData();
 
-        metadataFetch.checkoutClassLoader(environment.getDependency());
+        classLoaderSwitcher.checkout(environment.getDependency());
 
         // 生成调用报告序号
         final String fakerId = UUIDUtil.getUUID();
         environment.setFakerId(fakerId);
 
-        AbstractListener listener = listenerFactory.buildBatchListener(fakerId, questInfo);
+        ListenerAction listener = listenerFactory.buildBatchListener(fakerId, questInfo);
         ArgsProviderContainer container = providerFactory.genArgsProvider(environment.getExpression(), invokeMetaData.getParamTypes(), questInfo.isRandom());
 
-        InvokeProxy invokeProxy = rpcInvokeProxy.findInvoke(environment.getProtocol());
+        InvokeProxy invokeProxy = rpcInvokeProxy.getInvoke(environment.getProtocol());
         InvocationMetaDate invocationMetaDate = getMetaDate(invokeMetaData);
         invokeProxy.initialization(invocationMetaDate);
 
-        JobAction action = new DefaultExecutor(fakerId, questInfo.getPoolSize(), questInfo.getQuestNum());
+        JobExecutor action = new DefaultExecutor(fakerId, questInfo.getPoolSize(), questInfo.getQuestNum());
         TaskExecutor taskActivity = new TaskExecutor(invokeProxy, listener, action, container);
 
         log.info("start task. fakerId: " + fakerId);
@@ -81,7 +81,7 @@ public class Main {
         saveReport(fakerId, environment.getAppId(), environment.getServiceId(), environment.getFuncId(),
                 beginTime, listener.buildReport());
 
-        metadataFetch.recover();
+        classLoaderSwitcher.recover();
         return "请求结果序号：" + fakerId;
     }
 

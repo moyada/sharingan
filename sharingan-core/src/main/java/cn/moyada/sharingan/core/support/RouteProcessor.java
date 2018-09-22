@@ -6,6 +6,11 @@ import cn.moyada.sharingan.storage.api.domain.AppDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * 路由解析器
+ * @author xueyikang
+ * @since 1.0
+ */
 @Component
 public class RouteProcessor {
 
@@ -18,12 +23,12 @@ public class RouteProcessor {
      * @return
      */
     public RouteInfo getRoute(String value) {
-        String expression = ExpressionUtil.findExpression(value);
+        String expression = RegexUtil.findExpression(value);
         if (null == expression) {
             return null;
         }
 
-        String[] route = ExpressionUtil.findRoute(expression);
+        String[] route = RegexUtil.findRoute(expression);
         AssertUtil.checkoutNotNull(route, "cannot find any route from " + expression);
 
         String appName = route[0];
@@ -39,5 +44,25 @@ public class RouteProcessor {
         routeInfo.setAppId(appId);
         routeInfo.setDomain(route[1]);
         return routeInfo;
+    }
+
+    public IntRange getIntRange(String value) {
+        String expression = RegexUtil.findInt(value);
+        if (null == expression) {
+            return null;
+        }
+
+        IntRange intRange = RegexUtil.findIntRange(expression);
+        intRange.setTarget(expression);
+        return intRange;
+    }
+
+    public DoubleRange getDoubleRange(String value) {
+        String expression = RegexUtil.findDouble(value);
+        if (null == expression) {
+            return null;
+        }
+
+        return RegexUtil.findDoubleRange(expression);
     }
 }

@@ -1,5 +1,8 @@
-package cn.moyada.sharingan.core.support;
+package cn.moyada.sharingan.core.provider;
 
+/**
+ * 参数提供器
+ */
 public interface ArgsProvider {
 
     /**

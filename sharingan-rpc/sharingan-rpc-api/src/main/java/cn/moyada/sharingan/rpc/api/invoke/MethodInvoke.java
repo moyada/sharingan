@@ -6,10 +6,17 @@ import cn.moyada.sharingan.common.utils.TimeUtil;
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;
 
+/**
+ * 方法句柄调用者
+ * @author xueyikang
+ * @since 1.0
+ */
 public abstract class MethodInvoke implements Invoke {
 
+    // 方法句柄
     protected MethodHandle methodHandle;
 
+    // 目标实例
     protected Object instance;
 
     @Override

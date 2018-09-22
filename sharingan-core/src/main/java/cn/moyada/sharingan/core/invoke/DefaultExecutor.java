@@ -1,6 +1,11 @@
 package cn.moyada.sharingan.core.invoke;
 
-public class DefaultExecutor extends AbstractExecutor implements JobAction {
+/**
+ * 默认调用器
+ * @author xueyikang
+ * @since 1.0
+ */
+public class DefaultExecutor extends AbstractConcurrentExecutor implements JobExecutor {
 
     public DefaultExecutor(String fakerId, int poolSize, int questNum) {
         super(getThreadPool(fakerId, poolSize, questNum));

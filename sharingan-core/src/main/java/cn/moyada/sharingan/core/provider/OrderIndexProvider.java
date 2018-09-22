@@ -1,4 +1,4 @@
-package cn.moyada.sharingan.core.support;
+package cn.moyada.sharingan.core.provider;
 
 /**
  * 顺序下标提供器
