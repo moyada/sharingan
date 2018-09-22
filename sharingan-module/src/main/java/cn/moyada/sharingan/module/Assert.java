@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.module;
 
 /**
- * Nexus Maven依赖信息
+ * 版本仓库信息
  * @author xueyikang
  * @create 2018-04-27 15:40
  */
@@ -13,12 +13,12 @@ public class Assert {
     private String repositoryName;
 
     /**
-     * 依赖Id
+     * 依赖id
      */
     private String componentId;
 
     /**
-     * 依赖版本
+     * 版本号
      */
     private String componentVersion;
 

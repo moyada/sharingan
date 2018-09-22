@@ -38,8 +38,14 @@ public class InvokeContext {
      */
     private String protocol;
 
+    /**
+     * 版本信息
+     */
     private Dependency dependency;
 
+    /**
+     * 请求方法信息
+     */
     private InvokeMetaData invokeMetaData;
 
     public String getFakerId() {

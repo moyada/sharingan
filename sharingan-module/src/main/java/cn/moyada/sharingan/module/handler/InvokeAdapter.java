@@ -16,7 +16,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
 /**
- * 调用代理生成器
+ * java调用类信息代理
  * @author xueyikang
  * @create 2017-12-31 16:02
  */
@@ -27,6 +27,12 @@ public class InvokeAdapter {
     @Autowired
     private MetadataFetch metadataFetch;
 
+    /**
+     * 包装调用信息
+     * @param dependency
+     * @param invokeInfo
+     * @return
+     */
     public InvokeMetaData wrapper(Dependency dependency, InvokeInfo invokeInfo) {
         log.info("fetch invoke info.");
 
@@ -45,7 +51,6 @@ public class InvokeAdapter {
             throw new InitializeInvokerException("类加载失败: " + e.getMessage());
         }
 
-        // 获取方法句柄
         MethodHandle methodHandle = getMethodHandle(dependency, clazz, invokeInfo.getMethodName(), paramTypes, returnType);
 
         InvokeMetaData metadata = new InvokeMetaData();
@@ -66,6 +71,15 @@ public class InvokeAdapter {
         return paramTypes;
     }
 
+    /**
+     * 获取方法句柄
+     * @param dependency
+     * @param classType
+     * @param methodName
+     * @param paramClass
+     * @param returnType
+     * @return
+     */
     private MethodHandle getMethodHandle(Dependency dependency, Class classType, String methodName,
                     Class[] paramClass, Class returnType) {
 

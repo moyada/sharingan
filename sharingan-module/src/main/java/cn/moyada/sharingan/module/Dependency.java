@@ -10,8 +10,14 @@ import java.util.Objects;
  */
 public final class Dependency {
 
+    /**
+     * 仓库坐标
+     */
     private String groupId;
 
+    /**
+     * 仓库坐标
+     */
     private String artifactId;
 
     /**
@@ -20,12 +26,12 @@ public final class Dependency {
     private String version;
 
     /**
-     * 手动jar包路径
+     * 指定jar包路径
      */
     private String url;
 
     /**
-     * 依赖
+     * 外部依赖
      */
     private List<Dependency> dependencyList;
 

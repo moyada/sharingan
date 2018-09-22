@@ -3,7 +3,7 @@ package cn.moyada.sharingan.core.listener;
 
 import cn.moyada.sharingan.core.handler.InvokeRecordHandler;
 import cn.moyada.sharingan.core.handler.RecordHandler;
-import cn.moyada.sharingan.rpc.api.invoke.InvokeCallback;
+import cn.moyada.sharingan.rpc.api.invoke.InvokeReceiver;
 import cn.moyada.sharingan.rpc.api.invoke.Result;
 import cn.moyada.sharingan.storage.api.InvocationRepository;
 import cn.moyada.sharingan.storage.api.domain.InvocationResultDO;
@@ -18,7 +18,7 @@ import java.util.concurrent.locks.LockSupport;
  * @author xueyikang
  * @create 2018-03-18 17:12
  */
-public abstract class AbstractListener extends ListenerReport implements ListenerAction, InvokeCallback {
+public abstract class AbstractListener extends ListenerReport implements ListenerAction, InvokeReceiver {
 
     private static final Logger log = LogManager.getLogger(AbstractListener.class);
 

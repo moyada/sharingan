@@ -3,16 +3,14 @@ package cn.moyada.sharingan.module.fetch;
 
 import cn.moyada.sharingan.common.enums.HttpScheme;
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
+import cn.moyada.sharingan.common.support.SimpleHttpClient;
 import cn.moyada.sharingan.common.utils.JsonUtil;
 import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.module.Assert;
 import cn.moyada.sharingan.module.Dependency;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +20,9 @@ import java.util.Map;
  * @create 2018-04-27 15:00
  */
 @Component
-public class Maven3LastJarFetch extends AbstractFetchLastJar implements DependencyFetch {
+public class Nexus3Fetch implements DependencyFetch {
+
+    private final SimpleHttpClient httpClient;
 
     private final String DOWNLOAD_URL;
     private final String MAVEN_URL;
@@ -44,7 +44,7 @@ public class Maven3LastJarFetch extends AbstractFetchLastJar implements Dependen
             "{\"property\":\"componentVersion\",\"value\":\"%s\"}" +
             "]}],\"type\":\"rpc\",\"tid\":0}]";
 
-    public Maven3LastJarFetch(@Value("${maven.host}") String host) {
+    public Nexus3Fetch(@Value("${maven.host}") String host) {
         if (StringUtil.isEmpty(host)) {
             throw new NullPointerException("cannot find maven.host properties.");
         }
@@ -58,6 +58,7 @@ public class Maven3LastJarFetch extends AbstractFetchLastJar implements Dependen
 
         this.DOWNLOAD_URL = host + "repository/";
         this.MAVEN_URL = host + "service/extdirect";
+        this.httpClient = new SimpleHttpClient();
     }
 
     /**
@@ -118,10 +119,8 @@ public class Maven3LastJarFetch extends AbstractFetchLastJar implements Dependen
      * @return
      */
     private String getLastDependency(Dependency dependency) {
-        HttpPost httpPost = getHttpPost(MAVEN_URL);
-        String data = ListQuest(dependency);
-        httpPost.setEntity(new StringEntity(data, StandardCharsets.UTF_8));
-        return request(httpPost);
+        String data = listQuest(dependency);
+        return httpClient.post(MAVEN_URL, data);
     }
 
     /**
@@ -131,10 +130,8 @@ public class Maven3LastJarFetch extends AbstractFetchLastJar implements Dependen
      * @return
      */
     private String getAssert(Dependency dependency, Assert assertInfo) {
-        HttpPost httpPost = getHttpPost(MAVEN_URL);
-        String data = AssertQuest(dependency, assertInfo);
-        httpPost.setEntity(new StringEntity(data, StandardCharsets.UTF_8));
-        return request(httpPost);
+        String data = assertQuest(dependency, assertInfo);
+        return httpClient.post(MAVEN_URL, data);
     }
 
     /**
@@ -166,7 +163,7 @@ public class Maven3LastJarFetch extends AbstractFetchLastJar implements Dependen
      * @param dependency
      * @return
      */
-    private String ListQuest(Dependency dependency) {
+    private String listQuest(Dependency dependency) {
         String version = dependency.getVersion();
         if(null == version) {
             version = "null";
@@ -187,7 +184,7 @@ public class Maven3LastJarFetch extends AbstractFetchLastJar implements Dependen
      * @param assertInfo
      * @return
      */
-    private String AssertQuest(Dependency dependency, Assert assertInfo) {
+    private String assertQuest(Dependency dependency, Assert assertInfo) {
         return String.format(ASSERT_QUEST,
                 assertInfo.getRepositoryName(),
                 assertInfo.getComponentId(),
@@ -197,7 +194,7 @@ public class Maven3LastJarFetch extends AbstractFetchLastJar implements Dependen
     }
 
     public static void main(String[] args) {
-        DependencyFetch dependencyFetch = new Maven3LastJarFetch("http://127.0.0.1:8081");
+        DependencyFetch dependencyFetch = new Nexus3Fetch("http://127.0.0.1:8081");
 
         Dependency dependency = new Dependency();
         dependency.setGroupId("cn.moyada");

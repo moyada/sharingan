@@ -4,11 +4,12 @@ import cn.moyada.sharingan.module.Dependency;
 
 import java.lang.invoke.MethodHandles;
 
+/**
+ * 元类信息获取器
+ * @author xueyikang
+ * @since 1.0
+ */
 public interface MetadataFetch {
-
-    void checkoutClassLoader(Dependency dependency);
-
-    void recover();
 
     /**
      * 根据依赖获取类

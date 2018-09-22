@@ -9,6 +9,10 @@ public class InitializeInvokerException extends SupperException {
 
     private static final long serialVersionUID = 5870600724106568612L;
 
+    public InitializeInvokerException(Throwable cause) {
+        super(cause);
+    }
+
     public InitializeInvokerException(String message) {
         super(message);
     }

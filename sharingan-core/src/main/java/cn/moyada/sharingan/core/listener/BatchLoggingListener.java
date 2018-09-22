@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.core.listener;
 
 import cn.moyada.sharingan.core.handler.InvokeRecordHandler;
-import cn.moyada.sharingan.rpc.api.invoke.InvokeCallback;
+import cn.moyada.sharingan.rpc.api.invoke.InvokeReceiver;
 import cn.moyada.sharingan.rpc.api.invoke.Result;
 import cn.moyada.sharingan.storage.api.domain.InvocationResultDO;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +16,7 @@ import java.util.Queue;
  * @author xueyikang
  * @create 2018-03-18 17:32
  */
-public class BatchLoggingListener extends AbstractListener implements InvokeCallback {
+public class BatchLoggingListener extends AbstractListener implements InvokeReceiver {
     private static final Logger log = LogManager.getLogger(BatchLoggingListener.class);
 
     private static final int OPT_SIZE = 1000;

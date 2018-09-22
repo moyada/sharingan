@@ -3,14 +3,14 @@ package cn.moyada.sharingan.module;
 import java.lang.invoke.MethodHandle;
 
 /**
- * 请求类信息
+ * 请求方法信息
  * @author xueyikang
  * @create 2017-12-31 16:00
  */
 public class InvokeMetaData {
 
     /**
-     * 方法参数类型
+     * 接口类型
      */
     private Class classType;
 

@@ -1,5 +1,8 @@
-package cn.moyada.sharingan.module.fetch;
+package cn.moyada.sharingan.common.enums;
 
+/**
+ * 基础类型
+ */
 public enum PrimitiveClass {
 
     VOID("void", void.class),

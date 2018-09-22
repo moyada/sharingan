@@ -1,7 +1,6 @@
 package cn.moyada.sharingan.manager.view;
 
 
-import cn.moyada.sharingan.common.utils.ThreadUtil;
 import cn.moyada.sharingan.common.utils.TimeUtil;
 import cn.moyada.sharingan.core.Main;
 import cn.moyada.sharingan.core.common.QuestInfo;
@@ -23,6 +22,7 @@ import java.util.stream.Collectors;
 
 
 /**
+ * 页面接口
  * Created by xueyikang on 2017/12/22.
  */
 @RestController
@@ -40,6 +40,7 @@ public class FakerController {
     @Autowired
     private InvocationRepository invocationRepository;
 
+    // 是否已有任务在运行
     private volatile boolean running = false;
 
     @RequestMapping(value = "/invoke.json", method = {RequestMethod.GET, RequestMethod.POST})
@@ -63,7 +64,7 @@ public class FakerController {
         questInfo.setSaveResult(saveResult);
         questInfo.setResultParam(resultParam);
 
-        String msg = questInfo.checkoutSelf();
+        String msg = questInfo.checkIllegal();
         if (null != msg) {
             return Result.failed(503, msg);
         }
@@ -75,6 +76,7 @@ public class FakerController {
             return Result.success(data);
         }
         catch (Exception e) {
+            e.printStackTrace();
             String message = e.getMessage();
             logger.error(message);
             return Result.failed(500, message);
@@ -83,77 +85,6 @@ public class FakerController {
             running = false;
             TimeUtil.stopTimekeeping();
         }
-    }
-
-    @RequestMapping(value = "/invokeDubbo.json", method = {RequestMethod.GET, RequestMethod.POST})
-    public Result invokeDubbo(@RequestParam("invokeId") int invokeId,
-                              @RequestParam("invokeExpression") String invokeExpression,
-                              @RequestParam(value = "poolSize", required = false) Integer poolSize,
-                              @RequestParam(value = "qps", required = false) Integer qps,
-                              @RequestParam(value = "loop", required = false) Integer loop,
-                              @RequestParam(value = "random", required = false, defaultValue = "1") Integer random,
-                              @RequestParam(value = "saveResult", required = false) Boolean saveResult,
-                              @RequestParam(value = "resultParam", required = false) String resultParam) {
-        if(running) {
-            return Result.failed(401, "已有任务进行中");
-        }
-
-        qps = null == qps || 1 > qps ? 1 : qps;
-        loop = null == loop || 1 > loop ? 1 : loop;
-        poolSize = Math.round((loop * 1.0F) / qps);
-        if(loop < poolSize) {
-            return Result.failed(503, "请求次数必须大于并发数");
-        }
-        if(loop < qps) {
-            return Result.failed(503, "请求次数必须大于每秒钟请求数");
-        }
-        saveResult = null == saveResult ? false : saveResult;
-        resultParam = null == resultParam || resultParam.trim().length() == 0 ? null : resultParam.trim();
-
-        QuestInfo invokerInfo = new QuestInfo();
-        invokerInfo.setFuncId(invokeId);
-        invokerInfo.setExpression(invokeExpression);
-        invokerInfo.setPoolSize(poolSize);
-        invokerInfo.setQps(qps);
-        invokerInfo.setQuestNum(loop);
-        invokerInfo.setRandom(random == 1);
-        invokerInfo.setSaveResult(saveResult);
-        invokerInfo.setResultParam(resultParam);
-
-        running = true;
-        TimeUtil.doTimekeeping();
-        try {
-            String data = main.invoke(invokerInfo);
-            return Result.success(data);
-        }
-        catch (Exception e) {
-            String message = e.getMessage();
-            logger.error(message);
-            return Result.failed(500, message);
-        }
-        finally {
-            running = false;
-            TimeUtil.stopTimekeeping();
-            ThreadUtil.clear();
-        }
-    }
-
-    @RequestMapping(value = "/getAllInvoke.json", method = RequestMethod.GET)
-    public Result getAllInvoke() {
-        List<FunctionDO> all;
-        try {
-            all = metadataRepository.findFunctionByService(-1);
-        } catch (Exception e) {
-            return Result.failed(500, e.getMessage());
-        }
-        return Result.success(all.stream()
-                .map(item -> new SelectVO(item.getId().toString(),
-                        item.getClassName() + ", " +
-                                item.getMethodName() + ", " +
-                                item.getParamType() + ", " +
-                                item.getReturnType()
-                ))
-                .collect(Collectors.toList()));
     }
 
     @RequestMapping(value = "/getAllApp.json", method = RequestMethod.GET)
@@ -219,15 +150,5 @@ public class FakerController {
 
         page.setData(invocationRepository.findResult(fakerId, pageIndex, pageSize));
         return page;
-    }
-
-    @RequestMapping(value = "/kill/{fakerId}", method = RequestMethod.GET)
-    public Result kill(@PathVariable(value = "fakerId", required = true) String fakerId) {
-        try {
-            return Result.success(fakerId + " 关闭成功");
-        }
-        catch (Exception e) {
-            return Result.failed(500, "指定线程池不存在 " + fakerId);
-        }
     }
 }

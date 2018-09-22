@@ -30,7 +30,7 @@ public class EnvironmentFactory {
     private InvokeAdapter invokeAdapter;
 
     @SuppressWarnings("ConstantConditions")
-    public InvokeContext buildEnv(QuestInfo questInfo) {
+    public InvokeContext getEnv(QuestInfo questInfo) {
         Integer funcId = questInfo.getFuncId();
         FunctionDO functionDO = metadataRepository.findFunctionById(funcId);
         AssertUtil.checkoutNotNull(functionDO, "cannot find function by funcId: " + funcId);
@@ -71,6 +71,7 @@ public class EnvironmentFactory {
 
         Dependency dependency = AppInfoConverter.toDependency(appDO);
 
+        // 获取外部依赖
         String dependencies = appDO.getDependencies();
         List<AppDO> appList = metadataRepository.findApp(dependencies);
         dependency.setDependencyList(AppInfoConverter.toDependency(appList));

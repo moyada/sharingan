@@ -6,6 +6,9 @@ import cn.moyada.sharingan.storage.api.domain.ServiceDO;
 
 import java.util.List;
 
+/**
+ * 元信息
+ */
 public interface MetadataRepository {
 
     /**

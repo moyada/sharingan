@@ -1,10 +1,14 @@
-package cn.moyada.sharingan.core.support;
+package cn.moyada.sharingan.core.provider;
 
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
+import cn.moyada.sharingan.core.support.RouteInfo;
 import cn.moyada.sharingan.storage.api.ArgsRepository;
 
 import java.util.List;
 
+/**
+ * 表达式替换提供器
+ */
 public class ReplacementProvider extends AbstractProvider implements ArgsProvider {
 
     private static final int DEFAULT_THRESHOLD = 1000;

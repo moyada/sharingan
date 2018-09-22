@@ -5,6 +5,11 @@ import cn.moyada.sharingan.storage.api.domain.InvocationResultDO;
 
 import java.util.List;
 
+/**
+ * 调用结果
+ * @author xueyikang
+ * @since 1.0
+ */
 public interface InvocationRepository {
 
     /**

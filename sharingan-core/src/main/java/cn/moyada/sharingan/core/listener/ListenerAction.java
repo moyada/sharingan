@@ -1,12 +1,12 @@
 package cn.moyada.sharingan.core.listener;
 
-import cn.moyada.sharingan.rpc.api.invoke.InvokeCallback;
+import cn.moyada.sharingan.rpc.api.invoke.InvokeReceiver;
 
 /**
  * @author xueyikang
  * @create 2018-04-05 15:38
  */
-public interface ListenerAction extends ReportAction, InvokeCallback {
+public interface ListenerAction extends ReportAction, InvokeReceiver {
 
     /**
      * 处理回调

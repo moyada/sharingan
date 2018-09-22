@@ -17,6 +17,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * dubbo协议调用器
+ */
 @Component("dubbo")
 public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, InvokeProxy {
 
@@ -50,6 +53,7 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
         registry.setUsername(dubboConfig.getUsername());
         registry.setPassword(dubboConfig.getPassword());
 
+        // 消费规则
         consumer = new ConsumerConfig();
         consumer.setTimeout(3000);
         consumer.setActives(100);
@@ -70,8 +74,14 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
         try {
             this.instance = reference.get();
         }
+        catch (IllegalArgumentException e) {
+            throw new InstanceNotFountException(e);
+        }
+        catch (RuntimeException e) {
+            throw new InstanceNotFountException(e);
+        }
         catch (Exception e) {
-            throw new InstanceNotFountException(e.getMessage());
+            throw new InstanceNotFountException(e);
         }
     }
 }

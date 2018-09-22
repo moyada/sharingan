@@ -8,11 +8,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public abstract class AbstractExecutor implements JobAction {
+/**
+ * 多线程调用器
+ */
+public abstract class AbstractConcurrentExecutor implements JobExecutor {
 
     final ExecutorService executor;
 
-    public AbstractExecutor(ExecutorService executor) {
+    public AbstractConcurrentExecutor(ExecutorService executor) {
         this.executor = executor;
     }
 

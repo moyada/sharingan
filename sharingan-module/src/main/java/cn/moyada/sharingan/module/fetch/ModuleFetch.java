@@ -1,5 +1,8 @@
 package cn.moyada.sharingan.module.fetch;
 
+import cn.moyada.sharingan.common.enums.PrimitiveClass;
+import cn.moyada.sharingan.common.utils.SoftReferenceUtil;
+import cn.moyada.sharingan.module.support.ClassLoaderSwitcher;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.loader.AppClassLoader;
 import cn.moyada.sharingan.module.loader.ClassLoaderAction;
@@ -10,6 +13,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.ref.SoftReference;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,19 +26,21 @@ import java.util.Map;
  * @create 2018-04-27 16:33
  */
 @Component("moduleFetch")
-public class ModuleFetch extends DirectionFetch implements ApplicationContextAware, MetadataFetch {
+public class ModuleFetch implements ApplicationContextAware, MetadataFetch, ClassLoaderSwitcher {
 
     private static final int CACHE_TIME = 720000;
 
+    // 项目类加载器
     private ClassLoader parent;
 
-    private final Map<Dependency, AppClassLoader> loaderMap = new HashMap<>();
+    // 类加载器映射
+    private final Map<Dependency, SoftReference<AppClassLoader>> loaderMap = new HashMap<>();
 
     @Autowired
     private DependencyFetch dependencyFetch;
 
     @Override
-    public void checkoutClassLoader(Dependency dependency) {
+    public void checkout(Dependency dependency) {
         AppClassLoader classLoader = getClassLoader(dependency);
         if(null == classLoader) {
             return;
@@ -77,13 +83,13 @@ public class ModuleFetch extends DirectionFetch implements ApplicationContextAwa
      * @return
      */
     private AppClassLoader getClassLoader(Dependency dependency) {
-        AppClassLoader classLoader = loaderMap.get(dependency);
+        AppClassLoader classLoader = SoftReferenceUtil.get(loaderMap, dependency);
         if(null == classLoader || !equals(classLoader, dependency)) {
             boolean success = loadJar(dependency);
             if (!success) {
                 return null;
             }
-            classLoader = loaderMap.get(dependency);
+            classLoader = SoftReferenceUtil.get(loaderMap, dependency);
         }
         return classLoader;
     }
@@ -102,7 +108,7 @@ public class ModuleFetch extends DirectionFetch implements ApplicationContextAwa
             return false;
         }
 
-        AppClassLoader classLoader = loaderMap.get(dependency);
+        AppClassLoader classLoader = SoftReferenceUtil.get(loaderMap, dependency);
         if(null != classLoader) {
             // 路径不变
             if(classLoader.getUrl().equals(jarUrl)) {
@@ -122,7 +128,7 @@ public class ModuleFetch extends DirectionFetch implements ApplicationContextAwa
         }
 
         classLoader.setTimestamp(System.currentTimeMillis());
-        loaderMap.put(dependency, classLoader);
+        SoftReferenceUtil.put(loaderMap, dependency, classLoader);
         return true;
     }
 

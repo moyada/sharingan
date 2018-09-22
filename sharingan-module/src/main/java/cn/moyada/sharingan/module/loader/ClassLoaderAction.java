@@ -2,6 +2,11 @@ package cn.moyada.sharingan.module.loader;
 
 import java.lang.invoke.MethodHandles;
 
+/**
+ * 模块类加载器行为
+ * @author xueyikang
+ * @since 1.0
+ */
 public interface ClassLoaderAction {
 
     /**
