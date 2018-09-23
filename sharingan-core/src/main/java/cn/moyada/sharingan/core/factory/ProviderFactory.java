@@ -40,12 +40,14 @@ public class ProviderFactory {
 
         for (int index = 0; index < length; index++) {
             param = params[index];
+            // 查询替换表达式
             route = routeProcessor.getRoute(param);
             if (null != route) {
                 providers[index] = new ReplacementProvider(param, paramTypes[index], route, argsRepository, isRandom);
                 continue;
             }
 
+            // 查询整数表达式
             intRange = routeProcessor.getIntRange(param);
             if (null != intRange) {
                 if (intRange.isConstant()) {
@@ -57,6 +59,7 @@ public class ProviderFactory {
                 continue;
             }
 
+            // 查询浮点数表达式
             doubleRange = routeProcessor.getDoubleRange(param);
             if (null != doubleRange) {
                 if (doubleRange.isConstant()) {
