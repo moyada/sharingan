@@ -10,7 +10,7 @@ sharingan 是用来快速检测回归RPC服务`可用性`的Java工程。
 * 动态类加载，无需引入依赖jar包，运行期从版本仓库中获取最新依赖，隔离不同项目依赖。
 
 * 参数表达式，根据配置规则动态生成请求参数。
-  例如，领域数据表达式: `${test.data}`、随机整数表达式: `#{int.random}`、范围浮点数表达式: `#{double.-50.5-300.8}`
+  例如，领域数据表达式: `${test.data}`、随机整数表达式: `#{int.random}`、范围浮点数表达式: `#{double[3].-50.5-300.8}`
 
 * rpc协议支持，目前支持[dubbo](https://github.com/apache/incubator-dubbo)，计划加入协议`Spring Cloud`、`Sofa`、`Istio`。
 
@@ -51,3 +51,7 @@ dubbo.password =
 
 * 领域数据表达式: `MetadataRepository`查询的`FunctionDO`中`expression`字段来指定规则动态生成请求参数，表达式格式为`${项目名称.数据领域}`。
   mysql中，项目名称为`app_info`表中的`name`、数据领域为`invoke_param`中的`domain`。
+
+* 数值表达式: 默认带有整数和浮点数的生成表达式，
+整数表达式: 可设置随机范围`#{int.开始-结束}`，或者无范围`#{int.random}`。
+浮点数表达式: 可设置随机范围`#{double[精度].开始-结束}`，或者无范围`#{double.random}`，对于`[精度]`设置可选，缺省为3。
