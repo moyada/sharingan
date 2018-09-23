@@ -1,15 +1,19 @@
 package cn.moyada.sharingan.core.support;
 
 /**
+ * 整数范围策略
  * @author xueyikang
  * @since 1.0
  **/
 public class IntRange {
 
+    // 替换目标
     private String target;
 
+    // 起始值
     private int start;
 
+    // 结束值
     private int end;
 
     public IntRange(String target, int start, int end) {
@@ -18,16 +22,20 @@ public class IntRange {
         this.end = end;
     }
 
+    /**
+     * 是否为常数
+     * @return
+     */
+    public boolean isConstant() {
+        return start == end;
+    }
+
     public String getTarget() {
         return target;
     }
 
     public void setTarget(String target) {
         this.target = target;
-    }
-
-    public boolean isConstant() {
-        return start == end;
     }
 
     public int getStart() {

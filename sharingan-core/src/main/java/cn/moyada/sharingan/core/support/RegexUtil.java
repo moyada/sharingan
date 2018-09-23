@@ -18,7 +18,7 @@ public class RegexUtil {
     private static final String intRangeRegex = "\\#\\{int\\.((\\-?\\d+\\-\\-?\\d+)|random)\\}";
     private static final String intRegex = "\\-?\\d+";
 
-    private static final String doubleRangeRegex = "\\#\\{double\\.((\\-?\\d+\\.?\\d*\\-\\-?\\d+\\.?\\d*)|random)\\}";
+    private static final String doubleRangeRegex = "\\#\\{double(\\[\\d+\\])?\\.((\\-?\\d+\\.?\\d*\\-\\-?\\d+\\.?\\d*)|random)\\}";
     private static final String doubleRegex = "\\-?\\d+\\.?\\d*";
 
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile(expressionRegex);
@@ -88,26 +88,27 @@ public class RegexUtil {
      * @return
      */
     public static IntRange findIntRange(String expression) {
+        // 是否为随机策略
         if (expression.contains(RANDOM)) {
-            return new IntRange(expression, 0, Integer.MAX_VALUE);
+            return new IntRange(expression, Integer.MIN_VALUE, Integer.MAX_VALUE);
         }
         Matcher matcher = INT_PATTERN.matcher(expression);
 
+        // 获取起始值
         if (!matcher.find()) {
             throw new RangeException("cannot find any range of int.");
         }
         String m1 = matcher.group();
-
-        if (!matcher.find()) {
-            throw new RangeException("cannot find any range of int.");
-        }
-        String m2 = matcher.group();
-
         Integer start = NumberUtil.toInt(m1);
         if (null == start) {
             throw new RangeException("value overflow, " + m1);
         }
 
+        // 获取结束值
+        if (!matcher.find()) {
+            throw new RangeException("cannot find any range of int.");
+        }
+        String m2 = matcher.group();
         Integer end = NumberUtil.toInt(m2);
         if (null == end) {
             throw new RangeException("value overflow, " + m2);
@@ -131,32 +132,54 @@ public class RegexUtil {
      * @return
      */
     public static DoubleRange findDoubleRange(String expression) {
-        if (expression.contains(RANDOM)) {
-            return new DoubleRange(expression, 0, Double.MAX_VALUE);
+        // 获取小数位
+        int precision;
+        int squareL = expression.indexOf('[');
+        int squareR = -1;
+        if (-1 == squareL) {
+            precision = 3;
+        } else {
+            squareR = expression.indexOf(']');
+            if (-1 == squareR) {
+                precision = 3;
+            } else {
+                Integer prec = NumberUtil.toInt(expression.substring(squareL+1, squareR));
+                precision = null == prec ? 3 : prec;
+            }
         }
-        Matcher matcher = DOUBLE_PATTERN.matcher(expression);
 
+        // 是否为随机策略
+        if (expression.contains(RANDOM)) {
+            return new DoubleRange(expression, precision, Double.MIN_VALUE, Double.MAX_VALUE);
+        }
+
+        String find;
+        if (-1 == squareR) {
+            find = expression;
+        } else {
+            find = expression.substring(squareR + 2);
+        }
+
+        Matcher matcher = DOUBLE_PATTERN.matcher(find);
+        // 获取起始值
         if (!matcher.find()) {
             throw new RangeException("cannot find any range of double.");
         }
         String m1 = matcher.group();
-
-        if (!matcher.find()) {
-            throw new RangeException("cannot find any range of double.");
-        }
-        String m2 = matcher.group();
-
         Double start = NumberUtil.toDouble(m1);
         if (null == start) {
             throw new RangeException("value overflow, " + m1);
         }
 
+        // 获取结束值
+        if (!matcher.find()) {
+            throw new RangeException("cannot find any range of double.");
+        }
+        String m2 = matcher.group();
         Double end = NumberUtil.toDouble(m2);
         if (null == end) {
             throw new RangeException("value overflow, " + m2);
         }
-
-
         int split = expression.indexOf(m2) - 1;
         if (expression.charAt(split) != SPLIT) {
             end = -end;
@@ -165,12 +188,15 @@ public class RegexUtil {
         if (start > end) {
             throw new RangeException("range error, " + expression);
         }
-        return new DoubleRange(expression, start, end);
+
+        return new DoubleRange(expression, precision, start, end);
     }
 
     public static void main(String[] args) {
-        System.out.println(findInt("#{int.32-321}"));
-        System.out.println(findIntRange("32.13-321.22"));
-        System.out.println(findDoubleRange("3213--32.122"));
+        String str = "[2132321]";
+        System.out.println(str.indexOf('['));
+        System.out.println(str.indexOf(']'));
+        System.out.println(str.length());
+        System.out.println(str.substring(0, 8));
     }
 }
