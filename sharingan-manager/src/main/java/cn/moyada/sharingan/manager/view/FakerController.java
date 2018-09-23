@@ -4,6 +4,7 @@ package cn.moyada.sharingan.manager.view;
 import cn.moyada.sharingan.common.utils.TimeUtil;
 import cn.moyada.sharingan.core.Main;
 import cn.moyada.sharingan.core.common.QuestInfo;
+import cn.moyada.sharingan.manager.cache.CacheService;
 import cn.moyada.sharingan.manager.vo.PageVO;
 import cn.moyada.sharingan.manager.vo.Result;
 import cn.moyada.sharingan.manager.vo.SelectVO;
@@ -14,7 +15,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +30,7 @@ import java.util.stream.Collectors;
  * Created by xueyikang on 2017/12/22.
  */
 @RestController
-@RequestMapping(value = "/faker", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FakerController {
 
     private static final Logger logger = LogManager.getLogger(FakerController.class);
@@ -40,6 +44,9 @@ public class FakerController {
     @Autowired
     private InvocationRepository invocationRepository;
 
+    @Autowired
+    private CacheService cacheService;
+
     // 是否已有任务在运行
     private volatile boolean running = false;
 
@@ -48,7 +55,7 @@ public class FakerController {
                          @RequestParam("expression") String expression,
 //                         @RequestParam(value = "poolSize", required = false) Integer poolSize,
                          @RequestParam(value = "qps", required = false) Integer qps,
-                         @RequestParam(value = "loop", required = false) Integer loop,
+                         @RequestParam(value = "total", required = false) Integer total,
                          @RequestParam(value = "random", required = false) Boolean random,
                          @RequestParam(value = "saveResult", required = false) Boolean saveResult,
                          @RequestParam(value = "resultParam", required = false) String resultParam) {
@@ -59,7 +66,7 @@ public class FakerController {
         questInfo.setFuncId(invokeId);
         questInfo.setExpression(expression);
         questInfo.setQps(qps);
-        questInfo.setQuestNum(loop);
+        questInfo.setQuestNum(total);
         questInfo.setRandom(random);
         questInfo.setSaveResult(saveResult);
         questInfo.setResultParam(resultParam);
@@ -126,6 +133,13 @@ public class FakerController {
         return Result.success(functions);
     }
 
+    @RequestMapping(value = "/getReport.json", method = RequestMethod.GET)
+    public Result getReport(@RequestParam("fakerId") String fakerId) {
+        InvocationReportDO report = cacheService.getReport(fakerId);
+        return Result.success(report);
+    }
+
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/getResult.json", method = RequestMethod.GET)
     public PageVO<InvocationResultDO> getResult(@RequestParam("fakerId") String fakerId,
                                                 @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
@@ -133,14 +147,14 @@ public class FakerController {
         pageIndex = null == pageIndex || pageIndex < 1 ? 1 : pageIndex;
         pageSize = null == pageSize || pageSize < 20 ? 20 : pageSize;
 
+        InvocationReportDO report = cacheService.getReport(fakerId);
+        if (null == report) {
+            return PageVO.emptyPage();
+        }
         PageVO<InvocationResultDO> page = new PageVO<>();
         page.setPageIndex(pageIndex);
         page.setPageSize(pageSize);
 
-        InvocationReportDO report = invocationRepository.findReport(fakerId);
-        if (null == report) {
-            return page;
-        }
         int total = report.getTotalInvoke();
         page.setTotal(total);
         if(0 == total) {

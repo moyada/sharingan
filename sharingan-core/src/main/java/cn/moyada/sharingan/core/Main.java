@@ -52,7 +52,8 @@ public class Main {
     private RpcInvokeProxy rpcInvokeProxy;
 
     public String invoke(QuestInfo questInfo) throws InitializeInvokerException {
-        questInfo.setPoolSize(RuntimeUtil.getActualSize(questInfo.getPoolSize()));
+//        questInfo.setPoolSize(RuntimeUtil.getActualPoolSize(questInfo.getPoolSize()));
+        questInfo.setPoolSize(RuntimeUtil.getMaxPoolSize());
 
         InvokeContext environment = environmentFactory.getEnv(questInfo);
         InvokeMetaData invokeMetaData = environment.getInvokeMetaData();
@@ -82,6 +83,7 @@ public class Main {
                 beginTime, listener.buildReport());
 
         classLoaderSwitcher.recover();
+        log.info("task done. fakerId: " + fakerId);
         return "请求结果序号：" + fakerId;
     }
 
