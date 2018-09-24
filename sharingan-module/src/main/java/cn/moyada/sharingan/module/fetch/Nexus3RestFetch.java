@@ -9,6 +9,7 @@ import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.MavenConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,17 +20,15 @@ import java.util.Map;
  * @author xueyikang
  * @create 2018-04-27 15:00
  */
+@DependsOn("mavenConfig")
 @Component
 public class Nexus3RestFetch implements DependencyFetch {
-
-    @Autowired
-    private MavenConfig mavenConfig;
 
     private final SimpleHttpClient httpClient;
 
     private final String DOWNLOAD_URL;
 
-    public Nexus3RestFetch() {
+    public Nexus3RestFetch(@Autowired MavenConfig mavenConfig) {
         String host = mavenConfig.getHost();
         if (StringUtil.isEmpty(host)) {
             throw new NullPointerException("cannot find maven.host properties.");
@@ -129,16 +128,11 @@ public class Nexus3RestFetch implements DependencyFetch {
 //        mavenConfig.setHost("http://127.0.0.1:8081");
 //
 //        Nexus3RestFetch dependencyFetch = new Nexus3RestFetch(mavenConfig);
-////        dependencyFetch.setMavenConfig(mavenConfig);
 //
 //        Dependency dependency = new Dependency();
 //        dependency.setGroupId("cn.moyada");
 //        dependency.setArtifactId("dubbo-test-api");
 //        String url = dependencyFetch.getJarUrl(dependency);
 //        System.out.println(url);
-//    }
-//
-//    public void setMavenConfig(MavenConfig mavenConfig) {
-//        this.mavenConfig = mavenConfig;
 //    }
 }

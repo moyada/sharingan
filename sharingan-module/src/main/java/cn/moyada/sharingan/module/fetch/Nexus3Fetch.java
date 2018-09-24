@@ -10,7 +10,6 @@ import cn.moyada.sharingan.module.Assert;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.MavenConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -20,11 +19,9 @@ import java.util.Map;
  * @author xueyikang
  * @create 2018-04-27 15:00
  */
-@Component
+//@DependsOn("mavenConfig")
+//@Component
 public class Nexus3Fetch implements DependencyFetch {
-
-    @Autowired
-    private MavenConfig mavenConfig;
 
     private final SimpleHttpClient httpClient;
 
@@ -48,7 +45,7 @@ public class Nexus3Fetch implements DependencyFetch {
             "{\"property\":\"componentVersion\",\"value\":\"%s\"}" +
             "]}],\"type\":\"rpc\",\"tid\":0}]";
 
-    public Nexus3Fetch() {
+    public Nexus3Fetch(@Autowired MavenConfig mavenConfig) {
         String host = mavenConfig.getHost();
         if (StringUtil.isEmpty(host)) {
             throw new NullPointerException("cannot find maven.host properties.");
