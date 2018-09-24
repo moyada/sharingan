@@ -5,7 +5,7 @@ import request from '../utils/request';
 class InvokeCascader extends React.Component {
   constructor(props) {
     super(props);
-    request("faker/getAllApp.json").then(({data, err}) => {
+    request("api/getAllApp.json").then(({data, err}) => {
       if(err) {
         return new Error(err);
       }
@@ -32,7 +32,7 @@ class InvokeCascader extends React.Component {
 
     switch (selected.type) {
       case "app" :
-        request("faker/getServiceByApp.json", {appId: selected.value})
+        request("api/getServiceByApp.json", {appId: selected.value})
           .then(({data, err}) => {
             if(err) {
               return new Error(err);
@@ -53,7 +53,7 @@ class InvokeCascader extends React.Component {
         })
         break
       case "class":
-        request("faker/getMethodByService.json", {serviceId: selected.value})
+        request("api/getMethodByService.json", {serviceId: selected.value})
           .then(({data, err}) => {
             if(err) {
               return new Error(err);

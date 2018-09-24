@@ -12,7 +12,7 @@ const RadioGroup = Radio.Group;
 class InvokeForm extends React.Component {
   state = {
     expand: false,
-    type: 'dubbo',
+    type: 'simple',
     data: [],
     visible: false,
     index: 1,
@@ -40,7 +40,7 @@ class InvokeForm extends React.Component {
       }
       let payload
       switch (this.state.type) {
-        case 'dubbo':
+        case 'simple':
           if(null == values.invokeId || values.invokeId === undefined || values.invokeId.length !== 3) {
             message.error("请选择调用请求")
             return
@@ -57,14 +57,14 @@ class InvokeForm extends React.Component {
             poolSize: values.poolSize,
             qps: values.qps,
             random: values.random,
-            loop: values.loop,
+            total: values.total,
             saveResult: values.saveResult,
             resultParam: values.resultParam,
           }
 
           message.success("生成测试请求")
 
-          request("faker/invoke.json", payload, 'POST')
+          request("api/invoke.json", payload, 'POST')
             .then(resp => {
               if(resp.err) {
                 message.error(resp.err.message, 10)
@@ -94,7 +94,7 @@ class InvokeForm extends React.Component {
             invokeInfo: JSON.stringify(this.state.data),
             poolSize: values.poolSize,
             qps: values.qps,
-            loop: values.loop,
+            total: values.total,
             saveResult: values.saveResult,
             resultParam: values.resultParam,
           }
@@ -103,7 +103,7 @@ class InvokeForm extends React.Component {
 
           this.setState({data: []})
 
-          request("faker/invokeHttp.json", payload)
+          request("api/invokeComplex.json", payload)
             .then(resp => {
               if(resp.err) {
                 message.error(resp.err.message, 10)
@@ -133,10 +133,10 @@ class InvokeForm extends React.Component {
 
   onSelectInvoke(value) {
     if(value !== undefined && null !== value && value.length === 3) {
-      let values = value[2].split(`-`)
-      if(value !== undefined && null !== value) {
+      let index = value[2].indexOf(`-`)
+      if(index !== undefined && null !== index) {
         this.props.form.setFieldsValue({
-          expression: values[1],
+          expression: value[2].substring(index+1)
         })
       }
     }
@@ -237,16 +237,16 @@ class InvokeForm extends React.Component {
     });
   }
 
-  changePollSize(qpsInput, loopInput) {
+  changePollSize(qpsInput, totalInput) {
     const qps = null == qpsInput ? this.props.form.getFieldsValue(['qps']).qps : qpsInput
-    const loop = null == loopInput ? this.props.form.getFieldsValue(['loop']).loop : loopInput
+    const total = null == totalInput ? this.props.form.getFieldsValue(['total']).total : totalInput
     if(qps === null || qps === undefined || qps < 1) {
       return
     }
-    if(loop === null || loop === undefined || loop < 1) {
+    if(total === null || total === undefined || total < 1) {
       return
     }
-    this.props.form.setFieldsValue({'poolSize': Math.round(loop / qps)})
+    this.props.form.setFieldsValue({'poolSize': Math.round(total / qps)})
   }
 
   render() {
@@ -307,8 +307,8 @@ class InvokeForm extends React.Component {
         onSubmit={this.handleSearch}
       >
         <Row>
-          <Tabs defaultActiveKey="dubbo" onChange={(key) => this.state.type = key }>
-            <TabPane tab="Dubbo" key="dubbo">
+          <Tabs defaultActiveKey="simple" onChange={(key) => this.state.type = key }>
+            <TabPane tab="接口测试" key="simple">
               <Col span={24} key='invokeId'>
                 <FormItem {...formItemRowLayout} style={{ marginRight: '100px', marginTop: '20px' }} label={`请求`}>
                   {getFieldDecorator(`invokeId`, {initialValue: null})(
@@ -323,7 +323,7 @@ class InvokeForm extends React.Component {
                   {getFieldDecorator(`expression`, {initialValue: null})(
                     <TextArea
                       maxLength={20000}
-                      placeholder='["${1.test}"]'
+                      placeholder='["${project.domain}"]'
                       autosize
                     />
                   )}
@@ -331,7 +331,7 @@ class InvokeForm extends React.Component {
               </Col>
             </TabPane>
 
-            <TabPane tab="Http" key="http" disabled>
+            <TabPane tab="复合测试" key="complex" disabled>
               <Col span={24} key='invokeUrl'>
                 <Table
                   dataSource={this.state.data}
@@ -446,35 +446,36 @@ class InvokeForm extends React.Component {
             </TabPane>
           </Tabs>
 
-          <Col span={3} key='poolSize'>
-            <FormItem {...formItemLayout} label={`并发数`} >
-              {getFieldDecorator(`poolSize`, {initialValue: null})(
+          <Col span={1} key='poolSize'>
+            {/*<FormItem {...formItemLayout} label={`并发数`} >*/}
+              {/*{getFieldDecorator(`poolSize`, {initialValue: null})(*/}
+                {/*<InputNumber*/}
+                  {/*min={1}*/}
+                  {/*max={100}*/}
+                  {/*precision={0}*/}
+                  {/*disabled*/}
+                {/*/>*/}
+              {/*)}*/}
+            {/*</FormItem>*/}
+          </Col>
+
+          <Col span={3} key='total'>
+            <FormItem {...formItemLayout} label={`请求次数`}>
+              {getFieldDecorator(`total`, {initialValue: null})(
                 <InputNumber
+                  // onChange={(total) =>this.changePollSize(null, total)}
                   min={1}
-                  max={100}
+                  max={100000}
                   precision={0}
-                  disabled
                 />
               )}
             </FormItem>
           </Col>
-          <Col span={4} key='qps'>
-            <FormItem {...formItemLayout} label={`每秒请求数`}>
+          <Col span={3} key='qps'>
+            <FormItem labelCol={{span : 11}} wrapperCol={{span : 11}} label={`每秒请求数`}>
               {getFieldDecorator(`qps`, {initialValue: null})(
                 <InputNumber
-                  onChange={(qps) => this.changePollSize(qps, null)}
-                  min={1}
-                  max={1000}
-                  precision={0}
-                />
-              )}
-            </FormItem>
-          </Col>
-          <Col span={3} key='loop'>
-            <FormItem {...formItemLayout} label={`请求次数`}>
-              {getFieldDecorator(`loop`, {initialValue: null})(
-                <InputNumber
-                  onChange={(loop) =>this.changePollSize(null, loop)}
+                  // onChange={(qps) => this.changePollSize(qps, null)}
                   min={1}
                   max={10000}
                   precision={0}

@@ -16,7 +16,17 @@ public class ConstantProvider extends AbstractProvider implements ArgsProvider {
     }
 
     @Override
+    protected String next() {
+        return constantValue.toString();
+    }
+
+    @Override
     public Object fetchNext() {
         return constantValue;
+    }
+
+    @Override
+    public String replace(String source) {
+        throw new UnsupportedOperationException();
     }
 }

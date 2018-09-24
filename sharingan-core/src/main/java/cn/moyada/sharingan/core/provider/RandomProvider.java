@@ -7,12 +7,12 @@ import java.util.Random;
  * @author xueyikang
  * @since 1.0
  **/
-public abstract class RandomProvider extends AbstractProvider implements ArgsProvider {
+public abstract class RandomProvider extends ReplacementProvider implements ArgsProvider {
 
     protected final Random random;
 
-    public RandomProvider(String value, Class<?> paramType) {
-        super(value, paramType);
+    public RandomProvider(String value, Class<?> paramType, String target) {
+        super(value, paramType, target);
         this.random = new Random();
     }
 }

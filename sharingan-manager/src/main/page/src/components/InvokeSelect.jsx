@@ -7,7 +7,7 @@ const Option = Select.Option;
 class InvokeSelect extends React.Component {
   constructor(props) {
     super(props);
-    request("faker/getAllInvoke.json").then(({data, err}) => {
+    request("api/getAllInvoke.json").then(({data, err}) => {
       if(err) {
         return new Error(err);
       }

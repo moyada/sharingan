@@ -8,8 +8,8 @@ public class RuntimeUtil {
 
     public final static int MAX_POOL_SIZE;
     static {
-        int cpuCore = Runtime.getRuntime().availableProcessors() * 2;
-        MAX_POOL_SIZE = cpuCore; // % 8 == 0 ? cpuCore : cpuCore + (8 - cpuCore % 8);
+        int cpuCore = Runtime.getRuntime().availableProcessors();
+        MAX_POOL_SIZE = cpuCore * 2; // % 8 == 0 ? cpuCore : cpuCore + (8 - cpuCore % 8);
     }
 
     /**
@@ -17,8 +17,12 @@ public class RuntimeUtil {
      * @param expectSize
      * @return
      */
-    public static int getActualSize(int expectSize) {
+    public static int getActualPoolSize(int expectSize) {
         return expectSize > MAX_POOL_SIZE ? MAX_POOL_SIZE : expectSize;
+    }
+
+    public static int getMaxPoolSize() {
+        return MAX_POOL_SIZE;
     }
 
     /**

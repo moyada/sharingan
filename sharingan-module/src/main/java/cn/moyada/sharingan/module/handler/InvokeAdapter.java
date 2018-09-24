@@ -2,6 +2,7 @@ package cn.moyada.sharingan.module.handler;
 
 
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
+import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.InvokeInfo;
 import cn.moyada.sharingan.module.InvokeMetaData;
@@ -61,7 +62,10 @@ public class InvokeAdapter {
         return metadata;
     }
 
-    private Class[] getParamClass(Dependency dependency, String paramType) throws ClassNotFoundException {
+    private Class<?>[] getParamClass(Dependency dependency, String paramType) throws ClassNotFoundException {
+        if (StringUtil.isEmpty(paramType)) {
+            return new Class<?>[0];
+        }
         String[] argsType = paramType.split(",");
         int length = argsType.length;
         Class<?>[] paramTypes = new Class[length];

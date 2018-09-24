@@ -9,23 +9,57 @@ import cn.moyada.sharingan.core.support.IntRange;
  **/
 public class IntProvider extends RandomProvider implements ArgsProvider {
 
-    private final String target;
+    private final boolean huge;
 
     private final int base;
+
     private final int range;
 
     public IntProvider(String value, Class<?> paramType, IntRange intRange) {
-        super(value, paramType);
-        this.target = intRange.getTarget();
-        this.base = intRange.getStart();
-        this.range = intRange.getEnd() - intRange.getStart();
+        super(value, paramType, intRange.getTarget());
+
+        int top = intRange.getEnd() - intRange.getStart();
+        boolean huge = intRange.getEnd() >= 0;
+        huge = huge && top < 0;
+
+        if (huge) {
+            this.range = intRange.getEnd();
+            this.base = intRange.getStart();
+            this.huge = true;
+        }
+        else {
+            this.range = top;
+            this.base = intRange.getStart();
+            this.huge = false;
+        }
     }
 
     @Override
-    public Object fetchNext() {
-        Integer data = random.nextInt(range) + base;
-        String newData = value.replace(target, data.toString());
-        Object next = convert(newData, paramType);
-        return next;
+    protected String next() {
+        int data;
+        if (huge) {
+            data = random.nextInt(range) - random.nextInt(base);
+        } else {
+            data = random.nextInt(range) + base;
+        }
+        return Integer.toString(data);
+    }
+
+//    @Override
+//    public Object fetchNext() {
+//        int data;
+//        if (huge) {
+//            data = random.nextInt(range) + base;
+//        } else {
+//            data = random.nextInt(range) - random.nextInt(base);
+//        }
+//        String newData = value.replace(target, Integer.toString(data));
+//        Object next = convert(newData, paramType);
+//        return next;
+//    }
+
+    public static void main(String[] args) {
+        System.out.println(Integer.MIN_VALUE +245);
+        System.out.println((Integer.MIN_VALUE + 245) + Integer.MIN_VALUE);
     }
 }

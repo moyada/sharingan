@@ -8,6 +8,42 @@ import request from '../utils/request';
 const FormItem = Form.Item;
 moment.locale('zh-cn');
 
+const reportColumns = [{
+  title: '请求次数',
+  dataIndex: 'totalInvoke',
+}, {
+  title: '响应次数',
+  dataIndex: 'responseInvoke',
+}, {
+  title: '成功比率',
+  dataIndex: 'successRate',
+  render(data) {
+    var color = 'orange'
+    if(data === 1.0) {
+      color = 'green'
+    }
+    if(data === 0.0) {
+      color = 'red'
+    }
+    return <div style={{color: color}}> {data} </div>
+  }
+}, {
+  title: '最小耗时',
+  dataIndex: 'minResponseTime',
+}, {
+  title: '最大耗时',
+  dataIndex: 'maxResponseTime',
+}, {
+  title: '平均耗时',
+  dataIndex: 'avgResponseTime',
+}, {
+  title: '开始时间',
+  dataIndex: 'dateCreate',
+  render(data) {
+    return <div> {moment(data).format("YYYY-MM-DD HH:mm:ss")} </div>
+  }
+}];
+
 const columns = [{
   title: '请求参数',
   dataIndex: 'realArgs',
@@ -110,7 +146,7 @@ class ResultList extends React.Component {
     const payload = {fakerId: fakerId, pageIndex: pageIndex, pageSize: pageSize };
     this.setState({loading: true})
 
-    request('faker/getResult.json', payload)
+    request('api/getReport.json', {fakerId: fakerId})
       .then(({data, err}) => {
         if(err) {
           message.error(err)
@@ -118,28 +154,40 @@ class ResultList extends React.Component {
           return
         }
 
-        let dataSource = data.data.map(item =>
-          ({
-            key: item.id,
-            realArgs: item.realArgs,
-            code: item.code,
-            result: item.result,
-            errorMsg: item.errorMsg,
-            responseTime: item.responseTime,
-            invokeTime: item.invokeTime,
-          })
-        )
-
-        this.state.pagination.current = data.pageIndex
-        this.state.pagination.total = data.total
-
-        this.setState({
-          data: dataSource,
-          loading: false,
-          currentPageIndex: data.pageIndex,
-          currentPageSize: data.pageSize,
-        });
+        this.state.report = [data.data]
       })
+      .then(
+      request('api/getResult.json', payload)
+        .then(({data, err}) => {
+          if(err) {
+            message.error(err)
+            this.setState({loading: false})
+            return
+          }
+
+          let dataSource = data.data.map(item =>
+            ({
+              key: item.id,
+              realArgs: item.realArgs,
+              code: item.code,
+              result: item.result,
+              errorMsg: item.errorMsg,
+              responseTime: item.responseTime,
+              invokeTime: item.invokeTime,
+            })
+          )
+
+          this.state.pagination.current = data.pageIndex
+          this.state.pagination.total = data.total
+
+          this.setState({
+            data: dataSource,
+            loading: false,
+            currentPageIndex: data.pageIndex,
+            currentPageSize: data.pageSize,
+          });
+        })
+    )
   }
 
   handleSearch = (e) => {
@@ -191,6 +239,11 @@ class ResultList extends React.Component {
             </Col>
           </Row>
         </Form>
+        <Table
+          dataSource={this.state.report}
+          columns={reportColumns}
+          pagination={false}
+        />
         <Table
           loading={this.state.loading}
           dataSource={this.state.data}
