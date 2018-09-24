@@ -55,3 +55,15 @@ dubbo.password =
 * 数值表达式: 默认带有整数和浮点数的生成表达式，
 整数表达式: 可设置随机范围`#{int.开始-结束}`，或者无范围`#{int.random}`。
 浮点数表达式: 可设置随机范围`#{double[精度].开始-结束}`，或者无范围`#{double.random}`，对于`[精度]`设置可选，缺省为3。
+
+## 示例
+测试数据位于`schema`文件下的`test.sql`。
+
+![image](http://github.com/moyada/sharingan/raw/master/images/example_1.png)
+
+![image](http://github.com/moyada/sharingan/raw/master/images/example_2.png)
+
+![image](http://github.com/moyada/sharingan/raw/master/images/example_3.png)
+
+![image](http://github.com/moyada/sharingan/raw/master/images/example_4.png)
+ 
