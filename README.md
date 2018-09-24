@@ -59,11 +59,11 @@ dubbo.password =
 ## 示例
 测试数据位于`schema`文件下的`test.sql`。
 
-![image](http://github.com/moyada/sharingan/raw/master/images/example_1.png)
+![example_1](images/example_1.png)
 
-![image](http://github.com/moyada/sharingan/raw/master/images/example_2.png)
+![example_2](images/example_2.png)
 
-![image](http://github.com/moyada/sharingan/raw/master/images/example_3.png)
+![example_3](images/example_3.png)
 
-![image](http://github.com/moyada/sharingan/raw/master/images/example_4.png)
+![example_4](images/example_4.png)
  
