@@ -2,13 +2,15 @@ package cn.moyada.sharingan.module;
 
 import cn.moyada.sharingan.common.utils.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
  * @author xueyikang
  * @since 1.0
  **/
-@Component
+@Order(-1)
+@Component("mavenConfig")
 @ConfigurationProperties(prefix = "maven")
 public class MavenConfig {
 
