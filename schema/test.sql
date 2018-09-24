@@ -8,7 +8,11 @@ VALUES
 
 INSERT INTO `function_info` (`id`, `app_id`, `service_id`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`)
 VALUES
-	(1, 1, 1, 'cn.moyada.dubbo.test.api.UserService', 'getById', 'java.lang.Integer', 'cn.moyada.dubbo.test.api.UserInfo', '[\"${dubbo-test.id}\"]');
+	(1, 1, 1, 'cn.moyada.dubbo.test.api.UserService', 'getById', 'java.lang.Integer', 'cn.moyada.dubbo.test.api.UserInfo', '[\"${dubbo-test.id}\"]'),
+	(2, 1, 1, 'cn.moyada.dubbo.test.api.UserService', 'save', 'cn.moyada.dubbo.test.api.UserInfo', 'void', '[\"{\'userId\': \'#{int.random}\', \'nikeName\': \'test#{double[2].-50.5--20.50}\', \'age\': \'#{int.15-40}\', \'gender\': \'true\', \'phone\': \'+86 1537751317374\'}\"]'),
+	(3, 1, 1, 'cn.moyada.dubbo.test.api.UserService', 'queryAll', NULL, 'java.util.List', '[]'),
+	(4, 1, 1, 'cn.moyada.dubbo.test.api.UserService', 'queryByIds', 'java.util.List', 'java.util.List', '[\"[#{int.20-50}, #{int.20-50}, #{int.20-50}]\"]');
+
 
 INSERT INTO `invoke_param` (`app_id`, `domain`, `param_value`, `date_create`)
 VALUES

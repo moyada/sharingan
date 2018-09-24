@@ -30,6 +30,8 @@ public abstract class AbstractProvider implements ArgsProvider {
         this.convertType = ConvertUtil.getConvertType(paramType);
     }
 
+    protected abstract String next();
+
     /**
      * 根据参数类型转换
      * @return
@@ -39,7 +41,7 @@ public abstract class AbstractProvider implements ArgsProvider {
         T data;
         switch (convertType) {
             case LIST:
-                data = (T) JsonUtil.toList(value, paramType);
+                data = (T) JsonUtil.toList(value, Object.class);
                 break;
 //            case ARRAY:
 //                data = JsonUtil.toArray(json, paramType);

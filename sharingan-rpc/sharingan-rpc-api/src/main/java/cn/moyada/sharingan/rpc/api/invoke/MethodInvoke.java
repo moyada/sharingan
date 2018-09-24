@@ -58,7 +58,7 @@ public abstract class MethodInvoke implements Invoke {
                 }
             }
             else {
-                result = Result.success(methodHandle.invoke(invocation));
+                result = Result.success(methodHandle.invoke(instance));
             }
         } catch (Throwable throwable) {
             result = Result.failed(throwable.getMessage());
