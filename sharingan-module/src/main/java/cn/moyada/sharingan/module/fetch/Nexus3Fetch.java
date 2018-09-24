@@ -69,11 +69,17 @@ public class Nexus3Fetch implements DependencyFetch {
     @Override
     public String getJarUrl(Dependency dependency) {
         String lastDependency = getLastDependency(dependency);
+        if (null == lastDependency) {
+            return null;
+        }
         Assert buildAssert = buildAssert(lastDependency);
         if(null == buildAssert) {
             return null;
         }
         String jarAssert = getAssert(dependency, buildAssert);
+        if (null == jarAssert) {
+            return null;
+        }
         jarAssert = getJarUrl(jarAssert);
         if(null == jarAssert) {
             return null;

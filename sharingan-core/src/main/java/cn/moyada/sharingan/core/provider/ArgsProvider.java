@@ -10,4 +10,11 @@ public interface ArgsProvider {
      * @return
      */
     Object fetchNext();
+
+    /**
+     * 生成参数替换数据
+     * @param source
+     * @return
+     */
+    String replace(String source);
 }

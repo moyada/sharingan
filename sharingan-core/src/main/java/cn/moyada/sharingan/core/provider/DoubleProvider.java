@@ -11,29 +11,43 @@ import java.text.NumberFormat;
  **/
 public class DoubleProvider extends RandomProvider implements ArgsProvider {
 
-    private final String target;
+    private final boolean huge;
 
     private final NumberFormat format;
+
     private final double base;
     private final double range;
 
     public DoubleProvider(String value, Class<?> paramType, DoubleRange doubleRange) {
-        super(value, paramType);
-        this.target = doubleRange.getTarget();
-        this.base = doubleRange.getStart();
-        this.range = doubleRange.getEnd() - doubleRange.getStart();
+        super(value, paramType, doubleRange.getTarget());
 
         format = NumberFormat.getNumberInstance();
         format.setMaximumFractionDigits(doubleRange.getPrecision());
 
+        double top = doubleRange.getEnd() - doubleRange.getStart();
+        boolean huge = doubleRange.getEnd() >= 0;
+        huge = huge && top < 0;
+
+        if (huge) {
+            this.range = doubleRange.getEnd();
+            this.base = doubleRange.getStart();
+            this.huge = true;
+        }
+        else {
+            this.range = top;
+            this.base = doubleRange.getStart();
+            this.huge = false;
+        }
     }
 
     @Override
-    public Object fetchNext() {
-        Double data = random.nextDouble() * range + base;
-        String format = this.format.format(data);
-        String newData = value.replace(target, format);
-        Object next = convert(newData, paramType);
-        return next;
+    protected String next() {
+        double data;
+        if (huge) {
+            data = random.nextDouble() * range - random.nextDouble() * base;
+        } else {
+            data = random.nextDouble() * range + base;
+        }
+        return format.format(data);
     }
 }
