@@ -2,11 +2,16 @@ package cn.moyada.sharingan.common.support;
 
 
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.MimeTypeUtils;
@@ -25,6 +30,14 @@ public class SimpleHttpClient {
 
     public SimpleHttpClient() {
         this.instance = HttpClientBuilder.create().build();
+    }
+
+    public SimpleHttpClient(String userName, String password) {
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        Credentials credentials = new UsernamePasswordCredentials(userName, password);
+        credentialsProvider.setCredentials(AuthScope.ANY, credentials);
+
+        this.instance = HttpClientBuilder.create().setDefaultCredentialsProvider(credentialsProvider).build();
     }
 
     /**

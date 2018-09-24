@@ -8,7 +8,8 @@ import cn.moyada.sharingan.common.utils.JsonUtil;
 import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.module.Assert;
 import cn.moyada.sharingan.module.Dependency;
-import org.springframework.beans.factory.annotation.Value;
+import cn.moyada.sharingan.module.MavenConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,6 +22,9 @@ import java.util.Map;
  */
 @Component
 public class Nexus3Fetch implements DependencyFetch {
+
+    @Autowired
+    private MavenConfig mavenConfig;
 
     private final SimpleHttpClient httpClient;
 
@@ -44,7 +48,8 @@ public class Nexus3Fetch implements DependencyFetch {
             "{\"property\":\"componentVersion\",\"value\":\"%s\"}" +
             "]}],\"type\":\"rpc\",\"tid\":0}]";
 
-    public Nexus3Fetch(@Value("${maven.host}") String host) {
+    public Nexus3Fetch() {
+        String host = mavenConfig.getHost();
         if (StringUtil.isEmpty(host)) {
             throw new NullPointerException("cannot find maven.host properties.");
         }
@@ -52,13 +57,19 @@ public class Nexus3Fetch implements DependencyFetch {
             throw new InitializeInvokerException("maven.host must use http or https protocol.");
         }
 
-        if(!host.endsWith("/")) {
+        if (!host.endsWith("/")) {
             host = host + "/";
         }
 
         this.DOWNLOAD_URL = host + "repository/";
         this.MAVEN_URL = host + "service/extdirect";
-        this.httpClient = new SimpleHttpClient();
+
+        if (mavenConfig.isCredential()) {
+            this.httpClient = new SimpleHttpClient(mavenConfig.getUsername(), mavenConfig.getPassword());
+        }
+        else {
+            this.httpClient = new SimpleHttpClient();
+        }
     }
 
     /**
@@ -73,7 +84,7 @@ public class Nexus3Fetch implements DependencyFetch {
             return null;
         }
         Assert buildAssert = buildAssert(lastDependency);
-        if(null == buildAssert) {
+        if (null == buildAssert) {
             return null;
         }
         String jarAssert = getAssert(dependency, buildAssert);
@@ -81,7 +92,7 @@ public class Nexus3Fetch implements DependencyFetch {
             return null;
         }
         jarAssert = getJarUrl(jarAssert);
-        if(null == jarAssert) {
+        if (null == jarAssert) {
             return null;
         }
         return DOWNLOAD_URL + buildAssert.getRepositoryName() + "/" + jarAssert;
@@ -95,12 +106,12 @@ public class Nexus3Fetch implements DependencyFetch {
     @SuppressWarnings("unchecked")
     private static String getJarUrl(String str) {
         Map<String, Object> response = JsonUtil.toMap(str, String.class, Object.class);
-        if(null == response || !response.containsKey("result")) {
+        if (null == response || !response.containsKey("result")) {
             return null;
         }
         Map<String, Object> result = (Map<String, Object>) response.get("result");
         List<Object> data = (List<Object>) result.get("data");
-        if(null == data || data.isEmpty()) {
+        if (null == data || data.isEmpty()) {
             return null;
         }
         Object name;
@@ -108,11 +119,11 @@ public class Nexus3Fetch implements DependencyFetch {
         for(Object obj : data) {
             result = (Map<String, Object>) obj;
             name = result.get("name");
-            if(null == name) {
+            if (null == name) {
                 continue;
             }
             jarName = name.toString();
-            if(jarName.endsWith(".jar") && !jarName.endsWith("sources.jar")) {
+            if (jarName.endsWith(".jar") && !jarName.endsWith("sources.jar")) {
                 return jarName;
             }
         }
@@ -148,12 +159,12 @@ public class Nexus3Fetch implements DependencyFetch {
     @SuppressWarnings("unchecked")
     private Assert buildAssert(String str) {
         Map<String, Object> response = JsonUtil.toMap(str, String.class, Object.class);
-        if(null == response || !response.containsKey("result")) {
+        if (null == response || !response.containsKey("result")) {
             return null;
         }
         Map<String, Object> result = (Map<String, Object>) response.get("result");
         List<Object> data = (List<Object>) result.get("data");
-        if(null == data || data.isEmpty()) {
+        if (null == data || data.isEmpty()) {
             return null;
         }
         result = (Map<String, Object>) data.get(0);
@@ -171,7 +182,7 @@ public class Nexus3Fetch implements DependencyFetch {
      */
     private String listQuest(Dependency dependency) {
         String version = dependency.getVersion();
-        if(null == version) {
+        if (null == version) {
             version = "null";
         }
         // 指定版本号
@@ -199,13 +210,13 @@ public class Nexus3Fetch implements DependencyFetch {
                 assertInfo.getComponentVersion());
     }
 
-    public static void main(String[] args) {
-        DependencyFetch dependencyFetch = new Nexus3Fetch("http://127.0.0.1:8081");
-
-        Dependency dependency = new Dependency();
-        dependency.setGroupId("cn.moyada");
-        dependency.setArtifactId("dubbo-test-api");
-        String url = dependencyFetch.getJarUrl(dependency);
-        System.out.println(url);
-    }
+//    public static void main(String[] args) {
+//        DependencyFetch dependencyFetch = new Nexus3Fetch("http://127.0.0.1:8081");
+//
+//        Dependency dependency = new Dependency();
+//        dependency.setGroupId("cn.moyada");
+//        dependency.setArtifactId("dubbo-test-api");
+//        String url = dependencyFetch.getJarUrl(dependency);
+//        System.out.println(url);
+//    }
 }
