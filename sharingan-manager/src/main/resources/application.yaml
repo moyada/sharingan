@@ -1,0 +1,20 @@
+project:
+  name: Sharingan
+
+server:
+  port: 8080
+
+logging:
+  config: classpath:log4j2.xml
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  #  config-location: classpath*:mybatis-config.xml
+  mapper-locations: classpath*:sqlmaps/*.xml
+  type-aliases-package: cn.moyada.sharingan.storage.api.domain
+  configuration:
+    use-column-label: true
