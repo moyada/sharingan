@@ -6,6 +6,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
+ * maven仓库配置
  * @author xueyikang
  * @since 1.0
  **/
@@ -14,10 +15,19 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "maven")
 public class MavenConfig {
 
+    /**
+     * 协议+域名+端口
+     */
     private String host;
 
+    /**
+     * 账户名
+     */
     private String username;
 
+    /**
+     * 密码
+     */
     private String password;
 
     public boolean isCredential() {

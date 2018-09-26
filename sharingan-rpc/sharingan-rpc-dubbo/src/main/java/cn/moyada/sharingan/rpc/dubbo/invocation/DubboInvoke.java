@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct;
 /**
  * dubbo协议调用器
  */
-@Component("dubbo")
+@Component("dubboInvoke")
 public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, InvokeProxy {
 
     @Autowired
@@ -62,7 +62,7 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
     }
 
     @Override
-    public void initialization(InvocationMetaDate metaDate) throws InstanceNotFountException {
+    public void initialize(InvocationMetaDate metaDate) throws InstanceNotFountException {
         this.methodHandle = metaDate.getMethodHandle();
 
         ReferenceConfig<?> reference = new ReferenceConfig<>(); // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏

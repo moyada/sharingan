@@ -5,7 +5,7 @@ import cn.moyada.sharingan.core.support.DoubleRange;
 import java.text.NumberFormat;
 
 /**
- * 随机数值提供器
+ * 浮点数提供器
  * @author xueyikang
  * @since 1.0
  **/
@@ -13,9 +13,13 @@ public class DoubleProvider extends RandomProvider implements ArgsProvider {
 
     private final boolean huge;
 
+    // 精度
     private final NumberFormat format;
 
+    // 基数
     private final double base;
+
+    // 范围
     private final double range;
 
     public DoubleProvider(String value, Class<?> paramType, DoubleRange doubleRange) {
@@ -26,6 +30,7 @@ public class DoubleProvider extends RandomProvider implements ArgsProvider {
 
         double top = doubleRange.getEnd() - doubleRange.getStart();
         boolean huge = doubleRange.getEnd() >= 0;
+        // 当上限-下限发生溢出时
         huge = huge && top < 0;
 
         if (huge) {

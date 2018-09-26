@@ -13,18 +13,28 @@ public class RandomReplaceProvider extends ReplacementProvider implements ArgsPr
 
     private static final int DEFAULT_THRESHOLD = 1000;
 
+    // 参数数据
     private final ArgsRepository argsRepository;
 
-    private final int threshold;
-    private final IndexProvider indexProvider;
-
-    private List<String> paramData;
-
+    // 项目编号
     private final int appId;
+    // 数据领域
     private final String paramDomain;
 
+    // 备选数据
+    private List<String> paramData;
+
+    // 数据总数
     private final int total;
+
+    // 数据刷新值
+    private final int threshold;
+
+    // 次数
     private int time;
+
+    // 下标提供器
+    private final IndexProvider indexProvider;
 
     public RandomReplaceProvider(String value, Class<?> paramType,
                                  RouteInfo routeInfo, ArgsRepository argsRepository, boolean isRandom) {
@@ -41,19 +51,25 @@ public class RandomReplaceProvider extends ReplacementProvider implements ArgsPr
         }
         this.total = total;
         this.time = 0;
-
         this.threshold = (int) ((total > DEFAULT_THRESHOLD ? DEFAULT_THRESHOLD : total) * 0.7);
+
         this.indexProvider = isRandom ? new RandomIndexProvider(threshold) : new OrderIndexProvider(threshold);
     }
 
     @Override
     protected String next() {
-        if (time > threshold || null == paramData) {
-            this.paramData = argsRepository.findRandomInvocationArgs(appId, paramDomain, total, threshold);
-        }
+        fresh();
         int index = indexProvider.nextIndex();
         String data = paramData.get(index);
         time++;
         return data;
+    }
+
+    private void fresh() {
+        if (time < threshold && null != paramData) {
+            return;
+        }
+        this.paramData = argsRepository.findRandomInvocationArgs(appId, paramDomain, total, threshold);
+        this.time = 0;
     }
 }

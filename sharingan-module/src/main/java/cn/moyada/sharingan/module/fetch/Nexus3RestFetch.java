@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 获取nexus下最近jar包
+ * jar包依赖获取器
+ * 使用nexus 3 REST API
  * @author xueyikang
  * @create 2018-04-27 15:00
  */
@@ -76,7 +77,8 @@ public class Nexus3RestFetch implements DependencyFetch {
      * @return
      */
     private String listQuest(Dependency dependency) {
-        StringBuilder url = new StringBuilder(DOWNLOAD_URL);
+        StringBuilder url = new StringBuilder(255);
+        url.append(DOWNLOAD_URL);
 
         url.append("maven.groupId=").append(dependency.getGroupId());
         url.append("&maven.artifactId=").append(dependency.getArtifactId());

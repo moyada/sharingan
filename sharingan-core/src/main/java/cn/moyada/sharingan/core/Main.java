@@ -69,7 +69,7 @@ public class Main {
 
         InvokeProxy invokeProxy = rpcInvokeProxy.getInvoke(environment.getProtocol());
         InvocationMetaDate invocationMetaDate = getMetaDate(invokeMetaData);
-        invokeProxy.initialization(invocationMetaDate);
+        invokeProxy.initialize(invocationMetaDate);
 
         JobExecutor action = new DefaultExecutor(fakerId, questInfo.getPoolSize(), questInfo.getQuestNum());
         TaskExecutor taskActivity = new TaskExecutor(invokeProxy, listener, action, container);

@@ -23,7 +23,7 @@ public class RpcInvokeProxy implements ApplicationContextAware {
      * @return
      */
     public InvokeProxy getInvoke(String protocol) {
-        InvokeProxy invokeProxy = applicationContext.getBean(protocol, InvokeProxy.class);
+        InvokeProxy invokeProxy = applicationContext.getBean(protocol.concat("Invoke").intern(), InvokeProxy.class);
         AssertUtil.checkoutNotNull(invokeProxy, "cannot find InvokeProxy by " + protocol);
         return invokeProxy;
     }

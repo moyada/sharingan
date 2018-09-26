@@ -3,7 +3,7 @@ package cn.moyada.sharingan.core.provider;
 import cn.moyada.sharingan.core.support.IntRange;
 
 /**
- * 随机数值提供器
+ * 整数提供器
  * @author xueyikang
  * @since 1.0
  **/
@@ -11,8 +11,10 @@ public class IntProvider extends RandomProvider implements ArgsProvider {
 
     private final boolean huge;
 
+    // 基数
     private final int base;
 
+    // 范围
     private final int range;
 
     public IntProvider(String value, Class<?> paramType, IntRange intRange) {
@@ -20,6 +22,7 @@ public class IntProvider extends RandomProvider implements ArgsProvider {
 
         int top = intRange.getEnd() - intRange.getStart();
         boolean huge = intRange.getEnd() >= 0;
+        // 当上限-下限发生溢出时
         huge = huge && top < 0;
 
         if (huge) {
