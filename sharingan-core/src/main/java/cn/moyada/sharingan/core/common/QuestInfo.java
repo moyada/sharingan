@@ -16,7 +16,17 @@ public class QuestInfo implements Serializable {
     /**
      * 调用方法编号
      */
-    private Integer funcId;
+    private Integer appId;
+
+    /**
+     * 调用方法编号
+     */
+    private Integer serviceId;
+
+    /**
+     * 调用方法编号
+     */
+    private Integer invokeId;
 
     /**
      * 参数表达式
@@ -58,7 +68,15 @@ public class QuestInfo implements Serializable {
      * @return
      */
     public String checkIllegal() {
-        if (null == funcId) {
+        if (null == appId) {
+            return "调用应用不能为空";
+        }
+
+        if (null == serviceId) {
+            return "调用服务不能为空";
+        }
+
+        if (null == invokeId) {
             return "调用方法不能为空";
         }
 
@@ -79,12 +97,28 @@ public class QuestInfo implements Serializable {
         return null;
     }
 
-    public Integer getFuncId() {
-        return funcId;
+    public Integer getAppId() {
+        return appId;
     }
 
-    public void setFuncId(Integer funcId) {
-        this.funcId = funcId;
+    public void setAppId(Integer appId) {
+        this.appId = appId;
+    }
+
+    public Integer getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Integer serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public Integer getInvokeId() {
+        return invokeId;
+    }
+
+    public void setInvokeId(Integer invokeId) {
+        this.invokeId = invokeId;
     }
 
     public String getExpression() {

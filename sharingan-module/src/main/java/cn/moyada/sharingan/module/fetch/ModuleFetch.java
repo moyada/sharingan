@@ -41,6 +41,9 @@ public class ModuleFetch implements ApplicationContextAware, MetadataFetch, Clas
 
     @Override
     public void checkout(Dependency dependency) {
+        if (null == dependency) {
+            return;
+        }
         AppClassLoader classLoader = getClassLoader(dependency);
         if(null == classLoader) {
             return;

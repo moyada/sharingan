@@ -1,6 +1,7 @@
 package cn.moyada.sharingan.rpc.dubbo.invocation;
 
 import cn.moyada.sharingan.common.exception.InstanceNotFountException;
+import cn.moyada.sharingan.common.task.DestroyTask;
 import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.rpc.api.config.DefaultConfig;
 import cn.moyada.sharingan.rpc.api.invoke.AsyncInvoke;
@@ -20,8 +21,11 @@ import javax.annotation.PostConstruct;
 /**
  * dubbo协议调用器
  */
-@Component("dubbo")
+@Component("dubboInvoke")
 public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, InvokeProxy {
+
+    @Autowired
+    private DestroyTask destroyTask;
 
     @Autowired
     private DubboConfig dubboConfig;
@@ -36,6 +40,7 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
     @PostConstruct
     public void initConfig() {
         if (StringUtil.isEmpty(dubboConfig.getRegistry())) {
+            destroyTask.addDestroyBean("dubboInvoke");
             return;
         }
 
@@ -62,14 +67,16 @@ public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, Invok
     }
 
     @Override
-    public void initialization(InvocationMetaDate metaDate) throws InstanceNotFountException {
-        this.methodHandle = metaDate.getMethodHandle();
+    public void initialize(InvocationMetaDate metaDate) throws InstanceNotFountException {
+        InvocationMetaDate.ClassInfo classInfo = metaDate.getClassInfo();
+
+        this.methodHandle = classInfo.getMethodHandle();
 
         ReferenceConfig<?> reference = new ReferenceConfig<>(); // 此实例很重，封装了与注册中心的连接以及与提供者的连接，请自行缓存，否则可能造成内存和连接泄漏
         reference.setApplication(config);
         reference.setConsumer(consumer);
         reference.setRegistry(registry); // 多个注册中心可以用setRegistries()
-        reference.setInterface(metaDate.getService());
+        reference.setInterface(classInfo.getServiceClass());
 
         try {
             this.instance = reference.get();

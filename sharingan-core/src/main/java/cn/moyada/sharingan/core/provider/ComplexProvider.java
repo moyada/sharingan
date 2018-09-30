@@ -1,6 +1,7 @@
 package cn.moyada.sharingan.core.provider;
 
 /**
+ * 复合提供器
  * @author xueyikang
  * @since 1.0
  **/

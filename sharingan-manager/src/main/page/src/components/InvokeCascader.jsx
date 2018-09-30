@@ -58,10 +58,10 @@ class InvokeCascader extends React.Component {
             if(err) {
               return new Error(err);
             }
-            const children = data.data.map(({id, methodName, paramType, returnType, expression}) =>
+            const children = data.data.map(({key, value}) =>
               ({
-                value: id + `-` + expression,
-                label: methodName + `, ` + paramType + `, ` + returnType,
+                value: key,
+                label: value,
                 children: null,
                 isLeaf: true,
                 type: 'method'

@@ -2,12 +2,13 @@ package cn.moyada.sharingan.module.fetch;
 
 
 import cn.moyada.sharingan.common.enums.HttpScheme;
-import cn.moyada.sharingan.common.exception.InitializeInvokerException;
 import cn.moyada.sharingan.common.support.SimpleHttpClient;
 import cn.moyada.sharingan.common.utils.JsonUtil;
 import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.MavenConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
@@ -16,13 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 获取nexus下最近jar包
+ * jar包依赖获取器
+ * 使用nexus 3 REST API
  * @author xueyikang
  * @create 2018-04-27 15:00
  */
 @DependsOn("mavenConfig")
 @Component
 public class Nexus3RestFetch implements DependencyFetch {
+    private static final Logger logger = LogManager.getLogger(Nexus3RestFetch.class);
 
     private final SimpleHttpClient httpClient;
 
@@ -31,10 +34,16 @@ public class Nexus3RestFetch implements DependencyFetch {
     public Nexus3RestFetch(@Autowired MavenConfig mavenConfig) {
         String host = mavenConfig.getHost();
         if (StringUtil.isEmpty(host)) {
-            throw new NullPointerException("cannot find maven.host properties.");
+            logger.error("Nexus3RestFetch init error, because cannot find maven.host properties.");
+            this.httpClient = null;
+            this.DOWNLOAD_URL = null;
+            return;
         }
         if (!HttpScheme.checkout(host)) {
-            throw new InitializeInvokerException("maven.host must use http or https protocol.");
+            logger.error("Nexus3RestFetch init error, maven.host must use http or https protocol.");
+            this.httpClient = null;
+            this.DOWNLOAD_URL = null;
+            return;
         }
 
         if(!host.endsWith("/")) {
@@ -42,7 +51,6 @@ public class Nexus3RestFetch implements DependencyFetch {
         }
 
         this.DOWNLOAD_URL = host + "service/rest/beta/search/assets?";
-//        this.DOWNLOAD_URL = host + "service/rest/beta/search/assets/download?";
 
         if (mavenConfig.isCredential()) {
             this.httpClient = new SimpleHttpClient(mavenConfig.getUsername(), mavenConfig.getPassword());
@@ -76,7 +84,8 @@ public class Nexus3RestFetch implements DependencyFetch {
      * @return
      */
     private String listQuest(Dependency dependency) {
-        StringBuilder url = new StringBuilder(DOWNLOAD_URL);
+        StringBuilder url = new StringBuilder(255);
+        url.append(DOWNLOAD_URL);
 
         url.append("maven.groupId=").append(dependency.getGroupId());
         url.append("&maven.artifactId=").append(dependency.getArtifactId());

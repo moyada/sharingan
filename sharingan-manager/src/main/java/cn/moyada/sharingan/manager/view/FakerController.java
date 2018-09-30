@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,7 +52,9 @@ public class FakerController {
     private volatile boolean running = false;
 
     @RequestMapping(value = "/invoke.json", method = {RequestMethod.GET, RequestMethod.POST})
-    public Result invoke(@RequestParam("invokeId") int invokeId,
+    public Result invoke(@RequestParam("appId") int appId,
+                         @RequestParam("serviceId") int serviceId,
+                         @RequestParam("invokeId") int invokeId,
                          @RequestParam("expression") String expression,
 //                         @RequestParam(value = "poolSize", required = false) Integer poolSize,
                          @RequestParam(value = "qps", required = false) Integer qps,
@@ -63,7 +66,9 @@ public class FakerController {
             return Result.failed(401, "已有任务进行中.");
         }
         QuestInfo questInfo = new QuestInfo();
-        questInfo.setFuncId(invokeId);
+        questInfo.setAppId(appId);
+        questInfo.setServiceId(serviceId);
+        questInfo.setInvokeId(invokeId);
         questInfo.setExpression(expression);
         questInfo.setQps(qps);
         questInfo.setQuestNum(total);
@@ -118,19 +123,37 @@ public class FakerController {
             return Result.failed(500, e.getMessage());
         }
         return Result.success(services.stream()
-                .map(c -> new SelectVO(c.getId().toString(), c.getName()))
+                .map(c -> new SelectVO(c.getId().toString(), c.getName() + " [" + c.getProtocol() + "]"))
                 .collect(Collectors.toList()));
     }
 
     @RequestMapping(value = "/getMethodByService.json", method = RequestMethod.GET)
     public Result getMethodByClass(@RequestParam("serviceId") int serviceId) {
         List<FunctionDO> functions;
+        List<HttpDO> https;
         try {
             functions = metadataRepository.findFunctionByService(serviceId);
+            https = metadataRepository.findHttpByService(serviceId);
         } catch (Exception e) {
             return Result.failed(500, e.getMessage());
         }
-        return Result.success(functions);
+
+        List<SelectVO> list = new ArrayList<>();
+        if (!functions.isEmpty()) {
+        list.addAll(functions.stream()
+                .map(c -> new SelectVO(c.getId().toString() + "-" + c.getExpression(),
+                        c.getMethodName() + ", " + c.getParamType() + "," + c.getReturnType()))
+                .collect(Collectors.toList()));
+        }
+
+        if (!https.isEmpty()) {
+        list.addAll(https.stream()
+                .map(c -> new SelectVO(c.getId().toString() + "-" + c.getExpression(),
+                        c.getMethodType() + " " + c.getMethodName() + " [" + c.getParam() + "], [" + c.getHeader() + "]"))
+                .collect(Collectors.toList()));
+        }
+
+        return Result.success(list);
     }
 
     @RequestMapping(value = "/getReport.json", method = RequestMethod.GET)

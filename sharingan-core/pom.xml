@@ -36,12 +36,12 @@
 
         <dependency>
             <groupId>cn.moyada</groupId>
-            <artifactId>sharingan-rpc-dubbo</artifactId>
+            <artifactId>sharingan-rpc-springcloud</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>cn.moyada</groupId>
+            <artifactId>sharingan-rpc-dubbo</artifactId>
         </dependency>
     </dependencies>
 </project>

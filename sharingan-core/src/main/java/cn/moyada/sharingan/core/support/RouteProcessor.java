@@ -62,7 +62,6 @@ public class RouteProcessor {
         if (null == expression) {
             return null;
         }
-
         return RegexUtil.findDoubleRange(expression);
     }
 }

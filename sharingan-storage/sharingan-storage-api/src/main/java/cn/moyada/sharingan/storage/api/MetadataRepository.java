@@ -2,6 +2,7 @@ package cn.moyada.sharingan.storage.api;
 
 import cn.moyada.sharingan.storage.api.domain.AppDO;
 import cn.moyada.sharingan.storage.api.domain.FunctionDO;
+import cn.moyada.sharingan.storage.api.domain.HttpDO;
 import cn.moyada.sharingan.storage.api.domain.ServiceDO;
 
 import java.util.List;
@@ -65,4 +66,18 @@ public interface MetadataRepository {
      * @return
      */
     FunctionDO findFunctionById(int funId);
+
+    /**
+     * 通过服务编号获取http请求信息
+     * @param serviceId 服务id
+     * @return
+     */
+    List<HttpDO> findHttpByService(int serviceId);
+
+    /**
+     * 获取http请求信息
+     * @param methodId 方法id
+     * @return
+     */
+    HttpDO findHttpById(int methodId);
 }

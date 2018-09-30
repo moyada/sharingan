@@ -2,6 +2,7 @@ package cn.moyada.sharingan.core.common;
 
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.InvokeMetaData;
+import cn.moyada.sharingan.rpc.api.invoke.InvocationMetaDate;
 
 /**
  * 调用任务上下文
@@ -18,15 +19,30 @@ public class InvokeContext {
      */
     private Integer appId;
 
+//    /**
+//     * 应用名
+//     */
+//    private String appName;
+
     /**
      * 服务编号
      */
     private Integer serviceId;
 
+//    /**
+//     * 服务名
+//     */
+//    private String serviceName;
+
     /**
      * 方法编号
      */
     private Integer funcId;
+
+//    /**
+//     * 方法名
+//     */
+//    private String methodName;
 
     /**
      * 参数表达式
@@ -47,6 +63,8 @@ public class InvokeContext {
      * 请求方法信息
      */
     private InvokeMetaData invokeMetaData;
+
+    private InvocationMetaDate invocationMetaDate;
 
     public String getFakerId() {
         return fakerId;
@@ -110,5 +128,13 @@ public class InvokeContext {
 
     public void setInvokeMetaData(InvokeMetaData invokeMetaData) {
         this.invokeMetaData = invokeMetaData;
+    }
+
+    public InvocationMetaDate getInvocationMetaDate() {
+        return invocationMetaDate;
+    }
+
+    public void setInvocationMetaDate(InvocationMetaDate invocationMetaDate) {
+        this.invocationMetaDate = invocationMetaDate;
     }
 }

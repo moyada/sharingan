@@ -14,5 +14,5 @@ public interface InvokeProxy extends AsyncInvoke {
      * @param metaDate
      * @throws InstanceNotFountException
      */
-    void initialization(InvocationMetaDate metaDate) throws InstanceNotFountException;
+    void initialize(InvocationMetaDate metaDate) throws InstanceNotFountException;
 }

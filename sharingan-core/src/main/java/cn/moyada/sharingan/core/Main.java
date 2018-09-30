@@ -56,6 +56,7 @@ public class Main {
         questInfo.setPoolSize(RuntimeUtil.getMaxPoolSize());
 
         InvokeContext environment = environmentFactory.getEnv(questInfo);
+
         InvokeMetaData invokeMetaData = environment.getInvokeMetaData();
 
         classLoaderSwitcher.checkout(environment.getDependency());
@@ -68,8 +69,8 @@ public class Main {
         ArgsProviderContainer container = providerFactory.genArgsProvider(environment.getExpression(), invokeMetaData.getParamTypes(), questInfo.isRandom());
 
         InvokeProxy invokeProxy = rpcInvokeProxy.getInvoke(environment.getProtocol());
-        InvocationMetaDate invocationMetaDate = getMetaDate(invokeMetaData);
-        invokeProxy.initialization(invocationMetaDate);
+        InvocationMetaDate invocationMetaDate = environment.getInvocationMetaDate();
+        invokeProxy.initialize(invocationMetaDate);
 
         JobExecutor action = new DefaultExecutor(fakerId, questInfo.getPoolSize(), questInfo.getQuestNum());
         TaskExecutor taskActivity = new TaskExecutor(invokeProxy, listener, action, container);
@@ -85,13 +86,6 @@ public class Main {
         classLoaderSwitcher.recover();
         log.info("task done. fakerId: " + fakerId);
         return "请求结果序号：" + fakerId;
-    }
-
-    private InvocationMetaDate getMetaDate(InvokeMetaData invokeMetaData) {
-        InvocationMetaDate invocationMetaDate = new InvocationMetaDate();
-        invocationMetaDate.setService(invokeMetaData.getClassType());
-        invocationMetaDate.setMethodHandle(invokeMetaData.getMethodHandle());
-        return invocationMetaDate;
     }
 
     private void saveReport(String fakerId, int appId, int serviceId, int funcId,
