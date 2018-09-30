@@ -12,14 +12,14 @@ sharingan 是用来快速检测回归RPC服务`可用性`的Java工程。
 * 参数表达式，根据配置规则动态生成请求参数。
   例如，领域数据表达式: `${test.data}`、随机整数表达式: `#{int.random}`、范围浮点数表达式: `#{double[3].-50.5-300.8}`
 
-* rpc协议支持，目前支持[dubbo](https://github.com/apache/incubator-dubbo)，计划加入协议`Spring Cloud`、`Sofa`、`Istio`。
+* rpc协议支持，目前支持[Dubbo](http://dubbo.apache.org/)、[Spring Cloud](http://projects.spring.io/spring-cloud/)。
 
 * 监听项目接口调用，对运行项目引入agent，生成项目领域数据，将请求的数据保存用于参数表达式使用。(开发中)
 
 
 ## 快速开始
 
-1. 项目需要`jdk1.8`以上版本，通过[这里](https://github.com/moyada/sharingan/releases) 下载 sharingan-manager 压缩包进行解压。
+1. 项目需要`jdk1.8`以上版本，通过[这里](https://github.com/moyada/sharingan/releases)下载 sharingan-manager 压缩包进行解压。
 
 2. 初始化mysql数据库，执行`schema`文件下的`info.sql`和`invoke.sql`。
 
@@ -30,9 +30,12 @@ sharingan 是用来快速检测回归RPC服务`可用性`的Java工程。
 maven.host = http://127.0.0.1:8081
 
 # mysql连接信息
-spring.datasource.url = jdbc:mysql://127.0.0.1:3306/sharingan?useUnicode=true&amp&characterEncoding=UTF-8&useSSL=false
+spring.datasource.url = jdbc:mysql://127.0.0.1:3306/sharingan?useSSL=false&useUnicode=true&amp&characterEncoding=UTF-8
 spring.datasource.username = root
 spring.datasource.password = root
+
+# SpringCloud 注册地址
+eureka.client.serviceUrl.defaultZone = http://127.0.0.1:8761
 
 # dubbo注册中心
 dubbo.registry = zookeeper://127.0.0.1:2181
@@ -59,11 +62,14 @@ dubbo.password =
 ## 示例
 测试数据位于`schema`文件下的`test.sql`。
 
+### 常量
 ![example_1](images/example_1.png)
 
+### 领域表达式
 ![example_2](images/example_2.png)
 
-![example_3](images/example_3.png)
+### 数值表达式
+![example_4](images/example_3.png)
 
-![example_4](images/example_4.png)
- 
+### 复合表达式
+![example_3](images/example_4.png)
