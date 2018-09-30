@@ -15,5 +15,6 @@
     <modules>
         <module>sharingan-rpc-dubbo</module>
         <module>sharingan-rpc-api</module>
+        <module>sharingan-rpc-springcloud</module>
     </modules>
 </project>

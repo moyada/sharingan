@@ -7,9 +7,13 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableWebMvc
+@EnableDiscoveryClient
+@EnableFeignClients
 @ImportAutoConfiguration(WebConfig.class)
 @MapperScan(basePackages = "cn.moyada.sharingan.storage.mysql.dao")
 @SpringBootApplication

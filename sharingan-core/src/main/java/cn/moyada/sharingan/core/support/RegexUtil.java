@@ -1,5 +1,6 @@
 package cn.moyada.sharingan.core.support;
 
+import cn.moyada.sharingan.common.constant.NumberConstant;
 import cn.moyada.sharingan.common.utils.NumberUtil;
 
 import java.util.regex.Matcher;
@@ -150,7 +151,7 @@ public class RegexUtil {
 
         // 是否为随机策略
         if (expression.contains(RANDOM)) {
-            return new DoubleRange(expression, precision, Double.MIN_VALUE, Double.MAX_VALUE);
+            return new DoubleRange(expression, precision, NumberConstant.SMALL_DOUBLE, NumberConstant.BIG_DOUBLE);
         }
 
         String find;
@@ -190,13 +191,5 @@ public class RegexUtil {
         }
 
         return new DoubleRange(expression, precision, start, end);
-    }
-
-    public static void main(String[] args) {
-        String str = "[2132321]";
-        System.out.println(str.indexOf('['));
-        System.out.println(str.indexOf(']'));
-        System.out.println(str.length());
-        System.out.println(str.substring(0, 8));
     }
 }

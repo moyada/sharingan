@@ -193,10 +193,6 @@ public class JsonUtil {
         }
     }
 
-    public static void main(String[] args) throws ParseException {
-        System.out.println(DATE_FORMAT.parse("2018-12-12 12:00:00"));
-        System.out.println(DATE_FORMAT.parse("\"2018-12-12 12:00:00\""));
-    }
     public static <C> C[] toArray(String json, Class<C[]> clazz) {
         C[] array;
         try {

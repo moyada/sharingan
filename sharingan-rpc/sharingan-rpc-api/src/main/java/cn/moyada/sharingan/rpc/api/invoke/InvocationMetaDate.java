@@ -8,28 +8,134 @@ import java.lang.invoke.MethodHandle;
 public class InvocationMetaDate {
 
     /**
-     * 服务接口类型
+     * 服务名
      */
-    private Class service;
+    private String applicationName;
 
     /**
-     * 调用句柄
+     * 服务名
      */
-    private MethodHandle methodHandle;
+    private String serviceName;
 
-    public Class getService() {
-        return service;
+    /**
+     * 方法名
+     */
+    private String methodName;
+
+    private ClassInfo classInfo;
+
+    private HttpInfo httpInfo;
+
+    public static class ClassInfo {
+
+        /**
+         * 服务接口类型
+         */
+        private Class serviceClass;
+
+        /**
+         * 调用句柄
+         */
+        private MethodHandle methodHandle;
+
+        public Class getServiceClass() {
+            return serviceClass;
+        }
+
+        public void setServiceClass(Class serviceClass) {
+            this.serviceClass = serviceClass;
+        }
+
+        public MethodHandle getMethodHandle() {
+            return methodHandle;
+        }
+
+        public void setMethodHandle(MethodHandle methodHandle) {
+            this.methodHandle = methodHandle;
+        }
     }
 
-    public void setService(Class service) {
-        this.service = service;
+    public static class HttpInfo {
+
+        /**
+         * http请求类型
+         */
+        private String httpType;
+
+        /**
+         * 头信息
+         */
+        private String[] header;
+
+
+        /**
+         * 参数名
+         */
+        private String[] param;
+
+        public String getHttpType() {
+            return httpType;
+        }
+
+        public void setHttpType(String httpType) {
+            this.httpType = httpType;
+        }
+
+        public String[] getHeader() {
+            return header;
+        }
+
+        public void setHeader(String[] header) {
+            this.header = header;
+        }
+
+        public String[] getParam() {
+            return param;
+        }
+
+        public void setParam(String[] param) {
+            this.param = param;
+        }
     }
 
-    public MethodHandle getMethodHandle() {
-        return methodHandle;
+
+    public String getApplicationName() {
+        return applicationName;
     }
 
-    public void setMethodHandle(MethodHandle methodHandle) {
-        this.methodHandle = methodHandle;
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public ClassInfo getClassInfo() {
+        return classInfo;
+    }
+
+    public void setClassInfo(ClassInfo classInfo) {
+        this.classInfo = classInfo;
+    }
+
+    public HttpInfo getHttpInfo() {
+        return httpInfo;
+    }
+
+    public void setHttpInfo(HttpInfo httpInfo) {
+        this.httpInfo = httpInfo;
     }
 }

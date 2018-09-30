@@ -45,13 +45,14 @@ class InvokeForm extends React.Component {
             message.error("请选择调用请求")
             return
           }
-          if(null == values.expression || values.expression === undefined ||
-          values.expression.charAt(0) !== '[' || !InvokeForm.isJSON(values.expression)) {
+          if(null == values.expression || values.expression === undefined || !InvokeForm.isJSON(values.expression)) {
             message.error("请输入正确的参数表达式")
             return
           }
 
           payload = {
+            appId: values.invokeId[0],
+            serviceId: values.invokeId[1],
             invokeId: values.invokeId[2].split(`-`)[0],
             expression: values.expression,
             poolSize: values.poolSize,
@@ -116,7 +117,6 @@ class InvokeForm extends React.Component {
                   description: resp.data.data,
                   duration: 20
                 });
-                console.log(resp.data.data)
               }
               else {
 

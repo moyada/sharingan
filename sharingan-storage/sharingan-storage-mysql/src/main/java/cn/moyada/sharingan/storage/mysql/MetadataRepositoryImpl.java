@@ -5,9 +5,11 @@ import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.storage.api.MetadataRepository;
 import cn.moyada.sharingan.storage.api.domain.AppDO;
 import cn.moyada.sharingan.storage.api.domain.FunctionDO;
+import cn.moyada.sharingan.storage.api.domain.HttpDO;
 import cn.moyada.sharingan.storage.api.domain.ServiceDO;
 import cn.moyada.sharingan.storage.mysql.dao.AppDAO;
 import cn.moyada.sharingan.storage.mysql.dao.FunctionDAO;
+import cn.moyada.sharingan.storage.mysql.dao.HttpDAO;
 import cn.moyada.sharingan.storage.mysql.dao.ServiceDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -25,6 +27,9 @@ public class MetadataRepositoryImpl implements MetadataRepository {
 
     @Autowired
     private FunctionDAO functionDAO;
+
+    @Autowired
+    private HttpDAO httpDAO;
 
     @Override
     public List<AppDO> findAllApp() {
@@ -73,5 +78,15 @@ public class MetadataRepositoryImpl implements MetadataRepository {
     @Override
     public FunctionDO findFunctionById(int funId) {
         return functionDAO.findById(funId);
+    }
+
+    @Override
+    public List<HttpDO> findHttpByService(int serviceId) {
+        return httpDAO.findByService(serviceId);
+    }
+
+    @Override
+    public HttpDO findHttpById(int methodId) {
+        return httpDAO.findById(methodId);
     }
 }

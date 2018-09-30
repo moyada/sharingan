@@ -8,13 +8,29 @@ logging:
   config: classpath:log4j2.xml
 
 spring:
+  application:
+    name: ${project.name}
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-
+    
 mybatis:
   #  config-location: classpath*:mybatis-config.xml
   mapper-locations: classpath*:sqlmaps/*.xml
   type-aliases-package: cn.moyada.sharingan.storage.api.domain
   configuration:
     use-column-label: true
+
+eureka:
+  instance:
+    hostname: ${spring.application.name}
+  client:
+    # 关闭服务注册
+    register-with-eureka: false
+    should-unregister-on-shutdown: false
+    registry-fetch-interval-seconds: 3600
+    serviceUrl:
+      defaultZone:
+
+maven:
+  host: http://127.0.0.1:8081

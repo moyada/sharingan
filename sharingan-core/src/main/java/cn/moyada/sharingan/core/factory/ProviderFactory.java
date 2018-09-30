@@ -37,44 +37,8 @@ public class ProviderFactory {
         }
 
         ArgsProvider[] providers = new ArgsProvider[length];
-//        String param;
-//        RouteInfo route;
-//        IntRange intRange;
-//        DoubleRange doubleRange;
 
         for (int index = 0; index < length; index++) {
-//            param = params[index];
-//            // 查询替换表达式
-//            route = routeProcessor.getRoute(param);
-//            if (null != route) {
-//                providers[index] = new RandomReplaceProvider(param, paramTypes[index], route, argsRepository, isRandom);
-//                continue;
-//            }
-//
-//            // 查询整数表达式
-//            intRange = routeProcessor.getIntRange(param);
-//            if (null != intRange) {
-//                if (intRange.isConstant()) {
-//                    providers[index] = new ConstantProvider(String.valueOf(intRange.getStart()), paramTypes[index]);
-//                }
-//                else {
-//                    providers[index] = new IntProvider(param, paramTypes[index], intRange);
-//                }
-//                continue;
-//            }
-//
-//            // 查询浮点数表达式
-//            doubleRange = routeProcessor.getDoubleRange(param);
-//            if (null != doubleRange) {
-//                if (doubleRange.isConstant()) {
-//                    providers[index] = new ConstantProvider(String.valueOf(doubleRange.getStart()), paramTypes[index]);
-//                }
-//                else {
-//                    providers[index] = new DoubleProvider(param, paramTypes[index], doubleRange);
-//                }
-//                continue;
-//            }
-
             providers[index] = getProvider(params[index], paramTypes[index], isRandom);
         }
 

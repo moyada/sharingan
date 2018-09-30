@@ -27,7 +27,7 @@ public class IntProvider extends RandomProvider implements ArgsProvider {
 
         if (huge) {
             this.range = intRange.getEnd();
-            this.base = intRange.getStart();
+            this.base = Integer.MIN_VALUE == intRange.getStart() ? Integer.MAX_VALUE : -intRange.getStart();
             this.huge = true;
         }
         else {
