@@ -3,12 +3,11 @@ package cn.moyada.sharingan.storage.mysql;
 import cn.moyada.sharingan.storage.api.ArgsRepository;
 import cn.moyada.sharingan.storage.mysql.dao.ArgsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Random;
 
-@Repository
+
 public class ArgsRepositoryImpl implements ArgsRepository {
 
     private final Random random = new Random();

@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
  * @since 1.0
  */
 @Component
-@ConfigurationProperties()
+@ConfigurationProperties(DefaultConfig.DEFAULT_CONFIG_PREFIX)
 public class DefaultConfig {
+
+    static final String DEFAULT_CONFIG_PREFIX = "";
 
     /**
      * 项目名

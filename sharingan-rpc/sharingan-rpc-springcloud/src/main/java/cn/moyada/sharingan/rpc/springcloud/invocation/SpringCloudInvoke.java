@@ -14,11 +14,11 @@ import feign.codec.Decoder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
 import org.springframework.cloud.openfeign.FeignContext;
 import org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -32,7 +32,7 @@ import java.util.Map;
  * @author xueyikang
  * @since 1.0
  **/
-@Component("springcloudInvoke")
+//@Component("springcloudInvoke")
 public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationContextAware, AsyncInvoke, InvokeProxy {
 
     @Autowired
@@ -40,6 +40,9 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
 
     @Value("${eureka.client.serviceUrl.defaultZone}")
     private String registerUrl;
+
+    @Autowired
+    private EurekaClientConfigBean configBean;
 
 //    private Feign.Builder builder;
 
@@ -56,6 +59,7 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
     @PostConstruct
     public void initConfig() {
         if (StringUtil.isEmpty(registerUrl)) {
+            configBean.setFetchRegistry(false);
             destroyTask.addDestroyBean("springcloudInvoke");
             return;
         }
