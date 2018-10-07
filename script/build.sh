@@ -1,18 +1,7 @@
 #!/usr/bin/env sh
 
 cd ..
-HOME=$(pwd)
+mvn install
 
-# 编译调用核心
-cd dubbo-faker-core
-
-mvn clean install -Dmaven.test.skip=true
-
-cd $HOME/script
-
+cd script
 sh build-web.sh
-
-# 编译页面
-#sh build-page.sh
-#cd $HOME
-

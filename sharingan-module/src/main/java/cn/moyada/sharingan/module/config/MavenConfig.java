@@ -1,4 +1,4 @@
-package cn.moyada.sharingan.module;
+package cn.moyada.sharingan.module.config;
 
 import cn.moyada.sharingan.common.utils.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,12 +8,14 @@ import org.springframework.stereotype.Component;
 /**
  * maven仓库配置
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 @Order(-1)
 @Component("mavenConfig")
-@ConfigurationProperties(prefix = "maven")
+@ConfigurationProperties(MavenConfig.MAVEN_CONFIG_PREFIX)
 public class MavenConfig {
+
+    static final String MAVEN_CONFIG_PREFIX = "maven";
 
     /**
      * 协议+域名+端口

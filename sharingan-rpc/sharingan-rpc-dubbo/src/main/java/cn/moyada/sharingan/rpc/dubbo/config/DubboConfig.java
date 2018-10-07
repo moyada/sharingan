@@ -2,16 +2,16 @@ package cn.moyada.sharingan.rpc.dubbo.config;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * dubbo配置项
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  */
-@Component
-@ConfigurationProperties(prefix = "dubbo")
+@ConfigurationProperties(DubboConfig.DUBBO_CONFIG_PREFIX)
 public class DubboConfig {
+
+    static final String DUBBO_CONFIG_PREFIX = "dubbo";
 
     // 注册中心地址
     private String registry;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>sharingan</artifactId>
+        <groupId>cn.moyada</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>sharingan-monitor</artifactId>
+    <packaging>jar</packaging>
+
+    <modules>
+        <module>sharingan-monitor-api</module>
+        <module>sharingan-monitor-local</module>
+        <module>sharingan-monitor-mysql</module>
+        <module>sharingan-monitor-http</module>
+    </modules>
+
+
+</project>

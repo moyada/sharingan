@@ -191,6 +191,11 @@ public class ModuleFetch implements ApplicationContextAware, MetadataFetch, Clas
         return false;
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.parent = applicationContext.getClassLoader();
+    }
+
     public static void main(String[] args) throws ClassNotFoundException {
         System.setProperty("maven.host", "https://repo.souche-inc.com");
         System.setProperty("maven.version", "maven2");
@@ -201,10 +206,5 @@ public class ModuleFetch implements ApplicationContextAware, MetadataFetch, Clas
         Class aClass = moduleFetch.getClass(dependency, "com.souche.car.model.api.model.ModelService");
         System.out.println(aClass);
         moduleFetch.getClassLoader(dependency).destroy();
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.parent = applicationContext.getClassLoader();
     }
 }

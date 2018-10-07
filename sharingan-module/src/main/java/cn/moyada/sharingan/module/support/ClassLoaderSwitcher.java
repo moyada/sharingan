@@ -5,7 +5,7 @@ import cn.moyada.sharingan.module.Dependency;
 /**
  * 类加载器切换器
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public interface ClassLoaderSwitcher {
 

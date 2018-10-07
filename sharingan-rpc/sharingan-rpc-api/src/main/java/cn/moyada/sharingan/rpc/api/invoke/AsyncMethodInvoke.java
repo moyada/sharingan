@@ -1,19 +1,26 @@
 package cn.moyada.sharingan.rpc.api.invoke;
 
+import cn.moyada.sharingan.common.exception.InstanceNotFountException;
 import cn.moyada.sharingan.common.utils.ParamUtil;
 
 /**
  * 异步方法
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  */
-public abstract class AsyncMethodInvoke extends MethodInvoke implements AsyncInvoke {
+public abstract class AsyncMethodInvoke extends MethodInvoke implements AsyncInvoke, InvokeProxy {
 
     private InvokeReceiver invokeReceiver;
 
     @Override
     public void register(InvokeReceiver invokeReceiver) {
         this.invokeReceiver = invokeReceiver;
+    }
+
+
+    @Override
+    public void initialize(InvocationMetaDate metaDate) throws InstanceNotFountException {
+
     }
 
     @Override

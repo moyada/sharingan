@@ -3,7 +3,7 @@ package cn.moyada.sharingan.core.provider;
 /**
  * 常量替换提供器
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class ConstantReplaceProvider extends ReplacementProvider implements ArgsProvider {
 

@@ -25,24 +25,19 @@ sharingan 是用来快速检测回归RPC服务`可用性`的Java工程。
 
 3. 对`conf.properties`文件进行配置:
 
-```
-# nexus3仓库地址
-maven.host = http://127.0.0.1:8081
+| 参数 | 描述 |
+| --- | ---- |
+| spring.datasource.url | mysql连接地址 |
+| spring.datasource.username | mysql连接用户名 |
+| spring.datasource.password | mysql连接密码 |
+| maven.host | nexus3仓库地址(可选) |
+| maven.username | nexus3仓库账号(可选) |
+| maven.username | nexus3仓库密码(可选) |
+| dubbo.registry | dubbo注册中心地址(可选) |
+| dubbo.username | dubbo注册中心账号(可选) |
+| dubbo.password | dubbo注册中心密码(可选) |
+| eureka.client.serviceUrl.defaultZone | SpringCloud-eureka注册地址(可选) |
 
-# mysql连接信息
-spring.datasource.url = jdbc:mysql://127.0.0.1:3306/sharingan?useSSL=false&useUnicode=true&amp&characterEncoding=UTF-8
-spring.datasource.username = root
-spring.datasource.password = root
-
-# SpringCloud 注册地址
-eureka.client.serviceUrl.defaultZone = http://127.0.0.1:8761
-
-# dubbo注册中心
-dubbo.registry = zookeeper://127.0.0.1:2181
-dubbo.username =
-dubbo.password =
-
-```
 4. 启动sharingan: `./run.sh`
 
 5. 访问链接 `htto://127.0.0.1:8080/index.html` 进入管理界面。
@@ -50,7 +45,8 @@ dubbo.password =
 
 ## 使用指南
 
-* 动态进行类加载: 通过`MetadataRepository`查找`AppDO`来获取项目的仓库坐标，从版本仓库中获取最新依赖。
+* 动态进行类加载: 在非http调用时，通过`MetadataRepository`查询的`AppDO`获取项目的仓库坐标，从版本仓库中获取最新依赖，
+同时时卸载过期类加载器。
 
 * 领域数据表达式: `MetadataRepository`查询的`FunctionDO`中`expression`字段来指定规则动态生成请求参数，表达式格式为`${项目名称.数据领域}`。
   mysql中，项目名称为`app_info`表中的`name`、数据领域为`invoke_param`中的`domain`。

@@ -1,5 +1,6 @@
 package cn.moyada.sharingan.rpc.springcloud.invocation;
 
+import cn.moyada.sharingan.common.constant.HttpStatus;
 import cn.moyada.sharingan.common.exception.InstanceNotFountException;
 import cn.moyada.sharingan.common.task.DestroyTask;
 import cn.moyada.sharingan.common.utils.RegexUtil;
@@ -14,11 +15,11 @@ import feign.codec.Decoder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
 import org.springframework.cloud.openfeign.FeignContext;
 import org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -30,9 +31,9 @@ import java.util.Map;
 
 /**
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
-@Component("springcloudInvoke")
+//@Component("springcloudInvoke")
 public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationContextAware, AsyncInvoke, InvokeProxy {
 
     @Autowired
@@ -40,6 +41,9 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
 
     @Value("${eureka.client.serviceUrl.defaultZone}")
     private String registerUrl;
+
+    @Autowired
+    private EurekaClientConfigBean configBean;
 
 //    private Feign.Builder builder;
 
@@ -56,6 +60,7 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
     @PostConstruct
     public void initConfig() {
         if (StringUtil.isEmpty(registerUrl)) {
+            configBean.setFetchRegistry(false);
             destroyTask.addDestroyBean("springcloudInvoke");
             return;
         }
@@ -139,7 +144,11 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
         try {
             Request request = requestTemplate.request();
             Response response = client.execute(request, options);
-            result = Result.success(decoder.decode(response, String.class));
+            if (response.status() == HttpStatus.OK) {
+                result = Result.success(decoder.decode(response, String.class));
+            } else {
+                result = Result.failed(decoder.decode(response, String.class).toString());
+            }
         } catch (IOException e) {
             result = Result.failed(e.getMessage());
         } catch (Exception e) {

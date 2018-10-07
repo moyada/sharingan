@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 @Component
 public class DestroyTask implements InitializingBean {

@@ -10,7 +10,7 @@ import java.text.NumberFormat;
 /**
  * 浮点数提供器
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class DoubleProvider extends RandomProvider implements ArgsProvider {
 

@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * 随机数值提供器
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public abstract class RandomProvider extends ReplacementProvider implements ArgsProvider {
 

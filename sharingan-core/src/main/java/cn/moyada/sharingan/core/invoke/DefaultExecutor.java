@@ -3,7 +3,7 @@ package cn.moyada.sharingan.core.invoke;
 /**
  * 默认调用器
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  */
 public class DefaultExecutor extends AbstractConcurrentExecutor implements JobExecutor {
 

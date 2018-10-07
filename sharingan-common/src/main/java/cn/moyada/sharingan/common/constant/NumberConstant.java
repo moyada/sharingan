@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class NumberConstant {
 

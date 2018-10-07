@@ -6,7 +6,7 @@ import cn.moyada.sharingan.common.support.SimpleHttpClient;
 import cn.moyada.sharingan.common.utils.JsonUtil;
 import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.module.Dependency;
-import cn.moyada.sharingan.module.MavenConfig;
+import cn.moyada.sharingan.module.config.MavenConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

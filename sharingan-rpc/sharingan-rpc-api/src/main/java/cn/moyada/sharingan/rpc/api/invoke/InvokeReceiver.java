@@ -3,7 +3,7 @@ package cn.moyada.sharingan.rpc.api.invoke;
 /**
  * 调用接收者
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  */
 public interface InvokeReceiver {
 

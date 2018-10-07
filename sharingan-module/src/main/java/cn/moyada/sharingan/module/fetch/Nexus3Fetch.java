@@ -8,7 +8,7 @@ import cn.moyada.sharingan.common.utils.JsonUtil;
 import cn.moyada.sharingan.common.utils.StringUtil;
 import cn.moyada.sharingan.module.Assert;
 import cn.moyada.sharingan.module.Dependency;
-import cn.moyada.sharingan.module.MavenConfig;
+import cn.moyada.sharingan.module.config.MavenConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

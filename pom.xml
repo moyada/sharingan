@@ -16,6 +16,8 @@
         <module>sharingan-module</module>
         <module>sharingan-manager</module>
         <module>sharingan-storage</module>
+        <module>sharingan-monitor</module>
+        <module>sharingan-agent</module>
     </modules>
 
     <properties>
@@ -62,6 +64,7 @@
         <java_source_version>1.8</java_source_version>
         <java_target_version>1.8</java_target_version>
         <file_encoding>UTF-8</file_encoding>
+
         <!-- Maven plugins -->
         <maven_jar_version>3.0.2</maven_jar_version>
         <!--<maven_surefire_version>2.19.1</maven_surefire_version>-->
@@ -78,6 +81,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>cn.moyada</groupId>
+                <artifactId>sharingan-monitor-api</artifactId>
+                <version>${sharingan.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>cn.moyada</groupId>
                 <artifactId>sharingan-module</artifactId>
@@ -318,11 +327,11 @@
                 <version>${disruptor.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-devtools</artifactId>
-                <version>${project.parent.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.springframework.boot</groupId>-->
+                <!--<artifactId>spring-boot-starter-devtools</artifactId>-->
+                <!--<version>${project.parent.version}</version>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -423,17 +432,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>maven-repo-master</id>
-            <url>file:/Users/xueyikang/repository/dubbo-sharingan/</url>
-            <name>Temporary Staging Repository</name>
-        </repository>
-        <!--<repository>-->
-            <!--<id>internal.repo</id>-->
-            <!--<name>Temporary Staging Repository</name>-->
-            <!--<url>file://${project.build.directory}/mvn-repo</url>-->
-        <!--</repository>-->
-    </distributionManagement>
 </project>

@@ -14,14 +14,13 @@ import com.alibaba.dubbo.config.ConsumerConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 /**
  * dubbo协议调用器
  */
-@Component("dubboInvoke")
+//@Component("dubboInvoke")
 public class DubboInvoke extends AsyncMethodInvoke implements AsyncInvoke, InvokeProxy {
 
     @Autowired
