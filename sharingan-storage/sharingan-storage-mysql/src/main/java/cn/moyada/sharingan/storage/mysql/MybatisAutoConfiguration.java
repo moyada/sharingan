@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 @Configuration
 @MapperScan(basePackages = "cn.moyada.sharingan.storage.mysql.dao")

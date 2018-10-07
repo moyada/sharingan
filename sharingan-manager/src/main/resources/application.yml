@@ -1,0 +1,14 @@
+mybatis:
+  #  config-location: classpath*:mybatis-config.xml
+  mapper-locations: classpath*:sqlmaps/*.xml
+
+eureka:
+  instance:
+    hostname: ${spring.application.name}
+  client:
+    # 关闭服务注册
+    register-with-eureka: false
+    should-unregister-on-shutdown: false
+    registry-fetch-interval-seconds: 60
+    serviceUrl:
+      defaultZone:

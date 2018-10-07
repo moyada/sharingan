@@ -1,5 +1,6 @@
 package cn.moyada.sharingan.core.handler;
 
+import cn.moyada.sharingan.common.constant.HttpStatus;
 import cn.moyada.sharingan.common.utils.JsonUtil;
 import cn.moyada.sharingan.common.utils.ReflectUtil;
 import cn.moyada.sharingan.rpc.api.invoke.Result;
@@ -11,11 +12,6 @@ import cn.moyada.sharingan.storage.api.domain.InvocationResultDO;
  * @create 2018-08-27 14:53
  */
 public class InvokeRecordHandler implements RecordHandler<InvocationResultDO> {
-
-    private static final Integer OK = 200;
-    private static final Integer NULL = 404;
-    private static final Integer ERROR = 500;
-    private static final Integer TIME_OUT = 504;
 
     private static final String NULL_RESULT = "null";
 
@@ -57,7 +53,7 @@ public class InvokeRecordHandler implements RecordHandler<InvocationResultDO> {
         if (saveResult) {
             String invokeResult = JsonUtil.toJson(result.getResult());
             if (null == invokeResult) {
-                resultDO.setCode(NULL);
+                resultDO.setCode(HttpStatus.NOT_FOUND);
                 resultDO.setResult(NULL_RESULT);
                 return;
             }
@@ -68,7 +64,7 @@ public class InvokeRecordHandler implements RecordHandler<InvocationResultDO> {
                 Object param = ReflectUtil.getValue(result.getResult(), resultParam);
                 // 保存结果的单个参数
                 if (null == param) {
-                    resultDO.setCode(NULL);
+                    resultDO.setCode(HttpStatus.NOT_FOUND);
                     resultDO.setResult(resultParam.concat(": null").intern());
                     return;
                 }
@@ -76,11 +72,11 @@ public class InvokeRecordHandler implements RecordHandler<InvocationResultDO> {
                 resultDO.setResult(param.toString());
             }
         }
-        resultDO.setCode(rt > TIMEOUT_MILLISECONDS ? TIME_OUT : OK);
+        resultDO.setCode(rt > TIMEOUT_MILLISECONDS ? HttpStatus.TIME_OUT : HttpStatus.OK);
     }
 
     private void buildFailure(InvocationResultDO resultDO, Result result) {
-        resultDO.setCode(ERROR);
+        resultDO.setCode(HttpStatus.ERROR);
         resultDO.setErrorMsg(result.getException());
         resultDO.setResponseTime(result.getResponseTime());
     }

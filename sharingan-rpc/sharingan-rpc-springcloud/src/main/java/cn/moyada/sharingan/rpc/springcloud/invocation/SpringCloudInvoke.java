@@ -1,5 +1,6 @@
 package cn.moyada.sharingan.rpc.springcloud.invocation;
 
+import cn.moyada.sharingan.common.constant.HttpStatus;
 import cn.moyada.sharingan.common.exception.InstanceNotFountException;
 import cn.moyada.sharingan.common.task.DestroyTask;
 import cn.moyada.sharingan.common.utils.RegexUtil;
@@ -30,7 +31,7 @@ import java.util.Map;
 
 /**
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 //@Component("springcloudInvoke")
 public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationContextAware, AsyncInvoke, InvokeProxy {
@@ -143,7 +144,11 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
         try {
             Request request = requestTemplate.request();
             Response response = client.execute(request, options);
-            result = Result.success(decoder.decode(response, String.class));
+            if (response.status() == HttpStatus.OK) {
+                result = Result.success(decoder.decode(response, String.class));
+            } else {
+                result = Result.failed(decoder.decode(response, String.class).toString());
+            }
         } catch (IOException e) {
             result = Result.failed(e.getMessage());
         } catch (Exception e) {

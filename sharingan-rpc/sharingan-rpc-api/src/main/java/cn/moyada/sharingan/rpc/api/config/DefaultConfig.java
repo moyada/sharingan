@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * 基础配置项
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  */
 @Component
 @ConfigurationProperties(DefaultConfig.DEFAULT_CONFIG_PREFIX)

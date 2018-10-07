@@ -3,7 +3,7 @@ package cn.moyada.sharingan.core.support;
 /**
  * 浮点数范围策略
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class DoubleRange {
 

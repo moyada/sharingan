@@ -5,7 +5,7 @@ import cn.moyada.sharingan.core.support.IntRange;
 /**
  * 整数提供器
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class IntProvider extends RandomProvider implements ArgsProvider {
 

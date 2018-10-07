@@ -6,9 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * dubbo配置项
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  */
-//@Component
 @ConfigurationProperties(DubboConfig.DUBBO_CONFIG_PREFIX)
 public class DubboConfig {
 

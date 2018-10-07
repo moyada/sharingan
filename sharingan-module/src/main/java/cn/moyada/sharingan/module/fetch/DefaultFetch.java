@@ -8,7 +8,7 @@ import java.lang.invoke.MethodHandles;
 /**
  * 默认元类获取器
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  */
 public class DefaultFetch implements MetadataFetch {
 

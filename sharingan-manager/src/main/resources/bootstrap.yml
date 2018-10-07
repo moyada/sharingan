@@ -1,0 +1,15 @@
+project:
+  name: Sharingan
+
+server:
+  port: 8080
+
+logging:
+  config: classpath:log4j2.xml
+
+spring:
+  application:
+    name: ${project.name}
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver

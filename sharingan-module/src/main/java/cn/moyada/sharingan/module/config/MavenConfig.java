@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * maven仓库配置
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 @Order(-1)
 @Component("mavenConfig")
