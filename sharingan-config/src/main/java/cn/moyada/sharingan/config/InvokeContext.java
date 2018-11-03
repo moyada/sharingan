@@ -1,8 +1,7 @@
-package cn.moyada.sharingan.core.common;
+package cn.moyada.sharingan.config;
 
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.InvokeMetaData;
-import cn.moyada.sharingan.rpc.api.invoke.InvocationMetaDate;
 
 /**
  * 调用任务上下文
@@ -10,39 +9,34 @@ import cn.moyada.sharingan.rpc.api.invoke.InvocationMetaDate;
 public class InvokeContext {
 
     /**
-     * 测试编码
-     */
-    private String fakerId;
-
-    /**
      * 项目编号
      */
     private Integer appId;
 
-//    /**
-//     * 应用名
-//     */
-//    private String appName;
+    /**
+     * 应用名
+     */
+    private String appName;
 
     /**
      * 服务编号
      */
     private Integer serviceId;
 
-//    /**
-//     * 服务名
-//     */
-//    private String serviceName;
+    /**
+     * 服务名
+     */
+    private String serviceName;
 
     /**
      * 方法编号
      */
     private Integer funcId;
 
-//    /**
-//     * 方法名
-//     */
-//    private String methodName;
+    /**
+     * 方法名
+     */
+    private String methodName;
 
     /**
      * 参数表达式
@@ -64,15 +58,10 @@ public class InvokeContext {
      */
     private InvokeMetaData invokeMetaData;
 
-    private InvocationMetaDate invocationMetaDate;
-
-    public String getFakerId() {
-        return fakerId;
-    }
-
-    public void setFakerId(String fakerId) {
-        this.fakerId = fakerId;
-    }
+    /**
+     * http请求信息
+     */
+    private HttpRequestInfo httpRequestInfo;
 
     public Integer getAppId() {
         return appId;
@@ -80,6 +69,14 @@ public class InvokeContext {
 
     public void setAppId(Integer appId) {
         this.appId = appId;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public Integer getServiceId() {
@@ -90,12 +87,28 @@ public class InvokeContext {
         this.serviceId = serviceId;
     }
 
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
     public Integer getFuncId() {
         return funcId;
     }
 
     public void setFuncId(Integer funcId) {
         this.funcId = funcId;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 
     public String[] getExpression() {
@@ -130,11 +143,11 @@ public class InvokeContext {
         this.invokeMetaData = invokeMetaData;
     }
 
-    public InvocationMetaDate getInvocationMetaDate() {
-        return invocationMetaDate;
+    public HttpRequestInfo getHttpRequestInfo() {
+        return httpRequestInfo;
     }
 
-    public void setInvocationMetaDate(InvocationMetaDate invocationMetaDate) {
-        this.invocationMetaDate = invocationMetaDate;
+    public void setHttpRequestInfo(HttpRequestInfo httpRequestInfo) {
+        this.httpRequestInfo = httpRequestInfo;
     }
 }

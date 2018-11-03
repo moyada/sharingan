@@ -1,6 +1,7 @@
 package cn.moyada.sharingan.rpc.dubbo.config;
 
 
+import cn.moyada.sharingan.common.utils.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -8,13 +9,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author xueyikang
  * @since 0.0.1
  */
-@ConfigurationProperties(DubboConfig.DUBBO_CONFIG_PREFIX)
+@ConfigurationProperties("dubbo")
 public class DubboConfig {
-
-    static final String DUBBO_CONFIG_PREFIX = "dubbo";
 
     // 注册中心地址
     private String registry;
+
+    // 协议
+    private String protocol;
 
     // 注册中心账户
     private String username;
@@ -22,12 +24,23 @@ public class DubboConfig {
     // 注册中心密码
     private String password;
 
+    // 注册中心密码
+    private Integer timeout;
+
     public String getRegistry() {
         return registry;
     }
 
     public void setRegistry(String registry) {
         this.registry = registry;
+    }
+
+    public String getProtocol() {
+        return StringUtil.isEmpty(protocol) ? "dubbo" : protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     public String getUsername() {
@@ -44,5 +57,13 @@ public class DubboConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getTimeout() {
+        return null == timeout ? 3000 : timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
     }
 }

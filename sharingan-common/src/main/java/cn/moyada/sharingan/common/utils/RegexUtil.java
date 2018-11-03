@@ -15,6 +15,11 @@ public class RegexUtil {
 
     private static final Pattern PATH_PATTERN = Pattern.compile(pathRegex);
 
+    /**
+     * 获取请求路径动态参数
+     * @param path
+     * @return
+     */
     public static List<String> findPathVariable(String path) {
         Matcher matcher = PATH_PATTERN.matcher(path);
         List<String> params = new ArrayList<>();
