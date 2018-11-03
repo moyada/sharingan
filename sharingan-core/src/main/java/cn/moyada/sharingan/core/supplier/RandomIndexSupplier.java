@@ -1,4 +1,4 @@
-package cn.moyada.sharingan.core.provider;
+package cn.moyada.sharingan.core.supplier;
 
 import cn.moyada.sharingan.common.utils.TimeUtil;
 
@@ -9,13 +9,13 @@ import java.util.Random;
  * @author xueyikang
  * @create 2018-03-28 05:17
  */
-public class RandomIndexProvider extends AbstractIndexProvider {
+public class RandomIndexSupplier extends AbstractIndexSupplier {
 
     private static final long BIT = 0x000000007fffL;
 
     private int prime = 0;
 
-    public RandomIndexProvider(int threshold) {
+    public RandomIndexSupplier(int threshold) {
         super(threshold);
         this.prime = findPrime();
     }

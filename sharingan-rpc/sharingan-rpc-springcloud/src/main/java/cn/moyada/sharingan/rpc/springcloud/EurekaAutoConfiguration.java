@@ -15,10 +15,14 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.0.1
  **/
 @Configuration
-@ConditionalOnProperty(value = "eureka.client.serviceUrl.defaultZone", matchIfMissing = true)
+@ConditionalOnProperty(value = EurekaAutoConfiguration.REGISTER_URL, matchIfMissing = true)
 @EnableDiscoveryClient
 @EnableFeignClients
 public class EurekaAutoConfiguration {
+
+    public final static String REGISTER_URL = "eureka.client.serviceUrl.defaultZone";
+
+    public final static String BEAN_NAME = "springcloudInvoke";
 
     @Bean
     @ConditionalOnMissingBean
@@ -26,7 +30,7 @@ public class EurekaAutoConfiguration {
         return new FeignBeanFactoryPostProcessor();
     }
 
-    @Bean("springcloudInvoke")
+    @Bean(EurekaAutoConfiguration.BEAN_NAME)
     @ConditionalOnMissingBean(SpringCloudInvoke.class)
     public InvokeProxy springCloudInvoke() {
         return new SpringCloudInvoke();

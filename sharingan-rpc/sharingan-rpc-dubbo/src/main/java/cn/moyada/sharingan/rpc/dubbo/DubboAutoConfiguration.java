@@ -16,8 +16,12 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 @ConditionalOnClass(DubboConfig.class)
-@ConditionalOnProperty(value = "dubbo.registry", matchIfMissing = true)
+@ConditionalOnProperty(value = DubboAutoConfiguration.REGISTER_URL, matchIfMissing = true)
 public class DubboAutoConfiguration {
+
+    final static String REGISTER_URL = "dubbo.registry";
+
+    public static final String BEAN_NAME = "dubboInvoke";
 
     @Bean
     @ConditionalOnMissingBean(value = DubboConfig.class, search = SearchStrategy.CURRENT)
@@ -25,7 +29,7 @@ public class DubboAutoConfiguration {
         return new DubboConfig();
     }
 
-    @Bean("dubboInvoke")
+    @Bean(DubboAutoConfiguration.BEAN_NAME)
     @ConditionalOnMissingBean(DubboInvoke.class)
     public InvokeProxy dubboInvoke() {
         return new DubboInvoke();

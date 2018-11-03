@@ -1,19 +1,14 @@
-package cn.moyada.sharingan.core.factory;
+package cn.moyada.sharingan.config;
 
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
 import cn.moyada.sharingan.common.utils.AssertUtil;
 import cn.moyada.sharingan.common.utils.JsonUtil;
 import cn.moyada.sharingan.common.utils.RegexUtil;
 import cn.moyada.sharingan.common.utils.StringUtil;
-import cn.moyada.sharingan.core.common.InvokeContext;
-import cn.moyada.sharingan.core.common.QuestInfo;
-import cn.moyada.sharingan.core.convert.AppInfoConverter;
-import cn.moyada.sharingan.core.convert.FunctionInfoConverter;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.InvokeInfo;
 import cn.moyada.sharingan.module.InvokeMetaData;
 import cn.moyada.sharingan.module.handler.InvokeAdapter;
-import cn.moyada.sharingan.rpc.api.invoke.InvocationMetaDate;
 import cn.moyada.sharingan.storage.api.MetadataRepository;
 import cn.moyada.sharingan.storage.api.domain.AppDO;
 import cn.moyada.sharingan.storage.api.domain.FunctionDO;
@@ -25,8 +20,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author xueyikang
+ * @since 1.0
+ **/
 @Component
-public class EnvironmentFactory {
+public class DefaultInvokeContextFactory implements InvokeContextFactory {
 
     @Autowired
     private MetadataRepository metadataRepository;
@@ -45,12 +44,11 @@ public class EnvironmentFactory {
         return false;
     }
 
-    public InvokeContext getEnv(QuestInfo questInfo) {
-        Integer appId = questInfo.getAppId();
+    @Override
+    public InvokeContext getContext(int appId, int serviceId, int invokeId, String expression) {
         AppDO appDO = metadataRepository.findAppById(appId);
         AssertUtil.checkoutNotNull(appDO, "cannot find application by appId: " + appId);
 
-        Integer serviceId = questInfo.getServiceId();
         ServiceDO serviceDO = metadataRepository.findServiceById(serviceId);
         AssertUtil.checkoutNotNull(serviceDO, "cannot find service by serviceId: " + serviceId);
 
@@ -58,18 +56,19 @@ public class EnvironmentFactory {
         if (StringUtil.isEmpty(protocol)) {
             throw new InitializeInvokerException("protocol cannot be null");
         }
+
         InvokeContext context;
         if (isHttp(protocol)) {
-            context = getHttpEnv(questInfo.getInvokeId(), questInfo.getExpression());
+            context = getHttpEnv(invokeId, expression);
         } else {
-            context = getFuncEnv(questInfo.getInvokeId(), questInfo.getExpression());
+            context = getFuncEnv(invokeId, expression);
         }
 
         context.setProtocol(serviceDO.getProtocol());
         context.setAppId(appId);
         context.setServiceId(serviceId);
-        context.getInvocationMetaDate().setApplicationName(appDO.getName());
-        context.getInvocationMetaDate().setServiceName(serviceDO.getName());
+        context.setAppName(appDO.getName());
+        context.setServiceName(serviceDO.getName());
         return context;
     }
 
@@ -81,7 +80,7 @@ public class EnvironmentFactory {
         String[] expression = JsonUtil.toArray(inputExpression, String[].class);
 
         Dependency dependency = getDependency(functionDO.getAppId());
-        InvokeInfo invokeInfo = FunctionInfoConverter.getInvokeInfo(functionDO);
+        InvokeInfo invokeInfo = ContextConverter.toInvokeInfo(functionDO);
 
         InvokeMetaData invokeMetaData = invokeAdapter.wrapper(dependency, invokeInfo);
 
@@ -95,18 +94,10 @@ public class EnvironmentFactory {
         InvokeContext context = new InvokeContext();
         context.setDependency(dependency);
         context.setInvokeMetaData(invokeMetaData);
-
+        context.setMethodName(functionDO.getMethodName());
         context.setFuncId(funcId);
         context.setExpression(expression);
 
-        InvocationMetaDate invocationMetaDate = new InvocationMetaDate();
-        invocationMetaDate.setMethodName(functionDO.getMethodName());
-        InvocationMetaDate.ClassInfo classInfo = new InvocationMetaDate.ClassInfo();
-        classInfo.setServiceClass(invokeMetaData.getClassType());
-        classInfo.setMethodHandle(invokeMetaData.getMethodHandle());
-
-        invocationMetaDate.setClassInfo(classInfo);
-        context.setInvocationMetaDate(invocationMetaDate);
         return context;
     }
 
@@ -139,6 +130,7 @@ public class EnvironmentFactory {
         InvokeContext context = new InvokeContext();
         context.setFuncId(methodId);
         context.setExpression(expression);
+        context.setMethodName(httpDO.getMethodName());
 
         InvokeMetaData invokeMetaData = new InvokeMetaData();
         invokeMetaData.setClassType(Object.class);
@@ -146,21 +138,17 @@ public class EnvironmentFactory {
         invokeMetaData.setReturnType(String.class);
         context.setInvokeMetaData(invokeMetaData);
 
-        InvocationMetaDate invocationMetaDate = new InvocationMetaDate();
-        invocationMetaDate.setMethodName(httpDO.getMethodName());
-        InvocationMetaDate.HttpInfo httpInfo = new InvocationMetaDate.HttpInfo();
-        httpInfo.setHttpType(httpDO.getMethodType());
-        httpInfo.setParam(params);
-        httpInfo.setHeader(headers);
-
-        invocationMetaDate.setHttpInfo(httpInfo);
-        context.setInvocationMetaDate(invocationMetaDate);
+        HttpRequestInfo httpRequestInfo = new HttpRequestInfo();
+        httpRequestInfo.setHttpType(httpDO.getMethodType());
+        httpRequestInfo.setParam(params);
+        httpRequestInfo.setHeader(headers);
+        context.setHttpRequestInfo(httpRequestInfo);
 
         return context;
     }
 
     private String[] getHttpExpression(String inputExpression, String method,
-                                      String[] params, String[] headers) {
+                                       String[] params, String[] headers) {
         List<String> variable = RegexUtil.findPathVariable(method);
         int paramLeng = variable.size();
         if (null != params) {
@@ -228,22 +216,16 @@ public class EnvironmentFactory {
         return expression;
     }
 
-    public static void main(String[] args) {
-        String inputExpression = "{'param': {'yest': 'wert'}}";
-        Map<String, Map> expressionMap = JsonUtil.toMap(inputExpression, String.class, Map.class);
-        System.out.println(expressionMap);
-    }
-
     private Dependency getDependency(int appId) {
         AppDO appDO = metadataRepository.findAppById(appId);
         AssertUtil.checkoutNotNull(appDO, "获取应用信息失败: " + appId);
 
-        Dependency dependency = AppInfoConverter.toDependency(appDO);
+        Dependency dependency = ContextConverter.toDependency(appDO);
 
         // 获取外部依赖
         String dependencies = appDO.getDependencies();
         List<AppDO> appList = metadataRepository.findApp(dependencies);
-        dependency.setDependencyList(AppInfoConverter.toDependency(appList));
+        dependency.setDependencyList(ContextConverter.toDependency(appList));
         return dependency;
     }
 }

@@ -9,24 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sharingan-core</artifactId>
-
-    <packaging>jar</packaging>
+    <artifactId>sharingan-config</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>quasar-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>comsat-httpclient</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>cn.moyada</groupId>
-            <artifactId>sharingan-config</artifactId>
+            <artifactId>sharingan-common</artifactId>
         </dependency>
 
         <dependency>
@@ -37,21 +25,6 @@
         <dependency>
             <groupId>cn.moyada</groupId>
             <artifactId>sharingan-storage-mysql</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.moyada</groupId>
-            <artifactId>sharingan-rpc-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.moyada</groupId>
-            <artifactId>sharingan-rpc-springcloud</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.moyada</groupId>
-            <artifactId>sharingan-rpc-dubbo</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -22,82 +22,30 @@ public class InvocationMetaDate {
      */
     private String methodName;
 
-    private ClassInfo classInfo;
+    /**
+     * 服务接口类型
+     */
+    private Class serviceClass;
 
-    private HttpInfo httpInfo;
+    /**
+     * 调用句柄
+     */
+    private MethodHandle methodHandle;
 
-    public static class ClassInfo {
+    /**
+     * http请求类型
+     */
+    private String httpType;
 
-        /**
-         * 服务接口类型
-         */
-        private Class serviceClass;
+    /**
+     * 头信息
+     */
+    private String[] header;
 
-        /**
-         * 调用句柄
-         */
-        private MethodHandle methodHandle;
-
-        public Class getServiceClass() {
-            return serviceClass;
-        }
-
-        public void setServiceClass(Class serviceClass) {
-            this.serviceClass = serviceClass;
-        }
-
-        public MethodHandle getMethodHandle() {
-            return methodHandle;
-        }
-
-        public void setMethodHandle(MethodHandle methodHandle) {
-            this.methodHandle = methodHandle;
-        }
-    }
-
-    public static class HttpInfo {
-
-        /**
-         * http请求类型
-         */
-        private String httpType;
-
-        /**
-         * 头信息
-         */
-        private String[] header;
-
-
-        /**
-         * 参数名
-         */
-        private String[] param;
-
-        public String getHttpType() {
-            return httpType;
-        }
-
-        public void setHttpType(String httpType) {
-            this.httpType = httpType;
-        }
-
-        public String[] getHeader() {
-            return header;
-        }
-
-        public void setHeader(String[] header) {
-            this.header = header;
-        }
-
-        public String[] getParam() {
-            return param;
-        }
-
-        public void setParam(String[] param) {
-            this.param = param;
-        }
-    }
-
+    /**
+     * 参数名
+     */
+    private String[] param;
 
     public String getApplicationName() {
         return applicationName;
@@ -123,19 +71,43 @@ public class InvocationMetaDate {
         this.methodName = methodName;
     }
 
-    public ClassInfo getClassInfo() {
-        return classInfo;
+    public Class getServiceClass() {
+        return serviceClass;
     }
 
-    public void setClassInfo(ClassInfo classInfo) {
-        this.classInfo = classInfo;
+    public void setServiceClass(Class serviceClass) {
+        this.serviceClass = serviceClass;
     }
 
-    public HttpInfo getHttpInfo() {
-        return httpInfo;
+    public MethodHandle getMethodHandle() {
+        return methodHandle;
     }
 
-    public void setHttpInfo(HttpInfo httpInfo) {
-        this.httpInfo = httpInfo;
+    public void setMethodHandle(MethodHandle methodHandle) {
+        this.methodHandle = methodHandle;
+    }
+
+    public String getHttpType() {
+        return httpType;
+    }
+
+    public void setHttpType(String httpType) {
+        this.httpType = httpType;
+    }
+
+    public String[] getHeader() {
+        return header;
+    }
+
+    public void setHeader(String[] header) {
+        this.header = header;
+    }
+
+    public String[] getParam() {
+        return param;
+    }
+
+    public void setParam(String[] param) {
+        this.param = param;
     }
 }

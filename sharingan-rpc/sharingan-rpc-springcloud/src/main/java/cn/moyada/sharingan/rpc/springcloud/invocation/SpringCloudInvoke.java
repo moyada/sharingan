@@ -5,8 +5,8 @@ import cn.moyada.sharingan.common.exception.InstanceNotFountException;
 import cn.moyada.sharingan.common.task.DestroyTask;
 import cn.moyada.sharingan.common.utils.RegexUtil;
 import cn.moyada.sharingan.common.utils.StringUtil;
-import cn.moyada.sharingan.common.utils.TimeUtil;
 import cn.moyada.sharingan.rpc.api.invoke.*;
+import cn.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration;
 import feign.Client;
 import feign.Request;
 import feign.RequestTemplate;
@@ -23,29 +23,26 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * SpringCloud-Eureka调用器
  * @author xueyikang
  * @since 0.0.1
  **/
-//@Component("springcloudInvoke")
-public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationContextAware, AsyncInvoke, InvokeProxy {
+public class SpringCloudInvoke extends AsyncMethodInvoke<Request> implements ApplicationContextAware, AsyncInvoke, InvokeProxy {
 
     @Autowired
     private DestroyTask destroyTask;
 
-    @Value("${eureka.client.serviceUrl.defaultZone}")
+    @Value("${" + EurekaAutoConfiguration.REGISTER_URL + "}")
     private String registerUrl;
 
     @Autowired
     private EurekaClientConfigBean configBean;
-
-//    private Feign.Builder builder;
 
     private FeignContext feignContext;
     private Client client;
@@ -60,8 +57,9 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
     @PostConstruct
     public void initConfig() {
         if (StringUtil.isEmpty(registerUrl)) {
+            // 无效注册地址，关闭注册，销毁实例
             configBean.setFetchRegistry(false);
-            destroyTask.addDestroyBean("springcloudInvoke");
+            destroyTask.addDestroyBean(EurekaAutoConfiguration.BEAN_NAME);
             return;
         }
     }
@@ -79,18 +77,18 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
         }
 
         this.baseTemplate = create(metaDate);
-        InvocationMetaDate.HttpInfo httpInfo = metaDate.getHttpInfo();
 
+        //
         List<String> paramList = RegexUtil.findPathVariable(metaDate.getMethodName());
         this.paramSize = paramList.size();
 
-        String[] paramsName = httpInfo.getParam();
+        String[] paramsName = metaDate.getParam();
         if (null != paramsName && paramsName.length > 0) {
             this.paramSize += paramsName.length;
             paramList.addAll(Arrays.asList(paramsName));
         }
 
-        String[] headers = httpInfo.getHeader();
+        String[] headers = metaDate.getHeader();
         if (null != headers && headers.length > 0) {
             this.paramSize += headers.length;
             paramList.addAll(Arrays.asList(headers));
@@ -101,6 +99,9 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
         beforeInvoke();
     }
 
+    /**
+     * 预处理请求
+     */
     private void beforeInvoke() {
         Object[] args = new Object[paramSize];
         for (int index = 0; index < paramSize; index++) {
@@ -111,21 +112,24 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
         execute(invocation);
     }
 
+    /**
+     * 创建请求模版
+     * @param metaDate
+     * @return
+     */
     private static RequestTemplate create(InvocationMetaDate metaDate) {
-        InvocationMetaDate.HttpInfo httpInfo = metaDate.getHttpInfo();
-
         RequestTemplate template = new RequestTemplate();
         template.append(metaDate.getMethodName());
-        template.method(httpInfo.getHttpType());
+        template.method(metaDate.getHttpType());
         template.insert(0, "http://" + metaDate.getApplicationName().toUpperCase());
 
-        String[] param = httpInfo.getParam();
+        String[] param = metaDate.getParam();
         if (null != param) {
             for (String s : param) {
                 template.query(s, "{" + s + "}");
             }
         }
-        String[] header = httpInfo.getHeader();
+        String[] header = metaDate.getHeader();
         if (null != header) {
             for (String s : header) {
                 template.query(s, "{" + s + "}");
@@ -135,14 +139,16 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
     }
 
     @Override
-    public Result execute(Invocation invocation) {
+    protected Request resolve(Invocation invocation) {
         RequestTemplate requestTemplate = new RequestTemplate(baseTemplate);
         resolveArgs(requestTemplate, invocation.getArgsValue());
+        return requestTemplate.request();
+    }
 
+    @Override
+    public Result invoke(Request request) {
         Result result;
-        long begin = TimeUtil.currentTimeMillis();
         try {
-            Request request = requestTemplate.request();
             Response response = client.execute(request, options);
             if (response.status() == HttpStatus.OK) {
                 result = Result.success(decoder.decode(response, String.class));
@@ -154,10 +160,6 @@ public class SpringCloudInvoke extends AsyncMethodInvoke implements ApplicationC
         } catch (Exception e) {
             result = Result.failed(e.getMessage());
         }
-
-        result.setStartTime(new Timestamp(begin));
-        // 完成计算耗时
-        result.setResponseTime((int) (TimeUtil.currentTimeMillis() - begin));
 
         return result;
     }

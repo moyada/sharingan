@@ -4,11 +4,11 @@ import cn.moyada.sharingan.common.exception.InstanceNotFountException;
 import cn.moyada.sharingan.common.utils.ParamUtil;
 
 /**
- * 异步方法
+ * 异步方法调用器
  * @author xueyikang
  * @since 0.0.1
  */
-public abstract class AsyncMethodInvoke extends MethodInvoke implements AsyncInvoke, InvokeProxy {
+public abstract class AsyncMethodInvoke<T> extends MethodInvoke<T> implements AsyncInvoke, InvokeProxy {
 
     private InvokeReceiver invokeReceiver;
 
@@ -16,7 +16,6 @@ public abstract class AsyncMethodInvoke extends MethodInvoke implements AsyncInv
     public void register(InvokeReceiver invokeReceiver) {
         this.invokeReceiver = invokeReceiver;
     }
-
 
     @Override
     public void initialize(InvocationMetaDate metaDate) throws InstanceNotFountException {

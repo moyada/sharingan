@@ -1,6 +1,9 @@
 package cn.moyada.sharingan.core.provider;
 
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
+import cn.moyada.sharingan.core.supplier.IndexSupplier;
+import cn.moyada.sharingan.core.supplier.OrderIndexSupplier;
+import cn.moyada.sharingan.core.supplier.RandomIndexSupplier;
 import cn.moyada.sharingan.core.support.RouteInfo;
 import cn.moyada.sharingan.storage.api.ArgsRepository;
 
@@ -34,7 +37,7 @@ public class RandomReplaceProvider extends ReplacementProvider implements ArgsPr
     private int time;
 
     // 下标提供器
-    private final IndexProvider indexProvider;
+    private final IndexSupplier indexSupplier;
 
     public RandomReplaceProvider(String value, Class<?> paramType,
                                  RouteInfo routeInfo, ArgsRepository argsRepository, boolean isRandom) {
@@ -53,13 +56,13 @@ public class RandomReplaceProvider extends ReplacementProvider implements ArgsPr
         this.time = 0;
         this.threshold = (int) ((total > DEFAULT_THRESHOLD ? DEFAULT_THRESHOLD : total) * 0.7);
 
-        this.indexProvider = isRandom ? new RandomIndexProvider(threshold) : new OrderIndexProvider(threshold);
+        this.indexSupplier = isRandom ? new RandomIndexSupplier(threshold) : new OrderIndexSupplier(threshold);
     }
 
     @Override
     protected String next() {
         fresh();
-        int index = indexProvider.nextIndex();
+        int index = indexSupplier.nextIndex();
         String data = paramData.get(index);
         time++;
         return data;
