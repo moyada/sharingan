@@ -13,14 +13,13 @@ import javassist.NotFoundException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Field;
@@ -28,18 +27,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MonitorAnnotationBeanPostProcessor implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor, BeanFactoryAware, Ordered {
+public class MonitorAnnotationBeanPostProcessor implements BeanFactoryPostProcessor, BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
 
-    private Set<String> beanNames = new HashSet<>();
+    private Set<String> proxyBeanNames = new HashSet<>();
 
     private Monitor monitorBean;
 
-    @Autowired
     private SharinganConfig sharinganConfig;
 
     @Override
-    public void postProcessBeanDefinitionRegistry(@NonNull BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
-        if (!sharinganConfig.isEnable()) {
+    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanDefinitionRegistry) throws BeansException {
+        if (sharinganConfig == null || !sharinganConfig.isEnable()) {
             return;
         }
 
@@ -59,7 +57,22 @@ public class MonitorAnnotationBeanPostProcessor implements BeanDefinitionRegistr
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
             if (beanDefinition instanceof AbstractBeanDefinition) {
                 AbstractBeanDefinition definition = (AbstractBeanDefinition) beanDefinition;
-                Class<?> beanClass = definition.getBeanClass();
+                Class<?> beanClass;
+
+                if (definition.hasBeanClass()) {
+                    beanClass = definition.getBeanClass();
+                } else {
+                    String beanClassName = definition.getBeanClassName();
+                    if (null == beanClassName) {
+                        continue;
+                    }
+                    try {
+                        beanClass = Class.forName(beanClassName);
+                    } catch (ClassNotFoundException e1) {
+                        e1.printStackTrace();
+                        continue;
+                    }
+                }
 
                 List<ProxyMethod> proxyInfo = ClassUtil.getProxyInfo(beanClass, Exclusive.class);
 
@@ -75,19 +88,15 @@ public class MonitorAnnotationBeanPostProcessor implements BeanDefinitionRegistr
                 }
 
                 definition.setBeanClass(beanClass);
-                beanNames.add(beanDefinitionName);
+                proxyBeanNames.add(beanDefinitionName);
             }
         }
     }
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-
-    }
-
-    @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (sharinganConfig.isEnable() && beanNames.contains(beanName)) {
+        if (sharinganConfig.isEnable() && proxyBeanNames.contains(beanName)) {
+            // System.out.println("inject monitor");
             try {
                 injectProperty(bean);
             } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -117,6 +126,7 @@ public class MonitorAnnotationBeanPostProcessor implements BeanDefinitionRegistr
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         monitorBean = beanFactory.getBean(Monitor.class);
+        sharinganConfig = beanFactory.getBean(SharinganConfig.class);
     }
 
     @Override

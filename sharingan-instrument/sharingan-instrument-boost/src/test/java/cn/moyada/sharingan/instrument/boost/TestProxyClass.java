@@ -14,7 +14,6 @@ public class TestProxyClass extends AbstractClass implements Interface1 {
 
     @Catch("faker")
     private void boo(String value, boolean flag) {
-
         System.out.println(value);
     }
 

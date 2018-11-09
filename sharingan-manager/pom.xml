@@ -67,6 +67,11 @@
 
         <dependency>
             <groupId>cn.moyada</groupId>
+            <artifactId>sharingan-instrument-spring</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.moyada</groupId>
             <artifactId>sharingan-core</artifactId>
         </dependency>
 

@@ -49,6 +49,24 @@
 
             <dependency>
                 <groupId>cn.moyada</groupId>
+                <artifactId>sharingan-monitor-local</artifactId>
+                <version>${sharingan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.moyada</groupId>
+                <artifactId>sharingan-instrument-spring</artifactId>
+                <version>${sharingan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.moyada</groupId>
+                <artifactId>sharingan-monitor-api</artifactId>
+                <version>${sharingan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.moyada</groupId>
                 <artifactId>sharingan-instrument-boost</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
@@ -56,12 +74,6 @@
             <dependency>
                 <groupId>cn.moyada</groupId>
                 <artifactId>sharingan-config</artifactId>
-                <version>${sharingan.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-monitor-api</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 

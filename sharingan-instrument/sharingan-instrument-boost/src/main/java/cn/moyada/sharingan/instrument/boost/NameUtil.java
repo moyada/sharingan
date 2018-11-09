@@ -25,7 +25,7 @@ class NameUtil {
         int index = className.lastIndexOf('.');
         String simpleName = -1 == index ? className : className.substring(index + 1);
         if (!simpleName.contains("$")) {
-            return className + "$Proxy";
+            return className + "$_Proxy";
         }
         return className + "_Proxy";
     }

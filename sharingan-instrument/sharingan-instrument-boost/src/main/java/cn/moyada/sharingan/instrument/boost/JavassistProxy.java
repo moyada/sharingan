@@ -2,7 +2,6 @@ package cn.moyada.sharingan.instrument.boost;
 
 import javassist.*;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -96,15 +95,19 @@ public class JavassistProxy<T> implements ClassProxy {
             }
         }
 
+//        if (!target.isInterface()) {
+//            ctClass.setSuperclass(classPool.getCtClass(target.getName()));
+//        }
+
         ctClass.setName(NameUtil.getProxyName(ctClass.getName()));
 
-        try {
-            String path = getClass().getResource("").getPath();
-            String pkg = getClass().getPackage().getName().replace(".", "/");
-            ctClass.writeFile(path.substring(0, path.indexOf(pkg)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            String path = getClass().getResource("").getPath();
+//            String pkg = getClass().getPackage().getName().replace(".", "/");
+//            ctClass.writeFile(path.substring(0, path.indexOf(pkg)));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         return (Class<T>) ctClass.toClass();
     }

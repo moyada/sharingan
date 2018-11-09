@@ -14,7 +14,9 @@ import java.util.List;
  **/
 public class ClassUtilTest {
 
-    public static void main(String[] args) throws NoSuchMethodException, NotFoundException, ClassNotFoundException, InvocationTargetException, CannotCompileException, IllegalAccessException, IOException {
+    public static void main(String[] args) throws NoSuchMethodException, NotFoundException, ClassNotFoundException, InvocationTargetException, CannotCompileException, IllegalAccessException, IOException, InstantiationException {
+        Interface2 testProxyClass;
+
         List<ProxyMethod> proxyInfo = ClassUtil.getProxyInfo(TestProxyClass.class, Exclusive.class);
         System.out.println(proxyInfo);
 
@@ -24,6 +26,9 @@ public class ClassUtilTest {
         );
 
         Class<TestProxyClass> wrapper = javassistProxy.wrapper(TestProxyClass.class, proxyInfo);
+
+        testProxyClass = wrapper.newInstance();
         System.out.println(wrapper);
+        testProxyClass.go(123);
     }
 }

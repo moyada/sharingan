@@ -14,6 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>cn.moyada</groupId>
+            <artifactId>sharingan-monitor-local</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.moyada</groupId>
             <artifactId>sharingan-instrument-boost</artifactId>
         </dependency>
 

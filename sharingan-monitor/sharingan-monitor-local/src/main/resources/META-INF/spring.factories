@@ -1,0 +1,1 @@
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.moyada.sharingan.monitor.local.LocalMonitorAutoConfiguration
