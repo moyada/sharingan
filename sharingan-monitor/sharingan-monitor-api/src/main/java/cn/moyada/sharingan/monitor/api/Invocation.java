@@ -1,38 +1,38 @@
 package cn.moyada.sharingan.monitor.api;
 
+import java.util.Map;
+
 /**
  * @author xueyikang
  * @since 0.0.1
  **/
-public class Invocation {
+public interface Invocation {
 
-    private String application;
+    String getApplication();
 
-    private String domain;
+    void setApplication(String application);
 
-    private Object args;
+    String getDomain();
 
-    public String getApplication() {
-        return application;
-    }
+    void setDomain(String domain);
 
-    public void setApplication(String application) {
-        this.application = application;
-    }
+    Map<String, Object> getArgs();
 
-    public String getDomain() {
-        return domain;
-    }
+    void addArgs(String name, Object args);
 
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
+    void addArgs(String name, boolean args);
 
-    public Object getArgs() {
-        return args;
-    }
+    void addArgs(String name, byte args);
 
-    public void setArgs(Object args) {
-        this.args = args;
-    }
+    void addArgs(String name, short args);
+
+    void addArgs(String name, int args);
+
+    void addArgs(String name, long args);
+
+    void addArgs(String name, float args);
+
+    void addArgs(String name, double args);
+
+    void addArgs(String name, char args);
 }

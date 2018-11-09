@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>sharingan-instrument</artifactId>
+        <groupId>cn.moyada</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>sharingan-instrument-boost</artifactId>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
+    <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>org.overturetool.core</groupId>-->
+            <!--<artifactId>ast</artifactId>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.ow2.asm</groupId>-->
+            <!--<artifactId>asm</artifactId>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.ow2.asm</groupId>-->
+            <!--<artifactId>asm-util</artifactId>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>com.squareup</groupId>-->
+            <!--<artifactId>javapoet</artifactId>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.moyada</groupId>
+            <artifactId>sharingan-monitor-api</artifactId>
+        </dependency>
+    </dependencies>
+</project>

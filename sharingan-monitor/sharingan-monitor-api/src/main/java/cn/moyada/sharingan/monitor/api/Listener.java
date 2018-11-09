@@ -7,11 +7,11 @@ import java.lang.annotation.*;
  * @since 0.0.1
  **/
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Listener {
 
-    String value();
+    String value() default "";
 
     RpcProtocol protocol();
 }

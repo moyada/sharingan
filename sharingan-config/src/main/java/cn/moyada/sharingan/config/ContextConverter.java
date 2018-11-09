@@ -9,11 +9,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 类型转换器
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class ContextConverter {
 
+    /**
+     * 获取方法调用信息
+     * @param functionDO
+     * @return
+     */
     public static InvokeInfo toInvokeInfo(FunctionDO functionDO) {
         InvokeInfo invokeInfo = new InvokeInfo();
         invokeInfo.setClassType(functionDO.getClassName());
@@ -23,6 +29,11 @@ public class ContextConverter {
         return invokeInfo;
     }
 
+    /**
+     * 获取依赖信息
+     * @param infoDO
+     * @return
+     */
     public static Dependency toDependency(AppDO infoDO) {
         Dependency dependency = new Dependency();
         dependency.setArtifactId(infoDO.getArtifactId());
@@ -32,6 +43,11 @@ public class ContextConverter {
         return dependency;
     }
 
+    /**
+     * 获取依赖信息
+     * @param infoDOs
+     * @return
+     */
     public static List<Dependency> toDependency(List<AppDO> infoDOs) {
         if (null == infoDOs) {
             return null;
