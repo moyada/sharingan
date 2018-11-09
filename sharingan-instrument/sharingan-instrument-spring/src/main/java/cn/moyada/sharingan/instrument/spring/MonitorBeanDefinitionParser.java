@@ -2,6 +2,7 @@ package cn.moyada.sharingan.instrument.spring;
 
 
 import cn.moyada.sharingan.instrument.spring.util.StringUtil;
+import cn.moyada.sharingan.monitor.api.Monitor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.TypedStringValue;
 import org.springframework.beans.factory.support.ManagedMap;
@@ -18,7 +19,7 @@ import org.w3c.dom.NodeList;
  **/
 public class MonitorBeanDefinitionParser implements BeanDefinitionParser {
 
-    private static final Class<?> target = MonitorBean.class;
+    private static final Class<?> target = Monitor.class;
 
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {

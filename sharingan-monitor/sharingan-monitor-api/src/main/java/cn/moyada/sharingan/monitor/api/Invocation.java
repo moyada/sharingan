@@ -8,14 +8,6 @@ import java.util.Map;
  **/
 public interface Invocation {
 
-    String getApplication();
-
-    void setApplication(String application);
-
-    String getDomain();
-
-    void setDomain(String domain);
-
     Map<String, Object> getArgs();
 
     void addArgs(String name, Object args);

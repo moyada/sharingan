@@ -9,31 +9,7 @@ import java.util.Map;
  **/
 public class DefaultInvocation implements Invocation {
 
-    private String application;
-
-    private String domain;
-
     private Map<String, Object> args;
-
-    @Override
-    public String getApplication() {
-        return application;
-    }
-
-    @Override
-    public void setApplication(String application) {
-        this.application = application;
-    }
-
-    @Override
-    public String getDomain() {
-        return domain;
-    }
-
-    @Override
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
 
     @Override
     public Map<String, Object> getArgs() {

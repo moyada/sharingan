@@ -9,14 +9,13 @@ import cn.moyada.sharingan.monitor.api.RpcProtocol;
  * @author xueyikang
  * @since 1.0
  **/
-@Listener(value = "test", protocol = RpcProtocol.DUBBO)
+@Listener(domain = "test", protocol = RpcProtocol.DUBBO)
 public interface Interface1 extends Interface2 {
 
     void say();
 
     void setValue(String name);
 
-    @Catch
     default void close(@Rename("haha") String name, String hehe) {
 
     }

@@ -10,6 +10,10 @@ public class ProxyMethod {
 
     private String methodName;
 
+    private String domain;
+
+    private String protocol;
+
     private List<ProxyField> proxyParams;
 
     private boolean proxyBefore = false;
@@ -32,6 +36,22 @@ public class ProxyMethod {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     public List<ProxyField> getProxyParams() {

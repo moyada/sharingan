@@ -6,6 +6,21 @@ package cn.moyada.sharingan.instrument.boost;
  **/
 class NameUtil {
 
+    static boolean isEmpty(String str) {
+        if (null == str) {
+            return true;
+        }
+
+        byte[] bytes = str.getBytes();
+        int length = bytes.length;
+        for (int i = 0; i < length; i++) {
+            if (!Character.isSpaceChar(bytes[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     static String getProxyName(String className) {
         int index = className.lastIndexOf('.');
         String simpleName = -1 == index ? className : className.substring(index + 1);

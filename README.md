@@ -12,9 +12,9 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 * 参数表达式，根据配置规则动态生成请求参数。
   例如，领域数据表达式: `${test.data}`、随机整数表达式: `#{int.random}`、范围浮点数表达式: `#{double[3].-50.5-300.8}`
 
-* rpc协议支持，目前支持[Dubbo](http://dubbo.apache.org/)、[Spring Cloud](http://projects.spring.io/spring-cloud/)。
+* rpc协议支持，目前支持 [Dubbo](http://dubbo.apache.org/)、[Spring Cloud](http://projects.spring.io/spring-cloud/)。
 
-* 监听项目接口调用，对运行项目引入 agent，生成项目领域数据，将请求的数据保存用于参数表达式使用。(开发中)
+* 监听服务调用，通过对项目进行类文件增强，代理方法调用，将请求的数据保存用于参数表达式使用。(注: 增加元类空间占用)
 
 ## 如何使用
 
@@ -26,16 +26,16 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 
 | 参数 | 描述 |
 | --- | ---- |
-| spring.datasource.url | mysql连接地址 |
-| spring.datasource.username | mysql连接用户名 |
-| spring.datasource.password | mysql连接密码 |
-| maven.host | nexus3仓库地址(可选) |
-| maven.username | nexus3仓库账号(可选) |
-| maven.username | nexus3仓库密码(可选) |
-| dubbo.registry | dubbo注册中心地址(可选) |
-| dubbo.username | dubbo注册中心账号(可选) |
-| dubbo.password | dubbo注册中心密码(可选) |
-| eureka.client.serviceUrl.defaultZone | SpringCloud-eureka注册地址(可选) |
+| spring.datasource.url | mysql 连接地址 |
+| spring.datasource.username | mysql 连接用户名 |
+| spring.datasource.password | mysql 连接密码 |
+| maven.host | nexus3 仓库地址(可选) |
+| maven.username | nexus3 仓库账号(可选) |
+| maven.username | nexus3 仓库密码(可选) |
+| dubbo.registry | dubbo 注册中心地址(可选) |
+| dubbo.username | dubbo 注册中心账号(可选) |
+| dubbo.password | dubbo 注册中心密码(可选) |
+| eureka.client.serviceUrl.defaultZone | SpringCloud-eureka 注册地址(可选) |
 
 4. 启动sharingan: `./run.sh`
 
@@ -43,7 +43,7 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 
 ## 操作解释
 
-* 动态进行类加载: 在非http调用时，通过 `MetadataRepository` 查询的 `AppDO` 获取项目的仓库坐标，从版本仓库中获取最新依赖，
+* 动态进行类加载: 在非 http 调用时，通过 `MetadataRepository` 查询的 `AppDO` 获取项目的仓库坐标，从版本仓库中获取最新依赖，
 同时时卸载过期类加载器。
 
 * 领域数据表达式: `MetadataRepository` 查询的 `FunctionDO` 中 `expression` 字段来指定规则动态生成请求参数，表达式格式为 `${项目名称.数据领域}` 。

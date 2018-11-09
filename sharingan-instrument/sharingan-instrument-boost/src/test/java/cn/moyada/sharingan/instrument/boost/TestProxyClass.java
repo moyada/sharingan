@@ -9,10 +9,10 @@ import cn.moyada.sharingan.monitor.api.RpcProtocol;
  * @author xueyikang
  * @since 1.0
  **/
-@Listener(value = "test", protocol = RpcProtocol.DUBBO)
+@Listener(domain = "test", protocol = RpcProtocol.DUBBO)
 public class TestProxyClass extends AbstractClass implements Interface1 {
 
-    @Catch
+    @Catch("faker")
     private void boo(String value, boolean flag) {
 
         System.out.println(value);

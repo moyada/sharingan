@@ -2,10 +2,9 @@ package cn.moyada.sharingan.instrument.boost;
 
 import javassist.*;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xueyikang
@@ -17,8 +16,6 @@ public class JavassistProxy<T> implements ClassProxy {
 
     private final ClassPool classPool;
 
-    private final CtClass invokeCt;
-
     private final String invokeClassName;
 
     private final String invokeObjName;
@@ -28,7 +25,7 @@ public class JavassistProxy<T> implements ClassProxy {
 
     private final String proxyMethod;
 
-    private final Map<String, String> privateVariables;
+    private final String[] privateVariables;
 
     private final StringBuilder invokeBody;
 
@@ -45,11 +42,10 @@ public class JavassistProxy<T> implements ClassProxy {
         this.invokeInterfaceName = invokeInterface.getName();
         this.invokeParamName = invokeParam.getName();
 
-        this.invokeCt = classPool.getOrNull(invokeParamName);
-
-        this.privateVariables = new HashMap<>();
+        this.privateVariables = new String[privateVariables.length];
+        int index = 0;
         for (String privateVariable : privateVariables) {
-            this.privateVariables.put(NameUtil.genPrivateName(privateVariable), NameUtil.getSetFunction(privateVariable));
+            this.privateVariables[index++] = NameUtil.genPrivateName(privateVariable);
         }
 
         this.invokeBody = new StringBuilder(128);
@@ -64,7 +60,7 @@ public class JavassistProxy<T> implements ClassProxy {
         proxyInvoke.setName(invokeObjName);
 
         CtField varField;
-        for (String variable : privateVariables.keySet()) {
+        for (String variable : privateVariables) {
             varField = getStringField(ctClass, variable);
             ctClass.addField(varField);
         }
@@ -102,13 +98,13 @@ public class JavassistProxy<T> implements ClassProxy {
 
         ctClass.setName(NameUtil.getProxyName(ctClass.getName()));
 
-//        try {
-//            String path = getClass().getResource("").getPath();
-//            String pkg = getClass().getPackage().getName().replace(".", "/");
-//            ctClass.writeFile(path.substring(0, path.indexOf(pkg)));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            String path = getClass().getResource("").getPath();
+            String pkg = getClass().getPackage().getName().replace(".", "/");
+            ctClass.writeFile(path.substring(0, path.indexOf(pkg)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return (Class<T>) ctClass.toClass();
     }
@@ -143,12 +139,15 @@ public class JavassistProxy<T> implements ClassProxy {
                 .append(invokeParamName)
                 .append("();\n");
 
-        for (Map.Entry<String, String> entry : privateVariables.entrySet()) {
+        invokeBody.append(LOCAL_VARIABLE).append(".addArgs(\"_protocol\", \"").append(method.getProtocol()).append("\");\n");
+        invokeBody.append(LOCAL_VARIABLE).append(".addArgs(\"_domain\", \"").append(method.getDomain()).append("\");\n");
+
+        for (String variable : privateVariables) {
             invokeBody.append(LOCAL_VARIABLE)
-                    .append(".")
-                    .append(entry.getValue())
-                    .append("(this.")
-                    .append(entry.getKey())
+                    .append(".addArgs(\"")
+                    .append(variable)
+                    .append("\", this.")
+                    .append(variable)
                     .append(");\n");
         }
 

@@ -15,12 +15,12 @@ import java.util.List;
 public class ClassUtilTest {
 
     public static void main(String[] args) throws NoSuchMethodException, NotFoundException, ClassNotFoundException, InvocationTargetException, CannotCompileException, IllegalAccessException, IOException {
-        List<ProxyMethod> proxyInfo = ClassUtil.getProxyInfo(TestProxyClass.class, Listener.class, Catch.class, Exclusive.class);
+        List<ProxyMethod> proxyInfo = ClassUtil.getProxyInfo(TestProxyClass.class, Exclusive.class);
         System.out.println(proxyInfo);
 
         JavassistProxy<Invocation> javassistProxy = new JavassistProxy<>(Monitor.class,
                 Monitor.class.getDeclaredMethod("listener", Invocation.class),
-                Invocation.class, DefaultInvocation.class, new String[]{"application", "domain"}
+                Invocation.class, DefaultInvocation.class, new String[]{"application"}
         );
 
         Class<TestProxyClass> wrapper = javassistProxy.wrapper(TestProxyClass.class, proxyInfo);

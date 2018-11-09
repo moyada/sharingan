@@ -8,7 +8,7 @@ import cn.moyada.sharingan.monitor.api.RpcProtocol;
  * @author xueyikang
  * @since 1.0
  **/
-@Listener(value = "test", protocol = RpcProtocol.DUBBO)
+@Listener(domain = "test", protocol = RpcProtocol.DUBBO)
 public interface Interface2 {
 
     @Catch

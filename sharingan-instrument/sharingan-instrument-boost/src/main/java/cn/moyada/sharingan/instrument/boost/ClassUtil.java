@@ -1,8 +1,10 @@
 package cn.moyada.sharingan.instrument.boost;
 
+import cn.moyada.sharingan.monitor.api.Catch;
+import cn.moyada.sharingan.monitor.api.Listener;
 import cn.moyada.sharingan.monitor.api.Rename;
+import javassist.NotFoundException;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -20,16 +22,8 @@ public class ClassUtil {
 
 
     public static List<ProxyMethod> getProxyInfo(Class clazz,
-                                          Class<? extends Annotation> classAnnotation,
-                                          Class<? extends Annotation> methodAnnotation,
                                           Class<? extends Annotation> exclusiveAnnotation) {
         if (null == clazz) {
-            return null;
-        }
-        if (null == classAnnotation) {
-            return null;
-        }
-        if (null == methodAnnotation) {
             return null;
         }
         if (clazz.isInterface()) {
@@ -39,64 +33,65 @@ public class ClassUtil {
             return null;
         }
 
-        List<Class> targetClass = getAnnotationClass(clazz, classAnnotation);
-        if (targetClass.isEmpty()) {
+        Map<Class, Listener> annotationClass = getAnnotationClass(clazz);
+        if (annotationClass.isEmpty()) {
             return null;
         }
 
-        List<ProxyMethod> proxyMethods = getMethodInfo(targetClass, methodAnnotation, exclusiveAnnotation);
+        List<ProxyMethod> proxyMethods = getMethodInfo(annotationClass, exclusiveAnnotation);
         if (null == proxyMethods) {
             return null;
         }
 
         try {
             checkMethodVariable(clazz, proxyMethods);
-        } catch (IOException | NoSuchMethodException e) {
+        } catch (NotFoundException | NoSuchMethodException e) {
             e.printStackTrace();
             return null;
         }
         return proxyMethods;
     }
 
-    private static List<Class> getAnnotationClass(Class clazz, Class<? extends Annotation> classAnnotation) {
-        List<Class> classes = new ArrayList<>();
+    private static Map<Class, Listener> getAnnotationClass(Class<?> clazz) {
+        Map<Class, Listener> classes = new HashMap<>();
 
-        if (clazz.isAnnotationPresent(classAnnotation)) {
-            classes.add(clazz);
+        Listener annotation = clazz.getAnnotation(Listener.class);
+        if (null != annotation) {
+            classes.put(clazz, annotation);
         }
 
-        addAnnotationInterface(clazz.getInterfaces(), classAnnotation, classes);
-        addAnnotationSuper(clazz.getSuperclass(), classAnnotation, classes);
+        addAnnotationInterface(clazz.getInterfaces(), classes);
+        addAnnotationSuper(clazz.getSuperclass(), classes);
         return classes;
     }
 
-    private static void addAnnotationInterface(Class[] interfaces, Class<? extends Annotation> classAnnotation, List<Class> classes) {
-        for (Class anInterface : interfaces) {
-            if (anInterface.isAnnotationPresent(classAnnotation)) {
-                classes.add(anInterface);
+    private static void addAnnotationInterface(Class<?>[] interfaces, Map<Class, Listener> classes) {
+        for (Class<?> anInterface : interfaces) {
+            Listener annotation = anInterface.getAnnotation(Listener.class);
+            if (null != annotation) {
+                classes.put(anInterface, annotation);
             }
-            addAnnotationInterface(anInterface.getInterfaces(), classAnnotation, classes);
+            addAnnotationInterface(anInterface.getInterfaces(), classes);
         }
     }
 
-    private static void addAnnotationSuper(Class superClass, Class<? extends Annotation> classAnnotation, List<Class> classes) {
+    private static void addAnnotationSuper(Class<?> superClass, Map<Class, Listener> classes) {
         if (null == superClass) {
             return;
         }
-
-        if (superClass.isAnnotationPresent(classAnnotation)) {
-            classes.add(superClass);
+        Listener annotation = superClass.getAnnotation(Listener.class);
+        if (null != annotation) {
+            classes.put(superClass, annotation);
         }
-
-        addAnnotationSuper(superClass.getSuperclass(), classAnnotation, classes);
+        addAnnotationSuper(superClass.getSuperclass(), classes);
     }
 
-    private static List<ProxyMethod> getMethodInfo(List<Class> targetClass,
-                                                   Class<? extends Annotation> methodAnnotation,
+    private static List<ProxyMethod> getMethodInfo(Map<Class, Listener> targetClass,
                                                    Class<? extends Annotation> exclusiveAnnotation) {
         Map<String, ProxyMethod> proxyMethods = new HashMap<>();
-        for (Class clazz : targetClass) {
-            addMethodInfo(clazz, proxyMethods, methodAnnotation, exclusiveAnnotation);
+
+        for (Map.Entry<Class, Listener> entry : targetClass.entrySet()) {
+            addMethodInfo(entry.getKey(), entry.getValue(), proxyMethods, exclusiveAnnotation);
         }
 
         if (proxyMethods.isEmpty()) {
@@ -108,8 +103,7 @@ public class ClassUtil {
         return proxyMethod;
     }
 
-    private static void addMethodInfo(Class clazz, Map<String, ProxyMethod> proxyMethods,
-                                               Class<? extends Annotation> methodAnnotation,
+    private static void addMethodInfo(Class clazz, Listener listener, Map<String, ProxyMethod> proxyMethods,
                                                Class<? extends Annotation> exclusiveAnnotation) {
         List<ProxyField> proxyFields;
 
@@ -122,7 +116,8 @@ public class ClassUtil {
             if (method.getParameterCount() == 0) {
                 continue;
             }
-            if (!method.isAnnotationPresent(methodAnnotation)) {
+            Catch annotation = method.getAnnotation(Catch.class);
+            if (null == annotation) {
                 continue;
             }
 
@@ -141,6 +136,13 @@ public class ClassUtil {
             proxyMethod.setProxyParams(proxyFields);
             proxyMethod.setProxyBefore(true);
 
+            String domain = annotation.value();
+            if (NameUtil.isEmpty(domain)) {
+                domain = listener.domain();
+            }
+            proxyMethod.setDomain(domain);
+            proxyMethod.setProtocol(listener.protocol().getProtocol());
+
             proxyMethods.put(methodName, proxyMethod);
         }
     }
@@ -155,8 +157,8 @@ public class ClassUtil {
 
         String[] variableName;
         try {
-            variableName = VariableUtil.getNameByASM(clazz, method);
-        } catch (IOException e) {
+            variableName = VariableUtil.getNameByJavassist(clazz, method);
+        } catch (NotFoundException e) {
             e.printStackTrace();
             variableName = null;
         }
@@ -188,7 +190,7 @@ public class ClassUtil {
         return proxyFields;
     }
 
-    private static void checkMethodVariable(Class target, List<ProxyMethod> proxyMethods) throws NoSuchMethodException, IOException {
+    private static void checkMethodVariable(Class target, List<ProxyMethod> proxyMethods) throws NoSuchMethodException, NotFoundException {
         String[] variableName = null;
         for (ProxyMethod proxyMethod : proxyMethods) {
             List<ProxyField> proxyParams = proxyMethod.getProxyParams();
@@ -199,7 +201,7 @@ public class ClassUtil {
                         Class[] paramTypes = proxyMethod.getParamTypes();
                         @SuppressWarnings("unchecked")
                         Method method = target.getDeclaredMethod(proxyMethod.getMethodName(), paramTypes);
-                        variableName = VariableUtil.getNameByASM(target, method);
+                        variableName = VariableUtil.getNameByJavassist(target, method);
                     }
 
                     proxyField.setParamName(variableName[proxyField.getParamIndex()]);
