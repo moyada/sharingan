@@ -84,7 +84,7 @@ public class JavassistProxy<T> implements ClassProxy {
                     ctMethod = targetClass.getDeclaredMethod(methodName, paramClass);
                 }
             } catch (NotFoundException e) {
-                // pass default method
+                // pass jdk8 default method
                 continue;
             }
 

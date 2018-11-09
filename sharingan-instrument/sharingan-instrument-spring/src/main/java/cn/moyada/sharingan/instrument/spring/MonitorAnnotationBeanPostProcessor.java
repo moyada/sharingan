@@ -22,14 +22,12 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Component
 public class MonitorAnnotationBeanPostProcessor implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor, BeanFactoryAware, Ordered {
 
     private Set<String> beanNames = new HashSet<>();

@@ -18,7 +18,7 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 
 ## 如何使用
 
-1. 项目需要 `jdk1.8` 以上版本，通过[这里](https://github.com/moyada/sharingan/releases)下载 sharingan-manager 压缩包进行解压。
+1. 项目需要 `jdk1.8` 以上版本，通过 [这里](https://github.com/moyada/sharingan/releases) 下载 sharingan-manager 压缩包进行解压。
 
 2. 初始化mysql数据库，执行 `schema` 文件下的 `info.sql` 和 `invoke.sql` 。
 
