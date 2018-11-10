@@ -3,6 +3,9 @@ classes/
 .idea
 *.iml
 *.log
+.babel.json
+logs/
+deploy/logs/
 sharingan-manager/src/main/resources/application.yaml
 deploy/config/conf-test.properties
 deploy/sharingan-manager.jar

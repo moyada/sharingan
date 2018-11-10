@@ -1,5 +1,6 @@
 package cn.moyada.sharingan.manager.cache;
 
+
 import cn.moyada.sharingan.storage.api.InvocationRepository;
 import cn.moyada.sharingan.storage.api.domain.InvocationReportDO;
 import org.springframework.beans.factory.annotation.Autowired;

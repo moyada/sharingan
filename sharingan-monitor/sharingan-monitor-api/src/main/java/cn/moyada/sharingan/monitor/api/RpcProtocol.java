@@ -19,4 +19,19 @@ public enum RpcProtocol {
     public String getProtocol() {
         return protocol;
     }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    static {
+        RpcProtocol[] rpcProtocols = RpcProtocol.values();
+        for (RpcProtocol rpcProtocol : rpcProtocols) {
+            String value = rpcProtocol.getProtocol().trim();
+            if (value.equals("")) {
+                throw new IllegalArgumentException("RpcProtocol Error: " + rpcProtocol.name() +" protocol value can not be space.");
+            }
+            rpcProtocol.setProtocol(value);
+        }
+    }
 }

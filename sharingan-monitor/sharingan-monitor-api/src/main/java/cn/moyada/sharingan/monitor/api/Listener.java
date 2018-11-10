@@ -6,12 +6,13 @@ import java.lang.annotation.*;
  * @author xueyikang
  * @since 0.0.1
  **/
+@Inherited
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Listener {
 
-    String value();
+    String domain();
 
     RpcProtocol protocol();
 }
