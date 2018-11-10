@@ -9,9 +9,11 @@ import org.springframework.core.env.Environment;
  * @author xueyikang
  * @since 1.0
  **/
-@ConfigurationProperties("sharingan")
+@ConfigurationProperties(SharinganConfig.PREFIX_NAME)
 @Lazy(false)
 public class SharinganConfig implements EnvironmentAware {
+
+    static final String PREFIX_NAME = "sharingan";
 
     private boolean enable = false;
 
@@ -21,12 +23,12 @@ public class SharinganConfig implements EnvironmentAware {
 
     @Override
     public void setEnvironment(Environment environment) {
-        Boolean enable = environment.getProperty("sharingan.enable", Boolean.class);
+        Boolean enable = environment.getProperty(PREFIX_NAME + ".enable", Boolean.class);
         if (null != enable) {
             this.enable = enable;
         }
 
-        String application = environment.getProperty("sharingan.application", String.class);
+        String application = environment.getProperty(PREFIX_NAME + ".application", String.class);
         if (null != application) {
             this.application = application;
         }

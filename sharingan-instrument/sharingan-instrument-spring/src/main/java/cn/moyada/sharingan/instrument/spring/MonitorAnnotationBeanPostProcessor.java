@@ -13,6 +13,7 @@ import javassist.NotFoundException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -27,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MonitorAnnotationBeanPostProcessor implements BeanFactoryPostProcessor, BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
+public class MonitorAnnotationBeanPostProcessor implements InitializingBean, BeanFactoryPostProcessor, BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
 
     private Set<String> proxyBeanNames = new HashSet<>();
 
@@ -35,23 +36,30 @@ public class MonitorAnnotationBeanPostProcessor implements BeanFactoryPostProces
 
     private SharinganConfig sharinganConfig;
 
+    private JavassistProxy<Invocation> javassistProxy;
+
     @Override
-    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanDefinitionRegistry) throws BeansException {
-        if (sharinganConfig == null || !sharinganConfig.isEnable()) {
+    public void afterPropertiesSet() throws Exception {
+        if (!sharinganConfig.isEnable()) {
             return;
         }
 
-        String[] beanDefinitionNames = beanDefinitionRegistry.getBeanDefinitionNames();
-
-        JavassistProxy<Invocation> javassistProxy;
         try {
             javassistProxy = new JavassistProxy<>(Monitor.class,
                     Monitor.class.getDeclaredMethod("listener", Invocation.class),
                     Invocation.class, DefaultInvocation.class, Variables.APP_INFO);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanDefinitionRegistry) throws BeansException {
+        if (!sharinganConfig.isEnable() || javassistProxy == null) {
             return;
         }
+
+        String[] beanDefinitionNames = beanDefinitionRegistry.getBeanDefinitionNames();
 
         for (String beanDefinitionName : beanDefinitionNames) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
@@ -95,8 +103,7 @@ public class MonitorAnnotationBeanPostProcessor implements BeanFactoryPostProces
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (sharinganConfig.isEnable() && proxyBeanNames.contains(beanName)) {
-            // System.out.println("inject monitor");
+        if (sharinganConfig.isEnable() && javassistProxy != null && proxyBeanNames.contains(beanName)) {
             try {
                 injectProperty(bean);
             } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -125,8 +132,17 @@ public class MonitorAnnotationBeanPostProcessor implements BeanFactoryPostProces
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        monitorBean = beanFactory.getBean(Monitor.class);
-        sharinganConfig = beanFactory.getBean(SharinganConfig.class);
+        try {
+            sharinganConfig = beanFactory.getBean(SharinganConfig.class);
+        } catch (BeansException e) {
+            sharinganConfig = new SharinganConfig();
+        }
+
+        try {
+            monitorBean = beanFactory.getBean(Monitor.class);
+        } catch (BeansException e) {
+            sharinganConfig.setEnable(false);
+        }
     }
 
     @Override

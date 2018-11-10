@@ -31,8 +31,7 @@ public class TestProxyClass extends AbstractClass implements Interface1 {
 
     @Override
     public void jiade(String name) {
-
-        jiade(name);
+        boo(name, true);
     }
 
     @Override

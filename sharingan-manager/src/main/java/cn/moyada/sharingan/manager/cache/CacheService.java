@@ -1,17 +1,32 @@
 package cn.moyada.sharingan.manager.cache;
 
-import cn.moyada.sharingan.monitor.api.Catch;
-import cn.moyada.sharingan.monitor.api.Listener;
-import cn.moyada.sharingan.monitor.api.RpcProtocol;
+
+import cn.moyada.sharingan.storage.api.InvocationRepository;
 import cn.moyada.sharingan.storage.api.domain.InvocationReportDO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
-@Listener(domain = "test", protocol = RpcProtocol.DUBBO)
-public interface CacheService {
+@Component
+public class CacheService {
 
-    @Catch
-    InvocationReportDO getReport(String fakerId);
+    @Autowired
+    private InvocationRepository invocationRepository;
+
+    private InvocationReportDO lastReport;
+
+    public InvocationReportDO getReport(String fakerId) {
+        if (null != lastReport && fakerId.equals(lastReport.getFakerId())) {
+            return lastReport;
+        }
+
+        InvocationReportDO report = invocationRepository.findReport(fakerId);
+        if (null != report) {
+            lastReport = report;
+        }
+        return report;
+    }
 }

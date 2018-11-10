@@ -4,8 +4,7 @@ import cn.moyada.sharingan.monitor.api.*;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -14,8 +13,8 @@ import java.util.List;
  **/
 public class ClassUtilTest {
 
-    public static void main(String[] args) throws NoSuchMethodException, NotFoundException, ClassNotFoundException, InvocationTargetException, CannotCompileException, IllegalAccessException, IOException, InstantiationException {
-        Interface2 testProxyClass;
+    public static void main(String[] args) throws NoSuchMethodException, NotFoundException, CannotCompileException, IllegalAccessException, InstantiationException, NoSuchFieldException {
+        AbstractClass testProxyClass;
 
         List<ProxyMethod> proxyInfo = ClassUtil.getProxyInfo(TestProxyClass.class, Exclusive.class);
         System.out.println(proxyInfo);
@@ -28,7 +27,16 @@ public class ClassUtilTest {
         Class<TestProxyClass> wrapper = javassistProxy.wrapper(TestProxyClass.class, proxyInfo);
 
         testProxyClass = wrapper.newInstance();
+
+        Field monitor = wrapper.getDeclaredField("_monitor");
+        monitor.setAccessible(true);
+        monitor.set(testProxyClass, new TestMonitor());
+
+        Field application = wrapper.getDeclaredField("_application");
+        application.setAccessible(true);
+        application.set(testProxyClass, "ceshi");
+
         System.out.println(wrapper);
-        testProxyClass.go(123);
+        testProxyClass.jiade("123");
     }
 }

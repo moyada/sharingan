@@ -3,7 +3,9 @@ package cn.moyada.sharingan.instrument.boost;
 import javassist.*;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xueyikang
@@ -24,7 +26,7 @@ public class JavassistProxy<T> implements ClassProxy {
 
     private final String proxyMethod;
 
-    private final String[] privateVariables;
+    private final Map<String, String> privateVariables;
 
     private final StringBuilder invokeBody;
 
@@ -41,10 +43,9 @@ public class JavassistProxy<T> implements ClassProxy {
         this.invokeInterfaceName = invokeInterface.getName();
         this.invokeParamName = invokeParam.getName();
 
-        this.privateVariables = new String[privateVariables.length];
-        int index = 0;
+        this.privateVariables = new HashMap<>(privateVariables.length);
         for (String privateVariable : privateVariables) {
-            this.privateVariables[index++] = NameUtil.genPrivateName(privateVariable);
+            this.privateVariables.put(NameUtil.genPrivateName(privateVariable), NameUtil.getSetFunction(privateVariable));
         }
 
         this.invokeBody = new StringBuilder(128);
@@ -53,24 +54,28 @@ public class JavassistProxy<T> implements ClassProxy {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Class<T> wrapper(Class<T> target, List<ProxyMethod> methods) throws NotFoundException, CannotCompileException {
+        CtClass targetClass = classPool.getCtClass(target.getName());
+
+        // 继承方式
+//        CtClass ctClass = classPool.makeClass(NameUtil.getProxyName(target.getName()));
+//        ctClass.setSuperclass(targetClass);
+
         CtClass ctClass = classPool.getCtClass(target.getName());
+        ctClass.setName(NameUtil.getProxyName(ctClass.getName()));
 
         CtField proxyInvoke = CtField.make("private " + invokeClassName + " " + invokeObjName + " = null;", ctClass);
         proxyInvoke.setName(invokeObjName);
+        ctClass.addField(proxyInvoke);
 
         CtField varField;
-        for (String variable : privateVariables) {
+        for (String variable : privateVariables.keySet()) {
             varField = getStringField(ctClass, variable);
             ctClass.addField(varField);
         }
 
-        ctClass.addField(proxyInvoke);
-
         String methodName;
         CtMethod ctMethod;
         CtClass[] paramClass;
-
-        CtClass targetClass = classPool.getCtClass(target.getName());
 
         for (ProxyMethod method : methods) {
             methodName = method.getMethodName();
@@ -88,18 +93,14 @@ public class JavassistProxy<T> implements ClassProxy {
             }
 
             try {
-                proxyMethod(ctMethod, method, invokeObjName, proxyMethod);
+                insertMethod(ctMethod, method, invokeObjName, proxyMethod);
+//                ctClass.addMethod(superMethod(ctMethod, method, invokeObjName, insertMethod));
             } catch (CannotCompileException e) {
                 e.printStackTrace();
                 return target;
             }
+
         }
-
-//        if (!target.isInterface()) {
-//            ctClass.setSuperclass(classPool.getCtClass(target.getName()));
-//        }
-
-        ctClass.setName(NameUtil.getProxyName(ctClass.getName()));
 
 //        try {
 //            String path = getClass().getResource("").getPath();
@@ -128,9 +129,17 @@ public class JavassistProxy<T> implements ClassProxy {
         return CtField.make("private String " + name + ";", ctClass);
     }
 
-    private void proxyMethod(CtMethod ctMethod, ProxyMethod method, String objName, String methodName)
+    /**
+     * 继承方法
+     * @param ctMethod
+     * @param method
+     * @param objName
+     * @param methodName
+     * @return
+     * @throws CannotCompileException
+     */
+    private CtMethod superMethod(CtMethod ctMethod, ProxyMethod method, String objName, String methodName)
             throws CannotCompileException {
-//        ctMethod.addLocalVariable(LOCAL_VARIABLE, paramFile);
 
         invokeBody.append("{ \n");
         invokeBody.append("if (null != ").append(invokeObjName).append(") {\n");
@@ -142,18 +151,79 @@ public class JavassistProxy<T> implements ClassProxy {
                 .append(invokeParamName)
                 .append("();\n");
 
-        invokeBody.append(LOCAL_VARIABLE).append(".addArgs(\"_protocol\", \"").append(method.getProtocol()).append("\");\n");
-        invokeBody.append(LOCAL_VARIABLE).append(".addArgs(\"_domain\", \"").append(method.getDomain()).append("\");\n");
+        invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("protocol")).append("(\"").append(method.getProtocol()).append("\");\n");
+        invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("domain")).append("(\"").append(method.getDomain()).append("\");\n");
 
-        for (String variable : privateVariables) {
+        for (Map.Entry<String, String> entry : privateVariables.entrySet()) {
             invokeBody.append(LOCAL_VARIABLE)
-                    .append(".addArgs(\"")
-                    .append(variable)
-                    .append("\", this.")
-                    .append(variable)
+                    .append(".")
+                    .append(entry.getValue())
+                    .append("(this.")
+                    .append(entry.getKey())
                     .append(");\n");
         }
 
+        for (ProxyField proxyField : method.getProxyParams()) {
+            invokeBody.append(LOCAL_VARIABLE)
+                    .append(".addArgs(\"").append(proxyField.getParamName())
+                    .append("\", $").append(proxyField.getParamIndex() + 1).append(");\n");
+        }
+
+        invokeBody.append(objName)
+                .append(".")
+                .append(methodName)
+                .append("(")
+                .append(LOCAL_VARIABLE)
+                .append("); \n }\n");
+
+        invokeBody.append("super.").append(method.getMethodName()).append("($$);\n}");
+
+        String proxyBody = invokeBody.toString();
+
+        invokeBody.delete(0, invokeBody.length());
+
+        System.out.println(proxyBody);
+
+        ctMethod.setBody(proxyBody);
+        return ctMethod;
+    }
+
+    /**
+     * 插入方法
+     * @param ctMethod
+     * @param method
+     * @param objName
+     * @param methodName
+     * @throws CannotCompileException
+     */
+    private void insertMethod(CtMethod ctMethod, ProxyMethod method, String objName, String methodName)
+            throws CannotCompileException {
+
+        invokeBody.append("{ \n");
+        invokeBody.append("if (null != ").append(invokeObjName).append(") {\n");
+
+        invokeBody.append(invokeInterfaceName)
+                .append(" ")
+                .append(LOCAL_VARIABLE)
+                .append(" = new ")
+                .append(invokeParamName)
+                .append("();\n");
+
+        // method param
+        invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("protocol")).append("(\"").append(method.getProtocol()).append("\");\n");
+        invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("domain")).append("(\"").append(method.getDomain()).append("\");\n");
+
+        // application param
+        for (Map.Entry<String, String> entry : privateVariables.entrySet()) {
+            invokeBody.append(LOCAL_VARIABLE)
+                    .append(".")
+                    .append(entry.getValue())
+                    .append("(this.")
+                    .append(entry.getKey())
+                    .append(");\n");
+        }
+
+        // invocation args
         for (ProxyField proxyField : method.getProxyParams()) {
             invokeBody.append(LOCAL_VARIABLE)
                     .append(".addArgs(\"").append(proxyField.getParamName())

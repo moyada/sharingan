@@ -1,6 +1,7 @@
 package cn.moyada.sharingan.monitor.local;
 
 import cn.moyada.sharingan.monitor.api.Monitor;
+import cn.moyada.sharingan.monitor.api.TestMonitor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
