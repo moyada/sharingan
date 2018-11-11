@@ -15,7 +15,6 @@
     <modules>
         <module>sharingan-instrument-agent</module>
         <module>sharingan-instrument-processor</module>
-        <module>sharingan-instrument-spring</module>
         <module>sharingan-instrument-boost</module>
     </modules>
 </project>

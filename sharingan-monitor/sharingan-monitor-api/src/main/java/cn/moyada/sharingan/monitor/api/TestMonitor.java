@@ -1,5 +1,7 @@
 package cn.moyada.sharingan.monitor.api;
 
+import cn.moyada.sharingan.monitor.api.entity.Invocation;
+
 /**
  * @author xueyikang
  * @since 1.0

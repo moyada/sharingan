@@ -6,13 +6,28 @@ public enum Protocol {
     SPRING_CLOUD("springcloud"),
     ;
 
-    private String value;
+    private String protocol;
 
-    Protocol(String value) {
-        this.value = value;
+    Protocol(String protocol) {
+        this.protocol = protocol;
     }
 
-    public String getValue() {
-        return value;
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    static {
+        Protocol[] protocols = Protocol.values();
+        for (Protocol protocol : protocols) {
+            String value = protocol.getProtocol().trim();
+            if (value.equals("")) {
+                throw new IllegalArgumentException("Protocol Error: " + protocol.name() +" protocol value can not be space.");
+            }
+            protocol.setProtocol(value);
+        }
     }
 }

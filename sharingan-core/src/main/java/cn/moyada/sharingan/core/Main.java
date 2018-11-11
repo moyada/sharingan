@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class Main {
@@ -73,6 +74,11 @@ public class Main {
         InvokeProxy invokeProxy = rpcInvokeProxy.getInvoke(invokeContext.getProtocol());
 
         System.gc();
+        try {
+            TimeUnit.MILLISECONDS.sleep(100L);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         InvocationMetaDate invocationMetaDate = InvocationConverter.toInvocation(invokeContext);
         invokeProxy.initialize(invocationMetaDate);

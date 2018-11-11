@@ -14,7 +14,7 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 
 * rpc协议支持，目前支持 [Dubbo](http://dubbo.apache.org/)、[Spring Cloud](http://projects.spring.io/spring-cloud/)。
 
-* 监听服务调用，通过对项目进行类文件增强，代理方法调用，将请求的数据保存用于参数表达式使用。(注: 增加元类空间占用)
+* 监听服务调用，通过对目标 class 生成镜像修改，监控方法调用。(注: 增加元类空间占用)
 
 ## 如何使用
 
@@ -40,6 +40,77 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 4. 启动sharingan: `./run.sh`
 
 5. 访问链接 `htto://127.0.0.1:8080/index.html` 进入管理界面。
+
+6. 调用采集
+
+要求项目使用 Spring-Boot (建议版本 2.x.x+)，将 `sharingan-instrument-spring` 配置 Monitor 后打包引入，以注解形式监控数据。
+
+具体步骤
+
+6.1. 创建 Monitor 实例，配置 sharingan-instrument-spring 下 pom.xml 中 sharingan-monitor 具体依赖。
+
+##### 示例: 在 LocalMonitorAutoConfiguration 或 SharinganMonitorAutoConfiguration 中配置自动装配。
+
+```
+
+@Bean
+public Monitor monitor() {
+    return new TestMonitor();
+}
+
+
+<-- 在 pom.xml 中引入 sharingan-monitor-local -->
+<dependencies>
+    <dependency>
+        <groupId>cn.moyada</groupId>
+        <artifactId>sharingan-monitor-local</artifactId>
+    </dependency>
+</dependencies>
+
+```
+
+6.2. 引入 sharingan-instrument-spring 依赖并配置参数
+
+```
+sharingan.enable = true
+sharingan.application = test
+```
+
+6.3. 对接口进行监控配置，依赖注入形式必须为 `@AutoWrie 接口 service;`
+
+| 注解 | 描述 |
+| --- | ---- |
+| @Listener | 选择监控对象，用于类或接口上 |
+| @Catch | 选择监控方法 |
+| @Rename | 对方法参数重命名 |
+| @Exclusive | 排除方法参数 |
+
+##### 示例
+
+```
+@Listener(domain = "test", protocol = RpcProtocol.DUBBO)
+public interface Interface1 {
+
+    @Catch
+    void report(@Rename("name") String value, @Exclusive boolean flag);
+}
+
+@Component
+public class Class1 implements Interface1 {
+
+    void report(String value, boolean flag) {
+        System.out.println(value + flag);
+    }
+}
+
+================
+
+@AutoWire
+Interface1 service;
+
+
+```
+
 
 ## 操作解释
 

@@ -18,9 +18,9 @@ import java.lang.reflect.Modifier;
  * @author xueyikang
  * @since 1.0
  **/
-class VariableUtil {
+public class VariableUtil {
 
-    static String[] getNameByASM(Class clazz, Method method) throws IOException {
+    public static String[] getNameByASM(Class clazz, Method method) throws IOException {
 //        final Class<?>[] methodParameterTypes = method.getParameterTypes();
 //        final int methodParameterCount = methodParameterTypes.length;
 //        final boolean isStatic = Modifier.isStatic(method.getModifiers());
@@ -86,7 +86,7 @@ class VariableUtil {
 //        return true;
 //    }
 
-    static String[] getNameByJavassist(Class clazz, Method method) throws NotFoundException {
+    public static String[] getNameByJavassist(Class clazz, Method method) throws NotFoundException {
         ClassPool classPool = ClassPool.getDefault();
 
         CtClass ctClass = classPool.get(clazz.getName());

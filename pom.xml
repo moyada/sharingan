@@ -9,6 +9,15 @@
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
+    <description>Testing instrument for RPC invocation</description>
+    <url>https://github.com/moyada/sharingan</url>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
     <modules>
         <module>sharingan-common</module>
         <module>sharingan-core</module>
@@ -20,6 +29,7 @@
         <module>sharingan-monitor</module>
         <module>sharingan-instrument</module>
         <module>sharingan-bom</module>
+        <module>sharingan-spring-boot</module>
     </modules>
 
     <properties>
@@ -49,13 +59,19 @@
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-monitor-local</artifactId>
+                <artifactId>sharingan-spring-boot-autoconfigure</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-instrument-spring</artifactId>
+                <artifactId>sharingan-monitor-mysql</artifactId>
+                <version>${sharingan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.moyada</groupId>
+                <artifactId>sharingan-monitor-local</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 

@@ -4,9 +4,9 @@ package cn.moyada.sharingan.instrument.boost;
  * @author xueyikang
  * @since 1.0
  **/
-class NameUtil {
+public class NameUtil {
 
-    static boolean isEmpty(String str) {
+    public static boolean isEmpty(String str) {
         if (null == str) {
             return true;
         }
@@ -21,7 +21,7 @@ class NameUtil {
         return true;
     }
 
-    static String getProxyName(String className) {
+    public static String getProxyName(String className) {
         int index = className.lastIndexOf('.');
         String simpleName = -1 == index ? className : className.substring(index + 1);
         if (!simpleName.contains("$")) {
@@ -30,21 +30,21 @@ class NameUtil {
         return className + "_Proxy";
     }
 
-    static String getSetFunction(String simpleName) {
+    public static String getSetFunction(String simpleName) {
         return "set" + toUpperCapitalName(simpleName);
     }
 
-    static String genPrivateName(String simpleName) {
-        return "_" + toLowerCapitalName(simpleName);
+    public static String genPrivateName(String simpleName) {
+        return "_" + toLowerCapitalName(simpleName) + "_";
     }
 
-    static String toLowerCapitalName(String simpleName) {
+    public static String toLowerCapitalName(String simpleName) {
         char c = simpleName.charAt(0);
         c = Character.toLowerCase(c);
         return c + simpleName.substring(1);
     }
 
-    static String toUpperCapitalName(String simpleName) {
+    public static String toUpperCapitalName(String simpleName) {
         char c = simpleName.charAt(0);
         c = Character.toUpperCase(c);
         return c + simpleName.substring(1);
