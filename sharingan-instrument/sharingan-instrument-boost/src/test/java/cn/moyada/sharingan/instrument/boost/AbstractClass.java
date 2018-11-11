@@ -1,14 +1,14 @@
 package cn.moyada.sharingan.instrument.boost;
 
-import cn.moyada.sharingan.monitor.api.Catch;
-import cn.moyada.sharingan.monitor.api.Listener;
-import cn.moyada.sharingan.monitor.api.RpcProtocol;
+import cn.moyada.sharingan.monitor.api.Protocol;
+import cn.moyada.sharingan.monitor.api.annotation.Catch;
+import cn.moyada.sharingan.monitor.api.annotation.Listener;
 
 /**
  * @author xueyikang
  * @since 1.0
  **/
-@Listener(domain = "test", protocol = RpcProtocol.DUBBO)
+@Listener(domain = "test", protocol = Protocol.DUBBO)
 public abstract class AbstractClass {
 
     @Catch

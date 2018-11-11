@@ -11,5 +11,10 @@
 
     <artifactId>sharingan-monitor-mysql</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>cn.moyada</groupId>
+            <artifactId>sharingan-monitor-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>

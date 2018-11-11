@@ -1,14 +1,15 @@
 package cn.moyada.sharingan.instrument.boost;
 
-import cn.moyada.sharingan.monitor.api.Catch;
-import cn.moyada.sharingan.monitor.api.Listener;
-import cn.moyada.sharingan.monitor.api.Rename;
+import cn.moyada.sharingan.instrument.boost.common.ProxyField;
+import cn.moyada.sharingan.instrument.boost.common.ProxyMethod;
+import cn.moyada.sharingan.monitor.api.annotation.Catch;
+import cn.moyada.sharingan.monitor.api.annotation.Listener;
+import cn.moyada.sharingan.monitor.api.annotation.Rename;
 import javassist.NotFoundException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ public class ClassUtil {
 
 
     public static List<ProxyMethod> getProxyInfo(Class clazz,
-                                          Class<? extends Annotation> exclusiveAnnotation) {
+                                                 Class<? extends Annotation> exclusiveAnnotation) {
         if (null == clazz) {
             return null;
         }
@@ -109,13 +110,21 @@ public class ClassUtil {
 
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
-            if (Modifier.isStatic(method.getModifiers())) {
+            int modifiers = method.getModifiers();
+            if (Modifier.isStatic(modifiers)) {
+                continue;
+            }
+            if (Modifier.isPrivate(modifiers)) {
+                continue;
+            }
+            if (Modifier.isFinal(modifiers)) {
                 continue;
             }
 
             if (method.getParameterCount() == 0) {
                 continue;
             }
+
             Catch annotation = method.getAnnotation(Catch.class);
             if (null == annotation) {
                 continue;
@@ -133,6 +142,7 @@ public class ClassUtil {
 
             ProxyMethod proxyMethod = new ProxyMethod();
             proxyMethod.setMethodName(methodName);
+            proxyMethod.setParamTypes(method.getParameterTypes());
             proxyMethod.setProxyParams(proxyFields);
             proxyMethod.setProxyBefore(true);
 
@@ -148,8 +158,8 @@ public class ClassUtil {
     }
 
     private static List<ProxyField> getParamInfo(Class clazz, Method method, Class<? extends Annotation> exclusiveAnnotation) {
-        Parameter[] parameters = method.getParameters();
-        if (null == parameters || parameters.length == 0) {
+        Class[] parameters = method.getParameterTypes();
+        if (parameters.length == 0) {
             return null;
         }
 
@@ -165,14 +175,14 @@ public class ClassUtil {
 
         List<ProxyField> proxyFields = null;
         for (int index = 0; index < length; index++) {
-            Parameter parameter = parameters[index];
+            Class<?> parameter = parameters[index];
             if (parameter.isAnnotationPresent(exclusiveAnnotation)) {
                 continue;
             }
 
             ProxyField proxyField = new ProxyField();
             proxyField.setParamIndex(index);
-            proxyField.setParamType(parameter.getType());
+            proxyField.setParamType(parameter);
 
             Rename rename = parameter.getAnnotation(Rename.class);
             if (null == rename) {
@@ -202,6 +212,11 @@ public class ClassUtil {
                         @SuppressWarnings("unchecked")
                         Method method = target.getDeclaredMethod(proxyMethod.getMethodName(), paramTypes);
                         variableName = VariableUtil.getNameByJavassist(target, method);
+
+                        if (null == variableName) {
+                            proxyMethods.remove(proxyMethod);
+                            break;
+                        }
                     }
 
                     proxyField.setParamName(variableName[proxyField.getParamIndex()]);

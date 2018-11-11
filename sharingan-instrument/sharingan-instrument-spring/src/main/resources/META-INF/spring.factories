@@ -1,8 +1,0 @@
-# AutoConfiguration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.moyada.sharingan.instrument.spring.SharinganMonitorAutoConfiguration
-
-# Application Listeners
-#org.springframework.context.ApplicationListener=org.springframework.cloud.bootstrap.BootstrapApplicationListener
-
-# Bootstrap components
-#org.springframework.cloud.bootstrap.BootstrapConfiguration=org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration

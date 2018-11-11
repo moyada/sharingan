@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @author xueyikang
  * @since 0.0.1
  **/
-@Component
+@Component("CacheService")
 public class CacheService {
 
     @Autowired

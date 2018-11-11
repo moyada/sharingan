@@ -1,8 +1,17 @@
 package cn.moyada.sharingan.instrument.processor;
 
 
-import cn.moyada.sharingan.instrument.boost.*;
-import cn.moyada.sharingan.monitor.api.*;
+import cn.moyada.sharingan.instrument.boost.common.ProxyField;
+import cn.moyada.sharingan.instrument.boost.common.ProxyMethod;
+import cn.moyada.sharingan.instrument.boost.proxy.ClassProxy;
+import cn.moyada.sharingan.instrument.boost.proxy.JavassistInheritProxy;
+import cn.moyada.sharingan.monitor.api.annotation.Catch;
+import cn.moyada.sharingan.monitor.api.annotation.Exclusive;
+import cn.moyada.sharingan.monitor.api.annotation.Listener;
+import cn.moyada.sharingan.monitor.api.annotation.Rename;
+import cn.moyada.sharingan.monitor.api.entity.DefaultInvocation;
+import cn.moyada.sharingan.monitor.api.entity.Invocation;
+import cn.moyada.sharingan.monitor.api.Monitor;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -89,7 +98,7 @@ public class MonitorProcessor extends AbstractProcessor {
 
         ClassProxy proxy;
         try {
-            proxy = new JavassistProxy(invokeClass, invokeMethod, invokeParam, invokeParamReal, privateVariables);
+            proxy = new JavassistInheritProxy(invokeClass, invokeMethod, invokeParam, invokeParamReal, privateVariables);
         } catch (Exception e) {
             messagePrint.error(e.getMessage());
             return true;

@@ -3,6 +3,7 @@ package cn.moyada.sharingan.rpc.springcloud;
 import cn.moyada.sharingan.rpc.api.invoke.InvokeProxy;
 import cn.moyada.sharingan.rpc.springcloud.invocation.SpringCloudInvoke;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 0.0.1
  **/
 @Configuration
+@ConditionalOnClass(SpringCloudInvoke.class)
 @ConditionalOnProperty(value = EurekaAutoConfiguration.REGISTER_URL, matchIfMissing = true)
 @EnableDiscoveryClient
 @EnableFeignClients
