@@ -1,14 +1,20 @@
 package cn.moyada.sharingan.instrument.boost.proxy;
 
 import cn.moyada.sharingan.instrument.boost.NameUtil;
+import cn.moyada.sharingan.instrument.boost.common.FieldInfo;
 import cn.moyada.sharingan.instrument.boost.common.ProxyMethod;
 import javassist.*;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.StringMemberValue;
+import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xueyikang
@@ -16,7 +22,8 @@ import java.util.Map;
  **/
 public abstract class JavassistProxy<T> implements ClassProxy {
 
-    final String LOCAL_VARIABLE = "_invoke_";
+    static final String PREFIX_NAME = "sharingan";
+    static final String LOCAL_VARIABLE = "_invoke_";
 
     final ClassPool classPool;
 
@@ -26,7 +33,7 @@ public abstract class JavassistProxy<T> implements ClassProxy {
 
     final String invokeParamName;
 
-    final Map<String, String> privateVariables;
+    final FieldInfo[] privateVariables;
 
     final StringBuilder invokeBody;
 
@@ -43,9 +50,16 @@ public abstract class JavassistProxy<T> implements ClassProxy {
         this.invokeInterfaceName = invokeInterface.getName();
         this.invokeParamName = invokeParam.getName();
 
-        this.privateVariables = new HashMap<>(privateVariables.length);
+        this.privateVariables = new FieldInfo[privateVariables.length];
+        int index = 0;
+        FieldInfo fieldInfo;
         for (String privateVariable : privateVariables) {
-            this.privateVariables.put(NameUtil.genPrivateName(privateVariable), NameUtil.getSetFunction(privateVariable));
+            fieldInfo = new FieldInfo();
+            fieldInfo.setParamName(privateVariable);
+            fieldInfo.setPrimitiveName(NameUtil.genPrivateName(privateVariable));
+            fieldInfo.setSetMethodName(NameUtil.getSetFunction(privateVariable));
+
+            this.privateVariables[index++] = fieldInfo;
         }
 
         this.invokeBody = new StringBuilder(128);
@@ -54,17 +68,74 @@ public abstract class JavassistProxy<T> implements ClassProxy {
     @Override
     public abstract <T> Class<T> wrapper(Class<T> target, List<ProxyMethod> methods) throws NotFoundException, CannotCompileException;
 
-    void writeFile(CtClass ctClass) {
+    protected void addField(CtClass ctClass) throws CannotCompileException {
+        // 监控接口
+        CtField proxyInvoke = CtField.make("private " + invokeClassName + " " + invokeObjName + ";", ctClass);
+        proxyInvoke.setName(invokeObjName);
+        addResourceAnnotation(ctClass, proxyInvoke);
+        ctClass.addField(proxyInvoke);
+
+        // 属性
+        CtField varField;
+        for (FieldInfo fieldInfo : privateVariables) {
+            varField = getStringField(ctClass, fieldInfo.getPrimitiveName());
+            addValueAnnotation(ctClass, varField, "${" + PREFIX_NAME + "." + fieldInfo.getParamName() + "}");
+            ctClass.addField(varField);
+        }
+    }
+
+    protected CtMethod findMethod(CtClass targetClass, ProxyMethod method) throws NotFoundException {
+        String methodName = method.getMethodName();
+        CtClass[] paramClass = getParamClass(method.getParamTypes());
         try {
-            String path = getClass().getResource("").getPath();
-            String pkg = getClass().getPackage().getName().replace(".", "/");
-            ctClass.writeFile(path.substring(0, path.indexOf(pkg)));
+            if (null == paramClass) {
+                return targetClass.getDeclaredMethod(methodName);
+            } else {
+                return targetClass.getDeclaredMethod(methodName, paramClass);
+            }
+        } catch (NotFoundException e) {
+            // pass jdk8 default method
+            return null;
+        }
+    }
+
+    public static void addResourceAnnotation(CtClass clazz, CtField cfield) {
+        ClassFile cfile = clazz.getClassFile();
+        ConstPool cpool = cfile.getConstPool();
+
+        AnnotationsAttribute attr = new AnnotationsAttribute(cpool, AnnotationsAttribute.visibleTag);
+        Annotation annot = new Annotation(Resource.class.getName(), cpool);
+        attr.addAnnotation(annot);
+        cfield.getFieldInfo().addAttribute(attr);
+    }
+
+    public static void addValueAnnotation(CtClass clazz, CtField cfield, String value) {
+        ClassFile cfile = clazz.getClassFile();
+        ConstPool cpool = cfile.getConstPool();
+
+        AnnotationsAttribute attr = new AnnotationsAttribute(cpool, AnnotationsAttribute.visibleTag);
+        Annotation annot = new Annotation(Value.class.getName(), cpool);
+        annot.addMemberValue("value", new StringMemberValue(value, cpool));
+        attr.addAnnotation(annot);
+        cfield.getFieldInfo().addAttribute(attr);
+    }
+
+    protected void writeFile(CtClass ctClass) {
+        String path = getClass().getResource("").getPath();
+        String pkg = getClass().getPackage().getName().replace(".", "/");
+        int index = path.indexOf(pkg);
+        if (-1 == index) {
+            return;
+        }
+        String directoryName = path.substring(0, index);
+        try {
+            ctClass.writeFile(directoryName);
         } catch (IOException | CannotCompileException e) {
             e.printStackTrace();
         }
     }
 
-    CtClass[] getParamClass(Class<?>[] paramTypes) throws NotFoundException {
+    protected CtClass[] getParamClass(Class<?>[] paramTypes) throws NotFoundException {
         if (null == paramTypes) {
             return null;
         }
@@ -81,8 +152,7 @@ public abstract class JavassistProxy<T> implements ClassProxy {
         return paramClasses;
     }
 
-
-    CtField getStringField(CtClass ctClass, String name) throws CannotCompileException {
+    protected CtField getStringField(CtClass ctClass, String name) throws CannotCompileException {
         return CtField.make("private String " + name + ";", ctClass);
     }
 }

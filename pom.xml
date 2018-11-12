@@ -59,6 +59,12 @@
 
             <dependency>
                 <groupId>cn.moyada</groupId>
+                <artifactId>sharingan-spring-boot-starter</artifactId>
+                <version>${sharingan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.moyada</groupId>
                 <artifactId>sharingan-spring-boot-autoconfigure</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>

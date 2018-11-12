@@ -11,6 +11,8 @@ import cn.moyada.sharingan.monitor.api.annotation.Listener;
 @Listener(domain = "test", protocol = Protocol.DUBBO)
 public abstract class AbstractClass {
 
+    private int num;
+
     @Catch
     public abstract void jiade(String name);
 }

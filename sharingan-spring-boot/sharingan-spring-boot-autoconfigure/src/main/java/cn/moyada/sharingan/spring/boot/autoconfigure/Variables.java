@@ -8,7 +8,7 @@ public class Variables {
 
     public static final String[] APP_INFO = new String[] {"application"};
 
-    public static final String APP_PARAM = "_application";
+    public static final String APP_PARAM = "_application_";
 
-    public static final String MONITOR_PARAM = "_monitor";
+    public static final String MONITOR_PARAM = "_monitor_";
 }

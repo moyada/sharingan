@@ -9,10 +9,11 @@ import cn.moyada.sharingan.monitor.api.processor.InvocationWorker;
  **/
 public abstract class AbstractMonitor implements Monitor {
 
-    private InvocationWorker worker;
+    protected InvocationWorker worker;
 
     public AbstractMonitor(InvocationWorker worker) {
         this.worker = worker;
+        new Thread(worker).start();
     }
 
     @Override

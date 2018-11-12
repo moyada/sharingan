@@ -8,6 +8,7 @@ import cn.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,26 +19,21 @@ import org.springframework.core.Ordered;
  * @since 1.0
  **/
 @Configuration
+@ConditionalOnProperty(value = SharinganConfig.PREFIX_NAME + ".enable", havingValue = "true")
 @ConditionalOnClass(Listener.class)
-@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 @EnableConfigurationProperties(SharinganConfig.class)
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class SharinganMonitorAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(SharinganConfig.class)
-    public SharinganConfig sharinganConfig() {
-        return new SharinganConfig();
+    @ConditionalOnMissingBean
+    public MonitorAnnotationBeanPostProcessor monitorProcessor() {
+        return new MonitorAnnotationBeanPostProcessor();
     }
 
     @Bean
     @ConditionalOnMissingBean
     public Monitor monitor() {
         return new TestMonitor();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public MonitorAnnotationBeanPostProcessor monitorProcessor() {
-        return new MonitorAnnotationBeanPostProcessor();
     }
 }

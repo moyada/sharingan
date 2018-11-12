@@ -1,13 +1,13 @@
 package cn.moyada.sharingan.instrument.boost.proxy;
 
 import cn.moyada.sharingan.instrument.boost.NameUtil;
+import cn.moyada.sharingan.instrument.boost.common.FieldInfo;
 import cn.moyada.sharingan.instrument.boost.common.ProxyField;
 import cn.moyada.sharingan.instrument.boost.common.ProxyMethod;
 import javassist.*;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xueyikang
@@ -28,32 +28,12 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
         CtClass ctClass = classPool.getCtClass(target.getName());
         ctClass.setName(NameUtil.getProxyName(ctClass.getName()));
 
-        CtField proxyInvoke = CtField.make("private " + invokeClassName + " " + invokeObjName + " = null;", ctClass);
-        proxyInvoke.setName(invokeObjName);
-        ctClass.addField(proxyInvoke);
+        addField(ctClass);
 
-        CtField varField;
-        for (String variable : privateVariables.keySet()) {
-            varField = getStringField(ctClass, variable);
-            ctClass.addField(varField);
-        }
-
-        String methodName;
         CtMethod ctMethod;
-        CtClass[] paramClass;
-
         for (ProxyMethod method : methods) {
-            methodName = method.getMethodName();
-            paramClass = getParamClass(method.getParamTypes());
-
-            try {
-                if (null == paramClass) {
-                    ctMethod = targetClass.getDeclaredMethod(methodName);
-                } else {
-                    ctMethod = targetClass.getDeclaredMethod(methodName, paramClass);
-                }
-            } catch (NotFoundException e) {
-                // pass jdk8 default method
+            ctMethod = findMethod(targetClass, method);
+            if (null == ctMethod) {
                 continue;
             }
 
@@ -65,7 +45,7 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
             }
         }
 
-//        writeFile(ctClass);
+        // writeFile(ctClass);
 
         return (Class<T>) ctClass.toClass();
     }
@@ -96,12 +76,12 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
         invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("domain")).append("(\"").append(method.getDomain()).append("\");\n");
 
         // application param
-        for (Map.Entry<String, String> entry : privateVariables.entrySet()) {
+        for (FieldInfo fieldInfo : privateVariables) {
             invokeBody.append(LOCAL_VARIABLE)
                     .append(".")
-                    .append(entry.getValue())
+                    .append(fieldInfo.getSetMethodName())
                     .append("(this.")
-                    .append(entry.getKey())
+                    .append(fieldInfo.getPrimitiveName())
                     .append(");\n");
         }
 
