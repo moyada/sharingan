@@ -12,10 +12,10 @@
     <artifactId>sharingan-spring-boot-autoconfigure</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>cn.moyada</groupId>
-            <artifactId>sharingan-monitor-mysql</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>cn.moyada</groupId>-->
+            <!--<artifactId>sharingan-monitor-mysql</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>cn.moyada</groupId>
@@ -25,6 +25,11 @@
         <dependency>
             <groupId>cn.moyada</groupId>
             <artifactId>sharingan-monitor-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
 
         <dependency>

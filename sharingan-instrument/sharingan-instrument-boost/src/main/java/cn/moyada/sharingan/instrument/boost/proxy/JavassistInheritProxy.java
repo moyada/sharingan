@@ -1,6 +1,7 @@
 package cn.moyada.sharingan.instrument.boost.proxy;
 
 import cn.moyada.sharingan.instrument.boost.NameUtil;
+import cn.moyada.sharingan.instrument.boost.common.FieldInfo;
 import cn.moyada.sharingan.instrument.boost.common.ProxyField;
 import cn.moyada.sharingan.instrument.boost.common.ProxyMethod;
 import javassist.*;
@@ -8,7 +9,6 @@ import javassist.bytecode.AttributeInfo;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author xueyikang
@@ -38,41 +38,20 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
         CtConstructor ctConstructor;
         for (CtConstructor constructor : targetClass.getConstructors()) {
             ctConstructor = CtNewConstructor.copy(constructor, ctClass, null);
-//            for (AttributeInfo attribute : constructor.getMethodInfo().getAttributes()) {
-//                ctConstructor.getMethodInfo().addAttribute(attribute);
-//            }
+            for (AttributeInfo attribute : constructor.getMethodInfo().getAttributes()) {
+                ctConstructor.getMethodInfo().addAttribute(attribute);
+            }
             ctConstructor.setBody("super($$);");
 
             ctClass.addConstructor(ctConstructor);
         }
 
-        // 监控接口
-        CtField proxyInvoke = CtField.make("private " + invokeClassName + " " + invokeObjName + " = null;", ctClass);
-        proxyInvoke.setName(invokeObjName);
-        ctClass.addField(proxyInvoke);
+        addField(ctClass);
 
-        CtField varField;
-        for (String variable : privateVariables.keySet()) {
-            varField = getStringField(ctClass, variable);
-            ctClass.addField(varField);
-        }
-
-        String methodName;
         CtMethod ctMethod;
-        CtClass[] paramClass;
-
         for (ProxyMethod method : methods) {
-            methodName = method.getMethodName();
-            paramClass = getParamClass(method.getParamTypes());
-
-            try {
-                if (null == paramClass) {
-                    ctMethod = targetClass.getDeclaredMethod(methodName);
-                } else {
-                    ctMethod = targetClass.getDeclaredMethod(methodName, paramClass);
-                }
-            } catch (NotFoundException e) {
-                // pass jdk8 default method
+            ctMethod = findMethod(targetClass, method);
+            if (null == ctMethod) {
                 continue;
             }
 
@@ -82,10 +61,9 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
                 e.printStackTrace();
                 return target;
             }
-
         }
 
-        // writeFile(ctClass);
+//        writeFile(ctClass);
 
         return (Class<T>) ctClass.toClass();
     }
@@ -120,12 +98,12 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
         invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("protocol")).append("(\"").append(method.getProtocol()).append("\");\n");
         invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("domain")).append("(\"").append(method.getDomain()).append("\");\n");
 
-        for (Map.Entry<String, String> entry : privateVariables.entrySet()) {
+        for (FieldInfo fieldInfo : privateVariables) {
             invokeBody.append(LOCAL_VARIABLE)
                     .append(".")
-                    .append(entry.getValue())
+                    .append(fieldInfo.getSetMethodName())
                     .append("(this.")
-                    .append(entry.getKey())
+                    .append(fieldInfo.getPrimitiveName())
                     .append(");\n");
         }
 
@@ -153,9 +131,10 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
         invokeBody.delete(0, invokeBody.length());
 
         CtMethod newMethod = CtNewMethod.make(modifiers, returnType, method.getMethodName(), parameterTypes, exceptionTypes, proxyBody, target);
-//        for (AttributeInfo attribute : ctMethod.getMethodInfo().getAttributes()) {
-//            newMethod.getMethodInfo().addAttribute(attribute);
-//        }
+        for (AttributeInfo attribute : ctMethod.getMethodInfo().getAttributes()) {
+            newMethod.getMethodInfo().addAttribute(attribute);
+        }
+        newMethod.setBody(proxyBody);
         return newMethod;
     }
 }
