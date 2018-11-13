@@ -6,5 +6,5 @@ package cn.moyada.sharingan.monitor.api.handler;
  **/
 public interface InvocationHandler<T> {
 
-    void handle(T t);
+    void handle(T t) ;
 }

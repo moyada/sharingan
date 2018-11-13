@@ -8,49 +8,41 @@ import cn.moyada.sharingan.monitor.api.Monitor;
 import cn.moyada.sharingan.monitor.api.annotation.Exclusive;
 import cn.moyada.sharingan.monitor.api.entity.DefaultInvocation;
 import cn.moyada.sharingan.monitor.api.entity.Invocation;
-import cn.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig;
+import cn.moyada.sharingan.spring.boot.autoconfigure.config.SharinganProperties;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
 
-public class MonitorAnnotationBeanPostProcessor implements InitializingBean, BeanFactoryAware, BeanFactoryPostProcessor, PriorityOrdered {
+public class MonitorAnnotationBeanPostProcessor implements InitializingBean, EnvironmentAware, BeanFactoryPostProcessor, PriorityOrdered {
 
-//    private Set<String> proxyBeanNames = new HashSet<>();
-
-//    private Monitor monitorBean;
-
-    private SharinganConfig sharinganConfig;
+    private boolean enable = false;
 
     private JavassistProxy<Invocation> javassistProxy;
 
-//    private BeanDefinitionRegistry beanDefinitionRegistry;
-
-//    private BeanCopier.Generator generator;
-
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (!sharinganConfig.isEnable()) {
+        if (!enable) {
             return;
         }
 
         try {
             javassistProxy = new JavassistInheritProxy<>(Monitor.class,
                     Monitor.class.getDeclaredMethod("listener", Invocation.class),
-                    Invocation.class, DefaultInvocation.class, Variables.APP_INFO);
+                    Invocation.class, DefaultInvocation.class, null, Variables.INJECT_APP_NAME);
         } catch (NoSuchMethodException e) {
-            sharinganConfig.setEnable(false);
+            e.printStackTrace();
         }
 
 //        generator = new BeanCopier.Generator();
@@ -63,7 +55,7 @@ public class MonitorAnnotationBeanPostProcessor implements InitializingBean, Bea
 
     @Override
     public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanDefinitionRegistry) throws BeansException {
-        if (!sharinganConfig.isEnable() || javassistProxy == null) {
+        if (!enable || javassistProxy == null) {
             return;
         }
 
@@ -201,22 +193,15 @@ public class MonitorAnnotationBeanPostProcessor implements InitializingBean, Bea
 //    }
 
     @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        try {
-            sharinganConfig = beanFactory.getBean(SharinganConfig.class);
-        } catch (BeansException e) {
-            sharinganConfig = new SharinganConfig();
-        }
-
-        try {
-            beanFactory.getBean(Monitor.class);
-        } catch (BeansException e) {
-            sharinganConfig.setEnable(false);
-        }
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 
     @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+    public void setEnvironment(Environment environment) {
+        Boolean property = environment.getProperty(SharinganProperties.ENABLE, boolean.class);
+        if (null != property) {
+            this.enable = property;
+        }
     }
 }

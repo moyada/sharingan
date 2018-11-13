@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -16,7 +18,7 @@ import java.util.concurrent.locks.LockSupport;
  * @author xueyikang
  * @since 1.0
  **/
-public class BatchInvocationWorker extends DeamonInvocationWorker {
+public class BatchInvocationWorker<E> extends DeamonInvocationWorker<E> {
 
     private final int intervalTime;
 
@@ -28,10 +30,10 @@ public class BatchInvocationWorker extends DeamonInvocationWorker {
 
     private volatile boolean sleep;
 
-    private final Queue<Collection<Record>> waitSet;
+    private final Queue<Collection<Record<E>>> waitSet;
 
-    public BatchInvocationWorker(InvocationHandler<Collection<Record>> handler,
-                                 InvocationReceiver<Record> receiver,
+    public BatchInvocationWorker(InvocationHandler<Collection<Record<E>>> handler,
+                                 InvocationReceiver<Record<E>> receiver,
                                  int intervalTime, int thresholdSize) {
 
         super(handler, receiver, thresholdSize + thresholdSize / 10);
@@ -54,10 +56,19 @@ public class BatchInvocationWorker extends DeamonInvocationWorker {
     public void run() {
         handlerThread.start();
 
-        for (;;) {
-            doExecute();
-            sleep();
-        }
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+        executorService.schedule(new Runnable() {
+            @Override
+            public void run() {
+                doExecute();
+            }
+        }, intervalTime, TimeUnit.MILLISECONDS);
+
+//        for (;;) {
+//            doExecute();
+//            sleep();
+//        }
     }
 
     private void sleep() {
@@ -82,7 +93,7 @@ public class BatchInvocationWorker extends DeamonInvocationWorker {
         }
     }
 
-    private void addJob(Collection<Record> data) {
+    private void addJob(Collection<Record<E>> data) {
         waitSet.offer(data);
         if (sleep) {
             sleep = false;
@@ -94,7 +105,7 @@ public class BatchInvocationWorker extends DeamonInvocationWorker {
 
         @Override
         public void run() {
-            Collection<Record> data;
+            Collection<Record<E>> data;
             for (;;) {
                 data = waitSet.poll();
 

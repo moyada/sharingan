@@ -8,6 +8,7 @@ import javassist.*;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xueyikang
@@ -15,8 +16,8 @@ import java.util.List;
  **/
 public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
 
-    public JavassistMirrorProxy(Class invokeClass, Method invokeMethod, Class<T> invokeInterface, Class<? extends T> invokeParam, String[] privateVariables) {
-        super(invokeClass, invokeMethod, invokeInterface, invokeParam, privateVariables);
+    public JavassistMirrorProxy(Class invokeClass, Method invokeMethod, Class<T> invokeInterface, Class<? extends T> invokeParam, Map<String, Object> attachParam, String... privateVariables) {
+        super(invokeClass, invokeMethod, invokeInterface, invokeParam, attachParam, privateVariables);
     }
 
     @Override
@@ -83,6 +84,15 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
                     .append("(this.")
                     .append(fieldInfo.getPrimitiveName())
                     .append(");\n");
+        }
+
+        // attach param
+        if (null != attachParam) {
+            for (Map.Entry<String, Object> entry : attachParam.entrySet()) {
+                invokeBody.append(LOCAL_VARIABLE)
+                        .append(".addArgs(\"").append(entry.getKey())
+                        .append("\", \"").append(entry.getValue()).append("\");\n");
+            }
         }
 
         // invocation args

@@ -7,15 +7,16 @@
         <groupId>cn.moyada</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sharingan-spring-boot-autoconfigure</artifactId>
 
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>cn.moyada</groupId>-->
-            <!--<artifactId>sharingan-monitor-mysql</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>cn.moyada</groupId>
+            <artifactId>sharingan-monitor-mysql</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>cn.moyada</groupId>
@@ -30,18 +31,32 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure-processor</artifactId>
-            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- 生成spring-configuration-metadata.json类，需要引入此类-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

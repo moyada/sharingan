@@ -98,7 +98,7 @@ public class MonitorProcessor extends AbstractProcessor {
 
         ClassProxy proxy;
         try {
-            proxy = new JavassistInheritProxy(invokeClass, invokeMethod, invokeParam, invokeParamReal, privateVariables);
+            proxy = new JavassistInheritProxy(invokeClass, invokeMethod, invokeParam, invokeParamReal, null, privateVariables);
         } catch (Exception e) {
             messagePrint.error(e.getMessage());
             return true;

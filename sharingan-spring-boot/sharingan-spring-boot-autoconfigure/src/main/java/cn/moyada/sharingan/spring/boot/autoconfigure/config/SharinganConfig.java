@@ -1,34 +1,38 @@
 package cn.moyada.sharingan.spring.boot.autoconfigure.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
+
+import java.util.Map;
 
 /**
  * @author xueyikang
  * @since 1.0
  **/
-@ConfigurationProperties(SharinganConfig.PREFIX_NAME)
-public class SharinganConfig implements EnvironmentAware {
-
-    public static final String PREFIX_NAME = "sharingan";
+@ConfigurationProperties(prefix = SharinganProperties.PREFIX_NAME)
+public class SharinganConfig {// implements EnvironmentAware {
 
     private boolean enable = false;
 
     private String application;
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        Boolean enable = environment.getProperty(PREFIX_NAME + ".enable", Boolean.class);
-        if (null != enable) {
-            this.enable = enable;
-        }
+    private Map<String, String> attach;
 
-        String application = environment.getProperty(PREFIX_NAME + ".application", String.class);
-        if (null != application) {
-            this.application = application;
-        }
+    public SharinganConfig() {
+        System.out.println("init");
     }
+
+    //    @Override
+//    public void setEnvironment(Environment environment) {
+//        Boolean enable = environment.getProperty(SharinganProperties.ENABLE, Boolean.class);
+//        if (null != enable) {
+//            this.enable = enable;
+//        }
+//
+//        String application = environment.getProperty(SharinganProperties.PREFIX_NAME + ".application", String.class);
+//        if (null != application) {
+//            this.application = application;
+//        }
+//    }
 
     public boolean isEnable() {
         return enable;
@@ -46,4 +50,11 @@ public class SharinganConfig implements EnvironmentAware {
         this.application = application;
     }
 
+    public Map<String, String> getAttach() {
+        return attach;
+    }
+
+    public void setAttach(Map<String, String> attach) {
+        this.attach = attach;
+    }
 }
