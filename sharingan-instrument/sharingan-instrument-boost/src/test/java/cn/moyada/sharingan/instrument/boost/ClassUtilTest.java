@@ -29,7 +29,7 @@ public class ClassUtilTest {
 
         JavassistProxy<Invocation> javassistProxy = new JavassistInheritProxy<>(Monitor.class,
                 Monitor.class.getDeclaredMethod("listener", Invocation.class),
-                Invocation.class, DefaultInvocation.class, new String[]{"application"}
+                Invocation.class, DefaultInvocation.class, null, "application"
         );
 
         Class<TestProxyClass> wrapper = javassistProxy.wrapper(TestProxyClass.class, proxyInfo);

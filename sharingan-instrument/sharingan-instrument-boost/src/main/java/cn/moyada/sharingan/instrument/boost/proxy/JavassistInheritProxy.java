@@ -9,6 +9,7 @@ import javassist.bytecode.AttributeInfo;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xueyikang
@@ -16,8 +17,8 @@ import java.util.List;
  **/
 public class JavassistInheritProxy<T> extends JavassistProxy<T> {
 
-    public JavassistInheritProxy(Class invokeClass, Method invokeMethod, Class<T> invokeInterface, Class<? extends T> invokeParam, String[] privateVariables) {
-        super(invokeClass, invokeMethod, invokeInterface, invokeParam, privateVariables);
+    public JavassistInheritProxy(Class invokeClass, Method invokeMethod, Class<T> invokeInterface, Class<? extends T> invokeParam, Map<String, Object> attachParam, String... privateVariables) {
+        super(invokeClass, invokeMethod, invokeInterface, invokeParam, attachParam, privateVariables);
     }
 
     @Override
@@ -95,8 +96,15 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
                 .append(invokeParamName)
                 .append("();\n");
 
-        invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("protocol")).append("(\"").append(method.getProtocol()).append("\");\n");
-        invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("domain")).append("(\"").append(method.getDomain()).append("\");\n");
+        invokeBody.append(LOCAL_VARIABLE)
+                .append(".")
+                .append(NameUtil.getSetFunction("protocol"))
+                .append("(\"").append(method.getProtocol()).append("\");\n");
+
+        invokeBody.append(LOCAL_VARIABLE)
+                .append(".")
+                .append(NameUtil.getSetFunction("domain"))
+                .append("(\"").append(method.getDomain()).append("\");\n");
 
         for (FieldInfo fieldInfo : privateVariables) {
             invokeBody.append(LOCAL_VARIABLE)
@@ -106,6 +114,15 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
                     .append(fieldInfo.getPrimitiveName())
                     .append(");\n");
         }
+
+        if (null != attachParam) {
+            for (Map.Entry<String, Object> entry : attachParam.entrySet()) {
+                invokeBody.append(LOCAL_VARIABLE)
+                        .append(".addArgs(\"").append(entry.getKey())
+                        .append("\", \"").append(entry.getValue()).append("\");\n");
+            }
+        }
+
 
         for (ProxyField proxyField : method.getProxyParams()) {
             invokeBody.append(LOCAL_VARIABLE)

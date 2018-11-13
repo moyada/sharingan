@@ -1,0 +1,41 @@
+{
+  "hints": [],
+  "groups": [
+  {
+    "name": "sharingan.datasource",
+    "type": "cn.moyada.sharingan.monitor.mysql.MysqlConfig",
+    "sourceType": "cn.moyada.sharingan.monitor.mysql.MysqlConfig"
+  }
+  ],
+  "properties": [
+    {
+      "name": "sharingan.datasource.url",
+      "type": "java.lang.String",
+      "description": "Indicates whether or not this instance listening invoke with monitor.",
+      "sourceType": "cn.moyada.sharingan.monitor.mysql.MysqlConfig"
+    },
+    {
+      "name": "sharingan.datasource.username",
+      "type": "java.lang.String",
+      "description": "Indicates whether or not this instance listening invoke with monitor.",
+      "sourceType": "cn.moyada.sharingan.monitor.mysql.MysqlConfig"
+    },
+    {
+      "name": "sharingan.datasource.password",
+      "type": "java.lang.String",
+      "description": "Indicates whether or not this instance listening invoke with monitor.",
+      "sourceType": "cn.moyada.sharingan.monitor.mysql.MysqlConfig"
+    },
+    {
+      "name": "sharingan.datasource.table",
+      "type": "java.lang.String",
+      "description": "Indicates whether or not this instance listening invoke with monitor.",
+      "sourceType": "cn.moyada.sharingan.monitor.mysql.MysqlConfig"
+    }
+    {
+      "name": "sharingan.datasource.column",
+      "type": "java.lang.String",
+      "description": "Indicates whether or not this instance listening invoke with monitor.",
+      "sourceType": "cn.moyada.sharingan.monitor.mysql.MysqlConfig"
+    }
+]}

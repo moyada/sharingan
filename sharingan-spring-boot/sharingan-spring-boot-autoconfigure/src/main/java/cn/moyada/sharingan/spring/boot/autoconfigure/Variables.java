@@ -6,9 +6,5 @@ package cn.moyada.sharingan.spring.boot.autoconfigure;
  **/
 public class Variables {
 
-    public static final String[] APP_INFO = new String[] {"application"};
-
-    public static final String APP_PARAM = "_application_";
-
-    public static final String MONITOR_PARAM = "_monitor_";
+    public static final String INJECT_APP_NAME = "application";
 }

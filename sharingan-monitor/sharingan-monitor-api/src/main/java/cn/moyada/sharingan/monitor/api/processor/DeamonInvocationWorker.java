@@ -12,14 +12,14 @@ import java.util.List;
  * @author xueyikang
  * @since 1.0
  **/
-public abstract class DeamonInvocationWorker extends AbstractInvocationWorker<Collection<Record>, Record> {
+public abstract class DeamonInvocationWorker<E> extends AbstractInvocationWorker<Collection<Record<E>>, Record<E>> {
 
     protected int size;
 
-    protected List<Record> nextQueue;
+    protected List<Record<E>> nextQueue;
 
-    public DeamonInvocationWorker(InvocationHandler<Collection<Record>> handler,
-                                  InvocationReceiver<Record> receiver,
+    public DeamonInvocationWorker(InvocationHandler<Collection<Record<E>>> handler,
+                                  InvocationReceiver<Record<E>> receiver,
                                   int size) {
         super(handler, receiver);
         this.nextQueue = new ArrayList<>(size);

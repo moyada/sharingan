@@ -14,9 +14,9 @@ import java.util.Collection;
 public class TestMonitor extends AbstractMonitor {
 
     public TestMonitor() {
-        super(new BatchInvocationWorker(new InvocationHandler<Collection<Record>>() {
+        super(new BatchInvocationWorker<>(new InvocationHandler<Collection<Record<String>>>() {
             @Override
-            public void handle(Collection<Record> records) {
+            public void handle(Collection<Record<String>> records) {
                 System.out.println("run task " + records);
             }
         }, new DefaultInvocationReceiver(), 2000, 10));

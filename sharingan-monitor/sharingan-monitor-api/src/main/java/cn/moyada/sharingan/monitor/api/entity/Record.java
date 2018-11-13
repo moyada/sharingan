@@ -5,7 +5,7 @@ package cn.moyada.sharingan.monitor.api.entity;
  * @author xueyikang
  * @since 1.0
  **/
-public interface Record {
+public interface Record<T> {
 
     String getApplication();
 
@@ -13,5 +13,5 @@ public interface Record {
 
     String getProtocol();
 
-    String getArgs();
+    T getArgs();
 }

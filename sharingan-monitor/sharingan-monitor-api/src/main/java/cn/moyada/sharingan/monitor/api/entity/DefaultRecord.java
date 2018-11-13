@@ -4,7 +4,7 @@ package cn.moyada.sharingan.monitor.api.entity;
  * @author xueyikang
  * @since 1.0
  **/
-public class DefaultRecoed implements Record {
+public class DefaultRecord implements Record<String> {
 
     private String application;
 

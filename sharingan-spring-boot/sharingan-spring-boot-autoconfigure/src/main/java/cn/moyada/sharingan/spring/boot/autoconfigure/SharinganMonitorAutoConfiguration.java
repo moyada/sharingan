@@ -2,38 +2,47 @@ package cn.moyada.sharingan.spring.boot.autoconfigure;
 
 
 import cn.moyada.sharingan.monitor.api.Monitor;
-import cn.moyada.sharingan.monitor.api.TestMonitor;
-import cn.moyada.sharingan.monitor.api.annotation.Listener;
+import cn.moyada.sharingan.monitor.mysql.MysqlConfig;
+import cn.moyada.sharingan.monitor.mysql.MysqlMonitorFactory;
 import cn.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import cn.moyada.sharingan.spring.boot.autoconfigure.config.SharinganProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 
 /**
  * @author xueyikang
  * @since 1.0
  **/
 @Configuration
-@ConditionalOnProperty(value = SharinganConfig.PREFIX_NAME + ".enable", havingValue = "true")
-@ConditionalOnClass(Listener.class)
-@EnableConfigurationProperties(SharinganConfig.class)
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@ConditionalOnClass(Monitor.class)
+@ConditionalOnProperty(name = SharinganProperties.ENABLE, havingValue = "true", matchIfMissing = true)
+@EnableConfigurationProperties({SharinganConfig.class, MysqlConfig.class})
 public class SharinganMonitorAutoConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
-    public MonitorAnnotationBeanPostProcessor monitorProcessor() {
-        return new MonitorAnnotationBeanPostProcessor();
-    }
+    @Autowired
+    private SharinganConfig sharinganConfig;
+
+    @Autowired
+    private MysqlConfig mysqlConfig;
 
     @Bean
     @ConditionalOnMissingBean
     public Monitor monitor() {
-        return new TestMonitor();
+        if (!sharinganConfig.isEnable()) {
+            return null;
+        }
+
+        return MysqlMonitorFactory.build(mysqlConfig);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public static MonitorAnnotationBeanPostProcessor monitorProcessor() {
+        return new MonitorAnnotationBeanPostProcessor();
     }
 }

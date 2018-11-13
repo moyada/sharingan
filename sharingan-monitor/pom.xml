@@ -18,6 +18,4 @@
         <module>sharingan-monitor-mysql</module>
         <module>sharingan-monitor-http</module>
     </modules>
-
-
 </project>

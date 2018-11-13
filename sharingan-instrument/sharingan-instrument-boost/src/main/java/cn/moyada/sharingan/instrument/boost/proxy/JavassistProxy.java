@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xueyikang
@@ -22,8 +23,8 @@ import java.util.List;
  **/
 public abstract class JavassistProxy<T> implements ClassProxy {
 
-    static final String PREFIX_NAME = "sharingan";
-    static final String LOCAL_VARIABLE = "_invoke_";
+    private static final String PREFIX_NAME = "sharingan";
+    static final String LOCAL_VARIABLE = NameUtil.genPrivateName("invoke");
 
     final ClassPool classPool;
 
@@ -33,13 +34,15 @@ public abstract class JavassistProxy<T> implements ClassProxy {
 
     final String invokeParamName;
 
+    final Map<String, Object> attachParam;
+
     final FieldInfo[] privateVariables;
 
     final StringBuilder invokeBody;
 
     JavassistProxy(Class invokeClass, Method invokeMethod,
                    Class<T> invokeInterface, Class<? extends T> invokeParam,
-                   String[] privateVariables) {
+                   Map<String, Object> attachParam, String... privateVariables) {
 
         this.classPool = ClassPool.getDefault();
 
@@ -49,6 +52,8 @@ public abstract class JavassistProxy<T> implements ClassProxy {
 
         this.invokeInterfaceName = invokeInterface.getName();
         this.invokeParamName = invokeParam.getName();
+
+        this.attachParam = attachParam;
 
         this.privateVariables = new FieldInfo[privateVariables.length];
         int index = 0;
