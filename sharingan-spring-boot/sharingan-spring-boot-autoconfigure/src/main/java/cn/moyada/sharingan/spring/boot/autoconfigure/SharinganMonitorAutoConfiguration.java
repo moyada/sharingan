@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 监视逻辑自动配置
  * @author xueyikang
  * @since 1.0
  **/

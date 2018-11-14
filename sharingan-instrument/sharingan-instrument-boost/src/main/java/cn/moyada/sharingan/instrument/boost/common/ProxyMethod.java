@@ -3,23 +3,50 @@ package cn.moyada.sharingan.instrument.boost.common;
 import java.util.List;
 
 /**
+ * 方法代理信息
  * @author xueyikang
  * @since 1.0
  **/
 public class ProxyMethod {
 
+    /**
+     * 方法名
+     */
     private String methodName;
 
+    /**
+     * 参数类型
+     */
     private Class[] paramTypes;
 
+    /**
+     * 方法归属域
+     */
     private String domain;
 
+    /**
+     * 协议类型
+     */
     private String protocol;
 
+    /**
+     * 序列化方式
+     */
+    private String serializationType;
+
+    /**
+     * 代理参数
+     */
     private List<ProxyField> proxyParams;
 
+    /**
+     * 代理逻辑先执行
+     */
     private boolean proxyBefore = false;
 
+    /**
+     * 代理逻辑后执行
+     */
     private boolean proxyAfter = false;
 
     public String getMethodName() {
@@ -52,6 +79,14 @@ public class ProxyMethod {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    public String getSerializationType() {
+        return serializationType;
+    }
+
+    public void setSerializationType(String serializationType) {
+        this.serializationType = serializationType;
     }
 
     public List<ProxyField> getProxyParams() {

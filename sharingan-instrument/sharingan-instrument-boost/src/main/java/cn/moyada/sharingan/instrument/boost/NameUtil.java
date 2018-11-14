@@ -21,6 +21,11 @@ public class NameUtil {
         return true;
     }
 
+    /**
+     * 获取代理名
+     * @param className
+     * @return
+     */
     public static String getProxyName(String className) {
         int index = className.lastIndexOf('.');
         String simpleName = -1 == index ? className : className.substring(index + 1);
@@ -30,20 +35,40 @@ public class NameUtil {
         return className + "_Proxy";
     }
 
+    /**
+     * 返回标准 set 方法
+     * @param simpleName
+     * @return
+     */
     public static String getSetFunction(String simpleName) {
         return "set" + toUpperCapitalName(simpleName);
     }
 
+    /**
+     * 生成私有名
+     * @param simpleName
+     * @return
+     */
     public static String genPrivateName(String simpleName) {
         return "_" + toLowerCapitalName(simpleName) + "_";
     }
 
+    /**
+     * 首字母小写
+     * @param simpleName
+     * @return
+     */
     public static String toLowerCapitalName(String simpleName) {
         char c = simpleName.charAt(0);
         c = Character.toLowerCase(c);
         return c + simpleName.substring(1);
     }
 
+    /**
+     * 首字母大写
+     * @param simpleName
+     * @return
+     */
     public static String toUpperCapitalName(String simpleName) {
         char c = simpleName.charAt(0);
         c = Character.toUpperCase(c);

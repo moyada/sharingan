@@ -12,14 +12,21 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-;
 
 /**
+ * 变量工具
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class VariableUtil {
 
+    /**
+     * 通过 ASM 获取属性名
+     * @param clazz
+     * @param method
+     * @return
+     * @throws IOException
+     */
     public static String[] getNameByASM(Class clazz, Method method) throws IOException {
 //        final Class<?>[] methodParameterTypes = method.getParameterTypes();
 //        final int methodParameterCount = methodParameterTypes.length;
@@ -86,6 +93,13 @@ public class VariableUtil {
 //        return true;
 //    }
 
+    /**
+     * 通过 javassist 获取属性名
+     * @param clazz
+     * @param method
+     * @return
+     * @throws NotFoundException
+     */
     public static String[] getNameByJavassist(Class clazz, Method method) throws NotFoundException {
         ClassPool classPool = ClassPool.getDefault();
 

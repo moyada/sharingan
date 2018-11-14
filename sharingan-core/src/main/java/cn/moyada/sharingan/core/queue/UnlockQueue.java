@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.core.queue;
 
 
-import cn.moyada.sharingan.common.utils.ThreadUtil;
+import cn.moyada.sharingan.common.util.ThreadUtil;
 
 /**
  * 单消费者无锁队列

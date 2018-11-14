@@ -1,6 +1,6 @@
 package cn.moyada.sharingan.core.supplier;
 
-import cn.moyada.sharingan.common.utils.TimeUtil;
+import cn.moyada.sharingan.common.util.TimeUtil;
 
 import java.util.Random;
 

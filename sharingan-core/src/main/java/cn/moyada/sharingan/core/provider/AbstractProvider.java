@@ -1,8 +1,8 @@
 package cn.moyada.sharingan.core.provider;
 
 import cn.moyada.sharingan.common.enums.ConvertType;
-import cn.moyada.sharingan.common.utils.ConvertUtil;
-import cn.moyada.sharingan.common.utils.JsonUtil;
+import cn.moyada.sharingan.common.util.ConvertUtil;
+import cn.moyada.sharingan.common.util.JsonUtil;
 
 /**
  * 提供器

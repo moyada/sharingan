@@ -2,7 +2,7 @@ package cn.moyada.sharingan.module.handler;
 
 
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
-import cn.moyada.sharingan.common.utils.StringUtil;
+import cn.moyada.sharingan.common.util.StringUtil;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.InvokeInfo;
 import cn.moyada.sharingan.module.InvokeMetaData;

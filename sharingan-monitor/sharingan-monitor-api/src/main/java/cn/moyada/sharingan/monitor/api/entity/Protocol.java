@@ -1,6 +1,10 @@
-package cn.moyada.sharingan.monitor.api;
+package cn.moyada.sharingan.monitor.api.entity;
 
+/**
+ * 协议类型
+ */
 public enum Protocol {
+
 
     DUBBO("dubbo"),
     SPRING_CLOUD("springcloud"),
@@ -20,6 +24,9 @@ public enum Protocol {
         this.protocol = protocol;
     }
 
+    /**
+     * 校验协议
+     */
     static {
         Protocol[] protocols = Protocol.values();
         for (Protocol protocol : protocols) {

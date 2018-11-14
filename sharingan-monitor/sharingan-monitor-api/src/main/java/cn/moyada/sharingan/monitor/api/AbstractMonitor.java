@@ -4,6 +4,7 @@ import cn.moyada.sharingan.monitor.api.entity.Invocation;
 import cn.moyada.sharingan.monitor.api.processor.InvocationWorker;
 
 /**
+ * 异步处理监视器
  * @author xueyikang
  * @since 1.0
  **/
@@ -13,11 +14,15 @@ public abstract class AbstractMonitor implements Monitor {
 
     public AbstractMonitor(InvocationWorker worker) {
         this.worker = worker;
+        startWorker();
+    }
+
+    private void startWorker() {
         new Thread(worker).start();
     }
 
     @Override
     public void listener(Invocation invocation) {
-        worker.work(invocation);
+        worker.submit(invocation);
     }
 }

@@ -1,6 +1,6 @@
 package cn.moyada.sharingan.core.support;
 
-import cn.moyada.sharingan.common.utils.AssertUtil;
+import cn.moyada.sharingan.common.util.AssertUtil;
 import cn.moyada.sharingan.storage.api.MetadataRepository;
 import cn.moyada.sharingan.storage.api.domain.AppDO;
 import org.springframework.beans.factory.annotation.Autowired;

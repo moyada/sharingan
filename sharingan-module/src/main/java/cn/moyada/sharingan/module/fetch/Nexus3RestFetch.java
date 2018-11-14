@@ -3,8 +3,8 @@ package cn.moyada.sharingan.module.fetch;
 
 import cn.moyada.sharingan.common.enums.HttpScheme;
 import cn.moyada.sharingan.common.support.SimpleHttpClient;
-import cn.moyada.sharingan.common.utils.JsonUtil;
-import cn.moyada.sharingan.common.utils.StringUtil;
+import cn.moyada.sharingan.common.util.JsonUtil;
+import cn.moyada.sharingan.common.util.StringUtil;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.config.MavenConfig;
 import org.apache.logging.log4j.LogManager;

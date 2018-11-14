@@ -1,6 +1,6 @@
 package cn.moyada.sharingan.instrument.boost;
 
-import cn.moyada.sharingan.monitor.api.Protocol;
+import cn.moyada.sharingan.monitor.api.entity.Protocol;
 import cn.moyada.sharingan.monitor.api.annotation.Catch;
 import cn.moyada.sharingan.monitor.api.annotation.Listener;
 

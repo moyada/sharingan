@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.rpc.dubbo.config;
 
 
-import cn.moyada.sharingan.common.utils.StringUtil;
+import cn.moyada.sharingan.common.util.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

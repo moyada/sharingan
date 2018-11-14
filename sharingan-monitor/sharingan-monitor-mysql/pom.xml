@@ -13,6 +13,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.moyada</groupId>
+            <artifactId>sharingan-serialization-jackson</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
         </dependency>

@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import java.util.Collection;
 
 /**
+ * 数据库持久化处理器
  * @author xueyikang
  * @since 1.0
  **/

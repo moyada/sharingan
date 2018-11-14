@@ -1,15 +1,25 @@
 package cn.moyada.sharingan.instrument.boost.common;
 
 /**
+ * 字段信息
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class FieldInfo {
 
+    /**
+     * 参数名
+     */
     private String paramName;
 
+    /**
+     * 私有名
+     */
     private String primitiveName;
 
+    /**
+     * 方法名
+     */
     private String setMethodName;
 
     public String getParamName() {

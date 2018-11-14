@@ -29,12 +29,14 @@
     {
       "name": "sharingan.datasource.table",
       "type": "java.lang.String",
+      "defaultValue": "invoke_param",
       "description": "Indicates whether or not this instance listening invoke with monitor.",
       "sourceType": "cn.moyada.sharingan.monitor.mysql.MysqlConfig"
-    }
+    },
     {
       "name": "sharingan.datasource.column",
       "type": "java.lang.String",
+      "defaultValue": "app_id,domain,param_value,date_create",
       "description": "Indicates whether or not this instance listening invoke with monitor.",
       "sourceType": "cn.moyada.sharingan.monitor.mysql.MysqlConfig"
     }

@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.module.fetch;
 
 import cn.moyada.sharingan.common.enums.PrimitiveClass;
-import cn.moyada.sharingan.common.utils.SoftReferenceUtil;
+import cn.moyada.sharingan.common.util.SoftReferenceUtil;
 import cn.moyada.sharingan.module.support.ClassLoaderSwitcher;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.loader.AppClassLoader;

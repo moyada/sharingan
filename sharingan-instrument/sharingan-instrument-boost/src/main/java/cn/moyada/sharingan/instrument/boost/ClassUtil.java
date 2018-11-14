@@ -16,12 +16,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 类代理工具
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class ClassUtil {
 
-
+    /**
+     * 获取代理信息
+     * @param clazz
+     * @param exclusiveAnnotation
+     * @return
+     */
     public static List<ProxyMethod> getProxyInfo(Class clazz,
                                                  Class<? extends Annotation> exclusiveAnnotation) {
         if (null == clazz) {
@@ -53,6 +59,11 @@ public class ClassUtil {
         return proxyMethods;
     }
 
+    /**
+     * 获取含有注解的类、父类、接口
+     * @param clazz
+     * @return
+     */
     private static Map<Class, Listener> getAnnotationClass(Class<?> clazz) {
         Map<Class, Listener> classes = new HashMap<>();
 
@@ -66,6 +77,11 @@ public class ClassUtil {
         return classes;
     }
 
+    /**
+     * 获取注解接口
+     * @param interfaces
+     * @param classes
+     */
     private static void addAnnotationInterface(Class<?>[] interfaces, Map<Class, Listener> classes) {
         for (Class<?> anInterface : interfaces) {
             Listener annotation = anInterface.getAnnotation(Listener.class);
@@ -76,6 +92,11 @@ public class ClassUtil {
         }
     }
 
+    /**
+     * 获取注解父类
+     * @param superClass
+     * @param classes
+     */
     private static void addAnnotationSuper(Class<?> superClass, Map<Class, Listener> classes) {
         if (null == superClass) {
             return;
@@ -87,6 +108,12 @@ public class ClassUtil {
         addAnnotationSuper(superClass.getSuperclass(), classes);
     }
 
+    /**
+     * 获取标记方法
+     * @param targetClass
+     * @param exclusiveAnnotation
+     * @return
+     */
     private static List<ProxyMethod> getMethodInfo(Map<Class, Listener> targetClass,
                                                    Class<? extends Annotation> exclusiveAnnotation) {
         Map<String, ProxyMethod> proxyMethods = new HashMap<>();
@@ -104,6 +131,13 @@ public class ClassUtil {
         return proxyMethod;
     }
 
+    /**
+     * 获取方法代理信息，排除静态、私有、不可变方法
+     * @param clazz
+     * @param listener
+     * @param proxyMethods
+     * @param exclusiveAnnotation
+     */
     private static void addMethodInfo(Class clazz, Listener listener, Map<String, ProxyMethod> proxyMethods,
                                                Class<? extends Annotation> exclusiveAnnotation) {
         List<ProxyField> proxyFields;
@@ -143,6 +177,7 @@ public class ClassUtil {
             ProxyMethod proxyMethod = new ProxyMethod();
             proxyMethod.setMethodName(methodName);
             proxyMethod.setParamTypes(method.getParameterTypes());
+            proxyMethod.setSerializationType(annotation.serialization().getDeclaringClass().getName());
             proxyMethod.setProxyParams(proxyFields);
             proxyMethod.setProxyBefore(true);
 
@@ -157,6 +192,13 @@ public class ClassUtil {
         }
     }
 
+    /**
+     * 获取方法参数代理信息
+     * @param clazz
+     * @param method
+     * @param exclusiveAnnotation
+     * @return
+     */
     private static List<ProxyField> getParamInfo(Class clazz, Method method, Class<? extends Annotation> exclusiveAnnotation) {
         Class[] parameters = method.getParameterTypes();
         if (parameters.length == 0) {
@@ -200,6 +242,13 @@ public class ClassUtil {
         return proxyFields;
     }
 
+    /**
+     * 重新获取属性名
+     * @param target
+     * @param proxyMethods
+     * @throws NoSuchMethodException
+     * @throws NotFoundException
+     */
     private static void checkMethodVariable(Class target, List<ProxyMethod> proxyMethods) throws NoSuchMethodException, NotFoundException {
         String[] variableName = null;
         for (ProxyMethod proxyMethod : proxyMethods) {

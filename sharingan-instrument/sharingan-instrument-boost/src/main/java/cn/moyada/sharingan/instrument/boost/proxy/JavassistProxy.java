@@ -18,25 +18,33 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * javassist 代理
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public abstract class JavassistProxy<T> implements ClassProxy {
 
     private static final String PREFIX_NAME = "sharingan";
+
+    // 临时字段名
     static final String LOCAL_VARIABLE = NameUtil.genPrivateName("invoke");
 
     final ClassPool classPool;
 
-    final String invokeInterfaceName, invokeClassName, invokeObjName;
+    // 调用器类名、对象名
+    final String invokeClassName, invokeObjName;
 
-    final String proxyMethod;
+    // 调用方法名
+    final String methodName;
 
-    final String invokeParamName;
+    // 传输属性接口类名、实现类名
+    final String paramInterfaceName, paramClassName;
 
-    final Map<String, Object> attachParam;
-
+    // 服务包含属性
     final FieldInfo[] privateVariables;
+
+    // 主机额外属性
+    final Map<String, Object> attachParam;
 
     final StringBuilder invokeBody;
 
@@ -48,14 +56,15 @@ public abstract class JavassistProxy<T> implements ClassProxy {
 
         this.invokeClassName = invokeClass.getName();
         this.invokeObjName = NameUtil.genPrivateName(invokeClass.getSimpleName());
-        this.proxyMethod = invokeMethod.getName();
+        this.methodName = invokeMethod.getName();
 
-        this.invokeInterfaceName = invokeInterface.getName();
-        this.invokeParamName = invokeParam.getName();
+        this.paramInterfaceName = invokeInterface.getName();
+        this.paramClassName = invokeParam.getName();
 
         this.attachParam = attachParam;
 
         this.privateVariables = new FieldInfo[privateVariables.length];
+
         int index = 0;
         FieldInfo fieldInfo;
         for (String privateVariable : privateVariables) {
@@ -73,14 +82,19 @@ public abstract class JavassistProxy<T> implements ClassProxy {
     @Override
     public abstract <T> Class<T> wrapper(Class<T> target, List<ProxyMethod> methods) throws NotFoundException, CannotCompileException;
 
-    protected void addField(CtClass ctClass) throws CannotCompileException {
+    /**
+     * 增加调用监视器字段
+     * @param ctClass
+     * @throws CannotCompileException
+     */
+    void addMonitorField(CtClass ctClass) throws CannotCompileException {
         // 监控接口
         CtField proxyInvoke = CtField.make("private " + invokeClassName + " " + invokeObjName + ";", ctClass);
         proxyInvoke.setName(invokeObjName);
         addResourceAnnotation(ctClass, proxyInvoke);
         ctClass.addField(proxyInvoke);
 
-        // 属性
+        // 增加系统属性
         CtField varField;
         for (FieldInfo fieldInfo : privateVariables) {
             varField = getStringField(ctClass, fieldInfo.getPrimitiveName());
@@ -89,6 +103,13 @@ public abstract class JavassistProxy<T> implements ClassProxy {
         }
     }
 
+    /**
+     * 查找方法信息
+     * @param targetClass
+     * @param method
+     * @return
+     * @throws NotFoundException
+     */
     protected CtMethod findMethod(CtClass targetClass, ProxyMethod method) throws NotFoundException {
         String methodName = method.getMethodName();
         CtClass[] paramClass = getParamClass(method.getParamTypes());
@@ -104,7 +125,12 @@ public abstract class JavassistProxy<T> implements ClassProxy {
         }
     }
 
-    public static void addResourceAnnotation(CtClass clazz, CtField cfield) {
+    /**
+     * 增加 {@code Resource} 注解
+     * @param clazz
+     * @param cfield
+     */
+    private void addResourceAnnotation(CtClass clazz, CtField cfield) {
         ClassFile cfile = clazz.getClassFile();
         ConstPool cpool = cfile.getConstPool();
 
@@ -114,7 +140,13 @@ public abstract class JavassistProxy<T> implements ClassProxy {
         cfield.getFieldInfo().addAttribute(attr);
     }
 
-    public static void addValueAnnotation(CtClass clazz, CtField cfield, String value) {
+    /**
+     * 增加 {@code Value} 注解，设置属性注入表达式
+     * @param clazz
+     * @param cfield
+     * @param value
+     */
+    private void addValueAnnotation(CtClass clazz, CtField cfield, String value) {
         ClassFile cfile = clazz.getClassFile();
         ConstPool cpool = cfile.getConstPool();
 
@@ -125,6 +157,10 @@ public abstract class JavassistProxy<T> implements ClassProxy {
         cfield.getFieldInfo().addAttribute(attr);
     }
 
+    /**
+     * 将生成的 class 类写入输入路径
+     * @param ctClass
+     */
     protected void writeFile(CtClass ctClass) {
         String path = getClass().getResource("").getPath();
         String pkg = getClass().getPackage().getName().replace(".", "/");
@@ -140,7 +176,13 @@ public abstract class JavassistProxy<T> implements ClassProxy {
         }
     }
 
-    protected CtClass[] getParamClass(Class<?>[] paramTypes) throws NotFoundException {
+    /**
+     * 解析类信息
+     * @param paramTypes
+     * @return
+     * @throws NotFoundException
+     */
+    private CtClass[] getParamClass(Class<?>[] paramTypes) throws NotFoundException {
         if (null == paramTypes) {
             return null;
         }
@@ -157,7 +199,14 @@ public abstract class JavassistProxy<T> implements ClassProxy {
         return paramClasses;
     }
 
-    protected CtField getStringField(CtClass ctClass, String name) throws CannotCompileException {
+    /**
+     * 生成 {@code String} 属性
+     * @param ctClass
+     * @param name
+     * @return
+     * @throws CannotCompileException
+     */
+    private CtField getStringField(CtClass ctClass, String name) throws CannotCompileException {
         return CtField.make("private String " + name + ";", ctClass);
     }
 }

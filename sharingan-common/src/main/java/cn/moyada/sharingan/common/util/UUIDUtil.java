@@ -1,4 +1,4 @@
-package cn.moyada.sharingan.common.utils;
+package cn.moyada.sharingan.common.util;
 
 import java.util.UUID;
 

@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.manager.view;
 
 
-import cn.moyada.sharingan.common.utils.TimeUtil;
+import cn.moyada.sharingan.common.util.TimeUtil;
 import cn.moyada.sharingan.core.Main;
 import cn.moyada.sharingan.core.common.QuestInfo;
 import cn.moyada.sharingan.manager.cache.CacheService;

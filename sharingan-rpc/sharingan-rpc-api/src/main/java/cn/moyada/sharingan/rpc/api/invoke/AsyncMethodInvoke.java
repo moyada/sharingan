@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.rpc.api.invoke;
 
 import cn.moyada.sharingan.common.exception.InstanceNotFountException;
-import cn.moyada.sharingan.common.utils.ParamUtil;
+import cn.moyada.sharingan.common.util.ParamUtil;
 
 /**
  * 异步方法调用器

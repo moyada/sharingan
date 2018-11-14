@@ -1,6 +1,6 @@
 package cn.moyada.sharingan.core.common;
 
-import cn.moyada.sharingan.common.utils.StringUtil;
+import cn.moyada.sharingan.common.util.StringUtil;
 
 import java.io.Serializable;
 

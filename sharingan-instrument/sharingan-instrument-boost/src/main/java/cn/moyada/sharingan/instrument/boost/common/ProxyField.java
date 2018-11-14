@@ -1,15 +1,25 @@
 package cn.moyada.sharingan.instrument.boost.common;
 
 /**
+ * 代理参数
  * @author xueyikang
- * @since 1.0
+ * @since 0.0.1
  **/
 public class ProxyField {
 
+    /**
+     * 参数类型
+     */
     private Class paramType;
 
+    /**
+     * 参数位置
+     */
     private int paramIndex;
 
+    /**
+     * 参数名
+     */
     private String paramName;
 
     public Class getParamType() {

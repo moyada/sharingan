@@ -4,13 +4,17 @@ import cn.moyada.sharingan.instrument.boost.NameUtil;
 import cn.moyada.sharingan.instrument.boost.common.FieldInfo;
 import cn.moyada.sharingan.instrument.boost.common.ProxyField;
 import cn.moyada.sharingan.instrument.boost.common.ProxyMethod;
-import javassist.*;
+import javassist.CannotCompileException;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.NotFoundException;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * javassist 镜像代理
  * @author xueyikang
  * @since 0.0.1
  **/
@@ -25,11 +29,10 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
     public <T> Class<T> wrapper(Class<T> target, List<ProxyMethod> methods) throws NotFoundException, CannotCompileException {
         CtClass targetClass = classPool.getCtClass(target.getName());
 
-        // 镜像方式
         CtClass ctClass = classPool.getCtClass(target.getName());
         ctClass.setName(NameUtil.getProxyName(ctClass.getName()));
 
-        addField(ctClass);
+        addMonitorField(ctClass);
 
         CtMethod ctMethod;
         for (ProxyMethod method : methods) {
@@ -39,7 +42,7 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
             }
 
             try {
-                insertMethod(ctMethod, method, invokeObjName, proxyMethod);
+                insertMethod(ctMethod, method, invokeObjName, methodName);
             } catch (CannotCompileException e) {
                 e.printStackTrace();
                 return target;
@@ -63,18 +66,22 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
             throws CannotCompileException {
 
         invokeBody.append("{ \n");
+
+        // condition
         invokeBody.append("if (null != ").append(invokeObjName).append(") {\n");
 
-        invokeBody.append(invokeInterfaceName)
+        // local variable
+        invokeBody.append(paramInterfaceName)
                 .append(" ")
                 .append(LOCAL_VARIABLE)
                 .append(" = new ")
-                .append(invokeParamName)
+                .append(paramClassName)
                 .append("();\n");
 
         // method param
         invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("protocol")).append("(\"").append(method.getProtocol()).append("\");\n");
         invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("domain")).append("(\"").append(method.getDomain()).append("\");\n");
+        invokeBody.append(LOCAL_VARIABLE).append(".").append(NameUtil.getSetFunction("serializationType")).append("(").append(method.getSerializationType()).append(");\n");
 
         // application param
         for (FieldInfo fieldInfo : privateVariables) {
@@ -90,7 +97,7 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
         if (null != attachParam) {
             for (Map.Entry<String, Object> entry : attachParam.entrySet()) {
                 invokeBody.append(LOCAL_VARIABLE)
-                        .append(".addArgs(\"").append(entry.getKey())
+                        .append(".addAttach(\"").append(entry.getKey())
                         .append("\", \"").append(entry.getValue()).append("\");\n");
             }
         }
@@ -102,17 +109,21 @@ public class JavassistMirrorProxy<T> extends JavassistProxy<T> {
                     .append("\", $").append(proxyField.getParamIndex() + 1).append(");\n");
         }
 
+        // invoke method
         invokeBody.append(objName)
                 .append(".")
                 .append(methodName)
                 .append("(")
                 .append(LOCAL_VARIABLE)
-                .append("); \n }\n }");
+                .append("); \n }\n");
 
-        String proxyBody = invokeBody.toString();
 
+        String proxyBody = invokeBody.append("}").toString();
+
+        // clear buffer
         invokeBody.delete(0, invokeBody.length());
 
+        // insert position
         if (method.isProxyBefore()) {
             ctMethod.insertBefore(proxyBody);
         }
