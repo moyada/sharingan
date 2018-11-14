@@ -4,6 +4,7 @@ import cn.moyada.sharingan.monitor.api.MonitorConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * 数据库连接信息
  * @author xueyikang
  * @since 1.0
  **/
@@ -12,39 +13,70 @@ public class MysqlConfig extends MonitorConfig {
 
     static final String PREFIX_NAME = "sharingan.datasource";
 
+    /**
+     * 驱动
+     */
+    private String driverClassName = "com.mysql.cj.jdbc.Driver";
+
+    /**
+     * 地址
+     */
     private String url;
 
+    /**
+     * 账户
+     */
     private String username;
 
+    /**
+     * 密码
+     */
     private String password;
 
+    /**
+     * 表名
+     */
     private String table;
 
+    /**
+     * 列名，以 , 分割
+     */
     private String[] column;
 
     public boolean isInvalid() {
+        if (null == driverClassName) {
+            return true;
+        }
         if (null == url) {
-            return false;
+            return true;
         }
         if (null == username) {
-            return false;
+            return true;
         }
         if (null == password) {
-            return false;
+            return true;
         }
         if (null == table) {
-            return false;
+            return true;
         }
         if (null == column) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public void setColumn(String column) {
         column = column.replaceAll(" ", "");
         String[] columns = column.split(",");
         this.column = columns;
+    }
+
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public void setDriverClassName(String driverClassName) {
+        this.driverClassName = driverClassName;
     }
 
     public String getUrl() {

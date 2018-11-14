@@ -5,34 +5,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.Map;
 
 /**
+ * 监视器配置
  * @author xueyikang
  * @since 1.0
  **/
 @ConfigurationProperties(prefix = SharinganProperties.PREFIX_NAME)
-public class SharinganConfig {// implements EnvironmentAware {
+public class SharinganConfig {
 
+    /**
+     * 启用
+     */
     private boolean enable = false;
 
+    /**
+     * 项目名
+     */
     private String application;
 
+    /**
+     * 当前环境属性
+     */
     private Map<String, String> attach;
-
-    public SharinganConfig() {
-        System.out.println("init");
-    }
-
-    //    @Override
-//    public void setEnvironment(Environment environment) {
-//        Boolean enable = environment.getProperty(SharinganProperties.ENABLE, Boolean.class);
-//        if (null != enable) {
-//            this.enable = enable;
-//        }
-//
-//        String application = environment.getProperty(SharinganProperties.PREFIX_NAME + ".application", String.class);
-//        if (null != application) {
-//            this.application = application;
-//        }
-//    }
 
     public boolean isEnable() {
         return enable;

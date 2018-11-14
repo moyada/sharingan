@@ -2,6 +2,7 @@ package cn.moyada.sharingan.monitor.api.entity;
 
 
 /**
+ * 持久化数据
  * @author xueyikang
  * @since 1.0
  **/

@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.storage.mysql;
 
-import cn.moyada.sharingan.common.utils.ConvertUtil;
-import cn.moyada.sharingan.common.utils.StringUtil;
+import cn.moyada.sharingan.common.util.ConvertUtil;
+import cn.moyada.sharingan.common.util.StringUtil;
 import cn.moyada.sharingan.storage.api.MetadataRepository;
 import cn.moyada.sharingan.storage.api.domain.AppDO;
 import cn.moyada.sharingan.storage.api.domain.FunctionDO;
@@ -12,7 +12,6 @@ import cn.moyada.sharingan.storage.mysql.dao.FunctionDAO;
 import cn.moyada.sharingan.storage.mysql.dao.HttpDAO;
 import cn.moyada.sharingan.storage.mysql.dao.ServiceDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

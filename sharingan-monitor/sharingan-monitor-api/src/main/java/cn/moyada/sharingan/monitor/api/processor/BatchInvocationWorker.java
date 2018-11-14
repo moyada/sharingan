@@ -15,28 +15,33 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 /**
+ * 异步批量处理器
  * @author xueyikang
  * @since 1.0
  **/
-public class BatchInvocationWorker<E> extends DeamonInvocationWorker<E> {
+public class BatchInvocationWorker<E> extends AbstractInvocationWorker<Record<E>> {
 
     private final int intervalTime;
 
     private final int thresholdSize;
 
+    // 调用信息队列
     private final Queue<Invocation> temporaryQueue;
 
+    // 持久化线程
     private final Thread handlerThread;
 
+    // 持久化线程状态
     private volatile boolean sleep;
 
+    // 持久化数据等待队列
     private final Queue<Collection<Record<E>>> waitSet;
 
     public BatchInvocationWorker(InvocationHandler<Collection<Record<E>>> handler,
                                  InvocationReceiver<Record<E>> receiver,
                                  int intervalTime, int thresholdSize) {
-
-        super(handler, receiver, thresholdSize + thresholdSize / 10);
+        super(handler, receiver, thresholdSize / 10);
+        // super(handler, receiver, thresholdSize + thresholdSize / 10);
 
         this.intervalTime = intervalTime;
         this.thresholdSize = thresholdSize;
@@ -48,14 +53,16 @@ public class BatchInvocationWorker<E> extends DeamonInvocationWorker<E> {
     }
 
     @Override
-    public void work(Invocation invocation) {
+    public void submit(Invocation invocation) {
         temporaryQueue.add(invocation);
     }
 
     @Override
     public void run() {
+        // 启动持久化线程
         handlerThread.start();
 
+        // 数据处理任务
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
         executorService.schedule(new Runnable() {
@@ -71,21 +78,26 @@ public class BatchInvocationWorker<E> extends DeamonInvocationWorker<E> {
 //        }
     }
 
-    private void sleep() {
-        try {
-            TimeUnit.MILLISECONDS.sleep(intervalTime);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
+//    private void sleep() {
+//        try {
+//            TimeUnit.MILLISECONDS.sleep(intervalTime);
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//        }
+//    }
 
+    /**
+     * 处理调用信息队列数据
+     */
     private void doExecute() {
         Invocation item;
+        Record<E> data;
 
         while (null != (item = temporaryQueue.poll())) {
-            Record data = receiver.receive(item);
+            data = receiver.receive(item);
             nextQueue.add(data);
 
+            // 持久化数据队列达到处理数量
             if (nextQueue.size() > thresholdSize) {
                 addJob(nextQueue);
                 nextQueue = new ArrayList<>(size);
@@ -93,6 +105,10 @@ public class BatchInvocationWorker<E> extends DeamonInvocationWorker<E> {
         }
     }
 
+    /**
+     * 增加批量任务
+     * @param data
+     */
     private void addJob(Collection<Record<E>> data) {
         waitSet.offer(data);
         if (sleep) {
@@ -101,6 +117,9 @@ public class BatchInvocationWorker<E> extends DeamonInvocationWorker<E> {
         }
     }
 
+    /**
+     * 持久化数据处理线程
+     */
     class AsyncHandleThread extends Thread {
 
         @Override
@@ -119,6 +138,9 @@ public class BatchInvocationWorker<E> extends DeamonInvocationWorker<E> {
             }
         }
 
+        /**
+         * 唤醒线程
+         */
         private void interruptSelf() {
             if (this.isInterrupted()) {
                 this.interrupt();

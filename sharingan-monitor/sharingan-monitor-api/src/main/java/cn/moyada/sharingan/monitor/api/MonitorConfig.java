@@ -6,9 +6,9 @@ package cn.moyada.sharingan.monitor.api;
  **/
 public class MonitorConfig {
 
-    private int intervalTime;
+    private int intervalTime = 3000;
 
-    private int thresholdSize;
+    private int thresholdSize = 100;
 
     public int getIntervalTime() {
         return intervalTime;

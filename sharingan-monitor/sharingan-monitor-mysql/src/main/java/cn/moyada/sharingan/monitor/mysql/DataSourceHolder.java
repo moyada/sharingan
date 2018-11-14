@@ -1,5 +1,6 @@
 package cn.moyada.sharingan.monitor.mysql;
 
+import cn.moyada.sharingan.monitor.api.ThreadUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.datasource.DataSourceException;
@@ -14,6 +15,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import java.io.Closeable;
 
 /**
+ * 数据库连接
  * @author xueyikang
  * @since 1.0
  **/
@@ -25,17 +27,17 @@ public class DataSourceHolder implements Closeable {
 
     public DataSourceHolder(MysqlConfig mysqlConfig) {
         if (null == mysqlConfig || mysqlConfig.isInvalid()) {
-            throw new DataSourceException();
+            throw new DataSourceException("connect parameter invalid.");
         }
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(mysqlConfig.getUrl());
-        config.setUsername(mysqlConfig.getUsername());
-        config.setPassword(mysqlConfig.getPassword());
 
-        this.dataSource = new HikariDataSource(config);
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            dataSource.close();
-        }));
+
+        this.dataSource = getDataSource(mysqlConfig);
+        ThreadUtil.addShutdownHook(new Runnable() {
+            @Override
+            public void run() {
+                dataSource.close();
+            }
+        });
 
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         Environment environment = new Environment("sharinganMonitor", transactionFactory, dataSource);
@@ -47,6 +49,23 @@ public class DataSourceHolder implements Closeable {
         this.factory = builder.build(configuration);
     }
 
+    private HikariDataSource getDataSource(MysqlConfig mysqlConfig) {
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName(mysqlConfig.getDriverClassName());
+        config.setJdbcUrl(mysqlConfig.getUrl());
+        config.setUsername(mysqlConfig.getUsername());
+        config.setPassword(mysqlConfig.getPassword());
+        config.setMinimumIdle(1);
+        config.setMaximumPoolSize(10);
+        config.setConnectionTimeout(3_000);
+        config.setMaxLifetime(30_000);
+        return new HikariDataSource(config);
+    }
+
+    /**
+     * 建立新会话
+     * @return
+     */
     public SqlSession openSession() {
         return factory.openSession();
     }

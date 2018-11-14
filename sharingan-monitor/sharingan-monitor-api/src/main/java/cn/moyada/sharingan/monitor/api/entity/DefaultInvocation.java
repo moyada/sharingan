@@ -1,9 +1,11 @@
 package cn.moyada.sharingan.monitor.api.entity;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * 标准调用数据
  * @author xueyikang
  * @since 0.0.1
  **/
@@ -15,7 +17,11 @@ public class DefaultInvocation implements Invocation {
 
     private String protocol;
 
+    private SerializationType serializationType;
+
     private Map<String, Object> args;
+
+    private Map<String, Object> attach;
 
     @Override
     public String getApplication() {
@@ -48,6 +54,29 @@ public class DefaultInvocation implements Invocation {
     }
 
     @Override
+    public Map<String, Object> getAttach() {
+        return attach;
+    }
+
+    @Override
+    public void addAttach(String name, Object value) {
+        if (attach == null) {
+            attach = new HashMap<>();
+        }
+        attach.put(name, value);
+    }
+
+    @Override
+    public SerializationType getSerializationType() {
+        return serializationType;
+    }
+
+    @Override
+    public void setSerializationType(SerializationType serializationType) {
+        this.serializationType = serializationType;
+    }
+
+    @Override
     public Map<String, Object> getArgs() {
         return args;
     }
@@ -64,7 +93,7 @@ public class DefaultInvocation implements Invocation {
     @Override
     public void addArgs(String name, byte args) {
         if (this.args == null) {
-            this.args = new HashMap<>();
+            this.args = new LinkedHashMap<>();
         }
 
         this.args.put(name, args);
@@ -112,6 +141,7 @@ public class DefaultInvocation implements Invocation {
                 ", domain='" + domain + '\'' +
                 ", protocol='" + protocol + '\'' +
                 ", args=" + args +
+                ", attach=" + attach +
                 '}';
     }
 }

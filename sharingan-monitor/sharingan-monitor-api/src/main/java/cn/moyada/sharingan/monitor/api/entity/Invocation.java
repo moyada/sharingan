@@ -3,6 +3,7 @@ package cn.moyada.sharingan.monitor.api.entity;
 import java.util.Map;
 
 /**
+ * 调用数据
  * @author xueyikang
  * @since 0.0.1
  **/
@@ -19,6 +20,14 @@ public interface Invocation {
     String getProtocol();
 
     void setProtocol(String protocol);
+
+    Map<String, Object> getAttach();
+
+    void addAttach(String name, Object value);
+
+    SerializationType getSerializationType();
+
+    void setSerializationType(SerializationType serializationType);
 
     Map<String, Object> getArgs();
 

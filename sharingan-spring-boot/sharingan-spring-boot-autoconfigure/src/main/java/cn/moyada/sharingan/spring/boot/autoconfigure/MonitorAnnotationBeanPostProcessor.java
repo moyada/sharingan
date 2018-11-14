@@ -9,6 +9,7 @@ import cn.moyada.sharingan.monitor.api.annotation.Exclusive;
 import cn.moyada.sharingan.monitor.api.entity.DefaultInvocation;
 import cn.moyada.sharingan.monitor.api.entity.Invocation;
 import cn.moyada.sharingan.spring.boot.autoconfigure.config.SharinganProperties;
+import cn.moyada.sharingan.spring.boot.autoconfigure.util.PropertiesUtil;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
 import org.springframework.beans.BeansException;
@@ -20,14 +21,19 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
-import org.springframework.core.env.Environment;
+import org.springframework.core.env.*;
 import org.springframework.lang.NonNull;
 
-import java.util.List;
+import java.util.*;
 
+/**
+ * 监视器代理解析器
+ */
 public class MonitorAnnotationBeanPostProcessor implements InitializingBean, EnvironmentAware, BeanFactoryPostProcessor, PriorityOrdered {
 
     private boolean enable = false;
+
+    private Map<String, Object> attach;
 
     private JavassistProxy<Invocation> javassistProxy;
 
@@ -40,18 +46,11 @@ public class MonitorAnnotationBeanPostProcessor implements InitializingBean, Env
         try {
             javassistProxy = new JavassistInheritProxy<>(Monitor.class,
                     Monitor.class.getDeclaredMethod("listener", Invocation.class),
-                    Invocation.class, DefaultInvocation.class, null, Variables.INJECT_APP_NAME);
+                    Invocation.class, DefaultInvocation.class, attach, Variables.INJECT_APP_NAME);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-
-//        generator = new BeanCopier.Generator();
     }
-
-//    @Override
-//    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-//        this.beanDefinitionRegistry = registry;
-//    }
 
     @Override
     public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanDefinitionRegistry) throws BeansException {
@@ -63,23 +62,14 @@ public class MonitorAnnotationBeanPostProcessor implements InitializingBean, Env
 
         for (String beanDefinitionName : beanDefinitionNames) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
-            if (beanDefinition instanceof AbstractBeanDefinition) {
-                AbstractBeanDefinition definition = (AbstractBeanDefinition) beanDefinition;
-                Class<?> beanClass;
 
-                if (definition.hasBeanClass()) {
-                    beanClass = definition.getBeanClass();
-                } else {
-                    String beanClassName = definition.getBeanClassName();
-                    if (null == beanClassName) {
-                        continue;
-                    }
-                    try {
-                        beanClass = Class.forName(beanClassName);
-                    } catch (ClassNotFoundException e1) {
-                        e1.printStackTrace();
-                        continue;
-                    }
+            if (beanDefinition instanceof AbstractBeanDefinition) {
+
+                AbstractBeanDefinition definition = (AbstractBeanDefinition) beanDefinition;
+                Class<?> beanClass = getClass(definition);
+
+                if (null == beanClass) {
+                    continue;
                 }
 
                 List<ProxyMethod> proxyInfo = ClassUtil.getProxyInfo(beanClass, Exclusive.class);
@@ -94,107 +84,34 @@ public class MonitorAnnotationBeanPostProcessor implements InitializingBean, Env
                     continue;
                 }
 
+                // 修改 BeanDefinition 类信息
                 definition.setBeanClass(beanClass);
             }
         }
     }
 
-//    @Override
-//    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-//        if (sharinganConfig.isEnable() && javassistProxy != null && proxyBeanNames.contains(beanName)) {
-//            try {
-//                injectProperty(bean);
-//            } catch (NoSuchFieldException | IllegalAccessException e) {
-//                e.printStackTrace();
-//            } finally {
-//                proxyBeanNames.remove(beanName);
-//            }
-//        }
-//        return bean;
-//    }
-
-//    private void injectProperty(Object bean) throws NoSuchFieldException, IllegalAccessException {
-//        Class<?> clazz = bean.getClass();
-//
-//        Field appField = clazz.getDeclaredField(Variables.APP_PARAM);
-//        appField.setAccessible(true);
-//        appField.set(bean, sharinganConfig.getApplication());
-//
-//        Field monitorField = clazz.getDeclaredField(Variables.MONITOR_PARAM);
-//        monitorField.setAccessible(true);
-//        monitorField.set(bean, monitorBean);
-//    }
-
-//    @Override
-//    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-//        if (!sharinganConfig.isEnable() || javassistProxy == null) {
-//            return bean;
-//        }
-//
-//        Class<?> target = bean.getClass();
-//        List<ProxyMethod> proxyMethods = ClassUtil.getProxyInfo(bean.getClass(), Exclusive.class);
-//        if (null == proxyMethods) {
-//            return bean;
-//        }
-//
-//        Class<?> proxy;
-//        try {
-//            proxy = javassistProxy.wrapper(target, proxyMethods);
-//        } catch (NotFoundException | CannotCompileException e) {
-//            e.printStackTrace();
-//            return bean;
-//        }
-//
-//        BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
-//        ConstructorArgumentValues constructorArgumentValues = beanDefinition.getConstructorArgumentValues();
-//        int argumentCount = constructorArgumentValues.getArgumentCount();
-//
-//        Object instance;
-//        if (0 == argumentCount) {
-//            try {
-//                instance = proxy.getDeclaredConstructor().newInstance();
-//            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-//                return bean;
-//            }
-//        } else {
-//            List<ConstructorArgumentValues.ValueHolder> values = constructorArgumentValues.getGenericArgumentValues();
-//            Class<?>[] argsTypes = new Class[argumentCount];
-//            Object[] argsValues = new Object[argumentCount];
-//            for (int i = 0; i < argumentCount; i++) {
-//                ConstructorArgumentValues.ValueHolder valueHolder = values.get(i);
-//                argsValues[i] = valueHolder.getValue();
-//                try {
-//                    argsTypes[i] = Class.forName(valueHolder.getType());
-//                } catch (ClassNotFoundException e) {
-//                    e.printStackTrace();
-//                    return bean;
-//                }
-//            }
-//
-//            try {
-//                instance = proxy.getDeclaredConstructor(argsTypes).newInstance(argsValues);
-//            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-//                return bean;
-//            }
-//        }
-//
-//        generator.setSource(target);
-//        generator.setTarget(proxy);
-//        BeanCopier beanCopier = generator.create();
-//        beanCopier.copy(bean, instance, null);
-//
-//        try {
-//            injectProperty(instance);
-//        } catch (NoSuchFieldException | IllegalAccessException e) {
-//            return bean;
-//        }
-//
-//        return instance;
-//    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+    /**
+     * 获取类信息
+     * @param definition
+     * @return
+     */
+    private Class getClass(AbstractBeanDefinition definition) {
+        Class<?> beanClass;
+        if (definition.hasBeanClass()) {
+            beanClass = definition.getBeanClass();
+        } else {
+            String beanClassName = definition.getBeanClassName();
+            if (null == beanClassName) {
+                return null;
+            }
+            try {
+                beanClass = Class.forName(beanClassName);
+            } catch (ClassNotFoundException e1) {
+                e1.printStackTrace();
+                return null;
+            }
+        }
+        return beanClass;
     }
 
     @Override
@@ -203,5 +120,12 @@ public class MonitorAnnotationBeanPostProcessor implements InitializingBean, Env
         if (null != property) {
             this.enable = property;
         }
+
+        attach = PropertiesUtil.getMap(environment, SharinganProperties.ATTACH);
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 }

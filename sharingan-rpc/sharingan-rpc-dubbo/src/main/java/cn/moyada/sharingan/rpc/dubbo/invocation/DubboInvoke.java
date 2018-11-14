@@ -2,7 +2,7 @@ package cn.moyada.sharingan.rpc.dubbo.invocation;
 
 import cn.moyada.sharingan.common.exception.InstanceNotFountException;
 import cn.moyada.sharingan.common.task.DestroyTask;
-import cn.moyada.sharingan.common.utils.StringUtil;
+import cn.moyada.sharingan.common.util.StringUtil;
 import cn.moyada.sharingan.rpc.api.config.DefaultConfig;
 import cn.moyada.sharingan.rpc.api.invoke.AsyncInvoke;
 import cn.moyada.sharingan.rpc.api.invoke.DefaultMethodInvoke;

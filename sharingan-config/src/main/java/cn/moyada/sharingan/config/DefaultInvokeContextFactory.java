@@ -1,10 +1,10 @@
 package cn.moyada.sharingan.config;
 
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
-import cn.moyada.sharingan.common.utils.AssertUtil;
-import cn.moyada.sharingan.common.utils.JsonUtil;
-import cn.moyada.sharingan.common.utils.RegexUtil;
-import cn.moyada.sharingan.common.utils.StringUtil;
+import cn.moyada.sharingan.common.util.AssertUtil;
+import cn.moyada.sharingan.common.util.JsonUtil;
+import cn.moyada.sharingan.common.util.RegexUtil;
+import cn.moyada.sharingan.common.util.StringUtil;
 import cn.moyada.sharingan.module.Dependency;
 import cn.moyada.sharingan.module.InvokeInfo;
 import cn.moyada.sharingan.module.InvokeMetaData;

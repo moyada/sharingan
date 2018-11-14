@@ -1,6 +1,6 @@
 package cn.moyada.sharingan.core.invoke;
 
-import cn.moyada.sharingan.common.utils.RuntimeUtil;
+import cn.moyada.sharingan.common.util.RuntimeUtil;
 import cn.moyada.sharingan.core.factory.GroupThreadFactory;
 
 import java.util.concurrent.ExecutorService;

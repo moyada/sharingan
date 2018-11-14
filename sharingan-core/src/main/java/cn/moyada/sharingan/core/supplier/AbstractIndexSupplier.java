@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.core.supplier;
 
 import cn.moyada.sharingan.common.exception.InitializeInvokerException;
-import cn.moyada.sharingan.common.utils.NumberUtil;
+import cn.moyada.sharingan.common.util.NumberUtil;
 
 /**
  * 下标提供器

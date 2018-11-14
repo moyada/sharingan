@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * javassist 继承代理
  * @author xueyikang
  * @since 0.0.1
  **/
@@ -47,7 +48,7 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
             ctClass.addConstructor(ctConstructor);
         }
 
-        addField(ctClass);
+        addMonitorField(ctClass);
 
         CtMethod ctMethod;
         for (ProxyMethod method : methods) {
@@ -57,7 +58,7 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
             }
 
             try {
-                ctClass.addMethod(superMethod(ctClass, ctMethod, method, invokeObjName, proxyMethod));
+                ctClass.addMethod(superMethod(ctClass, ctMethod, method, invokeObjName, methodName));
             } catch (CannotCompileException e) {
                 e.printStackTrace();
                 return target;
@@ -87,15 +88,19 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
         CtClass[] exceptionTypes = ctMethod.getExceptionTypes();
 
         invokeBody.append("{ \n");
+
+        // condition
         invokeBody.append("if (null != ").append(invokeObjName).append(") {\n");
 
-        invokeBody.append(invokeInterfaceName)
+        // local variable
+        invokeBody.append(paramInterfaceName)
                 .append(" ")
                 .append(LOCAL_VARIABLE)
                 .append(" = new ")
-                .append(invokeParamName)
+                .append(paramClassName)
                 .append("();\n");
 
+        // method param
         invokeBody.append(LOCAL_VARIABLE)
                 .append(".")
                 .append(NameUtil.getSetFunction("protocol"))
@@ -106,6 +111,13 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
                 .append(NameUtil.getSetFunction("domain"))
                 .append("(\"").append(method.getDomain()).append("\");\n");
 
+        invokeBody.append(LOCAL_VARIABLE)
+                .append(".")
+                .append(NameUtil.getSetFunction("serializationType"))
+                .append("(").append(method.getSerializationType()).append(");\n");
+
+
+        // application param
         for (FieldInfo fieldInfo : privateVariables) {
             invokeBody.append(LOCAL_VARIABLE)
                     .append(".")
@@ -115,21 +127,23 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
                     .append(");\n");
         }
 
+        // attach param
         if (null != attachParam) {
             for (Map.Entry<String, Object> entry : attachParam.entrySet()) {
                 invokeBody.append(LOCAL_VARIABLE)
-                        .append(".addArgs(\"").append(entry.getKey())
+                        .append(".addAttach(\"").append(entry.getKey())
                         .append("\", \"").append(entry.getValue()).append("\");\n");
             }
         }
 
-
+        // invocation args
         for (ProxyField proxyField : method.getProxyParams()) {
             invokeBody.append(LOCAL_VARIABLE)
                     .append(".addArgs(\"").append(proxyField.getParamName())
                     .append("\", $").append(proxyField.getParamIndex() + 1).append(");\n");
         }
 
+        // invoke method
         invokeBody.append(objName)
                 .append(".")
                 .append(methodName)
@@ -138,15 +152,17 @@ public class JavassistInheritProxy<T> extends JavassistProxy<T> {
                 .append("); \n }\n");
 
         if (returnType.getName().equals("void")) {
-            invokeBody.append("super.").append(method.getMethodName()).append("($$);\n}");
+            invokeBody.append("super.").append(method.getMethodName()).append("($$);\n");
         } else {
-            invokeBody.append("return super.").append(method.getMethodName()).append("($$);\n}");
+            invokeBody.append("return super.").append(method.getMethodName()).append("($$);\n");
         }
 
-        String proxyBody = invokeBody.toString();
+        String proxyBody = invokeBody.append("}").toString();
 
+        // clear buffer
         invokeBody.delete(0, invokeBody.length());
 
+        // method annotation
         CtMethod newMethod = CtNewMethod.make(modifiers, returnType, method.getMethodName(), parameterTypes, exceptionTypes, proxyBody, target);
         for (AttributeInfo attribute : ctMethod.getMethodInfo().getAttributes()) {
             newMethod.getMethodInfo().addAttribute(attribute);

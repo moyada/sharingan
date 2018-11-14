@@ -1,6 +1,6 @@
 package cn.moyada.sharingan.module.config;
 
-import cn.moyada.sharingan.common.utils.StringUtil;
+import cn.moyada.sharingan.common.util.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

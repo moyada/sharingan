@@ -1,7 +1,7 @@
 package cn.moyada.sharingan.core.support;
 
 import cn.moyada.sharingan.common.constant.NumberConstant;
-import cn.moyada.sharingan.common.utils.NumberUtil;
+import cn.moyada.sharingan.common.util.NumberUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

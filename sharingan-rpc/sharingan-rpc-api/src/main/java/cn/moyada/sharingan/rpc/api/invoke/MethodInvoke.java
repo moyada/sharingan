@@ -1,6 +1,6 @@
 package cn.moyada.sharingan.rpc.api.invoke;
 
-import cn.moyada.sharingan.common.utils.TimeUtil;
+import cn.moyada.sharingan.common.util.TimeUtil;
 
 import java.lang.invoke.MethodHandle;
 import java.sql.Timestamp;

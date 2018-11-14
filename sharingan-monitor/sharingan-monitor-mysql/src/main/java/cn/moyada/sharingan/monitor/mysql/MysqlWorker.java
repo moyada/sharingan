@@ -8,12 +8,16 @@ import cn.moyada.sharingan.monitor.api.receiver.InvocationReceiver;
 import java.util.Collection;
 
 /**
+ * mysql 异步处理器
  * @author xueyikang
  * @since 1.0
  **/
-public class MysqlWorker<T> extends BatchInvocationWorker {
+public class MysqlWorker<T> extends BatchInvocationWorker<T> {
 
-    public MysqlWorker(MysqlConfig mysqlConfig, InvocationHandler<Collection<Record<T>>> handler, InvocationReceiver<Record<String>> receiver) {
+    public MysqlWorker(MysqlConfig mysqlConfig,
+                       InvocationHandler<Collection<Record<T>>> handler,
+                       InvocationReceiver<Record<T>> receiver)
+    {
         super(handler, receiver, mysqlConfig.getIntervalTime(), mysqlConfig.getThresholdSize());
     }
 }

@@ -30,6 +30,7 @@
         <module>sharingan-instrument</module>
         <module>sharingan-bom</module>
         <module>sharingan-spring-boot</module>
+        <module>sharingan-serialization</module>
     </modules>
 
     <properties>
@@ -77,7 +78,13 @@
 
             <dependency>
                 <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-monitor-local</artifactId>
+                <artifactId>sharingan-serialization-jackson</artifactId>
+                <version>${sharingan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.moyada</groupId>
+                <artifactId>sharingan-serialization-api</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
