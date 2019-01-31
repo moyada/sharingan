@@ -55,7 +55,7 @@ class InvokeForm extends React.Component {
             serviceId: values.invokeId[1],
             invokeId: values.invokeId[2].split(`-`)[0],
             expression: values.expression,
-            poolSize: values.poolSize,
+            concurrent: values.concurrent,
             qps: values.qps,
             random: values.random,
             total: values.total,
@@ -93,7 +93,7 @@ class InvokeForm extends React.Component {
 
           payload = {
             invokeInfo: JSON.stringify(this.state.data),
-            poolSize: values.poolSize,
+            concurrent: values.concurrent,
             qps: values.qps,
             total: values.total,
             saveResult: values.saveResult,
@@ -246,7 +246,7 @@ class InvokeForm extends React.Component {
     if(total === null || total === undefined || total < 1) {
       return
     }
-    this.props.form.setFieldsValue({'poolSize': Math.round(total / qps)})
+    // this.props.form.setFieldsValue({'concurrent': Math.round(total / qps)})
   }
 
   render() {
@@ -446,17 +446,19 @@ class InvokeForm extends React.Component {
             </TabPane>
           </Tabs>
 
-          <Col span={1} key='poolSize'>
-            {/*<FormItem {...formItemLayout} label={`并发数`} >*/}
-              {/*{getFieldDecorator(`poolSize`, {initialValue: null})(*/}
-                {/*<InputNumber*/}
-                  {/*min={1}*/}
-                  {/*max={100}*/}
-                  {/*precision={0}*/}
-                  {/*disabled*/}
-                {/*/>*/}
-              {/*)}*/}
-            {/*</FormItem>*/}
+          <Col span={1} key='NULL'/>
+
+          <Col span={3} key='concurrent'>
+            <FormItem {...formItemLayout} label={`并发数`} >
+              {getFieldDecorator(`concurrent`, {initialValue: null})(
+                <InputNumber
+                  min={1}
+                  max={300}
+                  precision={0}
+                  // disabled
+                />
+              )}
+            </FormItem>
           </Col>
 
           <Col span={3} key='total'>

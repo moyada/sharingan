@@ -14,7 +14,14 @@
 
     <modules>
         <module>sharingan-rpc-dubbo</module>
-        <module>sharingan-rpc-api</module>
         <module>sharingan-rpc-springcloud</module>
+        <module>sharingan-rpc-all</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.moyada</groupId>
+            <artifactId>sharingan-infrastructure</artifactId>
+        </dependency>
+    </dependencies>
 </project>

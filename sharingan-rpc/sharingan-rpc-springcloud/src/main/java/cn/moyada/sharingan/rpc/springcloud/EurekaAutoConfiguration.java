@@ -1,7 +1,8 @@
 package cn.moyada.sharingan.rpc.springcloud;
 
-import cn.moyada.sharingan.rpc.api.invoke.InvokeProxy;
+
 import cn.moyada.sharingan.rpc.springcloud.invocation.SpringCloudInvoke;
+import io.moyada.sharingan.infrastructure.invoke.InvokeProxy;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableFeignClients
 public class EurekaAutoConfiguration {
 
-    public final static String REGISTER_URL = "eureka.client.serviceUrl.defaultZone";
+    public final static String REGISTER_URL = "sharingan.rpc.springcloud.registry";
 
     public final static String BEAN_NAME = "springcloudInvoke";
 

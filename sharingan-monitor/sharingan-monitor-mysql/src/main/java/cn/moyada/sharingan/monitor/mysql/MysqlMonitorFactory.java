@@ -21,7 +21,7 @@ public class MysqlMonitorFactory {
         DataSourceHolder dataSourceHolder = new DataSourceHolder(mysqlConfig);
         SqlBuilder sqlBuilder = new SqlBuilder(mysqlConfig.getTable(), mysqlConfig.getColumn());
 
-        InvocationHandler<Collection<Record<String>>> handler = new MysqlHandler<>(dataSourceHolder, sqlBuilder);
+        InvocationHandler<Collection<Record<String>>> handler = new MysqlHandler(dataSourceHolder, sqlBuilder);
         InvocationReceiver<Record<String>> receiver = new JsonInvocationReceiver();
 
         AbstractInvocationWorker<Record<String>> mysqlWorker = new MysqlWorker<>(mysqlConfig, handler, receiver);

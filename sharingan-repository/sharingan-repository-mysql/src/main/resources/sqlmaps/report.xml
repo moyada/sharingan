@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.moyada.sharingan.repository.mysql.dao.ReportDAO">
+
+	<resultMap id="reportDO" type="io.moyada.sharingan.domain.request.InvokeReport">
+		<id column="id" property="id"/>
+		<result column="report_id" property="reportId"/>
+		<!--<result column="app_id" property="appId"/>-->
+		<!--<result column="service_id" property="serviceId"/>-->
+		<!--<result column="func_id" property="funcId"/>-->
+		<result column="total_invoke" property="totalInvoke"/>
+		<result column="response_invoke" property="responseInvoke"/>
+		<result column="success_rate" property="successRate"/>
+		<result column="min_response_time" property="minResponseTime"/>
+		<result column="max_response_time" property="maxResponseTime"/>
+		<result column="avg_response_time" property="avgResponseTime"/>
+		<result column="date_create" property="dateCreate"/>
+	</resultMap>
+
+	<sql id="reportColumn">
+		`id`, `report_id`, `total_invoke`, `response_invoke`, `success_rate`,
+		`min_response_time`, `max_response_time`, `avg_response_time`, `date_create`
+	</sql>
+
+	<insert id="saveReport">
+		INSERT IGNORE INTO `invoke_report` (`report_id`, `app_id`, `service_id`, `func_id`, `date_create`)
+		VALUE (#{reportId}, #{appId}, #{serviceId}, #{funcId}, #{dateCreate});
+	</insert>
+
+	<update id="updateReport">
+		UPDATE `invoke_report` SET
+		total_invoke = #{totalInvoke},
+		response_invoke = #{responseInvoke},
+		success_rate = #{successRate},
+		min_response_time = #{minResponseTime},
+		max_response_time = #{maxResponseTime},
+		avg_response_time = #{avgResponseTime},
+		date_create = #{dateCreate}
+		WHERE report_id = #{reportId}
+	</update>
+
+	<select id="findReport" resultMap="reportDO">
+		SELECT <include refid="reportColumn"/>
+		FROM `invoke_report`
+		WHERE `report_id` = #{reportId}
+	</select>
+</mapper>

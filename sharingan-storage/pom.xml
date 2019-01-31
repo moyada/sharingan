@@ -13,8 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>sharingan-storage-api</module>
-        <module>sharingan-storage-mysql</module>
     </modules>
-
 
 </project>

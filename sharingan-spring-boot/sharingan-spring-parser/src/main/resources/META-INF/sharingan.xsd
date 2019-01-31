@@ -27,7 +27,7 @@
         </xsd:attribute>
         <xsd:attribute name="enable" type="xsd:boolean" default="true">
             <xsd:annotation>
-                <xsd:documentation><![CDATA[ The report switch. ]]></xsd:documentation>
+                <xsd:documentation><![CDATA[ The reportData switch. ]]></xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
         <xsd:attribute name="monitor" type="xsd:string">

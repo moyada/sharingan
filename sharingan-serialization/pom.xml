@@ -14,6 +14,7 @@
     <modules>
         <module>sharingan-serialization-jackson</module>
         <module>sharingan-serialization-api</module>
+        <module>sharingan-serialization-fastjson</module>
     </modules>
 
 </project>

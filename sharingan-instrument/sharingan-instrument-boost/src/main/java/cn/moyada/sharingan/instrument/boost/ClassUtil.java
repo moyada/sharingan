@@ -22,6 +22,8 @@ import java.util.Map;
  **/
 public class ClassUtil {
 
+    private static final int METHOD_MODIFIER = Modifier.STATIC | Modifier.FINAL | Modifier.PRIVATE;
+
     /**
      * 获取代理信息
      * @param clazz
@@ -68,7 +70,7 @@ public class ClassUtil {
         Map<Class, Listener> classes = new HashMap<>();
 
         Listener annotation = clazz.getAnnotation(Listener.class);
-        if (null != annotation) {
+        if (null != annotation && isNotFinal(clazz)) {
             classes.put(clazz, annotation);
         }
 
@@ -102,10 +104,14 @@ public class ClassUtil {
             return;
         }
         Listener annotation = superClass.getAnnotation(Listener.class);
-        if (null != annotation) {
+        if (null != annotation && isNotFinal(superClass)) {
             classes.put(superClass, annotation);
         }
         addAnnotationSuper(superClass.getSuperclass(), classes);
+    }
+
+    private static boolean isNotFinal(Class clazz) {
+        return !Modifier.isFinal(clazz.getModifiers());
     }
 
     /**
@@ -144,14 +150,7 @@ public class ClassUtil {
 
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
-            int modifiers = method.getModifiers();
-            if (Modifier.isStatic(modifiers)) {
-                continue;
-            }
-            if (Modifier.isPrivate(modifiers)) {
-                continue;
-            }
-            if (Modifier.isFinal(modifiers)) {
+            if (isStaticOrFinalOrPrivate(method)) {
                 continue;
             }
 
@@ -177,7 +176,7 @@ public class ClassUtil {
             ProxyMethod proxyMethod = new ProxyMethod();
             proxyMethod.setMethodName(methodName);
             proxyMethod.setParamTypes(method.getParameterTypes());
-            proxyMethod.setSerializationType(annotation.serialization().getDeclaringClass().getName());
+            proxyMethod.setSerializationType(annotation.serialization().name());
             proxyMethod.setProxyParams(proxyFields);
             proxyMethod.setProxyBefore(true);
 
@@ -190,6 +189,10 @@ public class ClassUtil {
 
             proxyMethods.put(methodName, proxyMethod);
         }
+    }
+
+    private static boolean isStaticOrFinalOrPrivate(Method method) {
+        return (METHOD_MODIFIER & method.getModifiers()) != 0;
     }
 
     /**

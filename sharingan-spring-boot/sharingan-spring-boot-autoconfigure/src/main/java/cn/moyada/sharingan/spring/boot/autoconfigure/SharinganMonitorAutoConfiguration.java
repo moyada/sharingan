@@ -37,13 +37,13 @@ public class SharinganMonitorAutoConfiguration {
         if (!sharinganConfig.isEnable()) {
             return null;
         }
-
-        return MysqlMonitorFactory.build(mysqlConfig);
+//        return new TestMonitor();
+         return MysqlMonitorFactory.build(mysqlConfig);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public static MonitorAnnotationBeanPostProcessor monitorProcessor() {
-        return new MonitorAnnotationBeanPostProcessor();
+    public static MonitorBeanScannerConfigurer monitorProcessor() {
+        return new MonitorBeanScannerConfigurer();
     }
 }

@@ -1,5 +1,7 @@
 package cn.moyada.sharingan.instrument.boost.common;
 
+import cn.moyada.sharingan.monitor.api.entity.SerializationType;
+
 import java.util.List;
 
 /**
@@ -82,7 +84,7 @@ public class ProxyMethod {
     }
 
     public String getSerializationType() {
-        return serializationType;
+        return SerializationType.class.getName() + "." + serializationType;
     }
 
     public void setSerializationType(String serializationType) {

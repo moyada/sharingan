@@ -20,15 +20,14 @@
         <project.encoding>utf-8</project.encoding>
         <sharingan.version>0.0.1-SNAPSHOT</sharingan.version>
 
+        <!-- byte code -->
         <auto-service.version>1.0-rc4</auto-service.version>
         <asm.version>7.0</asm.version>
         <javapoet.version>1.11.1</javapoet.version>
         <javassist.version>3.24.0-GA</javassist.version>
         <classmate.version>1.3.4</classmate.version>
 
-        <quasar.version>0.7.9</quasar.version>
-        <comsat.version>0.7.0</comsat.version>
-
+        <!-- http libs -->
         <httpclient.version>4.5.6</httpclient.version>
         <httpasyncclient.version>4.1.3</httpasyncclient.version>
         <httpcore.version>4.4.8</httpcore.version>
@@ -40,26 +39,29 @@
         <curator.version>2.12.0</curator.version>
 
         <spring-cloud-dependencies.version>Finchley.RELEASE</spring-cloud-dependencies.version>
-        <spring-cloud.version>2.0.2.RELEASE</spring-cloud.version>
 
         <!-- log libs -->
         <slf4j.version>1.7.25</slf4j.version>
-        <disruptor.version>3.4.2</disruptor.version>
-        <jackson.version>2.9.7</jackson.version>
+        <conversantmedia.disruptor.version>1.2.13</conversantmedia.disruptor.version>
+        <lmax.disruptor.version>3.4.2</lmax.disruptor.version>
+
+        <!-- serialization libs -->
+        <jackson.version>2.9.8</jackson.version>
+        <fastjson.version>1.2.51</fastjson.version>
 
         <!-- util libs -->
-        <guava.version>23.5-jre</guava.version>
         <apache.common.version>3.8.1</apache.common.version>
+
+        <quasar.version>0.7.9</quasar.version>
 
         <!-- persistence libs -->
         <mysql.version>8.0.8-dmr</mysql.version>
         <hikari.version>3.2.0</hikari.version>
-
         <mybatis.spring.version>1.3.2</mybatis.spring.version>
 
         <!-- spring libs -->
         <spring.version>5.1.1.RELEASE</spring.version>
-        <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
+        <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
 
         <servlet.version>4.0.0</servlet.version>
 
@@ -70,47 +72,24 @@
 
         <!-- Maven plugins -->
         <maven_jar_version>3.0.2</maven_jar_version>
-        <!--<maven_surefire_version>2.19.1</maven_surefire_version>-->
-        <!--<maven_deploy_version>2.8.2</maven_deploy_version>-->
         <maven_compiler_version>3.8.0</maven_compiler_version>
-        <!--<maven_source_version>3.0.1</maven_source_version>-->
-        <!--<maven_javadoc_version>3.0.1</maven_javadoc_version>-->
-        <!--<maven_jetty_version>9.4.11.v20180605</maven_jetty_version>-->
-        <!--<maven_checkstyle_version>3.0.0</maven_checkstyle_version>-->
-        <!--<maven_jacoco_version>0.8.1</maven_jacoco_version>-->
+
         <maven.test.skip>true</maven.test.skip>
 
         <!-- test libs -->
-        <junit.version>4.12</junit.version>
+        <junit.version>5.3.2</junit.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>${hikari.version}</version>
-                <optional>true</optional>
-            </dependency>
-
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.version}</version>
-            </dependency>
-
+            <!-- concurrency -->
             <dependency>
                 <groupId>co.paralleluniverse</groupId>
                 <artifactId>quasar-core</artifactId>
                 <version>${quasar.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>co.paralleluniverse</groupId>
-                <artifactId>comsat-httpclient</artifactId>
-                <version>${comsat.version}</version>
-            </dependency>
-
+            <!-- json -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -118,17 +97,19 @@
             </dependency>
 
             <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- util -->
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${apache.common.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-
+            <!-- http -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
@@ -153,12 +134,7 @@
                 <version>${httpclient.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>1.8.9</version>
-            </dependency>
-
+            <!-- dubbo -->
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-framework</artifactId>
@@ -189,12 +165,24 @@
                 </exclusions>
             </dependency>
 
+            <!-- spring cloud -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <!-- processor -->
             <dependency>
                 <groupId>com.google.auto.service</groupId>
                 <artifactId>auto-service</artifactId>
                 <version>${auto-service.version}</version>
             </dependency>
 
+            <!-- byte code -->
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
@@ -208,18 +196,19 @@
             </dependency>
 
             <dependency>
-                <groupId>com.squareup</groupId>
-                <artifactId>javapoet</artifactId>
-                <version>${javapoet.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
+            <dependency>
+                <groupId>com.squareup</groupId>
+                <artifactId>javapoet</artifactId>
+                <version>${javapoet.version}</version>
+            </dependency>
+
+
+            <!-- datasource -->
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -227,20 +216,24 @@
                 <optional>true</optional>
             </dependency>
 
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikari.version}</version>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
             <!-- spring boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-                <optional>true</optional>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
                 <optional>true</optional>
@@ -261,6 +254,13 @@
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-log4j2</artifactId>
+                <version>${spring-boot.version}</version>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot.version}</version>
                 <optional>true</optional>
@@ -272,6 +272,7 @@
                 </exclusions>
             </dependency>
 
+            <!-- log -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>log4j-over-slf4j</artifactId>
@@ -286,38 +287,24 @@
             </dependency>
 
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-log4j2</artifactId>
-                <version>${spring-boot.version}</version>
+                <groupId>com.conversantmedia</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${conversantmedia.disruptor.version}</version>
                 <optional>true</optional>
             </dependency>
 
             <dependency>
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
-                <version>${disruptor.version}</version>
+                <version>${lmax.disruptor.version}</version>
                 <optional>true</optional>
             </dependency>
 
             <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-devtools</artifactId>-->
-            <!--<version>${project.parent.version}</version>-->
+                <!--<groupId>com.fasterxml</groupId>-->
+                <!--<artifactId>classmate</artifactId>-->
+                <!--<version>${classmate.version}</version>-->
             <!--</dependency>-->
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot.version}</version>
-                <optional>true</optional>
-            </dependency>
-
-
-            <dependency>
-                <groupId>com.fasterxml</groupId>
-                <artifactId>classmate</artifactId>
-                <version>${classmate.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -327,8 +314,21 @@
             </dependency>
 
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>

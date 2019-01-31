@@ -35,15 +35,14 @@ public class SqlBuilder {
     /**
      * 批量插入语句
      * @param records
-     * @param <T>
      * @return
      */
-    public <T> String insert(Collection<Record<T>> records) {
+    public String insert(Collection<Record<String>> records) {
         String now = simpleDateFormat.format(current);
 
         StringBuilder sql = new StringBuilder(records.size() * 16);
-        sql.append("INSERT INTO ").append(table).append(column).append("VALUES");
-        for (Record<T> record : records) {
+        sql.append("INSERT IGNORE INTO ").append(table).append(column).append("VALUES");
+        for (Record<String> record : records) {
             sql.append("\n('");
             sql.append(record.getApplication());
             sql.append("','");
@@ -51,7 +50,7 @@ public class SqlBuilder {
 //            sql.append("','");
 //            sql.append(record.getProtocol());
             sql.append("','");
-            sql.append(record.getArgs().toString());
+            sql.append(record.getArgs());
             sql.append("','");
             sql.append(now);
             sql.append("'),");

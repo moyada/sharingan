@@ -1,56 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" monitorInterval="30">
     <Properties>
-        <property name="LOG_DIR" value="logs"/>
+        <property name="baseDir" value="logs"/>
 
-        <Property name="LOG_PATTERN">
+        <Property name="logPattern">
             %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
         </Property>
 
-        <property name="DATA">
+        <property name="date">
             %d{yyyy-MM-dd}
         </property>
     </Properties>
 
-
-    <!-- Rolling File Appender -->
     <Appenders>
-
-        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+        <Console name="STDOUT" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${logPattern}"/>
         </Console>
 
-        <!-- Rolling File Appender -->
-        <RollingFile name="FileAppender" fileName="${LOG_DIR}/out.log"
-                     filePattern="${LOG_DIR}/out-${DATA}-%i.log">
+        <RollingRandomAccessFile name="LogFile" fileName="${baseDir}/out.log"
+                          immediateFlush="true" bufferedIO="false"
+                          filePattern="${baseDir}/out-${date}-%i.log.gz">
             <PatternLayout>
-                <Pattern>${LOG_PATTERN}</Pattern>
+                <Pattern>${logPattern}</Pattern>
             </PatternLayout>
-            <!--<JsonLayout complete="false" compact="true">
-                <KeyValuePair key="timestamp" value="$${date:yyyy-MM-dd'T'HH:mm:ss.SSSZ}" />
-            </JsonLayout>-->
             <!--<Filters>-->
                 <!--&lt;!&ndash; 只记录ERROR级别日志信息，程序打印的其他信息不会被记录 &ndash;&gt;-->
                 <!--&lt;!&ndash; 此level设置的日志级别，是过滤日志文件中打印出的日志信息，和Root的level有所区别 &ndash;&gt;-->
                 <!--<ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />-->
             <!--</Filters>-->
             <Policies>
+                <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10MB" />
                 <!-- 每天创建一个日志文件 -->
                 <TimeBasedTriggeringPolicy interval="1" />
             </Policies>
-            <DefaultRolloverStrategy max="10"/>
-        </RollingFile>
+            <!--自动删除超过7天的日志压缩文件-->
+            <!--<DefaultRolloverStrategy>-->
+                <!--<Delete basePath="${baseDir}" maxDepth="2">-->
+                    <!--<IfFileName glob="out-*.log.gz"/>-->
+                    <!--<IfLastModified age="7d"/>-->
+                <!--</Delete>-->
+            <!--</DefaultRolloverStrategy>-->
+            <DefaultRolloverStrategy max="7"/>
+        </RollingRandomAccessFile>
+
+        <Async name="AsyncLog">
+            <AppenderRef ref="LogFile" />
+            <DisruptorBlockingQueue/>
+        </Async>
     </Appenders>
 
     <Loggers>
-        <AsyncLogger name="cn.moyada.sharingan" level="info" additivity="false">
-            <AppenderRef ref="FileAppender" />
-            <AppenderRef ref="ConsoleAppender" />
-        </AsyncLogger>
+        <Logger name="cn.moyada.sharingan" level="info" additivity="false">
+            <AppenderRef ref="AsyncLog" />
+        </Logger>
 
         <Root level="info">
-            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="STDOUT" />
         </Root>
     </Loggers>
 </Configuration>

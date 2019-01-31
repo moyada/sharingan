@@ -18,7 +18,9 @@ public abstract class AbstractMonitor implements Monitor {
     }
 
     private void startWorker() {
-        new Thread(worker).start();
+        Thread thread = new Thread(worker);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @Override

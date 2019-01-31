@@ -11,7 +11,7 @@ import java.util.Collection;
  * @author xueyikang
  * @since 1.0
  **/
-public class MysqlHandler<T> implements InvocationHandler<Collection<Record<T>>> {
+public class MysqlHandler implements InvocationHandler<Collection<Record<String>>> {
 
     private final SqlBuilder sqlBuilder;
 
@@ -23,7 +23,7 @@ public class MysqlHandler<T> implements InvocationHandler<Collection<Record<T>>>
     }
 
     @Override
-    public void handle(Collection<Record<T>> records) {
+    public void handle(Collection<Record<String>> records) {
         String sql = sqlBuilder.insert(records);
 
         SqlSession sqlSession = dataSourceHolder.openSession();

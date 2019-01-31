@@ -1,17 +1,21 @@
 package cn.moyada.sharingan.rpc.springcloud.invocation;
 
-import cn.moyada.sharingan.common.constant.HttpStatus;
-import cn.moyada.sharingan.common.exception.InstanceNotFountException;
-import cn.moyada.sharingan.common.task.DestroyTask;
-import cn.moyada.sharingan.common.util.RegexUtil;
-import cn.moyada.sharingan.common.util.StringUtil;
-import cn.moyada.sharingan.rpc.api.invoke.*;
+
 import cn.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration;
 import feign.Client;
 import feign.Request;
 import feign.RequestTemplate;
 import feign.Response;
 import feign.codec.Decoder;
+import io.moyada.sharingan.infrastructure.ContextFactory;
+import io.moyada.sharingan.infrastructure.constant.HttpStatus;
+import io.moyada.sharingan.infrastructure.exception.InstanceNotFountException;
+import io.moyada.sharingan.infrastructure.invoke.AsyncMethodInvoke;
+import io.moyada.sharingan.infrastructure.invoke.Invocation;
+import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
+import io.moyada.sharingan.infrastructure.invoke.data.Result;
+import io.moyada.sharingan.infrastructure.util.RegexUtil;
+import io.moyada.sharingan.infrastructure.util.StringUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,10 +37,10 @@ import java.util.Map;
  * @author xueyikang
  * @since 0.0.1
  **/
-public class SpringCloudInvoke extends AsyncMethodInvoke<Request> implements ApplicationContextAware, AsyncInvoke, InvokeProxy {
+public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation> implements ApplicationContextAware {
 
     @Autowired
-    private DestroyTask destroyTask;
+    private ContextFactory contextFactory;
 
     @Value("${" + EurekaAutoConfiguration.REGISTER_URL + "}")
     private String registerUrl;
@@ -59,13 +63,13 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request> implements App
         if (StringUtil.isEmpty(registerUrl)) {
             // 无效注册地址，关闭注册，销毁实例
             configBean.setFetchRegistry(false);
-            destroyTask.addDestroyBean(EurekaAutoConfiguration.BEAN_NAME);
+            contextFactory.destroyBean(EurekaAutoConfiguration.BEAN_NAME);
             return;
         }
     }
 
     @Override
-    public void initialize(InvocationMetaDate metaDate) throws InstanceNotFountException {
+    protected void doInitialize(HttpInvocation metaDate) throws InstanceNotFountException {
         if (null == client) {
             this.client = getInstance(LoadBalancerFeignClient.class);
         }
@@ -107,8 +111,7 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request> implements App
         for (int index = 0; index < paramSize; index++) {
             args[index] = "";
         }
-        Invocation invocation = new Invocation();
-        invocation.setArgsValue(args);
+        Invocation invocation = new Invocation(args);
         execute(invocation);
     }
 
@@ -117,7 +120,7 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request> implements App
      * @param metaDate
      * @return
      */
-    private static RequestTemplate create(InvocationMetaDate metaDate) {
+    private static RequestTemplate create(HttpInvocation metaDate) {
         RequestTemplate template = new RequestTemplate();
         template.append(metaDate.getMethodName());
         template.method(metaDate.getHttpType());

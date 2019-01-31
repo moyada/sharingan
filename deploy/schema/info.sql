@@ -7,7 +7,7 @@ CREATE TABLE `app_info` (
   `url` varchar(191) DEFAULT NULL COMMENT '直接链接',
   `dependencies` varchar(100) DEFAULT NULL COMMENT '包含依赖,关联dependency表',
   `internal` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否内部依赖，1 -> 是，不在页面展示范围',
-  PRIMARY KEY (`id`,`name`,`group_id`,`artifact_id`)
+  PRIMARY KEY (`id`,`name`)
 ) COMMENT='项目信息表';
 
 CREATE TABLE `service_info` (
@@ -15,6 +15,7 @@ CREATE TABLE `service_info` (
   `app_id` int(11) unsigned NOT NULL COMMENT '项目编号',
   `name` varchar(100) NOT NULL COMMENT '服务名称',
   `protocol` enum('dubbo','springcloud') DEFAULT NULL COMMENT 'rpc协议',
+  `protocol_type` enum('HTTP') DEFAULT NULL COMMENT 'rpc调用方式',
   `class_name` varchar(191) DEFAULT NULL COMMENT '接口类名',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_service` (`app_id`,`name`)

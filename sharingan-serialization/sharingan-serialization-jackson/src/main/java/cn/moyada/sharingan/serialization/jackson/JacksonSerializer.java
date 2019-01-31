@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,13 +23,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * jackson 序列化处理器
+ * Jackson 序列化处理器
  * @author xueyikang
  * @since 1.0
  **/
 public class JacksonSerializer extends AbstractSerializer implements Serializer {
-
-    private DateFormat dateFormat;
 
     private final ObjectMapper mapper;
     private final TypeFactory typeFactory;
@@ -59,8 +54,8 @@ public class JacksonSerializer extends AbstractSerializer implements Serializer 
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
         //设置JSON时间格式
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        mapper.setDateFormat(dateFormat);
+
+        mapper.setDateFormat(DATE_FORMAT);
     }
 
     @Override
@@ -107,26 +102,6 @@ public class JacksonSerializer extends AbstractSerializer implements Serializer 
         return mapper.readValue(json, clazz);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T toDataType(String json, Class<T> clazz) {
-        if (clazz == java.util.Date.class) {
-            try {
-                return (T) dateFormat.parse(json);
-            } catch (ParseException e) {
-                // pass
-            }
-        }
-        else if (clazz == Timestamp.class) {
-            return (T) Timestamp.valueOf(json);
-        }
-        else if (clazz == Date.class) {
-            return (T) Date.valueOf(json);
-        }
-        else if (clazz == Time.class) {
-            return (T) Time.valueOf(json);
-        }
-        return null;
-    }
 
     public <T> T[] toArray(String json, Class<T[]> clazz) throws IOException {
         return mapper.readValue(json, clazz);

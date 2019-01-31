@@ -13,6 +13,8 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 import java.io.Closeable;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * 数据库连接
@@ -20,6 +22,8 @@ import java.io.Closeable;
  * @since 1.0
  **/
 public class DataSourceHolder implements Closeable {
+
+    private final Logger logger = LogManager.getLogManager().getLogger(DataSourceHolder.class.getName());
 
     private HikariDataSource dataSource;
 
@@ -29,7 +33,6 @@ public class DataSourceHolder implements Closeable {
         if (null == mysqlConfig || mysqlConfig.isInvalid()) {
             throw new DataSourceException("connect parameter invalid.");
         }
-
 
         this.dataSource = getDataSource(mysqlConfig);
         ThreadUtil.addShutdownHook(new Runnable() {
@@ -55,6 +58,7 @@ public class DataSourceHolder implements Closeable {
         config.setJdbcUrl(mysqlConfig.getUrl());
         config.setUsername(mysqlConfig.getUsername());
         config.setPassword(mysqlConfig.getPassword());
+        config.setAutoCommit(true);
         config.setMinimumIdle(1);
         config.setMaximumPoolSize(10);
         config.setConnectionTimeout(3_000);

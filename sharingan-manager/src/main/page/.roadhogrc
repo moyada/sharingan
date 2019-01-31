@@ -2,7 +2,7 @@
   "entry": "src/index.js",
   "disableCSSModules": false,
   "publicPath": "",
-  "outputPath": "../webapp/META-INF/resources",
+  "outputPath": "../resources/public",
   "autoprefixer": null,
   "env": {
     "development": {
