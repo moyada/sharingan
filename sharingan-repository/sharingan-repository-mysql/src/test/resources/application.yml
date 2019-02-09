@@ -1,0 +1,17 @@
+mybatis:
+  #  config-location: classpath*:mybatis-config.xml
+  mapper-locations: classpath*:sqlmaps/*.xml
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: ${sharingan.datasource.url}
+    username: ${sharingan.datasource.username}
+    password: ${sharingan.datasource.password}
+
+sharingan:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/sharingan?useSSL=false&useUnicode=true&useAffectedRows=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root

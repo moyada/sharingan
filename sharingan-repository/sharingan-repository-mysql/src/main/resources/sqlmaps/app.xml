@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.moyada.sharingan.repository.mysql.dao.AppDAO">
+
+	<resultMap id="appData" type="io.moyada.sharingan.domain.metadada.AppData">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="group_id" property="groupId"/>
+		<result column="artifact_id" property="artifactId"/>
+		<result column="version" property="version"/>
+		<result column="url" property="url"/>
+		<result column="dependencies" property="dependencies"/>
+	</resultMap>
+
+	<sql id="baseColumn">
+		`id`, `name`, `group_id`, `artifact_id`, `version`, `url`, `dependencies`
+	</sql>
+
+	<insert id="save">
+		INSERT INTO `app_info`
+		(<include refid="baseColumn"/>, `internal`)
+		VALUES
+		(NULL, #{appName}, #{groupId}, #{artifactId}, #{version}, #{url}, #{dependencies}, #{internal});
+	</insert>
+
+	<select id="findAll" resultMap="appData">
+		SELECT <include refid="baseColumn"/> FROM `app_info`
+		WHERE internal = 0;
+	</select>
+
+	<select id="findById" resultMap="appData">
+		SELECT <include refid="baseColumn"/> FROM `app_info`
+		WHERE id = #{appId} LIMIT 1
+	</select>
+
+	<select id="findByName" resultMap="appData">
+		SELECT <include refid="baseColumn"/> FROM `app_info`
+		WHERE name = #{appName} LIMIT 1
+	</select>
+
+	<select id="findByIds" resultMap="appData">
+		SELECT <include refid="baseColumn"/>
+		FROM `app_info`
+		WHERE id IN
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+</mapper>

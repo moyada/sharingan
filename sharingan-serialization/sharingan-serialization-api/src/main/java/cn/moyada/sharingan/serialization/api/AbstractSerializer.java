@@ -1,10 +1,19 @@
 package cn.moyada.sharingan.serialization.api;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 /**
  * @author xueyikang
  * @since 1.0
  **/
 public abstract class AbstractSerializer {
+
+    protected final static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     protected static boolean isEmpty(String json) {
         return null == json || Constant.NULL.equals(json);
@@ -52,17 +61,50 @@ public abstract class AbstractSerializer {
 
             case "char":
             case "java.lang.Character":
-                return (T) (Character) json.charAt(0);
+                return (T) Character.valueOf(json.charAt(0));
 
             case "boolean":
             case "java.lang.Boolean":
-                return (T) Boolean.valueOf(json);
-
+                return json.equalsIgnoreCase("true") ? (T) Boolean.TRUE :
+                        json.equalsIgnoreCase("false") ? (T) Boolean.FALSE : null;
             case "byte":
             case "java.lang.Byte":
                 return (T) Byte.valueOf(json);
+//            case "java.util.Date":
+//                try {
+//                    return (T) DATE_FORMAT.parse(json);
+//                } catch (ParseException e) {
+//                    // pass
+//                }
+//            case "java.sql.Timestamp":
+//                return (T) Timestamp.valueOf(json);
+//            case "java.sql.Date":
+//                return (T) Date.valueOf(json);
+//            case "java.sql.Time":
+//                return (T) Time.valueOf(json);
         }
 
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T toDataType(String json, Class<T> clazz) {
+        if (clazz == java.util.Date.class) {
+            try {
+                return (T) DATE_FORMAT.parse(json);
+            } catch (ParseException e) {
+                // pass
+            }
+        }
+        else if (clazz == Timestamp.class) {
+            return (T) Timestamp.valueOf(json);
+        }
+        else if (clazz == Date.class) {
+            return (T) Date.valueOf(json);
+        }
+        else if (clazz == Time.class) {
+            return (T) Time.valueOf(json);
+        }
         return null;
     }
 }

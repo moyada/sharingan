@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>sharingan</artifactId>
-        <groupId>cn.moyada</groupId>
+        <groupId>io.moyada</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -14,7 +14,14 @@
 
     <modules>
         <module>sharingan-rpc-dubbo</module>
-        <module>sharingan-rpc-api</module>
         <module>sharingan-rpc-springcloud</module>
+        <module>sharingan-rpc-all</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.moyada</groupId>
+            <artifactId>sharingan-infrastructure</artifactId>
+        </dependency>
+    </dependencies>
 </project>

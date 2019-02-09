@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.moyada.sharingan.rpc.dubbo.DubboAutoConfiguration
+  io.moyada.sharingan.rpc.dubbo.DubboAutoConfiguration

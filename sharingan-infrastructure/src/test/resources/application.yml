@@ -1,0 +1,8 @@
+project:
+  name: test
+
+sharingan:
+  maven:
+    registry: http://localhost:8081
+    username:
+    password:

@@ -1,0 +1,141 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "name": "sharinganConfig",
+      "type": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig",
+      "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
+    },
+    {
+      "name": "monitorConfig",
+      "type": "io.moyada.sharingan.monitor.api.config.MonitorConfig",
+      "sourceType": "io.moyada.sharingan.monitor.api.config.MonitorConfig"
+    },
+    {
+      "name": "dataSourceConfig",
+      "type": "io.moyada.sharingan.monitor.database.config.DataSourceConfig",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.DataSourceConfig"
+    },
+    {
+      "name": "applicationConfig",
+      "type": "io.moyada.sharingan.monitor.database.config.ApplicationConfig",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.ApplicationConfig"
+    },
+    {
+      "name": "dataConfig",
+      "type": "io.moyada.sharingan.monitor.database.config.DataConfig",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.DataConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "sharingan.monitor.enable",
+      "type": "java.lang.Boolean",
+      "defaultValue": "true",
+      "description": "Indicates whether or not this instance listening invoke with monitor.",
+      "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
+    },
+    {
+      "name": "sharingan.monitor.application",
+      "type": "java.lang.String",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
+    },
+    {
+      "name": "sharingan.monitor.attach",
+      "type": "java.util.Map",
+      "description": "Addition transfer data with monitor.",
+      "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
+    },
+
+
+    {
+      "name": "sharingan.monitor.type",
+      "type": "java.lang.String",
+      "defaultValue" : "Database",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.api.config.MonitorConfig"
+    },
+    {
+      "name": "sharingan.monitor.interval-time",
+      "type": "java.lang.Integer",
+      "defaultValue" : "3000",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.api.config.MonitorConfig"
+    },
+    {
+      "name": "sharingan.monitor.threshold-size",
+      "type": "java.lang.Integer",
+      "defaultValue" : "100",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.api.config.MonitorConfig"
+    },
+
+
+    {
+      "name": "sharingan.monitor.data-source.driver-class-name",
+      "type": "java.lang.String",
+      "defaultValue": "com.mysql.cj.jdbc.Driver",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.DataSourceConfig"
+    },
+    {
+      "name": "sharingan.monitor.data-source.url",
+      "type": "java.lang.String",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.DataSourceConfig"
+    },
+    {
+      "name": "sharingan.monitor.data-source.username",
+      "type": "java.lang.String",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.DataSourceConfig"
+    },
+    {
+      "name": "sharingan.monitor.data-source.password",
+      "type": "java.lang.String",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.DataSourceConfig"
+    },
+
+
+
+    {
+      "name": "sharingan.monitor.app-info.table",
+      "type": "java.lang.String",
+      "defaultValue": "app_info",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.ApplicationConfig"
+    },
+    {
+      "name": "sharingan.monitor.app-info.param-column",
+      "type": "java.lang.String",
+      "defaultValue": "name",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.ApplicationConfig"
+    },
+    {
+      "name": "sharingan.monitor.app-info.result-column",
+      "type": "java.lang.String",
+      "defaultValue": "id",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.ApplicationConfig"
+    },
+
+
+
+    {
+      "name": "sharingan.monitor.store-info.table",
+      "type": "java.lang.String",
+      "defaultValue": "invoke_data",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.DataConfig"
+    },
+    {
+      "name": "sharingan.monitor.store-info.column",
+      "type": "java.lang.String",
+      "defaultValue": "app_id, domain, param_value, date_create",
+      "description": "Get this application name.",
+      "sourceType": "io.moyada.sharingan.monitor.database.config.DataConfig"
+    }
+  ]}

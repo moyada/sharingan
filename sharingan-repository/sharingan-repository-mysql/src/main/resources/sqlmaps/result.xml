@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.moyada.sharingan.repository.mysql.dao.ResultDAO">
+
+	<resultMap id="resultDO" type="io.moyada.sharingan.domain.request.InvokeResult">
+		<id column="id" property="id"/>
+		<result column="real_args" property="realArgs"/>
+		<result column="code" property="code"/>
+		<result column="result" property="result"/>
+		<result column="error_msg" property="errorMsg"/>
+		<result column="response_time" property="responseTime"/>
+		<result column="invoke_time" property="invokeTime"/>
+	</resultMap>
+
+	<sql id="resultColumn">
+		`report_id`, `real_args`, `code`, `result`, `error_msg`, `response_time`, `invoke_time`
+	</sql>
+
+	<insert id="save">
+		INSERT INTO `invoke_result`
+		(<include refid="resultColumn"/>)
+		VALUE
+		(#{reportId}, #{realArgs}, #{code}, #{result}, #{errorMsg}, #{responseTime}, #{invokeTime});
+	</insert>
+
+	<insert id="saveList">
+		INSERT INTO `invoke_result`
+		(<include refid="resultColumn"/>)
+		<foreach collection="list" item="item" separator="," open="VALUES">
+			(#{item.reportId}, #{item.realArgs}, #{item.code}, #{item.result},
+			#{item.errorMsg}, #{item.responseTime}, #{item.invokeTime})
+		</foreach>;
+	</insert>
+
+	<select id="count" resultType="int">
+		SELECT count(*) FROM `invoke_result` WHERE `report_id` = #{reportIndex}
+	</select>
+
+	<select id="find" resultMap="resultDO">
+		SELECT a.`id`, `real_args`, `code`, `result`, `error_msg`, `response_time`, `invoke_time`
+		FROM `invoke_result` a,
+		(
+			SELECT id
+			FROM `invoke_result`
+			WHERE `report_id` = #{reportIndex}
+			ORDER BY `code` DESC, `response_time` DESC
+			LIMIT ${offset}, ${pageSize}
+		) b
+		WHERE a.`id` = b.`id`
+	</select>
+</mapper>

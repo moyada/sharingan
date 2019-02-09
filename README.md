@@ -26,16 +26,16 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 
 | 参数 | 描述 |
 | --- | ---- |
-| spring.datasource.url | mysql 连接地址 |
-| spring.datasource.username | mysql 连接用户名 |
-| spring.datasource.password | mysql 连接密码 |
-| maven.host | nexus3 仓库地址(可选) |
-| maven.username | nexus3 仓库账号(可选) |
-| maven.username | nexus3 仓库密码(可选) |
-| dubbo.registry | dubbo 注册中心地址(可选) |
-| dubbo.username | dubbo 注册中心账号(可选) |
-| dubbo.password | dubbo 注册中心密码(可选) |
-| eureka.client.serviceUrl.defaultZone | SpringCloud-eureka 注册地址(可选) |
+| sharingan.datasource.url | mysql 连接地址 |
+| sharingan.datasource.username | mysql 连接用户名 |
+| sharingan.datasource.password | mysql 连接密码 |
+| sharingan.maven.registry | nexus3 仓库地址(可选) |
+| sharingan.maven.username | nexus3 仓库账号(可选) |
+| sharingan.maven.username | nexus3 仓库密码(可选) |
+| sharingan.rpc.dubbo.registry | dubbo 注册中心地址(可选) |
+| sharingan.rpc.dubbo.username | dubbo 注册中心账号(可选) |
+| sharingan.rpc.dubbo.password | dubbo 注册中心密码(可选) |
+| sharingan.rpc.springcloud.registry | SpringCloud-eureka 注册地址(可选) |
 
 4. 启动sharingan: `./run.sh`
 
@@ -62,7 +62,7 @@ public Monitor monitor() {
 <-- 在 pom.xml 中引入 sharingan-monitor-local -->
 <dependencies>
     <dependency>
-        <groupId>cn.moyada</groupId>
+        <groupId>io.moyada</groupId>
         <artifactId>sharingan-monitor-local</artifactId>
     </dependency>
 </dependencies>
@@ -92,13 +92,13 @@ sharingan.application = test
 public interface Interface1 {
 
     @Catch
-    void report(@Rename("name") String value, @Exclusive boolean flag);
+    void reportData(@Rename("name") String value, @Exclusive boolean flag);
 }
 
 @Component
 public class Class1 implements Interface1 {
 
-    void report(String value, boolean flag) {
+    void reportData(String value, boolean flag) {
         System.out.println(value + flag);
     }
 }

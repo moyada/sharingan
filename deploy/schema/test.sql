@@ -5,8 +5,8 @@ VALUES
 
 INSERT INTO `service_info` (`id`, `app_id`, `name`, `protocol`, `class_name`)
 VALUES
-	(1, 1, 'UserService', 'dubbo', 'cn.moyada.dubbo.test.api.UserService'),
-	(2, 2, 'TestService', 'springcloud', NULL);
+	(1, 1, 'UserService', 'dubbo', NULL, 'cn.moyada.dubbo.test.api.UserService'),
+	(2, 2, 'TestService', 'springcloud', 'HTTP', NULL);
 
 
 INSERT INTO `function_info` (`id`, `app_id`, `service_id`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`)
@@ -21,7 +21,7 @@ VALUES
 	(1, 2, 2, '/{id}', 'GET', NULL, NULL, '{\"param\": {\"id\": \"#{int.random}\"}}'),
 	(2, 2, 2, '/info', 'GET', 'key', NULL, '{\"param\": {\"key\": \"test\"}}');
 
-INSERT INTO `invoke_param` (`app_id`, `domain`, `param_value`, `date_create`)
+INSERT INTO `invoke_data` (`app_id`, `domain`, `param_value`, `date_create`)
 VALUES
 	(1, 'id', '1', NULL),
 	(1, 'id', '12', NULL),
