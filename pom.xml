@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.moyada</groupId>
+    <groupId>io.moyada</groupId>
     <artifactId>sharingan</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
@@ -20,15 +20,12 @@
 
     <modules>
         <module>sharingan-manager</module>
-        <module>sharingan-storage</module>
         <module>sharingan-rpc</module>
         <module>sharingan-monitor</module>
-        <module>sharingan-instrument</module>
         <module>sharingan-bom</module>
-        <module>sharingan-spring-boot</module>
+        <module>sharingan-spring</module>
         <module>sharingan-serialization</module>
         <module>sharingan-domain</module>
-        <module>sharingan-service</module>
         <module>sharingan-application</module>
         <module>sharingan-repository</module>
         <module>sharingan-infrastructure</module>
@@ -54,7 +51,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-bom</artifactId>
                 <version>${sharingan.version}</version>
                 <type>pom</type>
@@ -62,116 +59,92 @@
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-serialization-fastjson</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-repository-mysql</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-executor</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-expression</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-application</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-service</artifactId>
-                <version>${sharingan.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-domain</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-rpc-dubbo</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-rpc-springcloud</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-rpc-all</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-infrastructure</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-serialization-jackson</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-monitor-mysql</artifactId>
+                <groupId>io.moyada</groupId>
+                <artifactId>sharingan-monitor-database</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-spring-boot-starter</artifactId>
-                <version>${sharingan.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-spring-boot-autoconfigure</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-instrument-boost</artifactId>
-                <version>${sharingan.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-serialization-api</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.moyada</groupId>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-monitor-api</artifactId>
-                <version>${sharingan.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.moyada</groupId>
-                <artifactId>sharingan-storage-api</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
         </dependencies>

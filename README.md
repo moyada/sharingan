@@ -62,7 +62,7 @@ public Monitor monitor() {
 <-- 在 pom.xml 中引入 sharingan-monitor-local -->
 <dependencies>
     <dependency>
-        <groupId>cn.moyada</groupId>
+        <groupId>io.moyada</groupId>
         <artifactId>sharingan-monitor-local</artifactId>
     </dependency>
 </dependencies>

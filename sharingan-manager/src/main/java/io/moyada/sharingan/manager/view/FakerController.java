@@ -1,7 +1,7 @@
 package io.moyada.sharingan.manager.view;
 
 
-import io.moyada.sharingan.application.FunctionData;
+import io.moyada.sharingan.application.data.FunctionData;
 import io.moyada.sharingan.application.InvokeService;
 import io.moyada.sharingan.application.ConfigService;
 import io.moyada.sharingan.application.ResultService;
@@ -110,7 +110,7 @@ public class FakerController {
         }
 
         List<SelectVO> collect = data.stream()
-                .map(d -> new SelectVO(d.getId() + "-" + d.getExpression(), d.getMethodName() + " " + d.getQuestInfo()))
+                .map(d -> new SelectVO(d.getId() + "-" + d.getExpression(), d.getMethodName() + d.getQuestInfo()))
                 .collect(Collectors.toList());
 
         return Result.success(collect);

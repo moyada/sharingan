@@ -20,7 +20,6 @@ public class ResultService {
     private ReportRepository reportRepository;
     private ResultRepository resultRepository;
 
-
     @Autowired
     public ResultService(ReportRepository reportRepository, ResultRepository resultRepository) {
         this.reportRepository = reportRepository;

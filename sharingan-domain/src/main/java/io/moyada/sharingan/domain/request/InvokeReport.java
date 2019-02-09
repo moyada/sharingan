@@ -69,8 +69,8 @@ public class InvokeReport {
     private InvokeReport() {
     }
 
-    public InvokeReport(String reportId, Integer appId, Integer serviceId, Integer funcId) {
-        this.reportId = reportId;
+    public InvokeReport(ReportId reportId, Integer appId, Integer serviceId, Integer funcId) {
+        this.reportId = reportId.getId();
         this.appId = appId;
         this.serviceId = serviceId;
         this.funcId = funcId;

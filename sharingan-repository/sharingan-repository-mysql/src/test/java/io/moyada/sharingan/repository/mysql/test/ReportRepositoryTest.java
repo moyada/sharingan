@@ -2,6 +2,7 @@ package io.moyada.sharingan.repository.mysql.test;
 
 
 import io.moyada.sharingan.domain.request.InvokeReport;
+import io.moyada.sharingan.domain.request.ReportId;
 import io.moyada.sharingan.domain.request.ReportRepository;
 import io.moyada.sharingan.domain.task.ReportData;
 import io.moyada.sharingan.infrastructure.util.TimeUtil;
@@ -21,14 +22,14 @@ public class ReportRepositoryTest {
 
     @Test
     public void saveReportTest() {
-        InvokeReport invokeReport = new InvokeReport("test", 1, 1, 1);
+        InvokeReport invokeReport = new InvokeReport(new ReportId("test"), 1, 1, 1);
         boolean success = reportRepository.saveReport(invokeReport);
         Assertions.assertTrue(success);
     }
 
     @Test
     public void updateReportTest() {
-        InvokeReport invokeReport = new InvokeReport("test", 1, 1, 1);
+        InvokeReport invokeReport = new InvokeReport(new ReportId("test"), 1, 1, 1);
         invokeReport.setTotalInvoke(3000);
         invokeReport.acceptDate(new ReportDataTest());
         invokeReport.setDateCreate(TimeUtil.nowTimestamp());

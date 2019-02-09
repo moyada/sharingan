@@ -1,5 +1,6 @@
 package io.moyada.sharingan.application;
 
+import io.moyada.sharingan.application.data.FunctionData;
 import io.moyada.sharingan.domain.metadada.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,14 +43,15 @@ public class ConfigService {
         List<FunctionData> data = new ArrayList<>(methodData.size() + httpData.size());
         if (!methodData.isEmpty()) {
             data.addAll(methodData.stream()
-                    .map(c -> new FunctionData(c.getId(), c.getMethodName(), c.getParamType() + ":" + c.getReturnType(), c.getExpression()))
+                    .map(c -> new FunctionData(c.getId(), c.getMethodName(),
+                            "[" + c.getParamType() + "] " + c.getReturnType(), c.getExpression()))
                     .collect(Collectors.toList()));
         }
 
         if (!httpData.isEmpty()) {
             data.addAll(httpData.stream()
-                    .map(c -> new FunctionData(c.getId(), c.getMethodName(),
-                            c.getMethodType() +  " [" + c.getParam() + "], [" + c.getHeader() + "]", c.getExpression()))
+                    .map(c -> new FunctionData(c.getId(), "[" + c.getMethodType() + "]" + c.getMethodName(),
+                            ", param = [" + c.getParam() + "], header = [" + c.getHeader() + "]", c.getExpression()))
                     .collect(Collectors.toList()));
         }
 

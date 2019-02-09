@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.moyada.sharingan.spring.boot.autoconfigure.SharinganMonitorAutoConfiguration
