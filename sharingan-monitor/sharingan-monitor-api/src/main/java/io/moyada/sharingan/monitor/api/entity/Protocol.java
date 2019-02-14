@@ -5,14 +5,17 @@ package io.moyada.sharingan.monitor.api.entity;
  */
 public enum Protocol {
 
-    DUBBO("dubbo"),
-    SPRING_CLOUD("springcloud"),
+    DUBBO("dubbo", false),
+    SPRING_CLOUD("springcloud", true),
     ;
 
     private String value;
 
-    Protocol(String value) {
+    private boolean isHttp;
+
+    Protocol(String value, boolean isHttp) {
         this.value = value;
+        this.isHttp = isHttp;
     }
 
     public String getValue() {
@@ -21,6 +24,10 @@ public enum Protocol {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public boolean isHttp() {
+        return isHttp;
     }
 
     /**

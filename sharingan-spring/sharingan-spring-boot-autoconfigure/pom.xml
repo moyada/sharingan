@@ -16,12 +16,12 @@
         <dependency>
             <groupId>io.github.moyada</groupId>
             <artifactId>metadata-enhancement</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
+            <version>0.0.2</version>
         </dependency>
 
         <dependency>
             <groupId>io.moyada</groupId>
-            <artifactId>sharingan-monitor-database</artifactId>
+            <artifactId>sharingan-monitor-mysql</artifactId>
         </dependency>
 
         <dependency>

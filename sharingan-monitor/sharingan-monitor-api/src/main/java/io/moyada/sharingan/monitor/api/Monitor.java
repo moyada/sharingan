@@ -9,6 +9,8 @@ import io.moyada.sharingan.monitor.api.entity.Invocation;
  **/
 public interface Monitor {
 
+    String TYPE = "null";
+
     /**
      * 调用数据监视
      * @param invocation

@@ -20,7 +20,13 @@ public class SharinganConfig {
     // 应用
     private String application;
 
-    private String type = "Database";
+    private String groupId;
+
+    private String artifactId;
+
+    private String monitorType = "Database";
+
+    private String registerType = "Database";
 
     private Map<String, String> attach;
 
@@ -40,12 +46,36 @@ public class SharinganConfig {
         this.application = application;
     }
 
-    public String getType() {
-        return type;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    public String getMonitorType() {
+        return monitorType;
+    }
+
+    public void setMonitorType(String monitorType) {
+        this.monitorType = monitorType;
+    }
+
+    public String getRegisterType() {
+        return registerType;
+    }
+
+    public void setRegisterType(String registerType) {
+        this.registerType = registerType;
     }
 
     public Map<String, String> getAttach() {

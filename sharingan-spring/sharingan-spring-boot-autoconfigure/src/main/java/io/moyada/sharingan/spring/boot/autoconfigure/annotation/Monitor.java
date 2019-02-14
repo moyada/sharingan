@@ -14,9 +14,13 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Monitor {
 
+    String name() default "";
+
+    Class value();
+
     /**
      * 服务提供的协议
      * @return
      */
-    Protocol value();
+    Protocol protocol();
 }

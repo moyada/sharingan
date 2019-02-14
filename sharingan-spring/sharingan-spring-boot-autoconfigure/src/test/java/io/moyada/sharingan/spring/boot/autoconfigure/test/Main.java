@@ -1,6 +1,7 @@
 package io.moyada.sharingan.spring.boot.autoconfigure.test;
 
 import io.moyada.sharingan.spring.boot.autoconfigure.MonitorBeanDefinitionScanner;
+import io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig;
 import io.moyada.sharingan.spring.boot.autoconfigure.support.ListenerAnalyser;
 import io.moyada.sharingan.spring.boot.autoconfigure.support.ListenerInfo;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -20,13 +21,13 @@ public class Main {
         attach.put("id", "13245");
 
         MonitorBeanDefinitionScanner beanDefinitionScanner =
-                new MonitorBeanDefinitionScanner(new DefaultListableBeanFactory(), "Test", attach);
+                new MonitorBeanDefinitionScanner(new DefaultListableBeanFactory(), new SharinganConfig(), null);
 
         Class<TestProxyClass> target = TestProxyClass.class;
 
         ListenerInfo listenerInfo = ListenerAnalyser.getListenerInfo(target);
         if (null != listenerInfo) {
-            beanDefinitionScanner.proxy(target, listenerInfo);
+//            beanDefinitionScanner.proxy(target, listenerInfo);
         }
     }
 }

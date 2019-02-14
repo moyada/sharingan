@@ -1,9 +1,6 @@
 package io.moyada.sharingan.spring.boot.autoconfigure.support;
 
-import io.moyada.sharingan.spring.boot.autoconfigure.annotation.Listener;
-import io.moyada.sharingan.spring.boot.autoconfigure.annotation.Exclusive;
-import io.moyada.sharingan.spring.boot.autoconfigure.annotation.Monitor;
-import io.moyada.sharingan.spring.boot.autoconfigure.annotation.Rename;
+import io.moyada.sharingan.spring.boot.autoconfigure.annotation.*;
 import io.moyada.sharingan.spring.boot.autoconfigure.util.VariableUtil;
 
 import java.lang.annotation.Annotation;
@@ -32,10 +29,10 @@ public class ListenerAnalyser {
         if (listenerMethod.isEmpty()) {
             return null;
         }
-
-        ListenerInfo listenerInfo = new ListenerInfo();
-        listenerInfo.setListenerMethods(listenerMethod);
-        return listenerInfo;
+        Monitor annotation = targetClass.getAnnotation(Monitor.class);
+        Class classType = annotation.value();
+        String name = annotation.name().isEmpty() ? classType.getSimpleName() : annotation.name();
+        return new ListenerInfo(name, classType, annotation.protocol(), listenerMethod);
     }
 
     /**
@@ -99,17 +96,11 @@ public class ListenerAnalyser {
         return annoClass;
     }
 
-    private static List<ListenerMethod> getInvokeMethod(Class<?> clazz) {
-        return Collections.emptyList();
-    }
-
     /**
      * 获取方法代理信息，排除静态、私有、不可变方法
      * @param clazz
      */
     private static List<ListenerMethod> getListenerMethod(Class<?> clazz) {
-        // Monitor monitor = clazz.getAnnotation(Monitor.class);
-
         Method[] methods = clazz.getDeclaredMethods();
 
         List<ListenerMethod> listenerMethods = new ArrayList<>(methods.length);
@@ -119,86 +110,40 @@ public class ListenerAnalyser {
                 continue;
             }
 
+            ListenerMethod listenerMethod = new ListenerMethod(method);
+            if (method.isAnnotationPresent(Register.class)) {
+                listenerMethod.setNeesRegister();
+                listenerMethod.setHttpData(method.getAnnotation(HttpMethod.class));
+            }
+            listenerMethods.add(listenerMethod);
+
             Listener value = method.getAnnotation(Listener.class);
             if (null == value) {
                 continue;
             }
-
             List<ProxyField> proxyFields = getListenerInfo(clazz, method);
             if (null == proxyFields) {
                 continue;
             }
 
-            ListenerMethod listenerMethod = new ListenerMethod();
             listenerMethod.setDomain(value.value());
-            listenerMethod.setMethodName(method.getName());
-            listenerMethod.setParamTypes(method.getParameterTypes());
             listenerMethod.setSerializationType(value.serialization().getDeclaringClass().getName()
                     + "." + value.serialization().name());
 
             listenerMethod.setProxyParams(proxyFields);
-
-            listenerMethods.add(listenerMethod);
         }
 
         return listenerMethods;
-    }
-    /**
-     * 获取方法代理信息，排除静态、私有、不可变方法
-     * @param clazz
-     */
-    private static void appendProxyMethod(Map<String, ListenerMethod> proxyMethods, Class<?> clazz) {
-        Monitor monitor = clazz.getAnnotation(Monitor.class);
-
-        Method[] methods = clazz.getDeclaredMethods();
-        for (Method method : methods) {
-            if (!needListener(method)) {
-                continue;
-            }
-
-            Listener annotation = method.getAnnotation(Listener.class);
-            if (null == annotation) {
-                continue;
-            }
-
-            String name = getName(method);
-            if (proxyMethods.containsKey(name)) {
-                continue;
-            }
-
-            List<ProxyField> proxyFields = getListenerInfo(clazz, method);
-            if (null == proxyFields) {
-                continue;
-            }
-
-            ListenerMethod listenerMethod = new ListenerMethod();
-            listenerMethod.setDomain(annotation.value());
-            listenerMethod.setMethodName(method.getName());
-            listenerMethod.setParamTypes(method.getParameterTypes());
-
-            listenerMethod.setSerializationType(annotation.serialization().getDeclaringClass().getName()
-                    + "." + annotation.serialization().name());
-
-            listenerMethod.setProxyParams(proxyFields);
-
-            proxyMethods.put(name, listenerMethod);
-        }
     }
 
     private static boolean needListener(Method method) {
         if (method.getParameterCount() == 0) {
             return false;
         }
-        return (method.getModifiers() & (Modifier.STATIC | Modifier.FINAL | Modifier.PRIVATE)) == 0;
-    }
-
-    private static String getName(Method method) {
-        StringBuilder methodName = new StringBuilder(method.getName());
-        methodName.append('[');
-        for (Class<?> parameterType : method.getParameterTypes()) {
-            methodName.append(parameterType.getName()).append(',');
+        if (!method.isAnnotationPresent(Listener.class) && !method.isAnnotationPresent(Register.class)) {
+            return false;
         }
-        return methodName.deleteCharAt(methodName.length()-1).append(']').toString();
+        return (method.getModifiers() & (Modifier.STATIC | Modifier.FINAL | Modifier.PRIVATE)) == 0;
     }
 
     /**

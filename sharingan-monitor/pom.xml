@@ -15,7 +15,7 @@
     <modules>
         <module>sharingan-monitor-api</module>
         <module>sharingan-monitor-local</module>
-        <module>sharingan-monitor-database</module>
+        <module>sharingan-monitor-mysql</module>
         <module>sharingan-monitor-http</module>
     </modules>
 </project>

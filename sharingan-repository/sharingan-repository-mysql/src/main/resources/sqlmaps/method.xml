@@ -4,7 +4,7 @@
 
 	<resultMap id="methodData" type="io.moyada.sharingan.domain.metadada.MethodData">
 		<id column="id" property="id"/>
-		<result column="class_name" property="className"/>
+		<result column="class_name" property="classType"/>
 		<result column="method_name" property="methodName"/>
 		<result column="param_type" property="paramType"/>
 		<result column="return_type" property="returnType"/>
@@ -19,7 +19,7 @@
 		INSERT INTO `function_info`
 		(<include refid="baseColumn"/>)
 		VALUE
-		(NULL, #{appId}, #{serviceId}, #{className}, #{methodName}, #{paramType}, #{returnType}, #{expression});
+		(NULL, #{appId}, #{serviceId}, #{classType}, #{methodName}, #{paramType}, #{returnType}, #{expression});
 	</insert>
 
 	<select id="findByService" resultMap="methodData">

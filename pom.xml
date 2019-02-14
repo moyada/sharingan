@@ -126,7 +126,7 @@
 
             <dependency>
                 <groupId>io.moyada</groupId>
-                <artifactId>sharingan-monitor-database</artifactId>
+                <artifactId>sharingan-monitor-mysql</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 

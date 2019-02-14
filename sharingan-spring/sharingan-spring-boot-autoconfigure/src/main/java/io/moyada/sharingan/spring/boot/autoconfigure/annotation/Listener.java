@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 public @interface Listener {
 
     /**
-     * value 信息
+     * domain 信息
      * @return
      */
     String value();
