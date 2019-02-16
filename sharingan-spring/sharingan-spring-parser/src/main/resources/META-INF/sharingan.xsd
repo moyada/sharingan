@@ -42,7 +42,7 @@
             <xsd:documentation><![CDATA[ The sharingan monitor config ]]></xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
-                    <tool:exports type="cn.moyada.sharingan.instrument.sharingan.spring.config.SharinganConfig"/>
+                    <tool:exports type="io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"/>
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>

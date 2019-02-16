@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  cn.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration
+  io.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration

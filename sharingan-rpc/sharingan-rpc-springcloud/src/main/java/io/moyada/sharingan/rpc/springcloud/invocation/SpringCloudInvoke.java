@@ -1,7 +1,7 @@
-package cn.moyada.sharingan.rpc.springcloud.invocation;
+package io.moyada.sharingan.rpc.springcloud.invocation;
 
 
-import cn.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration;
+import io.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration;
 import feign.Client;
 import feign.Request;
 import feign.RequestTemplate;

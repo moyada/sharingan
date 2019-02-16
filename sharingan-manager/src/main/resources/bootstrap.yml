@@ -10,6 +10,22 @@ logging:
 spring:
   application:
     name: ${project.name}
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
+    url: ${sharingan.datasource.url}
+    username: ${sharingan.datasource.username}
+    password: ${sharingan.datasource.password}
+
+eureka:
+  instance:
+    hostname: ${spring.application.name}
+  client:
+    # 关闭服务注册
+    register-with-eureka: false
+    should-unregister-on-shutdown: false
+    registry-fetch-interval-seconds: 60
+    serviceUrl:
+      defaultZone: ${sharingan.rpc.springcloud.registry}

@@ -131,16 +131,4 @@ public class Nexus3RestFetch implements ArtifactFetch {
         return downloadUrl.toString();
     }
 
-//    public static void main(String[] args) {
-//        MavenConfig mavenConfig = new MavenConfig();
-//        mavenConfig.setRegistry("http://127.0.0.1:8081");
-//
-//        Nexus3RestFetch dependencyFetch = new Nexus3RestFetch(mavenConfig);
-//
-//        Dependency dependency = new Dependency();
-//        dependency.setGroupId("cn.moyada");
-//        dependency.setArtifactId("dubbo-test-api");
-//        String url = dependencyFetch.getJarUrl(dependency);
-//        System.out.println(url);
-//    }
 }

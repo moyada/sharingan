@@ -14,9 +14,17 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Monitor {
 
+    /**
+     * 服务名
+     * @return
+     */
     String name() default "";
 
-    Class value();
+    /**
+     * 服务接口
+     * @return
+     */
+    Class value() default Object.class;
 
     /**
      * 服务提供的协议

@@ -78,7 +78,7 @@ public class ListenerMethod {
         this.httpData = new HttpData(name, type, param, header);
     }
 
-    public void setNeesRegister() {
+    public void setNeedRegister() {
         this.needRegister = true;
     }
 

@@ -44,27 +44,27 @@ public class MethodData {
         this.serviceData = serviceData;
     }
 
-    protected void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    protected void setClassName(String className) {
+    public void setClassName(String className) {
         this.className = className;
     }
 
-    protected void setMethodName(String methodName) {
+    public void setMethodName(String methodName) {
         this.methodName = methodName;
     }
 
-    protected void setParamType(String paramType) {
+    public void setParamType(String paramType) {
         this.paramType = paramType;
     }
 
-    protected void setReturnType(String returnType) {
+    public void setReturnType(String returnType) {
         this.returnType = returnType;
     }
 
-    protected void setExpression(String expression) {
+    public void setExpression(String expression) {
         this.expression = expression;
     }
 

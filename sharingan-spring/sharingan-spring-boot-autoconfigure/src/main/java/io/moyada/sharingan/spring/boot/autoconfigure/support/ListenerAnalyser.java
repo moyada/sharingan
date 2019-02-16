@@ -30,7 +30,12 @@ public class ListenerAnalyser {
             return null;
         }
         Monitor annotation = targetClass.getAnnotation(Monitor.class);
+
         Class classType = annotation.value();
+        if (classType == Object.class) {
+            classType = targetClass;
+        }
+
         String name = annotation.name().isEmpty() ? classType.getSimpleName() : annotation.name();
         return new ListenerInfo(name, classType, annotation.protocol(), listenerMethod);
     }
@@ -112,7 +117,7 @@ public class ListenerAnalyser {
 
             ListenerMethod listenerMethod = new ListenerMethod(method);
             if (method.isAnnotationPresent(Register.class)) {
-                listenerMethod.setNeesRegister();
+                listenerMethod.setNeedRegister();
                 listenerMethod.setHttpData(method.getAnnotation(HttpMethod.class));
             }
             listenerMethods.add(listenerMethod);

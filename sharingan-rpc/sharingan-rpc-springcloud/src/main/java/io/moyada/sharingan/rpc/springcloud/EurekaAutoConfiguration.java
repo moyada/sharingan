@@ -1,7 +1,7 @@
-package cn.moyada.sharingan.rpc.springcloud;
+package io.moyada.sharingan.rpc.springcloud;
 
 
-import cn.moyada.sharingan.rpc.springcloud.invocation.SpringCloudInvoke;
+import io.moyada.sharingan.rpc.springcloud.invocation.SpringCloudInvoke;
 import io.moyada.sharingan.infrastructure.invoke.InvokeProxy;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

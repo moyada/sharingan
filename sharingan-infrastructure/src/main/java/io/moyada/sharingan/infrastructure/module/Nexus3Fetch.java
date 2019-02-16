@@ -203,14 +203,4 @@ public class Nexus3Fetch implements ArtifactFetch {
                 dependency.getGroupId(),
                 artifact.getComponentVersion());
     }
-
-//    public static void main(String[] args) {
-//        ArtifactFetch dependencyFetch = new Nexus3Fetch("http://127.0.0.1:8081");
-//
-//        Dependency dependency = new Dependency();
-//        dependency.setGroupId("cn.moyada");
-//        dependency.setArtifactId("dubbo-test-api");
-//        String url = dependencyFetch.getJarUrl(dependency);
-//        System.out.println(url);
-//    }
 }

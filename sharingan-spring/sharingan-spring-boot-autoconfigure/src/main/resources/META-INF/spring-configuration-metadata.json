@@ -17,11 +17,6 @@
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataSourceConfig"
     },
     {
-      "name": "applicationConfig",
-      "type": "io.moyada.sharingan.monitor.mysql.config.AppMapperConfig",
-      "sourceType": "io.moyada.sharingan.monitor.mysql.config.AppMapperConfig"
-    },
-    {
       "name": "dataConfig",
       "type": "io.moyada.sharingan.monitor.mysql.config.DataMapperConfig",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataMapperConfig"
@@ -32,25 +27,25 @@
       "name": "sharingan.monitor.enable",
       "type": "java.lang.Boolean",
       "defaultValue": "true",
-      "description": "Indicates whether or not this instance listening invoke with monitor.",
+      "description": "Enable monitor for listener method invoke.",
       "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
     },
     {
       "name": "sharingan.monitor.application",
       "type": "java.lang.String",
-      "description": "Get this application name.",
+      "description": "Application name.",
       "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
     },
     {
       "name": "sharingan.monitor.group-id",
       "type": "java.lang.String",
-      "description": "Get this application name.",
+      "description": "GroupId of application.",
       "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
     },
     {
       "name": "sharingan.monitor.artifact-id",
       "type": "java.lang.String",
-      "description": "Get this application name.",
+      "description": "ArtifactId of application.",
       "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
     },
     {
@@ -63,14 +58,14 @@
       "name": "sharingan.monitor.type",
       "type": "java.lang.String",
       "defaultValue" : "null",
-      "description": "Get this application name.",
+      "description": "Monitor type.",
       "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
     },
     {
       "name": "sharingan.monitor.register",
       "type": "java.lang.String",
       "defaultValue" : "null",
-      "description": "Get this application name.",
+      "description": "Register type.",
       "sourceType": "io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig"
     },
 
@@ -78,14 +73,14 @@
       "name": "sharingan.monitor.interval-time",
       "type": "java.lang.Integer",
       "defaultValue" : "3000",
-      "description": "Get this application name.",
+      "description": "Interval time of each processing.",
       "sourceType": "io.moyada.sharingan.monitor.api.config.MonitorConfig"
     },
     {
       "name": "sharingan.monitor.threshold-size",
       "type": "java.lang.Integer",
       "defaultValue" : "100",
-      "description": "Get this application name.",
+      "description": "Number of each processing.",
       "sourceType": "io.moyada.sharingan.monitor.api.config.MonitorConfig"
     },
 
@@ -95,25 +90,25 @@
       "name": "sharingan.monitor.data-source.driver-class-name",
       "type": "java.lang.String",
       "defaultValue": "com.mysql.cj.jdbc.Driver",
-      "description": "Get this application name.",
+      "description": "Fully qualified name of the JDBC driver.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataSourceConfig"
     },
     {
       "name": "sharingan.monitor.data-source.url",
       "type": "java.lang.String",
-      "description": "Get this application name.",
+      "description": "JDBC URL of the database.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataSourceConfig"
     },
     {
       "name": "sharingan.monitor.data-source.username",
       "type": "java.lang.String",
-      "description": "Get this application name.",
+      "description": "Login username of the database.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataSourceConfig"
     },
     {
       "name": "sharingan.monitor.data-source.password",
       "type": "java.lang.String",
-      "description": "Get this application name.",
+      "description": "Login password of the database.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataSourceConfig"
     },
 
@@ -123,35 +118,35 @@
       "name": "sharingan.monitor.data-mapper.table",
       "type": "java.lang.String",
       "defaultValue": "invoke_data",
-      "description": "Get this application name.",
+      "description": "Data table of database monitor.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataMapperConfig"
     },
     {
       "name": "sharingan.monitor.data-mapper.app-column",
       "type": "java.lang.String",
-      "defaultValue": "app_id, domain, param_value, date_create",
-      "description": "Get this application name.",
+      "defaultValue": "app_id",
+      "description": "Application column of database monitor.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataMapperConfig"
     },
     {
       "name": "sharingan.monitor.data-mapper.domain-column",
       "type": "java.lang.String",
-      "defaultValue": "app_id, domain, param_value, date_create",
-      "description": "Get this application name.",
+      "defaultValue": "domain",
+      "description": "Domain column of database monitor.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataMapperConfig"
     },
     {
       "name": "sharingan.monitor.data-mapper.value-column",
       "type": "java.lang.String",
-      "defaultValue": "app_id, domain, param_value, date_create",
-      "description": "Get this application name.",
+      "defaultValue": "param_value",
+      "description": "Param column of database monitor.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataMapperConfig"
     },
     {
       "name": "sharingan.monitor.data-mapper.date-column",
       "type": "java.lang.String",
-      "defaultValue": "app_id, domain, param_value, date_create",
-      "description": "Get this application name.",
+      "defaultValue": "date_create",
+      "description": "Monitor time column of database monitor.",
       "sourceType": "io.moyada.sharingan.monitor.mysql.config.DataMapperConfig"
     }
   ]}

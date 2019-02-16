@@ -43,7 +43,7 @@ public class AppData {
     private String url;
 
     /**
-     * 项目依赖{@see cn.moyada.faker.storage.api.domain.AppData} appId,appId...
+     * 项目依赖 {@link io.moyada.sharingan.domain.metadada.AppData} appId,appId...
      */
     private String dependencies;
 
@@ -63,31 +63,31 @@ public class AppData {
         return ConvertUtil.convertInt(split);
     }
 
-    protected void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    protected void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    protected void setGroupId(String groupId) {
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 
-    protected void setArtifactId(String artifactId) {
+    public void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
     }
 
-    protected void setVersion(String version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
-    protected void setUrl(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
-    protected void setDependencies(String dependencies) {
+    public void setDependencies(String dependencies) {
         this.dependencies = dependencies;
     }
 
