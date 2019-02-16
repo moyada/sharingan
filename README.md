@@ -7,22 +7,20 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 
 ## 功能特性
 
-* 动态类加载，无需引入依赖 jar 包，运行期从版本仓库中获取最新依赖，隔离不同项目依赖。
-
-* 参数表达式，根据配置规则动态生成请求参数。
+* [参数表达式](#参数表达式)，根据配置规则动态生成请求参数。
   例如，领域数据表达式: `${test.data}`、随机整数表达式: `#{int.random}`、范围浮点数表达式: `#{double[3].-50.5-300.8}`
 
 * rpc协议支持，目前支持 [Dubbo](http://dubbo.apache.org/)、[Spring Cloud](http://projects.spring.io/spring-cloud/)。
 
-* 监听服务调用，通过对目标 class 生成镜像修改，监控方法调用。(注: 增加元类空间占用)
+* 监听服务调用，存储方法调用数据，用于测试生成请求参数。
 
 ## 如何使用
 
-1. 项目需要 `jdk1.8` 以上版本，通过 [这里](https://github.com/moyada/sharingan/releases) 下载 sharingan-manager 压缩包进行解压。
+1. 要求 `jdk1.8` 以上版本，通过 [这里](https://github.com/moyada/sharingan/releases) 下载解压。
 
 2. 初始化mysql数据库，执行 `schema` 文件下的 `info.sql` 和 `invoke.sql` 。
 
-3. 对 `conf.properties` 文件进行配置:
+3. 修改 `conf.properties` 文件配置项目环境。
 
 | 参数 | 描述 |
 | --- | ---- |
@@ -41,91 +39,17 @@ sharingan 是用来快速检测回归RPC服务 `可用性` 的Java工程。
 
 5. 访问链接 `htto://127.0.0.1:8080/index.html` 进入管理界面。
 
-6. 调用采集
+> 测试数据位于 `schema/test.sql` 。
 
-要求项目使用 Spring-Boot (建议版本 2.x.x+)，将 `sharingan-instrument-spring` 配置 Monitor 后打包引入，以注解形式监控数据。
+## 参数表达式
 
-具体步骤
-
-6.1. 创建 Monitor 实例，配置 sharingan-instrument-spring 下 pom.xml 中 sharingan-monitor 具体依赖。
-
-##### 示例: 在 LocalMonitorAutoConfiguration 或 SharinganMonitorAutoConfiguration 中配置自动装配。
-
-```
-
-@Bean
-public Monitor monitor() {
-    return new TestMonitor();
-}
-
-
-<-- 在 pom.xml 中引入 sharingan-monitor-local -->
-<dependencies>
-    <dependency>
-        <groupId>io.moyada</groupId>
-        <artifactId>sharingan-monitor-local</artifactId>
-    </dependency>
-</dependencies>
-
-```
-
-6.2. 引入 sharingan-instrument-spring 依赖并配置参数
-
-```
-sharingan.enable = true
-sharingan.application = test
-```
-
-6.3. 对接口进行监控配置，依赖注入形式必须为 `@AutoWrie 接口 service;`
-
-| 注解 | 描述 |
-| --- | ---- |
-| @Listener | 选择监控对象，用于类或接口上 |
-| @Catch | 选择监控方法 |
-| @Rename | 对方法参数重命名 |
-| @Exclusive | 排除方法参数 |
-
-##### 示例
-
-```
-@Listener(domain = "test", protocol = RpcProtocol.DUBBO)
-public interface Interface1 {
-
-    @Catch
-    void reportData(@Rename("name") String value, @Exclusive boolean flag);
-}
-
-@Component
-public class Class1 implements Interface1 {
-
-    void reportData(String value, boolean flag) {
-        System.out.println(value + flag);
-    }
-}
-
-================
-
-@AutoWire
-Interface1 service;
-
-
-```
-
-
-## 操作解释
-
-* 动态进行类加载: 在非 http 调用时，通过 `MetadataRepository` 查询的 `AppDO` 获取项目的仓库坐标，从版本仓库中获取最新依赖，
-同时时卸载过期类加载器。
-
-* 领域数据表达式: `MetadataRepository` 查询的 `FunctionDO` 中 `expression` 字段来指定规则动态生成请求参数，表达式格式为 `${项目名称.数据领域}` 。
+* 领域数据表达式: 表达式格式为 `${项目名称.数据领域}`，通过 `io.moyada.sharingan.domain.expression.DataRepository` 查询来指定规则动态生成请求参数，
   默认mysql实现中，项目名称为 `app_info` 表中的 `name` 、数据领域为 `invoke_param` 中的 `domain` 。
 
-* 数值表达式: 默认带有整数和浮点数的生成表达式，
+* 数值表达式: 默认带有整数和浮点数的生成表达式。
 整数表达式: 可设置随机范围 `#{int.开始-结束}` ，或者无范围 `#{int.random}` 。
 浮点数表达式: 可设置随机范围 `#{double[精度].开始-结束}` ，或者无范围 `#{double.random}` ，对于 `[精度]` 设置可选，缺省为 3。
 
-## 案例展示
-测试数据位于 `schema` 文件下的 `test.sql` 。
 
 ### 常量
 ![example_1](images/example_1.png)
@@ -136,5 +60,78 @@ Interface1 service;
 ### 数值表达式
 ![example_4](images/example_3.png)
 
-### 复合表达式
+### 对象表达式
 ![example_3](images/example_4.png)
+
+### 调用采集
+
+要求项目使用 Spring-Boot (建议版本 2.x.x+)
+
+1. 执行 `scripts/build-monitor.sh` 安装依赖。
+
+2. 加入监视器依赖
+
+```
+<dependency>
+    <groupId>io.moyada</groupId>
+    <artifactId>sharingan-spring-boot-starter</artifactId>
+</dependency>
+```
+
+3. 配置监视器参数
+
+```
+sharingan:
+  monitor:
+    enable: true
+    application: test
+    group_id: my.company
+    artifact-id: test-service
+
+    # 数据处理间隔时间
+    interval-time: 3000
+    # 批量上传数据大小
+    threshold-size: 100
+    
+    # 配置上传调用数据
+    type: mysql
+    
+    # 配置上传调用方法
+    register: mysql
+    
+    # mysql 方式
+    data-source:
+      url: jdbc:mysql://127.0.0.1:3306/sharingan?useSSL=false&useUnicode=true&useAffectedRows=true&serverTimezone=Asia/Shanghai
+      username: root
+      password: root
+
+```
+
+4. 配置监控注解
+
+| 注解 | 作用域 | 作用 |
+| --- | ---- | ---- |
+| [@Monitor](https://github.com/moyada/sharingan/blob/master/sharingan-spring/sharingan-spring-boot-autoconfigure/src/main/java/io/moyada/sharingan/spring/boot/autoconfigure/annotation/Monitor.java) | 类 | 配置监控并上传调用服务信息  |
+| [@Listener](https://github.com/moyada/sharingan/blob/master/sharingan-spring/sharingan-spring-boot-autoconfigure/src/main/java/io/moyada/sharingan/spring/boot/autoconfigure/annotation/Listener.java) | 方法 | 监控方法调用 |
+| [@Register](https://github.com/moyada/sharingan/blob/master/sharingan-spring/sharingan-spring-boot-autoconfigure/src/main/java/io/moyada/sharingan/spring/boot/autoconfigure/annotation/Register.java) | 方法 | 上传调用方法信息 |
+
+例如: 
+
+```
+@Monitor(value = TestController.class, protocol = Protocol.SPRING_CLOUD)
+@RestController
+public class TestControllerImpl implements TestController {
+
+    @Register
+    @HttpMethod(param = {"key"})
+    public String getInfo(@RequestParam("key") String key) {
+        ...
+    }
+
+    @Listener(value = "id")
+    @Register
+    public Result getResultById(@PathVariable("id") Long id) {
+        ...
+    }
+}
+```

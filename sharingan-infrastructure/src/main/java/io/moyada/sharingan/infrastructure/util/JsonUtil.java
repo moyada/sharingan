@@ -1,6 +1,6 @@
 package io.moyada.sharingan.infrastructure.util;
 
-import cn.moyada.sharingan.serialization.jackson.JacksonSerializer;
+import io.moyada.sharingan.serialization.jackson.JacksonSerializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

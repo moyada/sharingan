@@ -51,7 +51,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="cn.moyada.sharingan" level="info" additivity="false">
+        <Logger name="io.moyada.sharingan" level="info" additivity="false">
             <AppenderRef ref="AsyncLog" />
         </Logger>
 

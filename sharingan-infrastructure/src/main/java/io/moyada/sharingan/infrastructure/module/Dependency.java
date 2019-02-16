@@ -35,6 +35,11 @@ public final class Dependency {
      */
     private List<Dependency> dependencyList;
 
+    public Dependency(String groupId, String artifactId) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+    }
+
     public Dependency(String groupId, String artifactId, String version, String url) {
         this.groupId = groupId;
         this.artifactId = artifactId;

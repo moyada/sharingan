@@ -7,7 +7,7 @@
 		<result column="name" property="name"/>
 		<result column="protocol" property="protocol"/>
 		<result column="protocol_type" property="protocolType"/>
-		<result column="class_name" property="className"/>
+		<result column="class_name" property="classType"/>
 	</resultMap>
 
 	<sql id="baseColumn">
@@ -18,7 +18,7 @@
 		INSERT INTO `service_info`
 		 (<include refid="baseColumn"/>)
 		VALUES
-		(NULL, #{appId}, #{name}, #{protocol}, #{protocolType}, #{className});
+		(NULL, #{appId}, #{name}, #{protocol}, #{protocolType}, #{classType});
 	</insert>
 
 	<select id="findByApp" resultMap="serviceData">

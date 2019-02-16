@@ -15,8 +15,20 @@ import java.lang.annotation.*;
 public @interface Monitor {
 
     /**
+     * 服务名
+     * @return
+     */
+    String name() default "";
+
+    /**
+     * 服务接口
+     * @return
+     */
+    Class value() default Object.class;
+
+    /**
      * 服务提供的协议
      * @return
      */
-    Protocol value();
+    Protocol protocol();
 }

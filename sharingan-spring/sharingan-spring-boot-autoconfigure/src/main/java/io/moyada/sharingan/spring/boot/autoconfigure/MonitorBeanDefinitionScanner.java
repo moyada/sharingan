@@ -5,13 +5,11 @@ import io.moyada.metadata.enhancement.EnhanceFactory;
 import io.moyada.metadata.enhancement.statement.*;
 import io.moyada.metadata.enhancement.support.Annotation;
 import io.moyada.metadata.enhancement.support.Value;
-import io.moyada.sharingan.monitor.api.entity.DefaultInvocation;
-import io.moyada.sharingan.monitor.api.entity.Invocation;
+import io.moyada.sharingan.monitor.api.Register;
+import io.moyada.sharingan.monitor.api.entity.*;
 import io.moyada.sharingan.spring.boot.autoconfigure.annotation.Monitor;
-import io.moyada.sharingan.spring.boot.autoconfigure.support.ListenerAnalyser;
-import io.moyada.sharingan.spring.boot.autoconfigure.support.ListenerInfo;
-import io.moyada.sharingan.spring.boot.autoconfigure.support.ListenerMethod;
-import io.moyada.sharingan.spring.boot.autoconfigure.support.ProxyField;
+import io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig;
+import io.moyada.sharingan.spring.boot.autoconfigure.support.*;
 import io.moyada.sharingan.spring.boot.autoconfigure.util.BeanDefinitionUtil;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -23,6 +21,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -33,17 +32,17 @@ import java.util.Set;
  **/
 public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
 
-    private final String application;
-    private final Map<String, String> attach;
+    private final SharinganConfig sharinganConfig;
+    private final Register register;
+    private Integer appId;
 
-    public MonitorBeanDefinitionScanner(BeanDefinitionRegistry registry, String application, Map<String, String> attach) {
+    public MonitorBeanDefinitionScanner(BeanDefinitionRegistry registry, SharinganConfig sharinganConfig, Register register) {
         super(registry);
-        this.application = application;
-        if (null == attach) {
-            this.attach = Collections.emptyMap();
-        } else {
-            this.attach = attach;
+        this.sharinganConfig = sharinganConfig;
+        if (null == sharinganConfig.getAttach()) {
+            sharinganConfig.setAttach(Collections.emptyMap());
         }
+        this.register = register;
     }
 
     @Override
@@ -60,6 +59,8 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
     }
 
     private void processBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitions) {
+        initAppInfo();
+
         for (BeanDefinitionHolder holder : beanDefinitions) {
             AbstractBeanDefinition definition = (AbstractBeanDefinition) holder.getBeanDefinition();
             Class<?> beanClass = BeanDefinitionUtil.getClass(definition);
@@ -73,8 +74,9 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
                 continue;
             }
 
+            initData(listenerInfo);
             // 修改 BeanDefinition 类信息
-            Class<?> newBeanClass = proxy(beanClass, listenerInfo);
+            Class<?> newBeanClass = proxy(beanClass, listenerInfo.getListenerMethods());
 
             if (this.logger.isDebugEnabled()) {
                 this.logger.debug("Creating MonitorProxy Wrapper Bean name '" + holder.getBeanName() + "', type is '" + definition.getBeanClassName() + "'");
@@ -83,7 +85,57 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
         }
     }
 
-    public Class<?> proxy(Class<?> targetClass, ListenerInfo listenerInfo) {
+    private void initAppInfo() {
+        if (null == register) {
+            return;
+        }
+
+        AppInfo appInfo = new AppInfo();
+        appInfo.setName(sharinganConfig.getApplication());
+        appInfo.setGroupId(sharinganConfig.getGroupId());
+        appInfo.setArtifactId(sharinganConfig.getArtifactId());
+        appId = register.addAppReturnId(appInfo);
+    }
+
+    private void initData(ListenerInfo listenerInfo) {
+        if (null == register) {
+            return;
+        }
+
+        Class classType = listenerInfo.getClassType();
+
+        ServiceInfo serviceInfo = new ServiceInfo(appId, listenerInfo.getServiceName());
+        serviceInfo.setProtocol(listenerInfo.getProtocol());
+        serviceInfo.setClassType(classType);
+        int serviceId = register.addServiceReturnId(serviceInfo);
+
+        initData(serviceId, classType, listenerInfo.getListenerMethods());
+    }
+
+    private void initData(int serviceId, Class serviceClass, Collection<ListenerMethod> listenerMethods) {
+        for (ListenerMethod listenerMethod : listenerMethods) {
+            if (!listenerMethod.isNeedRegister()) {
+                continue;
+            }
+
+            HttpData httpData = listenerMethod.getHttpData();
+            if (null != httpData) {
+                HttpInfo httpInfo = new HttpInfo(appId, serviceId, httpData.getMethodName());
+                httpInfo.setType(httpData.getType());
+                httpInfo.setParam(httpData.getParam());
+                httpInfo.setHeader(httpData.getHeader());
+                register.addHttpReturnId(httpInfo);
+            } else {
+                FunctionInfo FunctionInfo = new FunctionInfo(appId, serviceId, listenerMethod.getMethodName());
+                FunctionInfo.setClassType(serviceClass);
+                FunctionInfo.setParamTypes(listenerMethod.getParamTypes());
+                FunctionInfo.setReturnType(listenerMethod.getReturnType());
+                register.addFunctionReturnId(FunctionInfo);
+            }
+        }
+    }
+
+    private Class<?> proxy(Class<?> targetClass, Collection<ListenerMethod> listenerMethods) {
         String monitorName = "_monitor";
         IdentStatement monitor = IdentStatement.of(monitorName);
 
@@ -92,7 +144,12 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
                 .addImport(DefaultInvocation.class.getName())
                 .addField(monitorName, io.moyada.sharingan.monitor.api.Monitor.class, Modifier.PRIVATE, Annotation.of(Resource.class));
 
-        for (ListenerMethod method : listenerInfo.getListenerMethods()) {
+        boolean hasBoost = false;
+        for (ListenerMethod method : listenerMethods) {
+            if (method.getDomain() == null) {
+                continue;
+            }
+
             enhance.beforeMethod(method.getMethodName(), method.getParamTypes(),
                     BodyStatement.init()
                             .addStatement(
@@ -101,9 +158,13 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
                                             getListenerBody(method, monitor))
                             )
             );
+            hasBoost = true;
         }
 
-        return enhance.create();
+        if (hasBoost) {
+            return enhance.create();
+        }
+        return targetClass;
     }
 
     private BodyStatement getListenerBody(ListenerMethod method, IdentStatement monitor) {
@@ -115,7 +176,7 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
                 .addStatement(new VariableStatement(Invocation.class, varName, Value.newObject(DefaultInvocation.class)));
 
         // 应用
-        listenerBody.addStatement(InvokeStatement.of(var, "setApplication", Value.of(application)));
+        listenerBody.addStatement(InvokeStatement.of(var, "setApplication", Value.of(sharinganConfig.getApplication())));
         // 业务领域
         listenerBody.addStatement(InvokeStatement.of(var, "setDomain", Value.of(method.getDomain())));
         // 序列化
@@ -128,7 +189,7 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
         }
 
         // 附带信息
-        for (Map.Entry<String, String> entry : attach.entrySet()) {
+        for (Map.Entry<String, String> entry : sharinganConfig.getAttach().entrySet()) {
             listenerBody.addStatement(InvokeStatement.of(var, "addAttach",
                     Value.of(entry.getKey()), Value.of(entry.getValue())));
         }

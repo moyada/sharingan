@@ -43,27 +43,27 @@ public class HttpData {
         this.serviceData = serviceData;
     }
 
-    protected void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    protected void setMethodName(String methodName) {
+    public void setMethodName(String methodName) {
         this.methodName = methodName;
     }
 
-    protected void setMethodType(String methodType) {
+    public void setMethodType(String methodType) {
         this.methodType = methodType;
     }
 
-    protected void setParam(String param) {
+    public void setParam(String param) {
         this.param = param;
     }
 
-    protected void setHeader(String header) {
+    public void setHeader(String header) {
         this.header = header;
     }
 
-    protected void setExpression(String expression) {
+    public void setExpression(String expression) {
         this.expression = expression;
     }
 

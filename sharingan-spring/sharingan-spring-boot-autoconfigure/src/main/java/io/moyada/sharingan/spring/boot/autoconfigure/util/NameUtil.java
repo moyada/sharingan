@@ -21,6 +21,21 @@ public class NameUtil {
         return true;
     }
 
+    public static String toString(String[] strs, char split) {
+        if (strs == null) {
+            return null;
+        }
+        int length = strs.length;
+        if (length == 0) {
+            return null;
+        }
+        StringBuilder value = new StringBuilder(length * 4);
+        for (String str : strs) {
+            value.append(str).append(split);
+        }
+        return value.deleteCharAt(value.length() - 1).toString();
+    }
+
     /**
      * 获取代理名
      * @param className

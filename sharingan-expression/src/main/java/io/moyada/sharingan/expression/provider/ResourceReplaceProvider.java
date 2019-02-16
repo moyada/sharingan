@@ -2,7 +2,8 @@ package io.moyada.sharingan.expression.provider;
 
 
 import io.moyada.sharingan.domain.expression.DataRepository;
-import io.moyada.sharingan.expression.RouteInfo;
+import io.moyada.sharingan.domain.metadada.AppData;
+import io.moyada.sharingan.domain.metadada.MetadataRepository;
 import io.moyada.sharingan.infrastructure.exception.InitializeInvokerException;
 
 import java.util.List;
@@ -33,16 +34,15 @@ public class ResourceReplaceProvider extends ReplacementProvider implements Args
     private int time;
 
     public ResourceReplaceProvider(String value, Class<?> paramType, String target, boolean isRandom,
-                                   DataRepository dataRepository, RouteInfo route) {
+                                   MetadataRepository metadataRepository, DataRepository dataRepository,
+                                   String appName, String domain) {
         super(value, paramType, target);
         this.indexSupplier = isRandom ? new RandomIndexSupplier() : new OrderIndexSupplier();
-        setResource(dataRepository, route);
+        AppData appData = metadataRepository.findAppByName(appName);
+        setResource(dataRepository, appData.getId(), domain);
     }
 
-    private void setResource(DataRepository dataRepository, RouteInfo route) {
-        int appId = route.getAppId();
-        String domain = route.getDomain();
-
+    private void setResource(DataRepository dataRepository, int appId, String domain) {
         int total = dataRepository.count(appId, domain);
         if (total == 0) {
             throw new InitializeInvokerException("invocation args is empty. appId: " + appId + ", domain: " + domain);

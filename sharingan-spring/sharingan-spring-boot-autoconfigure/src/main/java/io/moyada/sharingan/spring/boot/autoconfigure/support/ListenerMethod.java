@@ -1,5 +1,9 @@
 package io.moyada.sharingan.spring.boot.autoconfigure.support;
 
+import io.moyada.sharingan.monitor.api.entity.HttpType;
+import io.moyada.sharingan.spring.boot.autoconfigure.annotation.HttpMethod;
+
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -7,6 +11,8 @@ import java.util.List;
  * @since 1.0
  **/
 public class ListenerMethod {
+
+    private boolean needRegister = false;
 
     /**
      * 方法归属域
@@ -18,10 +24,17 @@ public class ListenerMethod {
      */
     private String methodName;
 
+    private HttpData httpData;
+
     /**
      * 参数类型
      */
     private Class[] paramTypes;
+
+    /**
+     * 返回类型
+     */
+    private Class returnType;
 
     /**
      * 序列化方式
@@ -43,6 +56,40 @@ public class ListenerMethod {
      */
     private boolean proxyAfter = false;
 
+    public ListenerMethod(Method method) {
+        this.methodName = method.getName();
+        this.paramTypes = method.getParameterTypes();
+        this.returnType = method.getReturnType();
+    }
+
+    public void setHttpData(HttpMethod annotation) {
+        if (null == annotation) {
+            return;
+        }
+        String name = annotation.value();
+        if (name.isEmpty()) {
+            name = "/" + methodName;
+        } else if (name.charAt(0) != '/') {
+            name = "/" + name;
+        }
+        HttpType type = annotation.type();
+        String[] param = annotation.param();
+        String[] header = annotation.header();
+        this.httpData = new HttpData(name, type, param, header);
+    }
+
+    public void setNeedRegister() {
+        this.needRegister = true;
+    }
+
+    public boolean isNeedRegister() {
+        return needRegister;
+    }
+
+    public HttpData getHttpData() {
+        return httpData;
+    }
+
     public String getDomain() {
         return domain;
     }
@@ -55,16 +102,12 @@ public class ListenerMethod {
         return methodName;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
     public Class[] getParamTypes() {
         return paramTypes;
     }
 
-    public void setParamTypes(Class[] paramTypes) {
-        this.paramTypes = paramTypes;
+    public Class getReturnType() {
+        return returnType;
     }
 
     public String getSerializationType() {

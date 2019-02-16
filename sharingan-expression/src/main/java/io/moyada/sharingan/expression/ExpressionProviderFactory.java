@@ -4,6 +4,7 @@ package io.moyada.sharingan.expression;
 import io.moyada.sharingan.domain.expression.ParamProvider;
 import io.moyada.sharingan.domain.expression.ProviderFactory;
 import io.moyada.sharingan.domain.expression.DataRepository;
+import io.moyada.sharingan.domain.metadada.MetadataRepository;
 import io.moyada.sharingan.expression.provider.*;
 import io.moyada.sharingan.expression.range.Range;
 import io.moyada.sharingan.expression.range.RangeAnalyser;
@@ -17,9 +18,6 @@ import java.util.List;
 
 @Component
 public class ExpressionProviderFactory implements ProviderFactory {
-
-    @Autowired
-    private RouteProcessor routeProcessor;
 
     @Autowired
     private ContextFactory contextFactory;
@@ -72,10 +70,13 @@ public class ExpressionProviderFactory implements ProviderFactory {
             // 查询替换表达式
             expression = ExpressionAnalyser.findExpression(param);
             if (null != expression) {
-                RouteInfo route = routeProcessor.getRoute(expression);
-                providers.add(new ResourceReplaceProvider(param, paramType, expression, isRandom, getDataRepository(), route));
-                param = clearTarget(param, expression);
-                continue;
+                String[] route = ExpressionAnalyser.findRoute(expression);
+                if (null != route) {
+                    providers.add(new ResourceReplaceProvider(param, paramType, expression, isRandom,
+                            getMetadataRepository(), getDataRepository(), route[0], route[1]));
+                    param = clearTarget(param, expression);
+                    continue;
+                }
             }
 
             // 查询整数表达式
@@ -109,6 +110,11 @@ public class ExpressionProviderFactory implements ProviderFactory {
             break;
         }
         return providers;
+    }
+
+    private MetadataRepository getMetadataRepository() {
+        String className = System.getProperty(MetadataRepository.class.getName());
+        return contextFactory.getBean(MetadataRepository.class, className);
     }
 
     private DataRepository getDataRepository() {

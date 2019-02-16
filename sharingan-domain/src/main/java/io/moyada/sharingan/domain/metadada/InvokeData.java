@@ -39,10 +39,10 @@ public class InvokeData {
         ServiceData serviceData = httpData.getServiceData();
         AppData appData = serviceData.getAppData();
 
-        String param = httpData.getParam();
+        String param = httpData.getParam().replaceAll(" ", "");
         String[] params = StringUtil.isEmpty(param) ? null : param.split(",");
 
-        String header = httpData.getHeader();
+        String header = httpData.getHeader().replaceAll(" ", "");
         String[] headers = StringUtil.isEmpty(header) ? null : header.split(",");
 
         return new HttpInvocation(appData.getName(), serviceData.getName(), httpData.getMethodName(),
