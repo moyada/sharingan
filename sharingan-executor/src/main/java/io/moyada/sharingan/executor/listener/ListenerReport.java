@@ -65,8 +65,8 @@ public class ListenerReport implements ReportData {
 
     @Override
     public void calculation() {
-        if (totalInvoke == errorInvoke) {
-            successRate = totalInvoke * 1.0D / (totalInvoke - errorInvoke);
+        if (errorInvoke > 0) {
+            successRate = totalInvoke == errorInvoke ? 1D : totalInvoke * 1.0D / (totalInvoke - errorInvoke);
         }
         avgResponseTime = totalResponseTime / totalInvoke;
     }

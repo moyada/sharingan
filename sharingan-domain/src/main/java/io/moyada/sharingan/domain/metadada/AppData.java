@@ -47,6 +47,19 @@ public class AppData {
      */
     private String dependencies;
 
+    private AppData() {
+    }
+
+    public AppData(Integer id, String name, String groupId, String artifactId, String version, String url, String dependencies) {
+        this.id = id;
+        this.name = name;
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.url = url;
+        this.dependencies = dependencies;
+    }
+
     public Dependency getDependency() {
         return new Dependency(groupId, artifactId, version, url);
     }
@@ -63,31 +76,31 @@ public class AppData {
         return ConvertUtil.convertInt(split);
     }
 
-    public void setId(Integer id) {
+    private void setId(Integer id) {
         this.id = id;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
-    public void setGroupId(String groupId) {
+    private void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 
-    public void setArtifactId(String artifactId) {
+    private void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
     }
 
-    public void setVersion(String version) {
+    private void setVersion(String version) {
         this.version = version;
     }
 
-    public void setUrl(String url) {
+    private void setUrl(String url) {
         this.url = url;
     }
 
-    public void setDependencies(String dependencies) {
+    private void setDependencies(String dependencies) {
         this.dependencies = dependencies;
     }
 

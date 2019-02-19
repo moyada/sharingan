@@ -7,11 +7,11 @@ import io.moyada.sharingan.infrastructure.util.ConvertUtil;
  * @author xueyikang
  * @since 0.0.1
  **/
-public class ComplexProvider extends AbstractProvider implements ArgsProvider {
+public class CompositeProvider extends AbstractProvider implements ArgsProvider {
 
     private ArgsProvider[] argsProviders;
 
-    public ComplexProvider(String value, Class<?> paramType, ArgsProvider[] argsProviders) {
+    public CompositeProvider(String value, Class<?> paramType, ArgsProvider[] argsProviders) {
         super(value, paramType);
         this.argsProviders = argsProviders;
     }

@@ -38,33 +38,39 @@ public class MethodData {
      */
     private String expression;
 
-    private ServiceData serviceData;
-
-    public void setServiceData(ServiceData serviceData) {
-        this.serviceData = serviceData;
+    private MethodData() {
     }
 
-    public void setId(Integer id) {
+    public MethodData(Integer id, String className, String methodName, String paramType, String returnType, String expression) {
+        this.id = id;
+        this.className = className;
+        this.methodName = methodName;
+        this.paramType = paramType;
+        this.returnType = returnType;
+        this.expression = expression;
+    }
+
+    private void setId(Integer id) {
         this.id = id;
     }
 
-    public void setClassName(String className) {
+    private void setClassName(String className) {
         this.className = className;
     }
 
-    public void setMethodName(String methodName) {
+    private void setMethodName(String methodName) {
         this.methodName = methodName;
     }
 
-    public void setParamType(String paramType) {
+    private void setParamType(String paramType) {
         this.paramType = paramType;
     }
 
-    public void setReturnType(String returnType) {
+    private void setReturnType(String returnType) {
         this.returnType = returnType;
     }
 
-    public void setExpression(String expression) {
+    private void setExpression(String expression) {
         this.expression = expression;
     }
 
@@ -90,9 +96,5 @@ public class MethodData {
 
     public String getExpression() {
         return expression;
-    }
-
-    public ServiceData getServiceData() {
-        return serviceData;
     }
 }

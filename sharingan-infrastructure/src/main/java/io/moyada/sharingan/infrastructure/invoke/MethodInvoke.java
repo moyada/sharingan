@@ -22,13 +22,16 @@ public abstract class MethodInvoke<T, I extends InvocationMetaDate> implements I
         Class<?> metaClass = ClassUtil.getGenericType(this, MethodInvoke.class, "I");
         if (metaClass.isInstance(metaDate)) {
             doInitialize((I) metaDate);
+            beforeInvoke();
         } else {
             throw new IllegalArgumentException("Generic type do not match");
         }
     }
 
     protected void doInitialize(I metaDate) throws InstanceNotFountException {
+    }
 
+    protected void beforeInvoke() {
     }
 
     /**

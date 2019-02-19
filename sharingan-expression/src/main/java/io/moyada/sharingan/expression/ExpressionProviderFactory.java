@@ -59,7 +59,7 @@ public class ExpressionProviderFactory implements ProviderFactory {
             return providers.get(0);
         }
 
-        return new ComplexProvider(param, paramType, providers.toArray(new ArgsProvider[size]));
+        return new CompositeProvider(param, paramType, providers.toArray(new ArgsProvider[size]));
     }
 
     private List<ArgsProvider> getProviders(String param, Class<?> paramType, boolean isRandom) {

@@ -54,13 +54,13 @@ public class DataMapperConfig {
             if (null != appColumn) {
                 columnSql.append("`").append(appColumn).append("`,");
             }
-            if (null == domainColumn) {
+            if (null != domainColumn) {
                 columnSql.append("`").append(domainColumn).append("`,");
             }
-            if (null == valueColumn) {
-                columnSql.append("`").append(domainColumn).append("`,");
+            if (null != valueColumn) {
+                columnSql.append("`").append(valueColumn).append("`,");
             }
-            if (null == dateColumn) {
+            if (null != dateColumn) {
                 columnSql.append("`").append(dateColumn).append("`,");
             }
             column = columnSql.deleteCharAt(columnSql.length()-1).toString();

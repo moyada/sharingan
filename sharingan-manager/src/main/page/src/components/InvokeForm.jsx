@@ -71,8 +71,8 @@ class InvokeForm extends React.Component {
                 message.error(resp.err.message, 10)
                 return
               }
-              if(resp.data.code === 200) {
 
+              if(resp.data.code === 200) {
                 notification.open({
                   message: '请求成功',
                   description: resp.data.data,

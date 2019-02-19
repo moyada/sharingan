@@ -99,20 +99,25 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
         }
 
         this.params = paramList.toArray(new String[0]);
-
-        beforeInvoke();
     }
 
     /**
      * 预处理请求
      */
-    private void beforeInvoke() {
+    @Override
+    protected void beforeInvoke() {
         Object[] args = new Object[paramSize];
         for (int index = 0; index < paramSize; index++) {
             args[index] = "";
         }
         Invocation invocation = new Invocation(args);
-        execute(invocation);
+        Result result = execute(invocation);
+        if (!result.isSuccess()) {
+            String exception = result.getException();
+            if (exception.contains("does not have available server")) {
+                throw new InstanceNotFountException(exception);
+            }
+        }
     }
 
     /**

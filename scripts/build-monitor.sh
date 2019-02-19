@@ -10,7 +10,7 @@ cd $dir
 cd ..
 base_dir=$(pwd)
 
-cd $base_dir/sharingan-spring
+cd $base_dir/sharingan-monitor
 mvn clean install -Dmaven.test.skip=true
 
 cd $base_dir/sharingan-spring

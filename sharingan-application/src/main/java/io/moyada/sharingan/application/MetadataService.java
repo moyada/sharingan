@@ -51,27 +51,22 @@ public class MetadataService implements ApplicationContextAware {
 
         InvokeData invokeData;
         if (serviceData.isHttp()) {
-            HttpData httpData = metadataRepository.findHttpById(questInfo.getFunctionId());
-            httpData.setServiceData(serviceData);
-
-            invokeData = new InvokeData(httpData);
+            invokeData = metadataRepository.findHttpById(questInfo.getFunctionId());
         } else {
             MethodData methodData = metadataRepository.findMethodById(questInfo.getFunctionId());
-            methodData.setServiceData(serviceData);
-
-            invokeData = new InvokeData(methodData);
+            invokeData = getClassData(appData, methodData);
         }
+        invokeData.setServiceData(serviceData);
         return invokeData;
     }
 
     /**
      * 获取类信息
-     * @param invokeData
+     * @param appData
+     * @param methodData
      * @return
      */
-    public ClassData getClassData(InvokeData invokeData) {
-        MethodData methodData = invokeData.getMethodData();
-        AppData appData = methodData.getServiceData().getAppData();
+    public ClassData getClassData(AppData appData, MethodData methodData) {
         Dependency dependency = getDependency(appData);
         loadMetadata(dependency);
         return getClassType(dependency, methodData);
@@ -129,11 +124,11 @@ public class MetadataService implements ApplicationContextAware {
             paramTypes = getParamClass(dependency, methodData.getParamType());
             returnType = metadataFetch.getClass(dependency, methodData.getReturnType());
         } catch (ClassNotFoundException e) {
-            throw new InitializeInvokerException("类加载失败: " + e.getMessage());
+            throw new InitializeInvokerException(e.getMessage());
         }
 
         MethodHandle methodHandle = getMethodHandle(dependency, clazz, methodData.getMethodName(), paramTypes, returnType);
-        return new ClassData(clazz, paramTypes, returnType, methodHandle);
+        return new ClassData(methodData.getMethodName(), clazz, paramTypes, returnType, methodHandle);
     }
 
     private Class<?>[] getParamClass(Dependency dependency, String paramType) throws ClassNotFoundException {

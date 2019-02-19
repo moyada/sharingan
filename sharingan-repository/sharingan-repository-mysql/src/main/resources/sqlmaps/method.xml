@@ -4,7 +4,7 @@
 
 	<resultMap id="methodData" type="io.moyada.sharingan.domain.metadada.MethodData">
 		<id column="id" property="id"/>
-		<result column="class_name" property="classType"/>
+		<result column="class_name" property="className"/>
 		<result column="method_name" property="methodName"/>
 		<result column="param_type" property="paramType"/>
 		<result column="return_type" property="returnType"/>

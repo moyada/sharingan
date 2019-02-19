@@ -7,7 +7,7 @@
 		<result column="name" property="name"/>
 		<result column="protocol" property="protocol"/>
 		<result column="protocol_type" property="protocolType"/>
-		<result column="class_name" property="classType"/>
+		<result column="class_name" property="className"/>
 	</resultMap>
 
 	<sql id="baseColumn">

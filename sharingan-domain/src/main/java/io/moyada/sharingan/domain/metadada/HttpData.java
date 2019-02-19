@@ -1,21 +1,19 @@
 package io.moyada.sharingan.domain.metadada;
 
+import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
+import io.moyada.sharingan.infrastructure.util.StringUtil;
+
 /**
  * http请求信息
  * @author xueyikang
  * @since 0.0.1
  **/
-public class HttpData {
+public class HttpData extends InvokeData<HttpInvocation> {
 
     /**
      * 方法编号
      */
     private Integer id;
-
-    /**
-     * 方法名
-     */
-    private String methodName;
 
     /**
      * 请求类别, GET\POST\PUT\DELETE
@@ -37,42 +35,54 @@ public class HttpData {
      */
     private String expression;
 
-    private ServiceData serviceData;
-
-    public void setServiceData(ServiceData serviceData) {
-        this.serviceData = serviceData;
+    private HttpData() {
     }
 
-    public void setId(Integer id) {
+    public HttpData(Integer id, String methodName, String methodType, String param, String header, String expression) {
+        super(methodName);
+        this.id = id;
+        this.methodType = methodType;
+        this.param = param;
+        this.header = header;
+        this.expression = expression;
+    }
+
+    @Override
+    public HttpInvocation getInvocation() {
+        ServiceData serviceData = getServiceData();
+        AppData appData = serviceData.getAppData();
+
+        String param = null == getParam() ? null : getParam().replaceAll(" ", "");
+        String[] params = StringUtil.isEmpty(param) ? null : param.split(",");
+
+        String header = null == getHeader() ? null : getHeader().replaceAll(" ", "");
+        String[] headers = StringUtil.isEmpty(header) ? null : header.split(",");
+
+        return new HttpInvocation(appData.getName(), serviceData.getName(), getMethodName(), getMethodType(), headers, params);
+    }
+
+    private void setId(Integer id) {
         this.id = id;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public void setMethodType(String methodType) {
+    private void setMethodType(String methodType) {
         this.methodType = methodType;
     }
 
-    public void setParam(String param) {
+    private void setParam(String param) {
         this.param = param;
     }
 
-    public void setHeader(String header) {
+    private void setHeader(String header) {
         this.header = header;
     }
 
-    public void setExpression(String expression) {
+    private void setExpression(String expression) {
         this.expression = expression;
     }
 
     public Integer getId() {
         return id;
-    }
-
-    public String getMethodName() {
-        return methodName;
     }
 
     public String getMethodType() {
@@ -89,9 +99,5 @@ public class HttpData {
 
     public String getExpression() {
         return expression;
-    }
-
-    public ServiceData getServiceData() {
-        return serviceData;
     }
 }

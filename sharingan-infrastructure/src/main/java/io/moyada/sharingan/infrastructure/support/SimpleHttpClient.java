@@ -51,7 +51,6 @@ public class SimpleHttpClient {
             HttpResponse execute = instance.execute(request);
             req = EntityUtils.toString(execute.getEntity());
         } catch (IOException e) {
-            e.printStackTrace();
             req = null;
         }
         return req;
