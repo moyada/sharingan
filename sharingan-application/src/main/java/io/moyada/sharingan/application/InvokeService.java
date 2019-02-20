@@ -115,6 +115,6 @@ public class InvokeService {
     }
 
     private InvokeProxy getInvokeProxy(ServiceData serviceData) {
-        return contextFactory.getProtocolInvoke(serviceData.getProtocol(), InvokeProxy.class);
+        return contextFactory.getProtocolInvoke(serviceData.getProtocol().getValue(), InvokeProxy.class);
     }
 }

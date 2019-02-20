@@ -67,8 +67,7 @@ public class SqlBuilder {
         String value =  StringUtil.concat(',',
                 serviceInfo.getAppId(),
                 NameUtil.getValue(serviceInfo.getName()),
-                NameUtil.getValue(protocol.getValue()),
-                (protocol.isHttp() ? "'HTTP'" : "NULL"),
+                NameUtil.getValue(protocol.name()),
                 NameUtil.getValue(serviceInfo.getClassType()));
         return buildInsertSql(metadataConfig.getServiceConfig(), value);
     }

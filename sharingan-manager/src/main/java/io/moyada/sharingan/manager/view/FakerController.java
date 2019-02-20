@@ -98,7 +98,7 @@ public class FakerController {
             return Result.failed(500, e.getMessage());
         }
         return Result.success(services.stream()
-                .map(c -> new SelectVO(c.getId().toString(), c.getName() + " [" + c.getProtocol() + "]"))
+                .map(c -> new SelectVO(c.getId().toString(), c.getName() + " [" + c.getProtocol().name() + "]"))
                 .collect(Collectors.toList()));
     }
 

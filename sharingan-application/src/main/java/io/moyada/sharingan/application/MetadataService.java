@@ -50,12 +50,24 @@ public class MetadataService implements ApplicationContextAware {
         serviceData.setAppData(appData);
 
         InvokeData invokeData;
-        if (serviceData.isHttp()) {
-            invokeData = metadataRepository.findHttpById(questInfo.getFunctionId());
-        } else {
-            MethodData methodData = metadataRepository.findMethodById(questInfo.getFunctionId());
-            invokeData = getClassData(appData, methodData);
+
+        Protocol protocol = serviceData.getProtocol();
+        if (null == protocol) {
+            throw new InitializeInvokerException(serviceData.getName() + " does not have protocol");
         }
+
+        switch (protocol.getMode()) {
+            case CLASS:
+                MethodData methodData = metadataRepository.findMethodById(questInfo.getFunctionId());
+                invokeData = getClassData(appData, methodData);
+                break;
+            case HTTP:
+                invokeData = metadataRepository.findHttpById(questInfo.getFunctionId());
+                break;
+            default:
+                throw new InitializeInvokerException(serviceData.getName() + " protocol " + protocol.getMode().name() + " not have process.");
+        }
+
         invokeData.setServiceData(serviceData);
         return invokeData;
     }

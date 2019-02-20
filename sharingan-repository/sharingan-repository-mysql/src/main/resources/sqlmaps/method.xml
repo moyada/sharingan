@@ -15,13 +15,6 @@
 		`id`, `app_id`, `service_id`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`
 	</sql>
 
-	<insert id="save">
-		INSERT INTO `function_info`
-		(<include refid="baseColumn"/>)
-		VALUE
-		(NULL, #{appId}, #{serviceId}, #{classType}, #{methodName}, #{paramType}, #{returnType}, #{expression});
-	</insert>
-
 	<select id="findByService" resultMap="methodData">
 		SELECT <include refid="baseColumn"/>
 		FROM `function_info`

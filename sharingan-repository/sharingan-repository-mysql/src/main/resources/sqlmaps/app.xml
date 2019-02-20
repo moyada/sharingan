@@ -16,13 +16,6 @@
 		`id`, `name`, `group_id`, `artifact_id`, `version`, `url`, `dependencies`
 	</sql>
 
-	<insert id="save">
-		INSERT INTO `app_info`
-		(<include refid="baseColumn"/>, `internal`)
-		VALUES
-		(NULL, #{appName}, #{groupId}, #{artifactId}, #{version}, #{url}, #{dependencies}, #{internal});
-	</insert>
-
 	<select id="findAll" resultMap="appData">
 		SELECT <include refid="baseColumn"/> FROM `app_info`
 		WHERE internal = 0;
