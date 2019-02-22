@@ -47,7 +47,6 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
 
     @Override
     public void registerDefaultFilters() {
-//        this.addIncludeFilter(new AnnotationTypeFilter(Component.class));
         this.addIncludeFilter(new AnnotationTypeFilter(Monitor.class));
     }
 
@@ -203,7 +202,6 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
     @Override
     public boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
         return super.isCandidateComponent(beanDefinition) &&
-//                beanDefinition.getMetadata().hasAnnotation(Component.class.getName()) &&
                  beanDefinition.getMetadata().hasAnnotation(Monitor.class.getName());
     }
 

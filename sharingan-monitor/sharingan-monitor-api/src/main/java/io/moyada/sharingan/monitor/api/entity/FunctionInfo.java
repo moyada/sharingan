@@ -9,43 +9,43 @@ public class FunctionInfo extends MethodInfo {
     /**
      * 接口类型
      */
-    private Class classType;
+    private Class<?> classType;
 
     /**
      * 参数类型
      */
-    private Class[] paramTypes;
+    private Class<?>[] paramTypes;
 
     /**
      * 返回类型
      */
-    private Class returnType;
+    private Class<?> returnType;
 
     public FunctionInfo(int appId, int serviceId, String name) {
         super(appId, serviceId, name);
     }
 
-    public Class getClassType() {
+    public Class<?> getClassType() {
         return classType;
     }
 
-    public void setClassType(Class classType) {
+    public void setClassType(Class<?> classType) {
         this.classType = classType;
     }
 
-    public Class[] getParamTypes() {
+    public Class<?>[] getParamTypes() {
         return paramTypes;
     }
 
-    public void setParamTypes(Class[] paramTypes) {
+    public void setParamTypes(Class<?>[] paramTypes) {
         this.paramTypes = paramTypes;
     }
 
-    public Class getReturnType() {
+    public Class<?> getReturnType() {
         return returnType;
     }
 
-    public void setReturnType(Class returnType) {
+    public void setReturnType(Class<?> returnType) {
         this.returnType = returnType;
     }
 }

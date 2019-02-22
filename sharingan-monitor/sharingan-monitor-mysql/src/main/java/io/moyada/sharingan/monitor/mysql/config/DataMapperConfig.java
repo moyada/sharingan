@@ -112,6 +112,9 @@ public class DataMapperConfig {
     }
 
     public void setTable(String table) {
+        if (null == table) {
+            return;
+        }
         this.table = table.trim();
     }
 

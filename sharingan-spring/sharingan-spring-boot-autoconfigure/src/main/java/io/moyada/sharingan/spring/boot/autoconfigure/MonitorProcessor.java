@@ -2,46 +2,31 @@ package io.moyada.sharingan.spring.boot.autoconfigure;
 
 import io.moyada.sharingan.monitor.api.Register;
 import io.moyada.sharingan.spring.boot.autoconfigure.config.SharinganConfig;
-import io.moyada.sharingan.spring.boot.autoconfigure.util.BeanDefinitionUtil;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.Ordered;
-import org.springframework.core.PriorityOrdered;
-
-import java.util.List;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * @author xueyikang
  * @since 1.0
  **/
-public class MetadataConfigureProcessor extends ProcessorSupport implements BeanFactoryPostProcessor, ApplicationContextAware, PriorityOrdered {
+public class MonitorProcessor extends ProcessorSupport implements BeanFactoryPostProcessor, ResourceLoaderAware {
 
     private SharinganConfig sharinganConfig;
+
     private Register register;
 
-    private ApplicationContext applicationContext;
-    private String[] basePackages;
-
-    public MetadataConfigureProcessor(SharinganConfig sharinganConfig, Register register) {
+    public MonitorProcessor(@Autowired SharinganConfig sharinganConfig, @Autowired(required = false) Register register) {
         this.sharinganConfig = sharinganConfig;
         this.register = register;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-        List<String> backPackages = BeanDefinitionUtil.getBasePackages(applicationContext);
-        if (backPackages == null) {
-            sharinganConfig.setEnable(false);
-        } else {
-            this.basePackages = backPackages.toArray(new String[0]);
-        }
-    }
+    private ResourceLoader resourceLoader;
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
@@ -58,12 +43,12 @@ public class MetadataConfigureProcessor extends ProcessorSupport implements Bean
 
         MonitorBeanDefinitionScanner scanner = new MonitorBeanDefinitionScanner((BeanDefinitionRegistry) beanFactory,
                 sharinganConfig, register);
-        scanner.setResourceLoader(this.applicationContext);
-        scanner.scan(this.basePackages);
+        scanner.setResourceLoader(this.resourceLoader);
+        scanner.scan(sharinganConfig.getBasePackages());
     }
 
     @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
     }
 }

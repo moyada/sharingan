@@ -14,6 +14,8 @@ public class MonitorConfig {
 
     private int thresholdSize = 100;
 
+    private String type;
+
     public int getIntervalTime() {
         return intervalTime;
     }
@@ -38,5 +40,13 @@ public class MonitorConfig {
         if (thresholdSize > 1) {
             this.thresholdSize = thresholdSize;
         }
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

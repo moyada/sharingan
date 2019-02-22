@@ -2,6 +2,7 @@ package io.moyada.sharingan.monitor.mysql.support;
 
 
 import io.moyada.sharingan.monitor.api.entity.*;
+import io.moyada.sharingan.monitor.api.util.ExpressionUtil;
 import io.moyada.sharingan.monitor.api.util.StringUtil;
 import io.moyada.sharingan.monitor.mysql.config.FindAction;
 import io.moyada.sharingan.monitor.mysql.config.MetadataConfig;
@@ -54,7 +55,7 @@ public class SqlBuilder {
     }
 
     public String buildInsertAppSql(AppInfo appInfo) {
-        String value = StringUtil.concat(',',
+        String value = StringUtil.concat(",",
                 NameUtil.getValue(appInfo.getName()),
                 NameUtil.getValue(appInfo.getGroupId()),
                 NameUtil.getValue(appInfo.getArtifactId()));
@@ -64,7 +65,7 @@ public class SqlBuilder {
     public String buildInsertServiceSql(ServiceInfo serviceInfo) {
         Protocol protocol = serviceInfo.getProtocol();
 
-        String value =  StringUtil.concat(',',
+        String value =  StringUtil.concat(",",
                 serviceInfo.getAppId(),
                 NameUtil.getValue(serviceInfo.getName()),
                 NameUtil.getValue(protocol.name()),
@@ -73,24 +74,26 @@ public class SqlBuilder {
     }
 
     public String buildInsertFunctionSql(FunctionInfo functionInfo) {
-        String value = StringUtil.concat(',',
+        String value = StringUtil.concat(",",
                 functionInfo.getAppId(),
                 functionInfo.getServiceId(),
                 NameUtil.getValue(functionInfo.getClassType()),
                 NameUtil.getValue(functionInfo.getName()),
                 NameUtil.getValue(NameUtil.getName(functionInfo.getParamTypes())),
-                NameUtil.getValue(functionInfo.getReturnType()));
+                NameUtil.getValue(functionInfo.getReturnType()),
+                NameUtil.getValue(ExpressionUtil.getExpression(functionInfo.getParamTypes())));
         return buildInsertSql(metadataConfig.getFunctionConfig(), value);
     }
 
     public String buildInsertHttpSql(HttpInfo httpInfo) {
-        String value = StringUtil.concat(',',
+        String value = StringUtil.concat(",",
                 httpInfo.getAppId(),
                 httpInfo.getServiceId(),
                 NameUtil.getValue(httpInfo.getName()),
                 NameUtil.getValue(httpInfo.getType().name()),
                 NameUtil.getValue(NameUtil.getName(httpInfo.getParam())),
-                NameUtil.getValue(NameUtil.getName(httpInfo.getHeader())));
+                NameUtil.getValue(NameUtil.getName(httpInfo.getHeader())),
+                NameUtil.getValue(ExpressionUtil.getExpression(httpInfo.getName(), httpInfo.getParam(), httpInfo.getHeader())));
         return buildInsertSql(metadataConfig.getHttpConfig(), value);
     }
 

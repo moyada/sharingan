@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.moyada.sharingan.spring.boot.autoconfigure.SharinganMonitorAutoConfiguration
+  io.moyada.sharingan.spring.boot.autoconfigure.SharinganMonitorAutoConfiguration, \
+  io.moyada.sharingan.spring.boot.autoconfigure.MysqlMonitorConfiguration

@@ -24,9 +24,7 @@ public class SharinganConfig {
 
     private String artifactId;
 
-    private String monitorType = "Database";
-
-    private String registerType = "Database";
+    private String[] basePackages;
 
     private Map<String, String> attach;
 
@@ -62,27 +60,19 @@ public class SharinganConfig {
         this.artifactId = artifactId;
     }
 
-    public String getMonitorType() {
-        return monitorType;
-    }
-
-    public void setMonitorType(String monitorType) {
-        this.monitorType = monitorType;
-    }
-
-    public String getRegisterType() {
-        return registerType;
-    }
-
-    public void setRegisterType(String registerType) {
-        this.registerType = registerType;
-    }
-
     public Map<String, String> getAttach() {
         return attach;
     }
 
     public void setAttach(Map<String, String> attach) {
         this.attach = attach;
+    }
+
+    public String[] getBasePackages() {
+        return basePackages;
+    }
+
+    public void setBasePackages(String[] basePackages) {
+        this.basePackages = basePackages;
     }
 }

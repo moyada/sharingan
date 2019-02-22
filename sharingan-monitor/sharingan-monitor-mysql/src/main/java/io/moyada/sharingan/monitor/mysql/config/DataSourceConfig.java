@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 1.0
  **/
 @ConfigurationProperties(prefix = MonitorConfig.PREFIX + ".data-source")
-public class DataSourceConfig extends MonitorConfig {
+public class DataSourceConfig {
 
     /**
      * 驱动
