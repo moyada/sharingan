@@ -9,6 +9,7 @@ fi
 cd $dir
 cd ..
 base_dir=$(pwd)
+mvn clean install -N
 
 cd $base_dir/sharingan-monitor
 mvn clean install -Dmaven.test.skip=true

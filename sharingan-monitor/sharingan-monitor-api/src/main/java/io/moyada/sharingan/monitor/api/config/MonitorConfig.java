@@ -16,6 +16,8 @@ public class MonitorConfig {
 
     private String type;
 
+    private String register;
+
     public int getIntervalTime() {
         return intervalTime;
     }
@@ -48,5 +50,13 @@ public class MonitorConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRegister() {
+        return register;
+    }
+
+    public void setRegister(String register) {
+        this.register = register;
     }
 }

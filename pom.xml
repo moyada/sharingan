@@ -23,7 +23,6 @@
         <module>sharingan-rpc</module>
         <module>sharingan-monitor</module>
         <module>sharingan-bom</module>
-        <module>sharingan-spring</module>
         <module>sharingan-serialization</module>
         <module>sharingan-domain</module>
         <module>sharingan-application</module>
