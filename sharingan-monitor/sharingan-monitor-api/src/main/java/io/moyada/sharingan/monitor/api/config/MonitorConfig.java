@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author xueyikang
  * @since 1.0
  **/
-@ConfigurationProperties(prefix = MonitorConfig.PREFIX + ".async")
+@ConfigurationProperties(prefix = MonitorConfig.PREFIX)
 public class MonitorConfig {
     public static final String PREFIX = "sharingan.monitor";
 

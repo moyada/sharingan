@@ -3,8 +3,8 @@
   "groups": [
     {
       "name": "sharinganConfig",
-      "type": "io.moyada.sharingan.spring.boot.starter.config.SharinganConfig",
-      "sourceType": "io.moyada.sharingan.spring.boot.starter.config.SharinganConfig"
+      "type": "io.moyada.spring.boot.sharingan.config.SharinganConfig",
+      "sourceType": "io.moyada.spring.boot.sharingan.config.SharinganConfig"
     },
     {
       "name": "monitorConfig",
@@ -28,31 +28,31 @@
       "type": "java.lang.Boolean",
       "defaultValue": "true",
       "description": "Enable monitor for listener method invoke.",
-      "sourceType": "io.moyada.sharingan.spring.boot.starter.config.SharinganConfig"
+      "sourceType": "io.moyada.spring.boot.sharingan.config.SharinganConfig"
     },
     {
       "name": "sharingan.monitor.application",
       "type": "java.lang.String",
       "description": "Application name.",
-      "sourceType": "io.moyada.sharingan.spring.boot.starter.config.SharinganConfig"
+      "sourceType": "io.moyada.spring.boot.sharingan.config.SharinganConfig"
     },
     {
       "name": "sharingan.monitor.group-id",
       "type": "java.lang.String",
       "description": "GroupId of application.",
-      "sourceType": "io.moyada.sharingan.spring.boot.starter.config.SharinganConfig"
+      "sourceType": "io.moyada.spring.boot.sharingan.config.SharinganConfig"
     },
     {
       "name": "sharingan.monitor.artifact-id",
       "type": "java.lang.String",
       "description": "ArtifactId of application.",
-      "sourceType": "io.moyada.sharingan.spring.boot.starter.config.SharinganConfig"
+      "sourceType": "io.moyada.spring.boot.sharingan.config.SharinganConfig"
     },
     {
       "name": "sharingan.monitor.attach",
       "type": "java.util.Map",
       "description": "Addition transfer data with monitor.",
-      "sourceType": "io.moyada.sharingan.spring.boot.starter.config.SharinganConfig"
+      "sourceType": "io.moyada.spring.boot.sharingan.config.SharinganConfig"
     },
 
 
