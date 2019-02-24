@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # 编译页面
-echo ${PWD}
-cd ../sharingan-manager/src/main/page/
+
+DIR=$(cd `dirname $0`;pwd)
+cd $DIR/../sharingan-manager/src/main/page/
 npm run build

@@ -10,7 +10,7 @@
 	</resultMap>
 
 	<sql id="baseColumn">
-		`id`, `app_id`, `name`, `protocol`, `protocol_type`, `class_name`
+		`id`, `app_id`, `name`, `protocol`, `class_name`
 	</sql>
 
 	<select id="findByApp" resultMap="serviceData">

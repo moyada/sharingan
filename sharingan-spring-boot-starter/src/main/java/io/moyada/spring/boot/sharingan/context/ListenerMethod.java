@@ -1,5 +1,6 @@
 package io.moyada.spring.boot.sharingan.context;
 
+import io.moyada.sharingan.monitor.api.entity.ContentType;
 import io.moyada.sharingan.monitor.api.entity.HttpType;
 import io.moyada.spring.boot.sharingan.annotation.HttpMethod;
 
@@ -73,9 +74,10 @@ public class ListenerMethod {
             name = "/" + name;
         }
         HttpType type = annotation.type();
+        ContentType contentType = annotation.contentType();
         String[] param = annotation.param();
         String[] header = annotation.header();
-        this.httpData = new HttpData(name, type, param, header);
+        this.httpData = new HttpData(name, type, contentType, param, header);
     }
 
     public void setNeedRegister() {

@@ -9,10 +9,12 @@ const FormItem = Form.Item;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-class InvokeForm extends React.Component {
+
+const HTTP_TYPE = "HTTP";
+
+class InvokeForm extends React.PureComponent {
   state = {
     expand: false,
-    type: 'simple',
     data: [],
     visible: false,
     index: 1,
@@ -20,6 +22,10 @@ class InvokeForm extends React.Component {
 
   // 校验表达式是否为json格式
   static isJSON(str) {
+    if (null === str) {
+      return true
+    }
+
     if (typeof str === 'string') {
       try {
         JSON.parse(str)
@@ -39,91 +45,50 @@ class InvokeForm extends React.Component {
         return
       }
       let payload
-      switch (this.state.type) {
-        case 'simple':
-          if(null == values.invokeId || values.invokeId === undefined || values.invokeId.length !== 3) {
-            message.error("请选择调用请求")
-            return
-          }
-          if(null == values.expression || values.expression === undefined || !InvokeForm.isJSON(values.expression)) {
-            message.error("请输入正确的参数表达式")
-            return
-          }
-
-          payload = {
-            appId: values.invokeId[0],
-            serviceId: values.invokeId[1],
-            invokeId: values.invokeId[2].split(`-`)[0],
-            expression: values.expression,
-            concurrent: values.concurrent,
-            qps: values.qps,
-            random: values.random,
-            total: values.total,
-            saveResult: values.saveResult,
-            resultParam: values.resultParam,
-          }
-
-          message.success("生成测试请求")
-
-          request("api/invoke.json", payload, 'POST')
-            .then(resp => {
-              if(resp.err) {
-                message.error(resp.err.message, 10)
-                return
-              }
-
-              if(resp.data.code === 200) {
-                notification.open({
-                  message: '请求成功',
-                  description: resp.data.data,
-                  duration: 20
-                });
-              }
-              else {
-                message.error(resp.data.msg, 10)
-              }
-            })
-          break
-
-        case 'http':
-          if(0 === this.state.data.length) {
-            message.error("请输入请求信息")
-            return
-          }
-
-          payload = {
-            invokeInfo: JSON.stringify(this.state.data),
-            concurrent: values.concurrent,
-            qps: values.qps,
-            total: values.total,
-            saveResult: values.saveResult,
-            resultParam: values.resultParam,
-          }
-
-          message.success("生成测试请求")
-
-          this.setState({data: []})
-
-          request("api/invokeComplex.json", payload)
-            .then(resp => {
-              if(resp.err) {
-                message.error(resp.err.message, 10)
-                return
-              }
-              if(resp.data.code === 200) {
-
-                notification.open({
-                  message: '请求成功',
-                  description: resp.data.data,
-                  duration: 20
-                });
-              }
-              else {
-
-              }
-            })
-          break
+      if(null == values.invokeId || values.invokeId === undefined || values.invokeId.length !== 3) {
+        message.error("请选择调用请求")
+        return
       }
+      if(values.expression === undefined || !InvokeForm.isJSON(values.expression)) {
+        message.error("请输入正确的参数表达式")
+        return
+      }
+
+      payload = {
+        appId: values.invokeId[0],
+        serviceId: values.invokeId[1],
+        invokeId: values.invokeId[2],
+        header: values.header,
+        body: values.body,
+        expression: values.expression,
+        concurrent: values.concurrent,
+        qps: values.qps,
+        random: values.random,
+        total: values.total,
+        saveResult: values.saveResult,
+        resultParam: values.resultParam,
+      }
+
+      message.success("生成测试请求")
+
+      request("api/invoke.json", payload, 'POST')
+        .then(resp => {
+          if(resp.err) {
+            message.error(resp.err.message, 10)
+            return
+          }
+
+          if(resp.data.code === 200) {
+            notification.open({
+              message: '请求成功',
+              description: resp.data.data,
+              duration: 20
+            });
+          }
+          else {
+            message.error(resp.data.msg, 10)
+          }
+        })
     })
   }
 
@@ -131,14 +96,32 @@ class InvokeForm extends React.Component {
     this.props.form.resetFields()
   }
 
-  onSelectInvoke(value) {
-    if(value !== undefined && null !== value && value.length === 3) {
-      let index = value[2].indexOf(`-`)
-      if(index !== undefined && null !== index) {
-        this.props.form.setFieldsValue({
-          expression: value[2].substring(index+1)
+  onSelectInvoke(id, value) {
+    if(id === undefined || null === id) {
+      return
+    }
+
+    switch (id.length) {
+      case 2:
+        this.setState({
+          type: value[1].extra
         })
-      }
+        break
+      case 3:
+        if (this.state.type === HTTP_TYPE) {
+          console.log(value[2])
+          this.props.form.setFieldsValue({
+            expression: value[2].extra,
+            header: value[2].header,
+            body: value[2].body
+          })
+          return
+        }
+
+        this.props.form.setFieldsValue({
+          expression: value[2].extra
+        })
+        break
     }
   }
 
@@ -213,7 +196,6 @@ class InvokeForm extends React.Component {
       return
     }
 
-
     this.state.data.push({
       key: `_` + this.state.index,
       url: url,
@@ -229,32 +211,17 @@ class InvokeForm extends React.Component {
     });
   }
 
-
-  handleCancel = (e) => {
-    this.props.form.resetFields(["url", "method", "header", "cookie", "param"])
-    this.setState({
-      visible: false,
-    });
-  }
-
-  changePollSize(qpsInput, totalInput) {
-    const qps = null == qpsInput ? this.props.form.getFieldsValue(['qps']).qps : qpsInput
-    const total = null == totalInput ? this.props.form.getFieldsValue(['total']).total : totalInput
-    if(qps === null || qps === undefined || qps < 1) {
-      return
-    }
-    if(total === null || total === undefined || total < 1) {
-      return
-    }
-    // this.props.form.setFieldsValue({'concurrent': Math.round(total / qps)})
-  }
-
   render() {
     const { getFieldDecorator } = this.props.form;
 
     const formItemLayout = {
       labelCol: { span: 9 },
       wrapperCol: { span: 15 },
+    };
+
+    const formItemHttpLayout = {
+      labelCol: { span: 5 },
+      wrapperCol: { span: 18 },
     };
 
     const formItemRowLayout = {
@@ -319,130 +286,56 @@ class InvokeForm extends React.Component {
                 </FormItem>
               </Col>
               <Col span={24} key='expression'>
-                <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`参数表达式`}>
-                  {getFieldDecorator(`expression`, {initialValue: null})(
-                    <TextArea
-                      maxLength={20000}
-                      placeholder='["${project.domain}"]'
-                      autosize
-                    />
-                  )}
-                </FormItem>
-              </Col>
-            </TabPane>
+                {
+                  this.state.type === HTTP_TYPE ?
+                    <Row>
+                      <Col span={8} key='param'>
+                        <FormItem {...formItemHttpLayout} style={{ marginRight: '10px' }} label={`参数`}>
+                          {getFieldDecorator(`expression`, {initialValue: null})(
+                            <TextArea
+                              maxLength={1000}
+                              placeholder='["key" : "${project.domain}"]'
+                              autosize
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={8} key='header'>
+                        <FormItem {...formItemHttpLayout} style={{ marginRight: '10px' }} label={`头信息`}>
+                          {getFieldDecorator(`header`, {initialValue: null})(
+                            <TextArea
+                              maxLength={1000}
+                              placeholder='["key" : "${project.domain}"]'
+                              autosize
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                      <Col span={8} key='body'>
+                        <FormItem {...formItemHttpLayout} label={`请求体`}>
+                          {getFieldDecorator(`body`, {initialValue: null})(
+                            <TextArea
+                              maxLength={1000}
+                              placeholder='["${project.domain}"]'
+                              autosize
+                            />
+                          )}
+                        </FormItem>
+                      </Col>
+                    </Row>
+                  :
+                    <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`参数表达式`}>
+                    {getFieldDecorator(`expression`, {initialValue: null})(
+                      <TextArea
+                        maxLength={20000}
+                        placeholder='["${project.domain}"]'
+                        autosize
+                      />
+                    )}
+                    </FormItem>
+                }
 
-            <TabPane tab="复合测试" key="complex" disabled>
-              <Col span={24} key='invokeUrl'>
-                <Table
-                  dataSource={this.state.data}
-                  columns={columns}
-                  pagination={false}
-                />
               </Col>
-
-              <Col span={24} key='add' style={{textAlign: 'right', paddingRight: '50px', marginTop: 10 , marginBottom: 10 }} >
-                <Button type="primary" onClick={this.showModal}>添加请求信息</Button>
-                <Modal
-                  title="请求信息"
-                  visible={this.state.visible}
-                  onOk={this.handleOk.bind(this)}
-                  onCancel={this.handleCancel.bind(this)}
-                  width="70%"
-                >
-                  <Row>
-                    <Col span={24} key="url">
-                      <FormItem {...formItemRowLayout} label={`请求链接`}>
-                        {getFieldDecorator(`url`, {initialValue: null})(
-                          <Input
-                            placeholder='http://'
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={24} key="method">
-                      <FormItem {...formItemRowLayout} label={`请求方法`}>
-                        {getFieldDecorator(`method`, {initialValue: "get"})(
-                          <RadioGroup >
-                            <RadioButton value="get">GET</RadioButton>
-                            <RadioButton value="post">POST</RadioButton>
-                            <RadioButton value="put">PUT</RadioButton>
-                            <RadioButton value="delete">DELETE</RadioButton>
-                          </RadioGroup>
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={24} key="header">
-                      <FormItem {...formItemRowLayout} label={`请求头`}>
-                        {getFieldDecorator(`header`, {initialValue: null})(
-                          <Input
-                            placeholder='{"_token": "153957392783"}'
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={24} key="cookie">
-                      <FormItem {...formItemRowLayout} label={`cookie`}>
-                        {getFieldDecorator(`cookie`, {initialValue: null})(
-                          <Input
-                            placeholder='{"JSESSIONID": "ByOK3vjFD72aPnrF7C2HmdnV6TZcEbzWoWiBYEnLerjQ99zWpBng"}'
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={24} key="param">
-                      <FormItem {...formItemRowLayout} label={`请求参数`}>
-                        {getFieldDecorator(`param`, {initialValue: null})(
-                          <Input
-                            placeholder='{"id": "123"}'
-                          />
-                        )}
-                      </FormItem>
-                    </Col>
-                  </Row>
-                </Modal>
-              </Col>
-
-              <Col span={6} key='proxyHost'>
-                <FormItem {...formItemLayout} label={`代理主机`}>
-                  {getFieldDecorator(`proxyHost`, {initialValue: null})(
-                    <Input
-                      placeholder='127.0.0.1'
-                    />
-                  )}
-                </FormItem>
-              </Col>
-
-              <Col span={6} key='proxyPort'>
-                <FormItem {...formItemLayout} label={`代理端口`}>
-                  {getFieldDecorator(`proxyPort`, {initialValue: null})(
-                    <InputNumber
-                      min={0}
-                      precision={0}
-                      placeholder='80'
-                    />
-                  )}
-                </FormItem>
-              </Col>
-
-              <Col span={6} key='proxyUsername'>
-                <FormItem {...formItemLayout} label={`账号`}>
-                  {getFieldDecorator(`proxyUsername`, {initialValue: null})(
-                    <Input
-                      placeholder='admin'
-                    />
-                  )}
-                </FormItem>
-              </Col>
-
-              <Col span={6} key='proxyPassword'>
-                <FormItem {...formItemLayout} style={{ marginRight: '20px' }} label={`密码`}>
-                  {getFieldDecorator(`proxyPassword`, {initialValue: null})(
-                    <Input
-                    />
-                  )}
-                </FormItem>
-              </Col>
-
             </TabPane>
           </Tabs>
 

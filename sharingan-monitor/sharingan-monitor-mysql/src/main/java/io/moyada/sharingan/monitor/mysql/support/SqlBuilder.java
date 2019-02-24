@@ -91,8 +91,7 @@ public class SqlBuilder {
                 httpInfo.getServiceId(),
                 NameUtil.getValue(httpInfo.getName()),
                 NameUtil.getValue(httpInfo.getType().name()),
-                NameUtil.getValue(NameUtil.getName(httpInfo.getParam())),
-                NameUtil.getValue(NameUtil.getName(httpInfo.getHeader())),
+                NameUtil.getValue(httpInfo.getContentType().getValue()),
                 NameUtil.getValue(ExpressionUtil.getExpression(httpInfo.getName(), httpInfo.getParam(), httpInfo.getHeader())));
         return buildInsertSql(metadataConfig.getHttpConfig(), value);
     }

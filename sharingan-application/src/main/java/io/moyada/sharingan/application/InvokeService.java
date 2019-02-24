@@ -86,13 +86,12 @@ public class InvokeService {
         InvokeProxy invokeProxy = getInvokeProxy(httpData.getServiceData());
 
         HttpInvocation httpInvocation = httpData.getInvocation();
+        ParamProvider paramProvider = expressionService.getHttpParamProvider(questInfo, httpInvocation);
         try {
             invokeProxy.initialize(httpInvocation);
         } catch (Exception e) {
             return Result.failed(e.getMessage());
         }
-
-        ParamProvider paramProvider = expressionService.getHttpParamProvider(questInfo, httpInvocation);
 
         return doInvoke(questInfo, invokeProxy, paramProvider);
     }
@@ -110,7 +109,9 @@ public class InvokeService {
 
         ReportData reportData = taskProcessor.start(questInfo.getQuest(), questInfo.getQps());
 
-        reportService.buildReport(reportId, questInfo.getQuest(), reportData);
+        if (!reportService.buildReport(reportId, questInfo.getQuest(), reportData)) {
+            return Result.failed(reportId.getId() + " not found.");
+        }
         return Result.success(reportId.getId());
     }
 

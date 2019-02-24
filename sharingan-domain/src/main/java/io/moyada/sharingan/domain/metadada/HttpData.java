@@ -1,7 +1,6 @@
 package io.moyada.sharingan.domain.metadada;
 
 import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
-import io.moyada.sharingan.infrastructure.util.StringUtil;
 
 /**
  * http请求信息
@@ -21,44 +20,33 @@ public class HttpData extends InvokeData<HttpInvocation> {
     private String methodType;
 
     /**
-     * 参数
+     * 编码方式
+     */
+    private String contentType;
+
+    /**
+     * 表达式
      */
     private String param;
 
     /**
-     * 头信息
+     * 表达式
      */
     private String header;
 
     /**
      * 表达式
      */
-    private String expression;
+    private String body;
 
     private HttpData() {
-    }
-
-    public HttpData(Integer id, String methodName, String methodType, String param, String header, String expression) {
-        super(methodName);
-        this.id = id;
-        this.methodType = methodType;
-        this.param = param;
-        this.header = header;
-        this.expression = expression;
     }
 
     @Override
     public HttpInvocation getInvocation() {
         ServiceData serviceData = getServiceData();
         AppData appData = serviceData.getAppData();
-
-        String param = null == getParam() ? null : getParam().replaceAll(" ", "");
-        String[] params = StringUtil.isEmpty(param) ? null : param.split(",");
-
-        String header = null == getHeader() ? null : getHeader().replaceAll(" ", "");
-        String[] headers = StringUtil.isEmpty(header) ? null : header.split(",");
-
-        return new HttpInvocation(appData.getName(), serviceData.getName(), getMethodName(), getMethodType(), headers, params);
+        return new HttpInvocation(appData.getName(), serviceData.getName(), getMethodName(), getMethodType(), contentType);
     }
 
     private void setId(Integer id) {
@@ -69,16 +57,36 @@ public class HttpData extends InvokeData<HttpInvocation> {
         this.methodType = methodType;
     }
 
+    private void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public String getParam() {
+        return param;
+    }
+
     private void setParam(String param) {
         this.param = param;
+    }
+
+    public String getHeader() {
+        return header;
     }
 
     private void setHeader(String header) {
         this.header = header;
     }
 
-    private void setExpression(String expression) {
-        this.expression = expression;
+    public String getBody() {
+        return body;
+    }
+
+    private void setBody(String body) {
+        this.body = body;
     }
 
     public Integer getId() {
@@ -87,17 +95,5 @@ public class HttpData extends InvokeData<HttpInvocation> {
 
     public String getMethodType() {
         return methodType;
-    }
-
-    public String getParam() {
-        return param;
-    }
-
-    public String getHeader() {
-        return header;
-    }
-
-    public String getExpression() {
-        return expression;
     }
 }

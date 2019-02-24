@@ -125,6 +125,7 @@ public class MonitorBeanDefinitionScanner extends ClassPathBeanDefinitionScanner
             if (null != httpData) {
                 HttpInfo httpInfo = new HttpInfo(appId, serviceId, httpData.getMethodName());
                 httpInfo.setType(httpData.getType());
+                httpInfo.setContentType(httpData.getContentType());
                 httpInfo.setParam(httpData.getParam());
                 httpInfo.setHeader(httpData.getHeader());
                 register.addHttpReturnId(httpInfo);

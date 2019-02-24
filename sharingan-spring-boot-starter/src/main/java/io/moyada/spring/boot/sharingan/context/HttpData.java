@@ -1,5 +1,6 @@
 package io.moyada.spring.boot.sharingan.context;
 
+import io.moyada.sharingan.monitor.api.entity.ContentType;
 import io.moyada.sharingan.monitor.api.entity.HttpType;
 
 /**
@@ -12,13 +13,16 @@ public class HttpData {
 
     private HttpType type;
 
+    private ContentType contentType;
+
     private String[] param;
 
     private String[] header;
 
-    public HttpData(String methodName, HttpType type, String[] param, String[] header) {
+    public HttpData(String methodName, HttpType type, ContentType contentType, String[] param, String[] header) {
         this.methodName = methodName;
         this.type = type;
+        this.contentType = contentType;
         this.param = param;
         this.header = header;
     }
@@ -29,6 +33,10 @@ public class HttpData {
 
     public HttpType getType() {
         return type;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
     }
 
     public String[] getParam() {

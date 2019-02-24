@@ -37,10 +37,11 @@ class InvokeCascader extends React.Component {
             if(err) {
               return new Error(err);
             }
-            const children = data.data.map(({key, value}) =>
+            const children = data.data.map(({key, value, extra}) =>
               ({
                 value: key,
                 label: value,
+                extra: extra,
                 children: null,
                 isLeaf: false,
                 type: 'class'
@@ -58,10 +59,13 @@ class InvokeCascader extends React.Component {
             if(err) {
               return new Error(err);
             }
-            const children = data.data.map(({key, value}) =>
+            const children = data.data.map(({key, value, extra, header, body}) =>
               ({
                 value: key,
                 label: value,
+                extra: extra,
+                header: header,
+                body: body,
                 children: null,
                 isLeaf: true,
                 type: 'method'

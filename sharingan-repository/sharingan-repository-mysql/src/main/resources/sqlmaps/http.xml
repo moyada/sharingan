@@ -6,13 +6,14 @@
 		<id column="id" property="id"/>
 		<result column="method_name" property="methodName"/>
 		<result column="method_type" property="methodType"/>
+		<result column="content_type" property="contentType"/>
 		<result column="param" property="param"/>
 		<result column="header" property="header"/>
-		<result column="expression" property="expression"/>
+		<result column="body" property="body"/>
 	</resultMap>
 
 	<sql id="baseColumn">
-		`id`, `app_id`, `service_id`, `method_name`, `method_type`, `param`, `header`, `expression`
+		`id`, `app_id`, `service_id`, `method_name`, `method_type`, `content_type`, `param`, `header`, `body`
 	</sql>
 
 	<select id="findByService" resultMap="httpData">

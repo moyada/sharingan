@@ -39,9 +39,11 @@ CREATE TABLE `http_info` (
   `app_id` int(11) unsigned NOT NULL COMMENT '项目编号',
   `service_id` int(11) unsigned NOT NULL COMMENT '服务编号',
   `method_name` varchar(191) DEFAULT NULL COMMENT '方法名',
-  `method_type` enum('GET','POST','PUT','DELETE') DEFAULT NULL COMMENT '请求类型',
+  `method_type` enum('GET','POST','PUT','DELETE') DEFAULT 'GET' COMMENT '请求类型',
   `param` varchar(191) DEFAULT NULL COMMENT '参数',
   `header` varchar(191) DEFAULT NULL COMMENT '头信息',
+  `body` varchar(191) DEFAULT NULL COMMENT '信息体',
+  `content_type` varchar(191) DEFAULT 'application/x-www-form-urlencoded' COMMENT '编码方式',
   `expression` varchar(191) DEFAULT NULL COMMENT '参数表达式',
   PRIMARY KEY (`id`)
 ) COMMENT='http请求信息表';
