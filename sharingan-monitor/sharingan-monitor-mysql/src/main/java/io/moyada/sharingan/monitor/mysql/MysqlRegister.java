@@ -19,8 +19,6 @@ import io.moyada.sharingan.monitor.mysql.support.SqlExecutor;
  **/
 public class MysqlRegister implements Register {
 
-    public static final String TYPE = "mysql";
-
     private final MetadataRepository metadataRepository;
 
     public MysqlRegister(DataSourceConfig dataSourceConfig, MetadataConfig metadataConfig) {

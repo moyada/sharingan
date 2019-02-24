@@ -20,8 +20,6 @@ import io.moyada.sharingan.serialization.jackson.JacksonSerializer;
  **/
 public class MysqlMonitor extends AsyncBatchMonitor<Record> {
 
-    public static final String TYPE = "mysql";
-
     private MysqlMonitor(MonitorConfig monitorConfig, RecordConverter converter, RecordConsumer consumer) {
         super(monitorConfig, converter, consumer);
     }

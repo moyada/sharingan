@@ -45,7 +45,7 @@ public class ModuleFetch extends DefaultFetch implements ApplicationContextAware
 
         ModuleClassLoader classLoader = getClassLoader(dependency);
         if(null == classLoader) {
-            throw new ClassNotFoundException(dependency + ", " + className);
+            throw new ClassNotFoundException("Load " + className + " failed.");
         }
         clazz = classLoader.loadLocalClass(className);
         return clazz;

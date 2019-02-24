@@ -12,7 +12,7 @@ public class HttpConfig implements FindAction {
 
     private String table = "http_info";
 
-    private String column = "`app_id`, `service_id`, `method_name`, `method_type`, `param`, `header`";
+    private String column = "`app_id`, `service_id`, `method_name`, `method_type`, `content_type`, `expression`";
 
     private String keyColumn = "id";
 

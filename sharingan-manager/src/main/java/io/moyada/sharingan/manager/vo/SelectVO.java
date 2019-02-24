@@ -10,20 +10,52 @@ public class SelectVO implements Serializable {
 
     private static final long serialVersionUID = -7750004293151410471L;
 
-    private String key;
+    private Object key;
 
     private String value;
 
-    public SelectVO(String key, String value) {
+    private String extra;
+
+    private String header;
+
+    private String body;
+
+    public SelectVO(Object key, String value) {
         this.key = key;
         this.value = value;
     }
 
-    public String getKey() {
+    public SelectVO(Object key, String value, String extra) {
+        this.key = key;
+        this.value = value;
+        this.extra = extra;
+    }
+
+    public SelectVO(Object key, String value, String extra, String header, String body) {
+        this.key = key;
+        this.value = value;
+        this.extra = extra;
+        this.header = header;
+        this.body = body;
+    }
+
+    public Object getKey() {
         return key;
     }
 
     public String getValue() {
         return value;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public String getBody() {
+        return body;
     }
 }

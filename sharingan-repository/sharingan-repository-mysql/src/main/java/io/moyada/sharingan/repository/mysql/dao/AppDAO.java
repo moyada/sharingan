@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface AppDAO {
 
-    int save(AppData appData);
-
     List<AppData> findAll();
 
     AppData findById(@Param("appId") int appId);

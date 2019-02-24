@@ -23,11 +23,26 @@ public class FunctionData {
      */
     private String expression;
 
+    private String param;
+
+    private String body;
+
+    private String header;
+
     public FunctionData(int id, String methodName, String questInfo, String expression) {
         this.id = id;
         this.methodName = methodName;
         this.questInfo = questInfo;
         this.expression = expression;
+    }
+
+    public FunctionData(int id, String methodName, String questInfo, String param, String header, String body) {
+        this.id = id;
+        this.methodName = methodName;
+        this.questInfo = questInfo;
+        this.param = param;
+        this.header = header;
+        this.body = body;
     }
 
     public int getId() {
@@ -43,6 +58,17 @@ public class FunctionData {
     }
 
     public String getExpression() {
-        return expression;
+        if (null != expression) {
+            return expression;
+        }
+        return param;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public String getHeader() {
+        return header;
     }
 }

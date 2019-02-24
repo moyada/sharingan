@@ -12,7 +12,7 @@ public class ServiceConfig implements FindAction {
 
     private String table = "service_info";
 
-    private String column = "`app_id`, `name`, `protocol`, `protocol_type`, `class_name`";
+    private String column = "`app_id`, `name`, `protocol`, `class_name`";
 
     private String keyColumn = "id";
 

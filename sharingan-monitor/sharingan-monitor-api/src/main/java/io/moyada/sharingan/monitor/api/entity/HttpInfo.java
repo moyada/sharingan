@@ -12,6 +12,8 @@ public class HttpInfo extends MethodInfo {
 
     private String[] header;
 
+    private ContentType contentType;
+
     public HttpInfo(int appId, int serviceId, String name) {
         super(appId, serviceId, name);
     }
@@ -22,6 +24,14 @@ public class HttpInfo extends MethodInfo {
 
     public void setType(HttpType type) {
         this.type = type;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(ContentType contentType) {
+        this.contentType = contentType;
     }
 
     public String[] getParam() {

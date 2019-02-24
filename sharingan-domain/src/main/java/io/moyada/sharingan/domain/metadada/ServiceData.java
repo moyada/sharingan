@@ -8,58 +8,52 @@ public class ServiceData {
     /**
      * 服务编号
      */
-    public Integer id;
+    private Integer id;
 
     /**
      * 服务名
      */
-    public String name;
+    private String name;
 
     /**
      * RPC协议
      */
-    public String protocol;
-
-    /**
-     * RPC方式
-     */
-    public String protocolType;
+    private Protocol protocol;
 
     /**
      * 类名
      */
-    public String className;
+    private String className;
 
-    public AppData appData;
+    private AppData appData;
 
-    public boolean isHttp() {
-        if (null == protocolType) {
-            return false;
-        }
-        return protocolType.equalsIgnoreCase("HTTP");
+    private ServiceData() {
+    }
+
+    public ServiceData(Integer id, String name, Protocol protocol, String className) {
+        this.id = id;
+        this.name = name;
+        this.protocol = protocol;
+        this.className = className;
     }
 
     public void setAppData(AppData appData) {
         this.appData = appData;
     }
 
-    public void setId(Integer id) {
+    private void setId(Integer id) {
         this.id = id;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
-    public void setProtocol(String protocol) {
+    private void setProtocol(Protocol protocol) {
         this.protocol = protocol;
     }
 
-    public void setProtocolType(String protocolType) {
-        this.protocolType = protocolType;
-    }
-
-    public void setClassName(String className) {
+    private void setClassName(String className) {
         this.className = className;
     }
 
@@ -71,12 +65,8 @@ public class ServiceData {
         return name;
     }
 
-    public String getProtocol() {
+    public Protocol getProtocol() {
         return protocol;
-    }
-
-    public String getProtocolType() {
-        return protocolType;
     }
 
     public String getClassName() {

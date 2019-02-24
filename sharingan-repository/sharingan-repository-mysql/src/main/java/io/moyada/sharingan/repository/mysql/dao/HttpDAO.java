@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface HttpDAO {
 
-    int save(HttpData httpData);
-
     List<HttpData> findByService(@Param("serviceId") int serviceId);
 
     HttpData findById(@Param("methodId") int methodId);

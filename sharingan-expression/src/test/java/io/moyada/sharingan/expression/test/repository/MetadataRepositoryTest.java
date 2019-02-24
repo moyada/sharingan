@@ -22,10 +22,7 @@ public class MetadataRepositoryTest implements MetadataRepository {
 
     @Override
     public AppData findAppByName(String appName) {
-        AppData appData = new AppData();
-        appData.setId(1);
-        appData.setName(appName);
-        return appData;
+        return new AppData(1, appName, null, null, null, null, null);
     }
 
     @Override

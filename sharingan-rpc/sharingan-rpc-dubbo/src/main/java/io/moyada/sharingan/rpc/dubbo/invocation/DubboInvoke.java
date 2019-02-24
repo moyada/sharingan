@@ -87,4 +87,9 @@ public class DubboInvoke extends DefaultMethodInvoke<ClassInvocation> {
         }
         setInstance(ref);
     }
+
+    @Override
+    protected void beforeInvoke() {
+        invoke(null);
+    }
 }

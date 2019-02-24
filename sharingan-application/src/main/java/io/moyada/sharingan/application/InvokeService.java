@@ -3,8 +3,7 @@ package io.moyada.sharingan.application;
 
 import io.moyada.sharingan.application.command.CreateReportCommand;
 import io.moyada.sharingan.domain.expression.ParamProvider;
-import io.moyada.sharingan.domain.metadada.ClassData;
-import io.moyada.sharingan.domain.metadada.InvokeData;
+import io.moyada.sharingan.domain.metadada.*;
 import io.moyada.sharingan.domain.request.QuestInfo;
 import io.moyada.sharingan.domain.request.ReportId;
 import io.moyada.sharingan.domain.task.ReportData;
@@ -48,24 +47,30 @@ public class InvokeService {
     }
 
     public Result<String> getInvokeData(QuestInfo questInfo) {
-        InvokeData invokeData = metadataService.getInvokeData(questInfo);
+        InvokeData invokeData;
+        try {
+            invokeData = metadataService.getInvokeData(questInfo);
+        } catch (Exception e) {
+            return Result.failed(e.getMessage());
+        }
 
         Result<String> result;
-        if (invokeData.getServiceData().isHttp()) {
-            result = doHttpInvoke(questInfo, invokeData);
+        if (invokeData instanceof HttpData) {
+            result = doHttpInvoke(questInfo, (HttpData) invokeData);
+        } else if (invokeData instanceof ClassData) {
+            result = doDubboInvoke(questInfo, (ClassData) invokeData);
         } else {
-            result = doDubboInvoke(questInfo, invokeData);
+            return Result.failed("unknown InvocationMetaDate");
         }
+
         metadataService.reset();
         return result;
     }
 
-    private Result<String> doDubboInvoke(QuestInfo questInfo, InvokeData invokeData) {
-        InvokeProxy invokeProxy = getInvokeProxy(invokeData);
+    private Result<String> doDubboInvoke(QuestInfo questInfo, ClassData classData) {
+        InvokeProxy invokeProxy = getInvokeProxy(classData.getServiceData());
 
-        ClassData classData = metadataService.getClassData(invokeData);
-
-        ClassInvocation classInvocation = invokeData.getClassInvocation(classData);
+        ClassInvocation classInvocation = classData.getInvocation();
         try {
             invokeProxy.initialize(classInvocation);
         } catch (Exception e) {
@@ -77,17 +82,16 @@ public class InvokeService {
         return doInvoke(questInfo, invokeProxy, paramProvider);
     }
 
-    private Result<String> doHttpInvoke(QuestInfo questInfo, InvokeData invokeData) {
-        InvokeProxy invokeProxy = getInvokeProxy(invokeData);
+    private Result<String> doHttpInvoke(QuestInfo questInfo, HttpData httpData) {
+        InvokeProxy invokeProxy = getInvokeProxy(httpData.getServiceData());
 
-        HttpInvocation httpInvocation = invokeData.getHttpInvocation();
+        HttpInvocation httpInvocation = httpData.getInvocation();
+        ParamProvider paramProvider = expressionService.getHttpParamProvider(questInfo, httpInvocation);
         try {
             invokeProxy.initialize(httpInvocation);
         } catch (Exception e) {
             return Result.failed(e.getMessage());
         }
-
-        ParamProvider paramProvider = expressionService.getHttpParamProvider(questInfo, httpInvocation);
 
         return doInvoke(questInfo, invokeProxy, paramProvider);
     }
@@ -105,11 +109,13 @@ public class InvokeService {
 
         ReportData reportData = taskProcessor.start(questInfo.getQuest(), questInfo.getQps());
 
-        reportService.buildReport(reportId, questInfo.getQuest(), reportData);
+        if (!reportService.buildReport(reportId, questInfo.getQuest(), reportData)) {
+            return Result.failed(reportId.getId() + " not found.");
+        }
         return Result.success(reportId.getId());
     }
 
-    private InvokeProxy getInvokeProxy(InvokeData invokeData) {
-        return contextFactory.getProtocolInvoke(invokeData.getServiceData().getProtocol(), InvokeProxy.class);
+    private InvokeProxy getInvokeProxy(ServiceData serviceData) {
+        return contextFactory.getProtocolInvoke(serviceData.getProtocol().getValue(), InvokeProxy.class);
     }
 }

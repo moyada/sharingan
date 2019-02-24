@@ -6,20 +6,12 @@
 		<id column="id" property="id"/>
 		<result column="name" property="name"/>
 		<result column="protocol" property="protocol"/>
-		<result column="protocol_type" property="protocolType"/>
-		<result column="class_name" property="classType"/>
+		<result column="class_name" property="className"/>
 	</resultMap>
 
 	<sql id="baseColumn">
-		`id`, `app_id`, `name`, `protocol`, `protocol_type`, `class_name`
+		`id`, `app_id`, `name`, `protocol`, `class_name`
 	</sql>
-
-	<insert id="save">
-		INSERT INTO `service_info`
-		 (<include refid="baseColumn"/>)
-		VALUES
-		(NULL, #{appId}, #{name}, #{protocol}, #{protocolType}, #{classType});
-	</insert>
 
 	<select id="findByApp" resultMap="serviceData">
 		SELECT <include refid="baseColumn"/> FROM `service_info`

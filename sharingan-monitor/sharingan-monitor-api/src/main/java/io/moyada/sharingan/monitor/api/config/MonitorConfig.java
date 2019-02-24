@@ -6,13 +6,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author xueyikang
  * @since 1.0
  **/
-@ConfigurationProperties(prefix = MonitorConfig.PREFIX + ".async")
+@ConfigurationProperties(prefix = MonitorConfig.PREFIX)
 public class MonitorConfig {
     public static final String PREFIX = "sharingan.monitor";
 
     private int intervalTime = 3000;
 
     private int thresholdSize = 100;
+
+    private String type;
+
+    private String register;
 
     public int getIntervalTime() {
         return intervalTime;
@@ -38,5 +42,21 @@ public class MonitorConfig {
         if (thresholdSize > 1) {
             this.thresholdSize = thresholdSize;
         }
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getRegister() {
+        return register;
+    }
+
+    public void setRegister(String register) {
+        this.register = register;
     }
 }

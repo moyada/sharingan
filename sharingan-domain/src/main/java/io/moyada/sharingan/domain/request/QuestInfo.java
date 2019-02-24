@@ -28,6 +28,10 @@ public class QuestInfo {
     /**
      * 参数表达式
      */
+    private String body;
+
+    private String header;
+
     private String expression;
 
     /**
@@ -61,7 +65,7 @@ public class QuestInfo {
     private String filterResult;
 
     public QuestInfo(Integer appId, Integer serviceId, Integer functionId,
-                     String expression,
+                     String expression, String header, String body,
                      Integer concurrent, Integer qps, Integer quest,
                      Boolean random, Boolean saveResult, String filterResult) {
 
@@ -69,6 +73,8 @@ public class QuestInfo {
         this.setServiceId(serviceId);
         this.setFunctionId(functionId);
         this.setExpression(expression);
+        this.setHeader(header);
+        this.setBody(body);
         this.setConcurrent(concurrent);
         this.setQps(qps);
         this.setQuest(quest);
@@ -77,8 +83,19 @@ public class QuestInfo {
         this.setFilterResult(filterResult);
     }
 
+
+
     public String getExpression() {
         return expression;
+    }
+
+
+    public String getBody() {
+        return body;
+    }
+
+    public String getHeader() {
+        return header;
     }
 
     public Integer getAppId() {
@@ -133,6 +150,17 @@ public class QuestInfo {
         AssertUtil.checkoutNotNull(functionId, "functionId error");
         AssertUtil.checkoutPositive(functionId);
         this.functionId = functionId;
+    }
+
+    private void setHeader(String header) {
+        this.header = header;
+    }
+
+    private void setBody(String body) {
+        if (StringUtil.isEmpty(body)) {
+            return;
+        }
+        this.body = body;
     }
 
     private void setExpression(String expression) {

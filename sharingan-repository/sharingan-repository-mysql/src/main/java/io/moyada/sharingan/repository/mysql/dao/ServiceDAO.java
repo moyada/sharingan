@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface ServiceDAO {
 
-    int save(ServiceData serviceData);
-
     List<ServiceData> findByApp(@Param("appId") int appId);
 
     ServiceData findById(@Param("serviceId") int serviceId);

@@ -12,7 +12,7 @@ public class FunctionConfig implements FindAction {
 
     private String table = "function_info";
 
-    private String column = "`app_id`, `service_id`, `class_name`, `method_name`, `param_type`, `return_type`";
+    private String column = "`app_id`, `service_id`, `class_name`, `method_name`, `param_type`, `return_type`, `expression`";
 
     private String keyColumn = "id";
 

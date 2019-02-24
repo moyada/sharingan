@@ -47,22 +47,24 @@ public class FakerController {
 
     @RequestMapping(value = "/invoke.json", method = {RequestMethod.GET, RequestMethod.POST})
     public Result<?> invoke(@RequestParam("appId") int appId,
-                         @RequestParam("serviceId") int serviceId,
-                         @RequestParam("invokeId") int invokeId,
-                         @RequestParam(value = "expression", defaultValue = "{}") String expression,
-                         @RequestParam(value = "concurrent", defaultValue = "1") Integer concurrent,
-                         @RequestParam(value = "qps", required = false, defaultValue = "1") Integer qps,
-                         @RequestParam(value = "total", required = false, defaultValue = "1") Integer total,
-                         @RequestParam(value = "random", required = false) Boolean random,
-                         @RequestParam(value = "save", required = false) Boolean saveResult,
-                         @RequestParam(value = "resultParam", required = false) String resultParam) {
+                            @RequestParam("serviceId") int serviceId,
+                            @RequestParam("invokeId") int invokeId,
+                            @RequestParam(value = "expression", defaultValue = "{}") String expression,
+                            @RequestParam(value = "header", defaultValue = "{}") String header,
+                            @RequestParam(value = "body") String body,
+                            @RequestParam(value = "concurrent", defaultValue = "1") Integer concurrent,
+                            @RequestParam(value = "qps", required = false, defaultValue = "1") Integer qps,
+                            @RequestParam(value = "total", required = false, defaultValue = "1") Integer total,
+                            @RequestParam(value = "random", required = false) Boolean random,
+                            @RequestParam(value = "save", required = false) Boolean saveResult,
+                            @RequestParam(value = "resultParam", required = false) String resultParam) {
 //        if(running) {
 //            return Result.failed(401, "已有任务进行中.");
 //        }
 
         QuestInfo questInfo;
         try {
-            questInfo = new QuestInfo(appId, serviceId, invokeId, expression, concurrent, qps, total, random, saveResult, resultParam);
+            questInfo = new QuestInfo(appId, serviceId, invokeId, expression, header, body, concurrent, qps, total, random, saveResult, resultParam);
         } catch (Exception e) {
             return Result.failed(501, e.getMessage());
         }
@@ -85,12 +87,12 @@ public class FakerController {
             return Result.failed(500, e.getMessage());
         }
         return Result.success(apps.stream()
-                .map(c -> new SelectVO(c.getId().toString(), c.getName()))
+                .map(c -> new SelectVO(c.getId(), c.getName()))
                 .collect(Collectors.toList()));
     }
 
     @GetMapping(value = "/getServiceByApp.json")
-    public Result<?> getClassByApp(@RequestParam(value = "appId") int appId) {
+    public Result<?> getServiceByApp(@RequestParam(value = "appId") int appId) {
         List<ServiceData> services;
         try {
             services = configService.getService(appId);
@@ -98,19 +100,21 @@ public class FakerController {
             return Result.failed(500, e.getMessage());
         }
         return Result.success(services.stream()
-                .map(c -> new SelectVO(c.getId().toString(), c.getName() + " [" + c.getProtocol() + "]"))
+                .map(c -> new SelectVO(c.getId(), c.getName() + " [" + c.getProtocol().name() + "]",
+                        c.getProtocol().getMode().name()))
                 .collect(Collectors.toList()));
     }
 
     @GetMapping(value = "/getMethodByService.json")
-    public Result<?> getMethodByClass(@RequestParam("serviceId") int serviceId) {
+    public Result<?> getMethodByService(@RequestParam("serviceId") int serviceId) {
         List<FunctionData> data = configService.getFunction(serviceId);
         if (data.isEmpty()) {
             return Result.success(Collections.emptyList());
         }
 
         List<SelectVO> collect = data.stream()
-                .map(d -> new SelectVO(d.getId() + "-" + d.getExpression(), d.getMethodName() + d.getQuestInfo()))
+                .map(d -> new SelectVO(d.getId(), d.getMethodName() + d.getQuestInfo(),
+                        d.getExpression(), d.getHeader(), d.getBody()))
                 .collect(Collectors.toList());
 
         return Result.success(collect);

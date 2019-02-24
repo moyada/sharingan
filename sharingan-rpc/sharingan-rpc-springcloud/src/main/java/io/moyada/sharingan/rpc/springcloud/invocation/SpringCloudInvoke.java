@@ -1,7 +1,6 @@
 package io.moyada.sharingan.rpc.springcloud.invocation;
 
 
-import io.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration;
 import feign.Client;
 import feign.Request;
 import feign.RequestTemplate;
@@ -14,8 +13,8 @@ import io.moyada.sharingan.infrastructure.invoke.AsyncMethodInvoke;
 import io.moyada.sharingan.infrastructure.invoke.Invocation;
 import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
 import io.moyada.sharingan.infrastructure.invoke.data.Result;
-import io.moyada.sharingan.infrastructure.util.RegexUtil;
 import io.moyada.sharingan.infrastructure.util.StringUtil;
+import io.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,10 +26,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * SpringCloud-Eureka调用器
@@ -57,6 +53,8 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
 
     private String[] params;
     private int paramSize;
+    private boolean hasBody;
+    private boolean isEmpty;
 
     @PostConstruct
     public void initConfig() {
@@ -82,37 +80,45 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
 
         this.baseTemplate = create(metaDate);
 
-        //
-        List<String> paramList = RegexUtil.findPathVariable(metaDate.getMethodName());
-        this.paramSize = paramList.size();
+        this.hasBody = metaDate.isHasBody();
+
+//        List<String> paramList = RegexUtil.findPathVariable(metaDate.getMethodName());
+        List<String> paramList = new ArrayList<>();
 
         String[] paramsName = metaDate.getParam();
         if (null != paramsName && paramsName.length > 0) {
-            this.paramSize += paramsName.length;
             paramList.addAll(Arrays.asList(paramsName));
         }
 
         String[] headers = metaDate.getHeader();
         if (null != headers && headers.length > 0) {
-            this.paramSize += headers.length;
             paramList.addAll(Arrays.asList(headers));
         }
 
         this.params = paramList.toArray(new String[0]);
+        this.paramSize = params.length;
 
-        beforeInvoke();
+        this.isEmpty = paramSize == 0 && !hasBody;
     }
 
     /**
      * 预处理请求
      */
-    private void beforeInvoke() {
-        Object[] args = new Object[paramSize];
-        for (int index = 0; index < paramSize; index++) {
+    @Override
+    protected void beforeInvoke() {
+        int size = hasBody ? paramSize + 1 : paramSize;
+        Object[] args = new Object[size];
+        for (int index = 0; index < size; index++) {
             args[index] = "";
         }
         Invocation invocation = new Invocation(args);
-        execute(invocation);
+        Result result = execute(invocation);
+        if (!result.isSuccess()) {
+            String exception = result.getException();
+            if (exception.contains("does not have available server")) {
+                throw new InstanceNotFountException(exception);
+            }
+        }
     }
 
     /**
@@ -137,6 +143,10 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
             for (String s : header) {
                 template.query(s, "{" + s + "}");
             }
+        }
+
+        if (null != metaDate.getContentType()) {
+            template.header("Content-Type", metaDate.getContentType());
         }
         return template;
     }
@@ -173,17 +183,27 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
      * @param argsValue
      */
     private void resolveArgs(RequestTemplate requestTemplate, Object[] argsValue) {
-        if (paramSize == 0) {
+        if (isEmpty) {
             return;
         }
+
+        if (hasBody) {
+            try {
+                requestTemplate.body(argsValue[0].toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         Map<String, Object> paramMap = new HashMap<>();
         Object value;
-        for (int index = 0; index < paramSize; index++) {
+        for (int index = hasBody ? 1 : 0; index < paramSize; index++) {
             value = argsValue[index];
             if (null != value) {
                 paramMap.put(params[index], value);
             }
         }
+
         requestTemplate.resolve(paramMap);
     }
 

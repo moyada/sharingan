@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface MethodDAO {
 
-    int save(MethodData methodData);
-
     List<MethodData> findByService(@Param("serviceId") int serviceId);
 
     MethodData findById(@Param("funcId") int funcId);

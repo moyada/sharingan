@@ -50,8 +50,8 @@ public class ConfigService {
 
         if (!httpData.isEmpty()) {
             data.addAll(httpData.stream()
-                    .map(c -> new FunctionData(c.getId(), "[" + c.getMethodType() + "]" + c.getMethodName(),
-                            ", param = [" + c.getParam() + "], header = [" + c.getHeader() + "]", c.getExpression()))
+                    .map(c -> new FunctionData(c.getId(),  c.getMethodName(),
+                            "[" + c.getMethodType() + "]", c.getParam(), c.getHeader(), c.getBody()))
                     .collect(Collectors.toList()));
         }
 

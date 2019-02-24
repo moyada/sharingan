@@ -5,12 +5,14 @@ import io.moyada.sharingan.domain.expression.ParamProvider;
 import io.moyada.sharingan.domain.expression.ProviderFactory;
 import io.moyada.sharingan.domain.metadada.ClassData;
 import io.moyada.sharingan.domain.request.QuestInfo;
+import io.moyada.sharingan.expression.HttpInfo;
 import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
 import io.moyada.sharingan.infrastructure.util.JsonUtil;
 import io.moyada.sharingan.infrastructure.util.RegexUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,9 +39,15 @@ public class ExpressionService {
     }
 
     public ParamProvider getHttpParamProvider(QuestInfo questInfo, HttpInvocation httpInvocation) {
-        String[] expression = getHttpExpression(questInfo.getExpression(),
-                httpInvocation.getMethodName(), httpInvocation.getParam(), httpInvocation.getHeader());
-        return getHttpParamProvider(expression, questInfo.getRandom());
+        HttpInfo httpInfo = getHttpExpression(questInfo.getExpression(), questInfo.getHeader(), questInfo.getBody(), httpInvocation.getMethodName());
+        if (httpInfo.isEmpty()) {
+            return ParamProvider.EMPTY_PARAM;
+        }
+
+        httpInvocation.setParam(httpInfo.getParam());
+        httpInvocation.setHeader(httpInfo.getHeader());
+        httpInvocation.setHasBody(httpInfo.getBody() != null);
+        return getHttpParamProvider(httpInfo.getValue(), questInfo.getRandom());
     }
 
     private ParamProvider getHttpParamProvider(String[] expression, boolean isRandom) {
@@ -64,72 +72,49 @@ public class ExpressionService {
         return providerFactory.getParamProvider(expression, paramTypes, isRandom);
     }
 
-    private static String[] getHttpExpression(String inputExpression, String method,
-                                              String[] params, String[] headers) {
+    private static HttpInfo getHttpExpression(String param, String header, String body, String method) {
+        Map<String, String> paramMapper = getVariableParam(method);
+
+        Map<String, Object> paramMap = JsonUtil.toMap(param, String.class, Object.class);
+        if (null != paramMap) {
+            if (null == paramMapper) {
+                paramMapper = new HashMap<>(paramMap.size());
+            }
+
+            for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
+                paramMapper.put(entry.getKey(), RegexUtil.replaceJson(JsonUtil.toJson(entry.getValue())));
+            }
+        }
+
+        Map<String, String> headerMapper;
+        if (null == header) {
+            headerMapper = null;
+        } else {
+            Map<String, Object> headerMap = JsonUtil.toMap(header, String.class, Object.class);
+            if (null == headerMap) {
+                headerMapper = null;
+            } else {
+                headerMapper = new HashMap<>(headerMap.size());
+                for (Map.Entry<String, Object> entry : headerMap.entrySet()) {
+                    headerMapper.put(entry.getKey(), RegexUtil.replaceJson(JsonUtil.toJson(entry.getValue())));
+                }
+            }
+        }
+
+        return new HttpInfo(paramMapper, headerMapper, body);
+    }
+
+    private static Map<String, String> getVariableParam(String method) {
         List<String> variable = RegexUtil.findPathVariable(method);
-        int paramLeng = variable.size();
-        if (null != params) {
-            paramLeng += params.length;
-        }
-        int headerLen = 0;
-        if (null != headers) {
-            headerLen += headers.length;
+        if (variable.isEmpty()) {
+            return null;
         }
 
-        int length = paramLeng + headerLen;
-
-        String[] expression = new String[length];
-
-        Map<String, Map> expressionMap = JsonUtil.toMap(inputExpression, String.class, Map.class);
-        if (null == expressionMap) {
-            for (int index = 0; index < variable.size(); index++) {
-                expression[index] = "{" + variable.get(index) + "}";
-            }
-            for (int index = variable.size(); index < length; index++) {
-                expression[index] = "";
-            }
-            return expression;
+        Map<String, String> param = new HashMap<>();
+        for (String var : variable) {
+            param.put(var, "{" + var + "}");
         }
 
-        int index = 0;
-        Object value;
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> paramMap = expressionMap.get("param");
-        if (null == paramMap) {
-            for (int i = 0; i < paramLeng; i++) {
-                expression[index++] = "";
-            }
-        }
-        else {
-            for (String item : variable) {
-                value = paramMap.get(item);
-                expression[index++] = null == value ? "{" + item + "}" : value.toString();
-            }
-            if (null != params) {
-                for (String item : params) {
-                    value = paramMap.get(item);
-                    expression[index++] = null == value ? "" : value.toString();
-                }
-            }
-        }
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> headerMap = expressionMap.get("header");
-        if (null == headerMap) {
-            for (int i = 0; i < headerLen; i++) {
-                expression[index++] = "";
-            }
-        }
-        else {
-            if (null != headers) {
-                for (String item : headers) {
-                    value = headerMap.get(item);
-                    expression[index++] = null == value ? "" : value.toString();
-                }
-            }
-        }
-
-        return expression;
+        return param;
     }
 }
