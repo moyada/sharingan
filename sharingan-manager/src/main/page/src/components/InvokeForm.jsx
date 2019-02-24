@@ -294,7 +294,7 @@ class InvokeForm extends React.PureComponent {
                           {getFieldDecorator(`expression`, {initialValue: null})(
                             <TextArea
                               maxLength={1000}
-                              placeholder='["key" : "${project.domain}"]'
+                              placeholder='{"key" : "${project.domain}"}'
                               autosize
                             />
                           )}
@@ -305,7 +305,7 @@ class InvokeForm extends React.PureComponent {
                           {getFieldDecorator(`header`, {initialValue: null})(
                             <TextArea
                               maxLength={1000}
-                              placeholder='["key" : "${project.domain}"]'
+                              placeholder='{"key" : "value"}'
                               autosize
                             />
                           )}
@@ -316,7 +316,6 @@ class InvokeForm extends React.PureComponent {
                           {getFieldDecorator(`body`, {initialValue: null})(
                             <TextArea
                               maxLength={1000}
-                              placeholder='["${project.domain}"]'
                               autosize
                             />
                           )}
@@ -328,7 +327,7 @@ class InvokeForm extends React.PureComponent {
                     {getFieldDecorator(`expression`, {initialValue: null})(
                       <TextArea
                         maxLength={20000}
-                        placeholder='["${project.domain}"]'
+                        placeholder='["${project.domain}", "#{int.random}"]'
                         autosize
                       />
                     )}
