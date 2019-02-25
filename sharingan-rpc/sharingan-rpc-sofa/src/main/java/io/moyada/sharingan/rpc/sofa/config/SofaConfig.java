@@ -1,40 +1,36 @@
-package io.moyada.sharingan.rpc.dubbo.config;
-
+package io.moyada.sharingan.rpc.sofa.config;
 
 import io.moyada.sharingan.infrastructure.util.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
- * dubbo配置项
  * @author xueyikang
- * @since 0.0.1
- */
-@ConfigurationProperties(DubboConfig.PREFIX)
-public class DubboConfig {
+ * @since 1.0
+ **/
+@Component
+@ConfigurationProperties(SofaConfig.PREFIX)
+public class SofaConfig {
 
-    public static final String PREFIX = "sharingan.rpc.dubbo";
+    public static final String PREFIX = "sharingan.rpc.sofa";
 
-    // 注册中心地址
+    // 注册中心
     private String[] registry;
 
     // 协议
-    private String protocol = "dubbo";
+    private String protocol = "bolt";
 
-    // 注册中心账户
-    private String username;
+    // 直连地址
+    private String directUrl;
 
-    // 注册中心密码
-    private String password;
-
-    // 超时
-    private Integer timeout = 3000;
+    private int timeout = 3000;
 
     public String[] getRegistry() {
         return registry;
     }
 
     public void setRegistry(String registry) {
-        if (StringUtil.isEmpty(registry)) {
+        if (null == registry) {
             return;
         }
         this.registry = registry.split(",");
@@ -51,20 +47,12 @@ public class DubboConfig {
         this.protocol = protocol;
     }
 
-    public String getUsername() {
-        return username;
+    public String getDirectUrl() {
+        return directUrl;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setDirectUrl(String directUrl) {
+        this.directUrl = directUrl;
     }
 
     public int getTimeout() {

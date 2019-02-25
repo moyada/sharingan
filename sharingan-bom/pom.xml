@@ -38,6 +38,8 @@
         <netty.version>4.1.17.Final</netty.version>
         <curator.version>2.12.0</curator.version>
 
+        <sofa-rpc.version>5.5.1</sofa-rpc.version>
+
         <spring-cloud-dependencies.version>Finchley.RELEASE</spring-cloud-dependencies.version>
 
         <!-- log libs -->
@@ -175,11 +177,11 @@
                 <optional>true</optional>
             </dependency>
 
-            <!-- processor -->
+            <!-- sofa-rpc -->
             <dependency>
-                <groupId>com.google.auto.service</groupId>
-                <artifactId>auto-service</artifactId>
-                <version>${auto-service.version}</version>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>sofa-rpc-all</artifactId>
+                <version>${sofa-rpc.version}</version>
             </dependency>
 
             <!-- byte code -->

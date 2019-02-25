@@ -10,6 +10,16 @@ import java.util.List;
  **/
 public class ClassUtil {
 
+    public static boolean isGeneric(Class<?> clazz) {
+        Class<?> superclass = clazz.getSuperclass();
+        if (null == superclass) {
+            return false;
+        }
+
+        TypeVariable<? extends Class<?>>[] typeParameters = superclass.getTypeParameters();
+        return typeParameters.length > 0;
+    }
+
     public static Class<?> getGenericType(final Object object, Class<?> parameterizedSuperclass, String typeParamName) {
         final Class<?> thisClass = object.getClass();
 

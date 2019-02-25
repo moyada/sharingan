@@ -3,26 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>sharingan</artifactId>
+        <artifactId>sharingan-rpc</artifactId>
         <groupId>io.moyada</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sharingan-rpc</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>sharingan-rpc-dubbo</module>
-        <module>sharingan-rpc-springcloud</module>
-        <module>sharingan-rpc-all</module>
-        <module>sharingan-rpc-sofa</module>
-    </modules>
+    <artifactId>sharingan-rpc-sofa</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>io.moyada</groupId>
-            <artifactId>sharingan-infrastructure</artifactId>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>sofa-rpc-all</artifactId>
         </dependency>
     </dependencies>
 </project>

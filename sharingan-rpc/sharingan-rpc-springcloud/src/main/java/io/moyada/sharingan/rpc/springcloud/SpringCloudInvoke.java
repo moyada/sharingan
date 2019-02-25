@@ -1,4 +1,4 @@
-package io.moyada.sharingan.rpc.springcloud.invocation;
+package io.moyada.sharingan.rpc.springcloud;
 
 
 import feign.Client;
@@ -14,7 +14,6 @@ import io.moyada.sharingan.infrastructure.invoke.Invocation;
 import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
 import io.moyada.sharingan.infrastructure.invoke.data.Result;
 import io.moyada.sharingan.infrastructure.util.StringUtil;
-import io.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
