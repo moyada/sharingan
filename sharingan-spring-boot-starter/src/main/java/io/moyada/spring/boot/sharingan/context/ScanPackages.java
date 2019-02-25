@@ -6,6 +6,8 @@ package io.moyada.spring.boot.sharingan.context;
  **/
 public class ScanPackages {
 
+    public static final String BEAN_NAME = "sharinganMonitorScanPackages";
+
     private String[] basePackages;
 
     public String[] getBasePackages() {

@@ -16,6 +16,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -94,6 +95,11 @@ public class SharinganMonitorAutoConfiguration extends CommonConfiguration imple
             return;
         }
         this.basePackages = bean.getBasePackages();
+
+        if (beanFactory instanceof DefaultListableBeanFactory) {
+            ((DefaultListableBeanFactory) beanFactory).removeBeanDefinition(ScanPackages.BEAN_NAME);
+            ((DefaultListableBeanFactory) beanFactory).destroyBean(bean);
+        }
     }
 
     @Override

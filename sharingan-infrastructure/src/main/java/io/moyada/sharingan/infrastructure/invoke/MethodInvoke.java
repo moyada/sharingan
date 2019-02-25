@@ -31,6 +31,10 @@ public abstract class MethodInvoke<T, I extends InvocationMetaDate> implements I
     protected void doInitialize(I metaDate) throws InstanceNotFountException {
     }
 
+    @Override
+    public void destroy() {
+    }
+
     protected void beforeInvoke() {
     }
 

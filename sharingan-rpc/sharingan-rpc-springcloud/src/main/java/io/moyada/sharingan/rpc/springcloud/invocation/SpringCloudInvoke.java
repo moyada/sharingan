@@ -82,7 +82,6 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
 
         this.hasBody = metaDate.isHasBody();
 
-//        List<String> paramList = RegexUtil.findPathVariable(metaDate.getMethodName());
         List<String> paramList = new ArrayList<>();
 
         String[] paramsName = metaDate.getParam();
@@ -99,6 +98,11 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
         this.paramSize = params.length;
 
         this.isEmpty = paramSize == 0 && !hasBody;
+    }
+
+    @Override
+    public void destroy() {
+        this.baseTemplate = null;
     }
 
     /**

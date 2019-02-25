@@ -108,6 +108,7 @@ public class InvokeService {
         TaskProcessor taskProcessor = taskService.newTask(questInfo, invokeProxy, paramProvider, reportId);
 
         ReportData reportData = taskProcessor.start(questInfo.getQuest(), questInfo.getQps());
+        invokeProxy.destroy();
 
         if (!reportService.buildReport(reportId, questInfo.getQuest(), reportData)) {
             return Result.failed(reportId.getId() + " not found.");

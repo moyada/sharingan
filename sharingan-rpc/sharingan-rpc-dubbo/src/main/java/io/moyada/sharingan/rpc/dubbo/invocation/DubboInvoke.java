@@ -37,6 +37,8 @@ public class DubboInvoke extends DefaultMethodInvoke<ClassInvocation> {
     private RegistryConfig registry;
     private ConsumerConfig consumer;
 
+    private ReferenceConfig<?> reference;
+
     @PostConstruct
     public void initConfig() {
         if (StringUtil.isEmpty(dubboConfig.getRegistry())) {
@@ -86,6 +88,16 @@ public class DubboInvoke extends DefaultMethodInvoke<ClassInvocation> {
             throw new InstanceNotFountException(e);
         }
         setInstance(ref);
+        this.reference = reference;
+    }
+
+    @Override
+    public void destroy() {
+        setInstance(null);
+        setMethodHandle(null);
+        if (this.reference != null) {
+            this.reference.destroy();
+        }
     }
 
     @Override
