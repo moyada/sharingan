@@ -5,6 +5,8 @@ import request from '../utils/request';
 class InvokeCascader extends React.Component {
   constructor(props) {
     super(props);
+
+    // 查询所有应用
     request("api/getAllApp.json").then(({data, err}) => {
       if(err) {
         return new Error(err);
@@ -31,6 +33,7 @@ class InvokeCascader extends React.Component {
     const selected = obj[obj.length - 1]
 
     switch (selected.type) {
+      // 查询应用下服务信息
       case "app" :
         request("api/getServiceByApp.json", {appId: selected.value})
           .then(({data, err}) => {
@@ -44,7 +47,7 @@ class InvokeCascader extends React.Component {
                 extra: extra,
                 children: null,
                 isLeaf: false,
-                type: 'class'
+                type: 'service'
               })
             )
             selected.children = children
@@ -53,7 +56,9 @@ class InvokeCascader extends React.Component {
             });
         })
         break
-      case "class":
+
+      // 查询服务下方法信息
+      case "service":
         request("api/getMethodByService.json", {serviceId: selected.value})
           .then(({data, err}) => {
             if(err) {

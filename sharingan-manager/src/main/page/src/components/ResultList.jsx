@@ -8,6 +8,7 @@ import request from '../utils/request';
 const FormItem = Form.Item;
 moment.locale('zh-cn');
 
+// 报告列表
 const reportColumns = [{
   title: '请求次数',
   dataIndex: 'totalInvoke',
@@ -18,7 +19,7 @@ const reportColumns = [{
   title: '成功比率',
   dataIndex: 'successRate',
   render(data) {
-    var color = 'orange'
+    let color = 'orange'
     if(data === 1.0) {
       color = 'green'
     }
@@ -44,7 +45,8 @@ const reportColumns = [{
   }
 }];
 
-const columns = [{
+// 结果列表
+const dataColumns = [{
   title: '请求参数',
   dataIndex: 'realArgs',
   width: '22%',
@@ -130,6 +132,7 @@ class ResultList extends React.Component {
       loading: false,
       data: [],
       fakerId: null,
+
       pagination: {
         current: 1,
         pageSize: 100,
@@ -142,11 +145,13 @@ class ResultList extends React.Component {
     }
   }
 
+  // 查询分页信息
   loadData(fakerId, pageIndex, pageSize) {
     const payload = {fakerId: fakerId, pageIndex: pageIndex, pageSize: pageSize };
     this.setState({loading: true})
 
-    request('api/getReport.json', {fakerId: fakerId})
+    //  查询调用结果
+    request('api/getResult.json', payload)
       .then(({data, err}) => {
         if(err) {
           message.error(err)
@@ -154,42 +159,32 @@ class ResultList extends React.Component {
           return
         }
 
-        this.state.report = [data.data]
+        let dataSource = data.data.map(item =>
+          ({
+            key: item.id,
+            realArgs: item.realArgs,
+            code: item.code,
+            result: item.result,
+            errorMsg: item.errorMsg,
+            responseTime: item.responseTime,
+            invokeTime: item.invokeTime,
+          })
+        )
+
+        // 设置分页
+        this.state.pagination.current = data.pageIndex
+        this.state.pagination.total = data.total
+
+        this.setState({
+          data: dataSource,
+          loading: false,
+          currentPageIndex: data.pageIndex,
+          currentPageSize: data.pageSize,
+        });
       })
-      .then(
-      request('api/getResult.json', payload)
-        .then(({data, err}) => {
-          if(err) {
-            message.error(err)
-            this.setState({loading: false})
-            return
-          }
-
-          let dataSource = data.data.map(item =>
-            ({
-              key: item.id,
-              realArgs: item.realArgs,
-              code: item.code,
-              result: item.result,
-              errorMsg: item.errorMsg,
-              responseTime: item.responseTime,
-              invokeTime: item.invokeTime,
-            })
-          )
-
-          this.state.pagination.current = data.pageIndex
-          this.state.pagination.total = data.total
-
-          this.setState({
-            data: dataSource,
-            loading: false,
-            currentPageIndex: data.pageIndex,
-            currentPageSize: data.pageSize,
-          });
-        })
-    )
   }
 
+  // 提交查询
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -197,6 +192,22 @@ class ResultList extends React.Component {
         return
       }
       const fakerId = values.fakerId
+      if(fakerId === null) {
+        message.error('请输入报告编号!')
+        return
+      }
+
+      // 查询报告信息
+      request('api/getReport.json', {fakerId: fakerId})
+        .then(({data, err}) => {
+          if(err) {
+            message.error(err)
+            return
+          }
+
+          this.state.report = [data.data]
+        })
+
       this.state.fakerId = fakerId
       this.loadData(fakerId, 1, 100)
     });
@@ -226,10 +237,13 @@ class ResultList extends React.Component {
         >
           <Row>
             <Col span={12} key='fakerId'>
-              <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`测试请求序号`}>
-                {getFieldDecorator(`fakerId`, {initFieldsValue: null, rules: [{ required: true}] })(
+              <FormItem {...formItemRowLayout} style={{ marginRight: '100px' }} label={`报告编号`}>
+                {getFieldDecorator(`fakerId`,
+                  {
+                  initFieldsValue: null,
+                  rules: [{ required: true, message: '请输入报告编号!', whitespace: false}]
+                })(
                   <Input
-
                   />
                 )}
               </FormItem>
@@ -247,7 +261,7 @@ class ResultList extends React.Component {
         <Table
           loading={this.state.loading}
           dataSource={this.state.data}
-          columns={columns}
+          columns={dataColumns}
           pagination={this.state.pagination}
         />
       </div>

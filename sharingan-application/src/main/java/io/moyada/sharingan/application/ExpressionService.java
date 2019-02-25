@@ -33,7 +33,7 @@ public class ExpressionService {
     public ParamProvider getMethodParamProvider(QuestInfo questInfo, ClassData classData) {
         String[] expression = JsonUtil.toArray(questInfo.getExpression(), String[].class);
         if (null == expression) {
-            throw new NullPointerException();
+            return ParamProvider.EMPTY_PARAM;
         }
         return getParamProvider(expression, classData.getParamTypes(), questInfo.getRandom());
     }
@@ -67,7 +67,7 @@ public class ExpressionService {
 
     private ParamProvider getParamProvider(String[] expression, Class<?>[] paramTypes, boolean isRandom) {
         if (expression.length != paramTypes.length) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("expression number error.");
         }
         return providerFactory.getParamProvider(expression, paramTypes, isRandom);
     }

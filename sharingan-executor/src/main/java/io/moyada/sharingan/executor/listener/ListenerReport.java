@@ -21,7 +21,7 @@ public class ListenerReport implements ReportData {
     /**
      * 成功概率
      */
-    private double successRate;
+    private double successRate = 1;
 
     /**
      * 最小耗时

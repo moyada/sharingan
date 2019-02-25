@@ -19,9 +19,9 @@
     </licenses>
 
     <modules>
+        <!--<module>sharingan-monitor</module>-->
         <module>sharingan-manager</module>
         <module>sharingan-rpc</module>
-        <module>sharingan-monitor</module>
         <module>sharingan-bom</module>
         <module>sharingan-serialization</module>
         <module>sharingan-domain</module>
