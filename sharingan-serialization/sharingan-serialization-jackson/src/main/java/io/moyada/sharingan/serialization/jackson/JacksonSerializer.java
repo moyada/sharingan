@@ -79,7 +79,11 @@ public class JacksonSerializer extends AbstractSerializer implements Serializer 
     public <T> T toObject(String json, Class<T> clazz) throws SerializationException {
         checkJson(json);
 
-        if (clazz == Date.class) {
+        if (clazz == String.class) {
+            @SuppressWarnings("unchecked")
+            T obj = (T) json;
+            return obj;
+        } else if (clazz == Date.class) {
             char first = json.charAt(0);
             int begin = first == '\'' || first == '"' ? 1 : 0;
             int end = json.indexOf(' ');

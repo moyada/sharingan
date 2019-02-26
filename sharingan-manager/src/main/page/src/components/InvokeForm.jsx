@@ -34,29 +34,28 @@ class InvokeForm extends React.PureComponent {
     return false
   }
 
-
-  handleCheckInput = (values) => {
+  isInvalidInput = (values) => {
     if(null == values.invokeId || values.invokeId.length !== 3) {
       message.error("请选择测试服务!")
-      return false
+      return true
     }
 
     if(values.expression != null && values.expression !== '') {
       if (this.state.type === HTTP_TYPE && !InvokeForm.isJSON(values.expression)) {
         message.error("请输入正确 JSON 对象格式的参数表达式!")
-        return false
+        return true
       } else if (values.expression.charAt(0) !== '[' && !InvokeForm.isJSON(values.expression)) {
         message.error("请输入正确 JSON 数组格式的参数表达式!")
-        return false
+        return true
       }
     }
 
     if(values.header != null && values.header !== '' && !InvokeForm.isJSON(values.header)) {
       message.error("请输入正确 JSON 对象格式的头信息!")
-      return false
+      return true
     }
 
-    return true
+    return false
   }
 
   handleRun = (e) => {
@@ -66,7 +65,7 @@ class InvokeForm extends React.PureComponent {
         return
       }
 
-      if (this.handleCheckInput(values)) {
+      if (this.isInvalidInput(values)) {
         return
       }
 
@@ -126,7 +125,6 @@ class InvokeForm extends React.PureComponent {
         break
       case 3:
         if (this.state.type === HTTP_TYPE) {
-          console.log(value[2])
           this.props.form.setFieldsValue({
             expression: value[2].extra,
             header: value[2].header,

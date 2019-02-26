@@ -48,6 +48,12 @@ public class GsonSerializer extends AbstractSerializer implements Serializer {
     public <T> T toObject(String json, Class<T> clazz) throws SerializationException {
         checkJson(json);
 
+        if (clazz == String.class) {
+            @SuppressWarnings("unchecked")
+            T result = (T) json;
+            return result;
+        }
+
         try {
             return gson.fromJson(json, clazz);
         } catch (JsonSyntaxException e) {
@@ -106,7 +112,7 @@ public class GsonSerializer extends AbstractSerializer implements Serializer {
         throw new SerializationException("unknown error");
     }
 
-    private static final class MapTypeToken extends TypeToken<Map<String, Object>> {
+    private static final class MapTypeToken extends TypeToken<Map<Object, Object>> {
 
     }
 

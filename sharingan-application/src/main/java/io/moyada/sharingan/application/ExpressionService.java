@@ -76,13 +76,13 @@ public class ExpressionService {
         Map<String, String> paramMapper = getVariableParam(method);
 
         Map<String, Object> paramMap = JsonUtil.toMap(param, String.class, Object.class);
-        if (null != paramMap) {
+        if (null != paramMap && !paramMap.isEmpty()) {
             if (null == paramMapper) {
                 paramMapper = new HashMap<>(paramMap.size());
             }
 
             for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
-                paramMapper.put(entry.getKey(), RegexUtil.replaceJson(JsonUtil.toJson(entry.getValue())));
+                paramMapper.put(entry.getKey(), JsonUtil.toJson(entry.getValue()));
             }
         }
 
@@ -91,12 +91,12 @@ public class ExpressionService {
             headerMapper = null;
         } else {
             Map<String, Object> headerMap = JsonUtil.toMap(header, String.class, Object.class);
-            if (null == headerMap) {
+            if (null == headerMap || headerMap.isEmpty()) {
                 headerMapper = null;
             } else {
                 headerMapper = new HashMap<>(headerMap.size());
                 for (Map.Entry<String, Object> entry : headerMap.entrySet()) {
-                    headerMapper.put(entry.getKey(), RegexUtil.replaceJson(JsonUtil.toJson(entry.getValue())));
+                    headerMapper.put(entry.getKey(), JsonUtil.toJson(entry.getValue()));
                 }
             }
         }
