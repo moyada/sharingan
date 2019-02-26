@@ -33,7 +33,7 @@ public class MonitorRegistrar implements ImportBeanDefinitionRegistrar {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ScanPackages.class);
         builder.setRole(BeanDefinition.ROLE_APPLICATION);
         builder.addPropertyValue("basePackages", basePackages);
-        beanDefinitionRegistry.registerBeanDefinition("monitorScanPackages", builder.getBeanDefinition());
+        beanDefinitionRegistry.registerBeanDefinition(ScanPackages.BEAN_NAME, builder.getBeanDefinition());
     }
 
     private String[] getBasePackages(AnnotationMetadata metadata) {

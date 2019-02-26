@@ -74,7 +74,7 @@ public class FakerController {
         if (!result.isSuccess()) {
             return Result.failed(500, result.getException());
         }
-        return Result.success(result.getResult());
+        return Result.success("请求编号为: " + result.getResult());
     }
 
     @GetMapping(value = "/getAllApp.json")

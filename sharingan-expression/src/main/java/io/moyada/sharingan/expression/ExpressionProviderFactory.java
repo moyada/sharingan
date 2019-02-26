@@ -30,10 +30,6 @@ public class ExpressionProviderFactory implements ProviderFactory {
      * @return
      */
     public ParamProvider getParamProvider(String[] params, Class<?>[] paramTypes, boolean isRandom) {
-        if (null == params) {
-            return ParamProvider.EMPTY_PARAM;
-        }
-
         int length = params.length;
         if (0 == length) {
             return ParamProvider.EMPTY_PARAM;

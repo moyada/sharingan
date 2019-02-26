@@ -1,6 +1,7 @@
 package io.moyada.sharingan.serialization.fastjson;
 
 import io.moyada.sharingan.serialization.api.AbstractSerializer;
+import io.moyada.sharingan.serialization.api.SerializationException;
 import io.moyada.sharingan.serialization.api.Serializer;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -16,32 +17,31 @@ import java.util.*;
 public class FastJsonSerializer extends AbstractSerializer implements Serializer {
 
     @Override
-    public String toString(Object obj) {
+    public String toString(Object obj) throws SerializationException {
+        checkNull(obj);
+
         return JSON.toJSONString(obj);
     }
 
     @Override
-    public String toString(List<?> list) {
+    public String toString(List<?> list) throws SerializationException {
+        checkNull(list);
+
         return JSON.toJSONString(list);
     }
 
     @Override
-    public <T> T toObject(String json, Class<T> clazz) throws Exception {
-        if (isEmpty(json)) {
-            return null;
-        }
-
-        T data = toPrimitiveType(json, clazz);
-        if (null != data) {
-            return data;
-        }
+    public <T> T toObject(String json, Class<T> clazz) throws SerializationException {
+        checkJson(json);
 
         return JSON.parseObject(json, clazz);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T[] toArray(String json, Class<T[]> clazz) throws Exception {
+    public <T> T[] toArray(String json, Class<T[]> clazz) throws SerializationException {
+        checkJson(json);
+
         JSONArray objects = JSON.parseArray(json);
 
         int size = objects.size();
@@ -58,13 +58,17 @@ public class FastJsonSerializer extends AbstractSerializer implements Serializer
     }
 
     @Override
-    public <T> List<T> toList(String json, Class<T> clazz) throws Exception {
+    public <T> Collection<T> toList(String json, Class<T> clazz) throws SerializationException {
+        checkJson(json);
+
         return JSON.parseArray(json, clazz);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, U> Map<T, U> toMap(String json, Class<T> t, Class<U> u) throws Exception {
+    public <T, U> Map<T, U> toMap(String json, Class<T> t, Class<U> u) throws SerializationException {
+        checkJson(json);
+
         JSONObject jsonObject = JSON.parseObject(json);
         if (jsonObject.isEmpty()) {
             return Collections.emptyMap();
@@ -98,17 +102,5 @@ public class FastJsonSerializer extends AbstractSerializer implements Serializer
         }
 
         return data;
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        Serializer serializer = new FastJsonSerializer();
-
-        Map<String, Integer> map = new HashMap<>();
-        map.put("haha", 666);
-        map.put("zhangsan", 250);
-        String s = serializer.toString(map);
-        System.out.println(s);
-        System.out.println(serializer.toMap(s, String.class, int.class));
     }
 }

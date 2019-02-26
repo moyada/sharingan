@@ -44,6 +44,12 @@
             <version>${sharingan.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.moyada</groupId>
+            <artifactId>sharingan-monitor-api</artifactId>
+            <version>${sharingan.version}</version>
+        </dependency>
+
         <!-- Condition processor -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

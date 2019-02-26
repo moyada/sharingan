@@ -1,4 +1,4 @@
-package io.moyada.sharingan.rpc.springcloud.invocation;
+package io.moyada.sharingan.rpc.springcloud;
 
 
 import feign.Client;
@@ -6,25 +6,18 @@ import feign.Request;
 import feign.RequestTemplate;
 import feign.Response;
 import feign.codec.Decoder;
-import io.moyada.sharingan.infrastructure.ContextFactory;
 import io.moyada.sharingan.infrastructure.constant.HttpStatus;
 import io.moyada.sharingan.infrastructure.exception.InstanceNotFountException;
 import io.moyada.sharingan.infrastructure.invoke.AsyncMethodInvoke;
 import io.moyada.sharingan.infrastructure.invoke.Invocation;
 import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
 import io.moyada.sharingan.infrastructure.invoke.data.Result;
-import io.moyada.sharingan.infrastructure.util.StringUtil;
-import io.moyada.sharingan.rpc.springcloud.EurekaAutoConfiguration;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
 import org.springframework.cloud.openfeign.FeignContext;
 import org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 
@@ -34,15 +27,6 @@ import java.util.*;
  * @since 0.0.1
  **/
 public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation> implements ApplicationContextAware {
-
-    @Autowired
-    private ContextFactory contextFactory;
-
-    @Value("${" + EurekaAutoConfiguration.REGISTER_URL + "}")
-    private String registerUrl;
-
-    @Autowired
-    private EurekaClientConfigBean configBean;
 
     private FeignContext feignContext;
     private Client client;
@@ -55,16 +39,6 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
     private int paramSize;
     private boolean hasBody;
     private boolean isEmpty;
-
-    @PostConstruct
-    public void initConfig() {
-        if (StringUtil.isEmpty(registerUrl)) {
-            // 无效注册地址，关闭注册，销毁实例
-            configBean.setFetchRegistry(false);
-            contextFactory.destroyBean(EurekaAutoConfiguration.BEAN_NAME);
-            return;
-        }
-    }
 
     @Override
     protected void doInitialize(HttpInvocation metaDate) throws InstanceNotFountException {
@@ -82,7 +56,6 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
 
         this.hasBody = metaDate.isHasBody();
 
-//        List<String> paramList = RegexUtil.findPathVariable(metaDate.getMethodName());
         List<String> paramList = new ArrayList<>();
 
         String[] paramsName = metaDate.getParam();
@@ -101,12 +74,18 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
         this.isEmpty = paramSize == 0 && !hasBody;
     }
 
+    @Override
+    public void destroy() {
+        this.baseTemplate = null;
+    }
+
     /**
      * 预处理请求
      */
     @Override
-    protected void beforeInvoke() {
+    protected void beforeInvoke(HttpInvocation metaDate) {
         int size = hasBody ? paramSize + 1 : paramSize;
+
         Object[] args = new Object[size];
         for (int index = 0; index < size; index++) {
             args[index] = "";

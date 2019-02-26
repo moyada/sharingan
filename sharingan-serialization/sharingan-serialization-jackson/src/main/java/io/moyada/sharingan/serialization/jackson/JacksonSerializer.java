@@ -1,7 +1,5 @@
 package io.moyada.sharingan.serialization.jackson;
 
-import io.moyada.sharingan.serialization.api.AbstractSerializer;
-import io.moyada.sharingan.serialization.api.Serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,15 +9,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import io.moyada.sharingan.serialization.api.AbstractSerializer;
+import io.moyada.sharingan.serialization.api.SerializationException;
+import io.moyada.sharingan.serialization.api.Serializer;
 
 import java.io.IOException;
 import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -49,66 +45,80 @@ public class JacksonSerializer extends AbstractSerializer implements Serializer 
         mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
         mapper.configure(JsonGenerator.Feature.QUOTE_FIELD_NAMES, false);
-//        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
         //设置JSON时间格式
-
-        mapper.setDateFormat(DATE_FORMAT);
+        mapper.setDateFormat(dateFormat);
     }
 
     @Override
-    public String toString(Object obj) throws JsonProcessingException {
-        if (null == obj) {
-            return null;
-        }
+    public String toString(Object obj) throws SerializationException {
+        checkNull(obj);
 
-        Class<?> clazz = obj.getClass();
-        if (clazz.isPrimitive() || clazz == String.class) {
-            return obj.toString();
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw new SerializationException(e);
         }
-
-        return mapper.writeValueAsString(obj);
     }
 
     @Override
-    public String toString(List<?> list) throws JsonProcessingException {
-        return mapper.writeValueAsString(list);
+    public String toString(List<?> list) throws SerializationException {
+        checkNull(list);
+
+        try {
+            return mapper.writeValueAsString(list);
+        } catch (JsonProcessingException e) {
+            throw new SerializationException(e);
+        }
     }
 
     @Override
-    public <T> T toObject(String json, Class<T> clazz) throws IOException {
-        if (isEmpty(json)) {
-            return null;
+    public <T> T toObject(String json, Class<T> clazz) throws SerializationException {
+        checkJson(json);
+
+        if (clazz == String.class) {
+            @SuppressWarnings("unchecked")
+            T obj = (T) json;
+            return obj;
+        } else if (clazz == Date.class) {
+            char first = json.charAt(0);
+            int begin = first == '\'' || first == '"' ? 1 : 0;
+            int end = json.indexOf(' ');
+            end = -1 == end ? json.length() - 1 : end;
+            @SuppressWarnings("unchecked")
+            T obj = (T) Date.valueOf(json.substring(begin, end));
+            return obj;
         }
 
-        T result = toPrimitiveType(json, clazz);
-        if (null != result) {
-            return result;
+        try {
+            return mapper.readValue(json, clazz);
+        } catch (IOException e) {
+            throw new SerializationException(e);
         }
-
-        if(java.util.Date.class.isAssignableFrom(clazz)) {
-            if (json.charAt(0) != '"') {
-                result = toDataType(json, clazz);
-                if (null != result) {
-                    return result;
-                }
-            } else {
-                json = "\"".concat(json).concat("\"");
-            }
-        }
-
-        return mapper.readValue(json, clazz);
     }
 
 
-    public <T> T[] toArray(String json, Class<T[]> clazz) throws IOException {
-        return mapper.readValue(json, clazz);
+    public <T> T[] toArray(String json, Class<T[]> clazz) throws SerializationException {
+        checkJson(json);
+
+        try {
+            return mapper.readValue(json, clazz);
+        } catch (IOException e) {
+            throw new SerializationException(e);
+        }
     }
 
-    public <T> List<T> toList(String json, Class<T> clazz) throws IOException {
-        return mapper.readValue(json, collectionTypeGenerator(clazz));
+    public <T> Collection<T> toList(String json, Class<T> clazz) throws SerializationException {
+        checkJson(json);
+
+        try {
+            return mapper.readValue(json, collectionTypeGenerator(clazz));
+        } catch (IOException e) {
+            throw new SerializationException(e);
+        }
     }
 
     private CollectionType collectionTypeGenerator(Class<?> cls) {
@@ -121,8 +131,12 @@ public class JacksonSerializer extends AbstractSerializer implements Serializer 
         return type;
     }
 
-    public <K, V> Map<K, V> toMap(String json, Class<K> kClass, Class<V> vClass) throws IOException {
-        return mapper.readValue(json, mapTypeGenerator(kClass, vClass));
+    public <K, V> Map<K, V> toMap(String json, Class<K> kClass, Class<V> vClass) throws SerializationException {
+        try {
+            return mapper.readValue(json, mapTypeGenerator(kClass, vClass));
+        } catch (IOException e) {
+            throw new SerializationException(e);
+        }
     }
 
     private MapType mapTypeGenerator(Class<?> kClass, Class<?> vClass) {
@@ -133,14 +147,5 @@ public class JacksonSerializer extends AbstractSerializer implements Serializer 
             mapTypeMap.put(name, type);
         }
         return type;
-    }
-
-    public static void main(String[] args) throws Exception {
-        Serializer jacksonSerializer = new JacksonSerializer();
-        Timestamp timestamp = jacksonSerializer.toObject("\"2018-11-11 12:31:23\"", Timestamp.class);
-        Date date = jacksonSerializer.toObject("2018-11-11", Date.class);
-        Time time = jacksonSerializer.toObject("12:31:23", Time.class);
-        java.util.Date date1 = jacksonSerializer.toObject("2018-11-11 12:31:23", java.util.Date.class);
-        System.out.println(jacksonSerializer.toObject("67", int.class));
     }
 }

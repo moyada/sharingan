@@ -3,22 +3,22 @@ package io.moyada.sharingan.rpc.dubbo.config;
 
 import io.moyada.sharingan.infrastructure.util.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * dubbo配置项
  * @author xueyikang
  * @since 0.0.1
  */
-@Component
-@ConfigurationProperties("sharingan.rpc.dubbo")
+@ConfigurationProperties(DubboConfig.PREFIX)
 public class DubboConfig {
 
+    public static final String PREFIX = "sharingan.rpc.dubbo";
+
     // 注册中心地址
-    private String registry;
+    private String[] registry;
 
     // 协议
-    private String protocol;
+    private String protocol = "dubbo";
 
     // 注册中心账户
     private String username;
@@ -27,21 +27,27 @@ public class DubboConfig {
     private String password;
 
     // 超时
-    private Integer timeout;
+    private Integer timeout = 3000;
 
-    public String getRegistry() {
+    public String[] getRegistry() {
         return registry;
     }
 
     public void setRegistry(String registry) {
-        this.registry = registry;
+        if (StringUtil.isEmpty(registry)) {
+            return;
+        }
+        this.registry = registry.split(",");
     }
 
     public String getProtocol() {
-        return StringUtil.isEmpty(protocol) ? "dubbo" : protocol;
+        return protocol;
     }
 
     public void setProtocol(String protocol) {
+        if (StringUtil.isEmpty(protocol)) {
+            return;
+        }
         this.protocol = protocol;
     }
 
@@ -61,11 +67,14 @@ public class DubboConfig {
         this.password = password;
     }
 
-    public Integer getTimeout() {
-        return null == timeout ? 3000 : timeout;
+    public int getTimeout() {
+        return timeout;
     }
 
     public void setTimeout(Integer timeout) {
+        if (timeout == null) {
+            return;
+        }
         this.timeout = timeout;
     }
 }

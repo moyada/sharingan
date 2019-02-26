@@ -13,9 +13,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>sharingan-rpc-all</module>
         <module>sharingan-rpc-dubbo</module>
         <module>sharingan-rpc-springcloud</module>
-        <module>sharingan-rpc-all</module>
+        <module>sharingan-rpc-sofa</module>
     </modules>
 
     <dependencies>

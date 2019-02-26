@@ -9,7 +9,6 @@ import io.moyada.sharingan.infrastructure.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.Map;
  * @author xueyikang
  * @create 2018-04-27 15:00
  */
-@DependsOn("moduleFetch")
 @Component
 public class Nexus3RestFetch implements ArtifactFetch {
     private static final Logger logger = LoggerFactory.getLogger(Nexus3RestFetch.class);

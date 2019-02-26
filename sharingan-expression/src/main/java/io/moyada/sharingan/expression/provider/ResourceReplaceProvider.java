@@ -38,17 +38,20 @@ public class ResourceReplaceProvider extends ReplacementProvider implements Args
                                    String appName, String domain) {
         super(value, paramType, target);
         this.indexSupplier = isRandom ? new RandomIndexSupplier() : new OrderIndexSupplier();
-        AppData appData = metadataRepository.findAppByName(appName);
-        setResource(dataRepository, appData.getId(), domain);
+        setResource(metadataRepository, dataRepository, appName, domain);
     }
 
-    private void setResource(DataRepository dataRepository, int appId, String domain) {
-        int total = dataRepository.count(appId, domain);
+    private void setResource(MetadataRepository metadataRepository, DataRepository dataRepository, String appName, String domain) {
+        AppData appData = metadataRepository.findAppByName(appName);
+        if (null == appData) {
+            throw new InitializeInvokerException("unable to fetch application info, name = " + appName);
+        }
+        int total = dataRepository.count(appData.getId(), domain);
         if (total == 0) {
-            throw new InitializeInvokerException("invocation args is empty. appId: " + appId + ", domain: " + domain);
+            throw new InitializeInvokerException("args resource is empty. appName: " + appName + ", domain: " + domain);
         }
         this.total = total;
-        this.dataSupplier = () -> dataRepository.findRandomArgs(appId, domain, total, DEFAULT_THRESHOLD);
+        this.dataSupplier = () -> dataRepository.findRandomArgs(appData.getId(), domain, total, DEFAULT_THRESHOLD);
         freshData();
     }
 

@@ -15,7 +15,7 @@ import java.lang.invoke.MethodHandle;
 public class DefaultMethodInvoke<I extends InvocationMetaDate> extends AsyncMethodInvoke<Object[], I> {
 
     // 方法句柄
-    protected MethodHandle methodHandle;
+    private MethodHandle methodHandle;
 
     // 目标实例
     protected Object instance;
@@ -25,7 +25,7 @@ public class DefaultMethodInvoke<I extends InvocationMetaDate> extends AsyncMeth
         return invocation.getArgsValue();
     }
 
-    public void setMethodHandle(MethodHandle methodHandle) {
+    protected void setMethodHandle(MethodHandle methodHandle) {
         this.methodHandle = methodHandle;
     }
 
@@ -70,8 +70,12 @@ public class DefaultMethodInvoke<I extends InvocationMetaDate> extends AsyncMeth
                 result = Result.success(methodHandle.invoke(instance));
             }
         } catch (Throwable throwable) {
-            result = Result.failed(throwable.getMessage());
+            result = Result.failed(convertError(throwable));
         }
         return result;
+    }
+
+    protected String convertError(Throwable throwable) {
+        return throwable.getMessage();
     }
 }

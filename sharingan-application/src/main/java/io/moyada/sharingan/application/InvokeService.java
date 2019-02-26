@@ -108,6 +108,7 @@ public class InvokeService {
         TaskProcessor taskProcessor = taskService.newTask(questInfo, invokeProxy, paramProvider, reportId);
 
         ReportData reportData = taskProcessor.start(questInfo.getQuest(), questInfo.getQps());
+        invokeProxy.destroy();
 
         if (!reportService.buildReport(reportId, questInfo.getQuest(), reportData)) {
             return Result.failed(reportId.getId() + " not found.");
@@ -116,6 +117,6 @@ public class InvokeService {
     }
 
     private InvokeProxy getInvokeProxy(ServiceData serviceData) {
-        return contextFactory.getProtocolInvoke(serviceData.getProtocol().getValue(), InvokeProxy.class);
+        return contextFactory.getBean(serviceData.getProtocol().getInvokeName(), InvokeProxy.class);
     }
 }

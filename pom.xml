@@ -19,9 +19,9 @@
     </licenses>
 
     <modules>
+        <!--<module>sharingan-monitor</module>-->
         <module>sharingan-manager</module>
         <module>sharingan-rpc</module>
-        <module>sharingan-monitor</module>
         <module>sharingan-bom</module>
         <module>sharingan-serialization</module>
         <module>sharingan-domain</module>
@@ -101,6 +101,12 @@
 
             <dependency>
                 <groupId>io.moyada</groupId>
+                <artifactId>sharingan-rpc-sofa</artifactId>
+                <version>${sharingan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.moyada</groupId>
                 <artifactId>sharingan-rpc-springcloud</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
@@ -119,7 +125,7 @@
 
             <dependency>
                 <groupId>io.moyada</groupId>
-                <artifactId>sharingan-serialization-jackson</artifactId>
+                <artifactId>sharingan-serialization-gson</artifactId>
                 <version>${sharingan.version}</version>
             </dependency>
 

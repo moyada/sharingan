@@ -136,7 +136,7 @@ public class MetadataService implements ApplicationContextAware {
             paramTypes = getParamClass(dependency, methodData.getParamType());
             returnType = metadataFetch.getClass(dependency, methodData.getReturnType());
         } catch (ClassNotFoundException e) {
-            throw new InitializeInvokerException(e.getMessage());
+            throw new InitializeInvokerException("ClassNotFound: " + e.getMessage());
         }
 
         MethodHandle methodHandle = getMethodHandle(dependency, clazz, methodData.getMethodName(), paramTypes, returnType);

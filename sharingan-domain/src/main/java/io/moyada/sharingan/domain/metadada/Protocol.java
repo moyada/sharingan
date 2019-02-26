@@ -8,6 +8,8 @@ public enum Protocol {
 
     Dubbo("dubbo", Mode.CLASS),
     SpringCloud("springcloud", Mode.HTTP),
+    SOFA("sofa", Mode.CLASS),
+    GRPC("grpc", null),
     ;
 
     private String value;
@@ -27,12 +29,8 @@ public enum Protocol {
         return specialMode;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    private void setValue(String value) {
-        this.value = value;
+    public String getInvokeName() {
+        return value + "Invoke";
     }
 
     public boolean isClass() {
@@ -43,13 +41,11 @@ public enum Protocol {
         return null != specialMode && specialMode == Mode.HTTP;
     }
 
-    /**
-     * 校验协议
-     */
+    // 校验协议名
     static {
         Protocol[] protocols = Protocol.values();
         for (Protocol protocol : protocols) {
-            String value = protocol.getValue();
+            String value = protocol.value;
             if (value == null) {
                 throw new IllegalArgumentException("Protocol Error: " + protocol.name() +" protocol value can not be null.");
             }
@@ -57,7 +53,7 @@ public enum Protocol {
             if (value.isEmpty()) {
                 throw new IllegalArgumentException("Protocol Error: " + protocol.name() +" protocol value can not be empty.");
             }
-            protocol.setValue(value);
+            protocol.value = value;
         }
     }
 }

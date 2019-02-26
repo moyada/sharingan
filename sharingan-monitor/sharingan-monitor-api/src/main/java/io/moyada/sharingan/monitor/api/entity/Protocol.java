@@ -5,6 +5,6 @@ package io.moyada.sharingan.monitor.api.entity;
  */
 public enum Protocol {
 
-    Dubbo, SpringCloud
+    Dubbo, SpringCloud, SOFA
     ;
 }

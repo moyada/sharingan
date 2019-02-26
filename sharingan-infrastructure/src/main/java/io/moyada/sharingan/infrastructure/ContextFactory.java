@@ -34,6 +34,10 @@ public class ContextFactory {
             return;
         }
         beanFactory.removeBeanDefinition(beanName);
+        destroyBean(bean);
+    }
+
+    public void destroyBean(Object bean) {
         beanFactory.destroyBean(bean);
     }
 
@@ -68,17 +72,12 @@ public class ContextFactory {
         return bean;
     }
 
-    /**
-     * 获取协议对应代理
-     * @param protocol
-     * @return
-     */
-    public <T> T getProtocolInvoke(String protocol, Class<T> beanType) {
+    public <T> T getBean(String beanName, Class<T> beanType) {
         T bean;
         try {
-            bean = applicationContext.getBean(protocol.concat("Invoke").intern(), beanType);
+            bean = applicationContext.getBean(beanName, beanType);
         } catch (Exception e) {
-            throw new InitializeInvokerException("cannot find InvokeProxy by " + protocol);
+            throw new InitializeInvokerException("cannot find Bean by name " + beanName);
         }
         return bean;
     }

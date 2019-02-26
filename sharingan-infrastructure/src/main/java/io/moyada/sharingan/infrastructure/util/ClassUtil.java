@@ -10,6 +10,34 @@ import java.util.List;
  **/
 public class ClassUtil {
 
+    public static Object[] newInstance(Class<?>[] classes) {
+        if (null == classes || classes.length == 0) {
+            return null;
+        }
+
+        Object[] objects = new Object[classes.length];
+
+        int index = 0;
+        for (Class<?> clazz : classes) {
+            try {
+                objects[index++] = clazz.getConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                return null;
+            }
+        }
+        return objects;
+    }
+
+    public static boolean isGeneric(Class<?> clazz) {
+        Class<?> superclass = clazz.getSuperclass();
+        if (null == superclass) {
+            return false;
+        }
+
+        TypeVariable<? extends Class<?>>[] typeParameters = superclass.getTypeParameters();
+        return typeParameters.length > 0;
+    }
+
     public static Class<?> getGenericType(final Object object, Class<?> parameterizedSuperclass, String typeParamName) {
         final Class<?> thisClass = object.getClass();
 

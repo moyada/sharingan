@@ -1,12 +1,12 @@
 package io.moyada.sharingan.infrastructure.util;
 
-import io.moyada.sharingan.serialization.jackson.JacksonSerializer;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import io.moyada.sharingan.serialization.api.SerializationException;
+import io.moyada.sharingan.serialization.api.Serializer;
+import io.moyada.sharingan.serialization.gson.GsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -16,13 +16,15 @@ public class JsonUtil {
 
     private static final Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
-    private static final JacksonSerializer SERIALIZER = new JacksonSerializer();
+    private static final String NULL = "null";
+
+    private static final Serializer SERIALIZER = new GsonSerializer();
 
     public static String toJson(Object obj) {
         String json;
         try {
             json = SERIALIZER.toString(obj);
-        } catch (JsonProcessingException e) {
+        } catch (SerializationException e) {
             log.error("Serialization json Error: " + e.getMessage());
             return null;
         }
@@ -30,27 +32,39 @@ public class JsonUtil {
     }
 
     public static <C> C toObject(String json, Class<C> c) {
+        if (NULL.equals(json)) {
+            return null;
+        }
+
         try {
             return SERIALIZER.toObject(json, c);
-        } catch (IOException e) {
+        } catch (SerializationException e) {
             log.error("Deserialization " + json + " to Object Error: " + e.getMessage());
             return null;
         }
     }
 
     public static <C> C[] toArray(String json, Class<C[]> clazz) {
+        if (NULL.equals(json)) {
+            return null;
+        }
+
         try {
             return SERIALIZER.toArray(json, clazz);
-        } catch (IOException e) {
+        } catch (SerializationException e) {
             log.error("Deserialization " + json + " to Array Error: " + e.getMessage());
             return null;
         }
     }
 
-    public static <C> List<C> toList(String json, Class<C> clazz) {
+    public static <C> Collection<C> toList(String json, Class<C> clazz) {
+        if (NULL.equals(json)) {
+            return null;
+        }
+
         try {
             return SERIALIZER.toList(json, clazz);
-        } catch (IOException e) {
+        } catch (SerializationException e) {
             log.error("Deserialization " + json + " to List Error: " + e.getMessage());
             return null;
         }
@@ -59,7 +73,7 @@ public class JsonUtil {
     public static <T, U> Map<T, U> toMap(String json, Class<T> t, Class<U> u) {
         try {
             return SERIALIZER.toMap(json, t, u);
-        } catch (IOException e) {
+        } catch (SerializationException e) {
             log.error("Deserialization " + json + " to Map Error: " + e.getMessage());
             return null;
         }

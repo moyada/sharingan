@@ -19,6 +19,11 @@
 
         <dependency>
             <groupId>io.moyada</groupId>
+            <artifactId>sharingan-rpc-sofa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.moyada</groupId>
             <artifactId>sharingan-rpc-springcloud</artifactId>
         </dependency>
     </dependencies>

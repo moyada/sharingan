@@ -1,6 +1,7 @@
 package io.moyada.sharingan.infrastructure.invoke;
 
 
+import io.moyada.sharingan.infrastructure.exception.InitializeInvokerException;
 import io.moyada.sharingan.infrastructure.exception.InstanceNotFountException;
 import io.moyada.sharingan.infrastructure.invoke.data.InvocationMetaDate;
 import io.moyada.sharingan.infrastructure.invoke.data.Result;
@@ -21,8 +22,9 @@ public abstract class MethodInvoke<T, I extends InvocationMetaDate> implements I
     public void initialize(InvocationMetaDate metaDate) throws InstanceNotFountException {
         Class<?> metaClass = ClassUtil.getGenericType(this, MethodInvoke.class, "I");
         if (metaClass.isInstance(metaDate)) {
-            doInitialize((I) metaDate);
-            beforeInvoke();
+            I actualData = (I) metaDate;
+            doInitialize(actualData);
+            beforeInvoke(actualData);
         } else {
             throw new IllegalArgumentException("Generic type do not match");
         }
@@ -31,7 +33,11 @@ public abstract class MethodInvoke<T, I extends InvocationMetaDate> implements I
     protected void doInitialize(I metaDate) throws InstanceNotFountException {
     }
 
-    protected void beforeInvoke() {
+    @Override
+    public void destroy() {
+    }
+
+    protected void beforeInvoke(I metaDate) throws InitializeInvokerException {
     }
 
     /**

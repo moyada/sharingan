@@ -19,6 +19,8 @@ public interface Invoke {
      */
     void initialize(InvocationMetaDate metaDate) throws InstanceNotFountException;
 
+    void destroy();
+
     /**
      * 接口调用，返回结果、耗时、异常
      * @param invocation

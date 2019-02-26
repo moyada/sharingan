@@ -21,7 +21,7 @@ public class ListenerReport implements ReportData {
     /**
      * 成功概率
      */
-    private double successRate;
+    private double successRate = 1;
 
     /**
      * 最小耗时
@@ -66,7 +66,7 @@ public class ListenerReport implements ReportData {
     @Override
     public void calculation() {
         if (errorInvoke > 0) {
-            successRate = totalInvoke == errorInvoke ? 1D : totalInvoke * 1.0D / (totalInvoke - errorInvoke);
+            successRate = totalInvoke == errorInvoke ? 0D : totalInvoke * 1.0D / (totalInvoke - errorInvoke);
         }
         avgResponseTime = totalResponseTime / totalInvoke;
     }
