@@ -16,6 +16,8 @@ public class JsonUtil {
 
     private static final Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
+    private static final String NULL = "null";
+
     private static final Serializer SERIALIZER = new GsonSerializer();
 
     public static String toJson(Object obj) {
@@ -30,6 +32,10 @@ public class JsonUtil {
     }
 
     public static <C> C toObject(String json, Class<C> c) {
+        if (NULL.equals(json)) {
+            return null;
+        }
+
         try {
             return SERIALIZER.toObject(json, c);
         } catch (SerializationException e) {
@@ -39,6 +45,10 @@ public class JsonUtil {
     }
 
     public static <C> C[] toArray(String json, Class<C[]> clazz) {
+        if (NULL.equals(json)) {
+            return null;
+        }
+
         try {
             return SERIALIZER.toArray(json, clazz);
         } catch (SerializationException e) {
@@ -48,6 +58,10 @@ public class JsonUtil {
     }
 
     public static <C> Collection<C> toList(String json, Class<C> clazz) {
+        if (NULL.equals(json)) {
+            return null;
+        }
+
         try {
             return SERIALIZER.toList(json, clazz);
         } catch (SerializationException e) {

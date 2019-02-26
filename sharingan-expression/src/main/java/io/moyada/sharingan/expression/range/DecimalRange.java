@@ -41,8 +41,11 @@ public class DecimalRange implements Range<Double> {
 
     @Override
     public boolean isHuge() {
-        return end - start >= NumberConstant.BIG_DOUBLE / 100
-                && start - end <= NumberConstant.SMALL_DOUBLE / 100;
+        double diff = end - start;
+        if (diff < 0) {
+            return true;
+        }
+        return diff >= NumberConstant.BIG_DOUBLE * 2;
     }
 
     @Override

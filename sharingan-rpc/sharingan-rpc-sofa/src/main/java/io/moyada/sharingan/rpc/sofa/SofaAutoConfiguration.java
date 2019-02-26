@@ -1,11 +1,14 @@
 package io.moyada.sharingan.rpc.sofa;
 
 
+import io.moyada.sharingan.infrastructure.ContextFactory;
+import io.moyada.sharingan.infrastructure.config.DefaultConfig;
 import io.moyada.sharingan.infrastructure.invoke.InvokeProxy;
+import io.moyada.sharingan.infrastructure.util.StringUtil;
 import io.moyada.sharingan.rpc.sofa.config.SofaConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -18,14 +21,12 @@ import org.springframework.core.env.Environment;
  **/
 @Configuration
 @ConditionalOnClass(SofaConfig.class)
-@ConditionalOnProperty(value = SofaAutoConfiguration.REGISTER_URL)
 public class SofaAutoConfiguration implements EnvironmentAware {
 
-    final static String REGISTER_URL = "sharingan.rpc.sofa.registry";
-
-    public static final String BEAN_NAME = "sofaInvoke";
-
     private Environment env;
+
+    @Autowired
+    private ContextFactory contextFactory;
 
     @Bean
     @ConditionalOnMissingBean(value = SofaConfig.class, search = SearchStrategy.CURRENT)
@@ -38,10 +39,14 @@ public class SofaAutoConfiguration implements EnvironmentAware {
         return sofaConfig;
     }
 
-    @Bean(SofaAutoConfiguration.BEAN_NAME)
+    @Bean("sofaInvoke")
     @ConditionalOnMissingBean(SofaInvoke.class)
-    public InvokeProxy sofaInvoke() {
-        return new SofaInvoke();
+    public InvokeProxy sofaInvoke(SofaConfig sofaConfig, DefaultConfig defaultConfig) {
+        if (null == sofaConfig.getRegistry() && StringUtil.isEmpty(sofaConfig.getDirectUrl())) {
+            contextFactory.destroyBean(sofaConfig);
+            return null;
+        }
+        return new SofaInvoke(sofaConfig, defaultConfig);
     }
 
     @Override

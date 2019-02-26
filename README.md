@@ -1,12 +1,16 @@
 Sharingan
 ---------------
 
-sharingan 是用来快速检测回归RPC服务 `可用性` 的 Java 工程。
-在项目快速迭代时期，由于工期紧凑、逻辑复杂、测试覆盖范围不全等原因程序中往往可能存在疏忽的各种问题。
-通过定义 `参数表达式` 对服务进行模拟调用，生成测试报告，检测程序中可能存在的各种异常。
+Sharingan 是一个模拟远程服务调用的项目，能够动态生成参数检测服务的可用性，从中发现并反馈异常问题。
 
-### [文档](https://moyada.github.io/sharingan/)
+目前支持的 RPC 框架有
+[Dubbo](http://dubbo.apache.org/)、
+[Spring Cloud](http://projects.spring.io/spring-cloud/)、
+[SOFA](https://www.sofastack.tech/)、
+~~gRPC~~。
+
+### [使用文档](https://moyada.github.io/sharingan/)
 
 ## 预览
 
-![example_4](docs/images/example_4.png)
+![example](docs/images/example.png)

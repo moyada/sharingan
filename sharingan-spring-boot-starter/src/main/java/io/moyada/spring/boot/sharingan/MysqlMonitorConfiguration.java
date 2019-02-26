@@ -7,7 +7,6 @@ import io.moyada.sharingan.monitor.api.config.MonitorConfig;
 import io.moyada.sharingan.monitor.mysql.MysqlMonitor;
 import io.moyada.sharingan.monitor.mysql.MysqlRegister;
 import io.moyada.sharingan.monitor.mysql.config.*;
-import io.moyada.spring.boot.sharingan.annotation.EnableSharinganMonitor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,7 +26,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @ConditionalOnBean(MonitorConfig.class)
-@ConditionalOnProperty(name = EnableSharinganMonitor.ENABLE_PREFIX, havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = MonitorConfig.PREFIX + ".data-source.url")
 @EnableConfigurationProperties({
         DataSourceConfig.class,
         AppConfig.class,

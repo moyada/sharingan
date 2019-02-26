@@ -60,8 +60,9 @@ public class DecimalProvider extends RandomProvider implements ArgsProvider {
     protected String next() {
         double data;
         if (huge) {
-            data = random.nextDouble() * range - random.nextDouble() * base;
-            return new BigDecimal(data).setScale(format.getMaximumFractionDigits(), RoundingMode.HALF_UP).toString();
+            data = (random.nextDouble() * range) - (random.nextDouble() * base);
+            return new BigDecimal(data).setScale(format.getMaximumFractionDigits(), RoundingMode.HALF_UP)
+                    .toString();
         } else {
             data = random.nextDouble() * range + base;
             return format.format(data);

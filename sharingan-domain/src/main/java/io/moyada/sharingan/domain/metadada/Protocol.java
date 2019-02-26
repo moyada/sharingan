@@ -8,7 +8,8 @@ public enum Protocol {
 
     Dubbo("dubbo", Mode.CLASS),
     SpringCloud("springcloud", Mode.HTTP),
-    Sofa("sofa", Mode.CLASS),
+    SOFA("sofa", Mode.CLASS),
+    GRPC("grpc", null),
     ;
 
     private String value;

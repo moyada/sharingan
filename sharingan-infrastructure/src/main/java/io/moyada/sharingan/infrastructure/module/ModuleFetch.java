@@ -33,8 +33,12 @@ public class ModuleFetch extends DefaultFetch implements ApplicationContextAware
     // 类加载器映射
     private final Map<Dependency, SoftReference<AppClassLoader>> loaderMap = new HashMap<>();
 
-    @Autowired
     private ArtifactFetch artifactFetch;
+
+    @Autowired
+    public ModuleFetch(ArtifactFetch artifactFetch) {
+        this.artifactFetch = artifactFetch;
+    }
 
     @Override
     public Class getClass(Dependency dependency, String className) throws ClassNotFoundException {

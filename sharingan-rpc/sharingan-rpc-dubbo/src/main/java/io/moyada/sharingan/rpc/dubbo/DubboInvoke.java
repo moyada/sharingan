@@ -5,15 +5,14 @@ import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ConsumerConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
-import io.moyada.sharingan.infrastructure.ContextFactory;
 import io.moyada.sharingan.infrastructure.config.DefaultConfig;
 import io.moyada.sharingan.infrastructure.exception.InstanceNotFountException;
 import io.moyada.sharingan.infrastructure.invoke.DefaultMethodInvoke;
+import io.moyada.sharingan.infrastructure.invoke.Invocation;
 import io.moyada.sharingan.infrastructure.invoke.data.ClassInvocation;
+import io.moyada.sharingan.infrastructure.util.ClassUtil;
 import io.moyada.sharingan.rpc.dubbo.config.DubboConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,29 +23,15 @@ import java.util.List;
  **/
 public class DubboInvoke extends DefaultMethodInvoke<ClassInvocation> {
 
-    @Autowired
-    private ContextFactory contextFactory;
-
-    @Autowired
-    private DubboConfig dubboConfig;
-
-    @Autowired
-    private DefaultConfig defaultConfig;
-
     private ApplicationConfig config;
     private ConsumerConfig consumer;
     private List<RegistryConfig> registries;
 
     private ReferenceConfig<?> reference;
 
-    @PostConstruct
-    public void initConfig() {
-        if (null == dubboConfig.getRegistry()) {
-            // 无效注册中心，销毁实例
-            contextFactory.destroyBean(DubboAutoConfiguration.BEAN_NAME);
-            return;
-        }
+    private Invocation preInvocation;
 
+    public DubboInvoke(DefaultConfig defaultConfig, DubboConfig dubboConfig) {
         // 当前应用配置
         ApplicationConfig config = new ApplicationConfig();
         config.setName(defaultConfig.getIdentifyName());
@@ -113,7 +98,24 @@ public class DubboInvoke extends DefaultMethodInvoke<ClassInvocation> {
     }
 
     @Override
-    protected void beforeInvoke() {
-        invoke(null);
+    protected String convertError(Throwable throwable) {
+        Throwable cause = throwable.getCause();
+        String message = null == cause ? throwable.getMessage() : cause.getMessage();
+
+        int index = message.indexOf("cause:");
+        if (index < 0) {
+            return message;
+        }
+
+        int end = message.indexOf('\n', index);
+        if (end < 0 || end - index < 7) {
+            return message.substring(index);
+        }
+        return message.substring(index + 7, end);
+    }
+
+    @Override
+    protected void beforeInvoke(ClassInvocation metaDate) {
+        invoke(ClassUtil.newInstance(metaDate.getParamTypes()));
     }
 }

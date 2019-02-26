@@ -34,6 +34,10 @@ public class ContextFactory {
             return;
         }
         beanFactory.removeBeanDefinition(beanName);
+        destroyBean(bean);
+    }
+
+    public void destroyBean(Object bean) {
         beanFactory.destroyBean(bean);
     }
 

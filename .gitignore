@@ -8,7 +8,8 @@ logs/
 deploy/logs/
 sharingan-manager/src/main/resources/application.yaml
 deploy/config/conf-test.properties
-deploy/sharingan-manager.jar
+*/sharingan-manager.jar
+sharingan-manager.tar.gz
 out/
 /sharingan-manager/page/node_modules/
 .classpath

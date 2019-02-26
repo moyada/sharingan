@@ -12,10 +12,10 @@ public class NumberConstant {
     public static final double SMALL_DOUBLE;
 
     static {
-        String value = StringUtils.repeat('9', 15);
-        String data = StringUtils.repeat('8', 230);
-        String precision = StringUtils.repeat('7', 5);
-        BIG_DOUBLE = Double.valueOf(value + data + "." + precision);
-        SMALL_DOUBLE = Double.valueOf("-" + value);
+        String value = StringUtils.repeat('9', 128)
+                + "."
+                + StringUtils.repeat('9', 32);
+        BIG_DOUBLE = Double.valueOf(value);
+        SMALL_DOUBLE = -Double.valueOf(value);
     }
 }

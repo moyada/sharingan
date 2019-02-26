@@ -42,7 +42,8 @@ public class ClassData extends InvokeData<ClassInvocation> {
     public ClassInvocation getInvocation() {
         ServiceData serviceData = getServiceData();
         AppData appData = serviceData.getAppData();
-        return new ClassInvocation(appData.getName(), serviceData.getName(), getMethodName(), getClassType(), getMethodHandle());
+        return new ClassInvocation(appData.getName(), serviceData.getName(), getMethodName(),
+                getClassType(), getParamTypes(), getMethodHandle());
     }
 
     public Class getClassType() {

@@ -11,7 +11,9 @@ public class ClassInvocation extends InvocationMetaDate {
     /**
      * 接口类型
      */
-    private Class classType;
+    private Class<?> classType;
+
+    private Class<?>[] paramTypes;
 
     /**
      * 方法具柄
@@ -19,14 +21,19 @@ public class ClassInvocation extends InvocationMetaDate {
     private MethodHandle methodHandle;
 
     public ClassInvocation(String applicationName, String serviceName, String methodName,
-                           Class classType, MethodHandle methodHandle) {
+                           Class<?> classType, Class<?>[] paramTypes, MethodHandle methodHandle) {
         super(applicationName, serviceName, methodName);
         this.classType = classType;
+        this.paramTypes = paramTypes;
         this.methodHandle = methodHandle;
     }
 
-    public Class getClassType() {
+    public Class<?> getClassType() {
         return classType;
+    }
+
+    public Class<?>[] getParamTypes() {
+        return paramTypes;
     }
 
     public MethodHandle getMethodHandle() {

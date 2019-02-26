@@ -4,17 +4,13 @@ package io.moyada.sharingan.rpc.sofa;
 import com.alipay.sofa.rpc.config.ApplicationConfig;
 import com.alipay.sofa.rpc.config.ConsumerConfig;
 import com.alipay.sofa.rpc.config.RegistryConfig;
-import io.moyada.sharingan.infrastructure.ContextFactory;
 import io.moyada.sharingan.infrastructure.config.DefaultConfig;
 import io.moyada.sharingan.infrastructure.exception.InstanceNotFountException;
 import io.moyada.sharingan.infrastructure.invoke.DefaultMethodInvoke;
 import io.moyada.sharingan.infrastructure.invoke.data.ClassInvocation;
 import io.moyada.sharingan.infrastructure.util.ClassUtil;
-import io.moyada.sharingan.infrastructure.util.StringUtil;
 import io.moyada.sharingan.rpc.sofa.config.SofaConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,28 +21,14 @@ import java.util.List;
  **/
 public class SofaInvoke extends DefaultMethodInvoke<ClassInvocation> {
 
-    @Autowired
-    private ContextFactory contextFactory;
-
-    @Autowired
     private SofaConfig sofaConfig;
-
-    @Autowired
-    private DefaultConfig defaultConfig;
 
     private ApplicationConfig applicationConfig;
     private List<RegistryConfig> registryConfigs;
 
     private ConsumerConfig<?> consumerConfig;
 
-    @PostConstruct
-    public void initConfig() {
-        if (null == sofaConfig.getRegistry() && StringUtil.isEmpty(sofaConfig.getDirectUrl())) {
-            // 无效注册中心，销毁实例
-            contextFactory.destroyBean(SofaAutoConfiguration.BEAN_NAME);
-            return;
-        }
-
+    public SofaInvoke(SofaConfig sofaConfig, DefaultConfig defaultConfig) {
         ApplicationConfig applicationConfig = new ApplicationConfig();
         applicationConfig.setAppName(defaultConfig.getIdentifyName());
 
@@ -64,6 +46,7 @@ public class SofaInvoke extends DefaultMethodInvoke<ClassInvocation> {
 
         this.applicationConfig = applicationConfig;
         this.registryConfigs = registryConfigs;
+        this.sofaConfig = sofaConfig;
     }
 
     @Override
@@ -106,7 +89,7 @@ public class SofaInvoke extends DefaultMethodInvoke<ClassInvocation> {
     }
 
     @Override
-    protected void beforeInvoke() {
-        invoke(null);
+    protected void beforeInvoke(ClassInvocation metaDate) {
+        invoke(ClassUtil.newInstance(metaDate.getParamTypes()));
     }
 }

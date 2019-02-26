@@ -1,14 +1,10 @@
 package io.moyada.sharingan.infrastructure.test;
 
 import io.moyada.sharingan.infrastructure.config.MavenConfig;
-import io.moyada.sharingan.infrastructure.module.ArtifactFetch;
-import io.moyada.sharingan.infrastructure.module.Dependency;
-import io.moyada.sharingan.infrastructure.module.MetadataFetch;
-import io.moyada.sharingan.infrastructure.module.Nexus3RestFetch;
+import io.moyada.sharingan.infrastructure.module.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -20,16 +16,20 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 public class ModuleTest {
 
-    @Autowired
-    private MetadataFetch metadataFetch;
+    private static MetadataFetch metadataFetch;
+    private static ArtifactFetch dependencyFetch;
 
     @Test
-    public void jarTest() {
+    public static void setup() {
         MavenConfig mavenConfig = new MavenConfig();
         mavenConfig.setRegistry("http://127.0.0.1:8081");
 
-        ArtifactFetch dependencyFetch = new Nexus3RestFetch(mavenConfig);
+        dependencyFetch = new Nexus3RestFetch(mavenConfig);
+        metadataFetch = new ModuleFetch(dependencyFetch);
+    }
 
+    @Test
+    public void jarTest() {
         Dependency dependency = new Dependency("io.moyada", "dubbo-test-api");
         String url = dependencyFetch.getJarUrl(dependency);
 

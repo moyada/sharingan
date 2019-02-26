@@ -1,8 +1,11 @@
 package io.moyada.sharingan.rpc.dubbo;
 
 
+import io.moyada.sharingan.infrastructure.ContextFactory;
+import io.moyada.sharingan.infrastructure.config.DefaultConfig;
 import io.moyada.sharingan.rpc.dubbo.config.DubboConfig;
 import io.moyada.sharingan.infrastructure.invoke.InvokeProxy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,7 +24,8 @@ import org.springframework.core.env.Environment;
 @ConditionalOnProperty(value = DubboConfig.PREFIX + ".registry")
 public class DubboAutoConfiguration implements EnvironmentAware {
 
-    static final String BEAN_NAME = "dubboInvoke";
+    @Autowired
+    private ContextFactory contextFactory;
 
     private Environment env;
 
@@ -37,10 +41,16 @@ public class DubboAutoConfiguration implements EnvironmentAware {
         return dubboConfig;
     }
 
-    @Bean(DubboAutoConfiguration.BEAN_NAME)
+    @Bean("dubboInvoke")
     @ConditionalOnMissingBean(DubboInvoke.class)
-    public InvokeProxy dubboInvoke() {
-        return new DubboInvoke();
+    public InvokeProxy dubboInvoke(DefaultConfig defaultConfig, DubboConfig dubboConfig) {
+        if (null == dubboConfig.getRegistry()) {
+            // 无效注册中心，销毁实例
+            contextFactory.destroyBean(dubboConfig);
+            return null;
+        }
+
+        return new DubboInvoke(defaultConfig, dubboConfig);
     }
 
     @Override
