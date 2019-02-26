@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-cd ..
+DIR=$(cd `dirname $0`;pwd)
+cd DIR/..
 mvn install
 
 cd script

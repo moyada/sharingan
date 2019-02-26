@@ -14,7 +14,7 @@ CREATE TABLE `service_info` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `app_id` int(11) unsigned NOT NULL COMMENT '项目编号',
   `name` varchar(100) NOT NULL COMMENT '服务名称',
-  `protocol` enum('dubbo','springcloud') DEFAULT NULL COMMENT 'rpc协议',
+  `protocol` enum('Dubbo','SpringCloud','Sofa') DEFAULT NULL COMMENT 'rpc协议',
   `protocol_type` enum('HTTP') DEFAULT NULL COMMENT 'rpc调用方式',
   `class_name` varchar(191) DEFAULT NULL COMMENT '接口类名',
   PRIMARY KEY (`id`),
