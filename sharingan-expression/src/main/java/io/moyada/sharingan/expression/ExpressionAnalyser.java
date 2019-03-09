@@ -8,22 +8,19 @@ import java.util.regex.Pattern;
  * @author xueyikang
  * @since 1.0
  **/
-public class ExpressionAnalyser {
+class ExpressionAnalyser {
 
     // ${app.domain}
-    private static final String expressionRegex = "\\$\\{[\\w\\-]+\\.[\\w\\-]+(\\.[\\w\\-]+)*\\}";
+    private static final String EXPRESSION_REGEX = "\\$\\{[\\w\\-]+\\.[\\w\\-]+(\\.[\\w\\-]+)*\\}";
+    private static final Pattern EXPRESSION_PATTERN = Pattern.compile(EXPRESSION_REGEX);
 
     // #{int.1-365} || #{int.random}
-    private static final String intRangeRegex = "\\#\\{int\\.((\\-?\\d+\\-\\-?\\d+)|random)\\}";
+    private static final String INT_RANGE_REGEX = "\\#\\{int\\.((\\-?\\d+\\-\\-?\\d+)|random)\\}";
+    private static final Pattern INT_RANGE_PATTERN = Pattern.compile(INT_RANGE_REGEX);
 
     // #{double.20-60.5} || #{double.random}
-    private static final String doubleRangeRegex = "\\#\\{double(\\[\\d+\\])?\\.((\\-?\\d+\\.?\\d*\\-\\-?\\d+\\.?\\d*)|random)\\}";
-
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile(expressionRegex);
-
-    private static final Pattern INT_RANGE_PATTERN = Pattern.compile(intRangeRegex);
-
-    private static final Pattern DOUBLE_RANGE_PATTERN = Pattern.compile(doubleRangeRegex);
+    private static final String DOUBLE_RANGE_REGEX = "\\#\\{double(\\[\\d+\\])?\\.((\\-?\\d+\\.?\\d*\\-\\-?\\d+\\.?\\d*)|random)\\}";
+    private static final Pattern DOUBLE_RANGE_PATTERN = Pattern.compile(DOUBLE_RANGE_REGEX);
 
     /**
      * 查询参数表达式
@@ -39,7 +36,7 @@ public class ExpressionAnalyser {
      * @param value
      * @return
      */
-    public static String findInt(String value) {
+    static String findInt(String value) {
         return findRegex(INT_RANGE_PATTERN, value);
     }
 
@@ -48,7 +45,7 @@ public class ExpressionAnalyser {
      * @param value
      * @return
      */
-    public static String findDouble(String value) {
+    static String findDouble(String value) {
         return findRegex(DOUBLE_RANGE_PATTERN, value);
     }
 
@@ -57,7 +54,7 @@ public class ExpressionAnalyser {
      * @param expression
      * @return
      */
-    public static String[] findRoute(String expression) {
+    static String[] findRoute(String expression) {
         if (!expression.contains(".")) {
             return null;
         }

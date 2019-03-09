@@ -37,7 +37,6 @@ public class SofaInvoke extends DefaultMethodInvoke<ClassInvocation> {
             RegistryConfig registryConfig = new RegistryConfig();
             registryConfig.setRegister(false);
             registryConfig.setSubscribe(false);
-            registryConfig.setProtocol(sofaConfig.getProtocol());
             registryConfig.setAddress(registry);
             registryConfig.setConnectTimeout(sofaConfig.getTimeout());
             registryConfig.setTimeout(sofaConfig.getTimeout());
@@ -60,8 +59,8 @@ public class SofaInvoke extends DefaultMethodInvoke<ClassInvocation> {
                 .setRetries(0)
                 .setDirectUrl(sofaConfig.getDirectUrl()) // 指定直连地址
                 .setRegistry(this.registryConfigs)
-                .setSubscribe(false)
                 .setRegister(false)
+                .setSubscribe(false)
                 .setConnectTimeout(sofaConfig.getTimeout())
                 .setTimeout(sofaConfig.getTimeout());
 

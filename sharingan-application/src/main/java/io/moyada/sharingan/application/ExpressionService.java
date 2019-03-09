@@ -5,7 +5,7 @@ import io.moyada.sharingan.domain.expression.ParamProvider;
 import io.moyada.sharingan.domain.expression.ProviderFactory;
 import io.moyada.sharingan.domain.metadada.ClassData;
 import io.moyada.sharingan.domain.request.QuestInfo;
-import io.moyada.sharingan.expression.HttpInfo;
+import io.moyada.sharingan.domain.expression.HttpInfo;
 import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
 import io.moyada.sharingan.infrastructure.util.JsonUtil;
 import io.moyada.sharingan.infrastructure.util.RegexUtil;

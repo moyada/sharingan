@@ -1,4 +1,4 @@
-package io.moyada.sharingan.expression;
+package io.moyada.sharingan.domain.expression;
 
 import java.util.Collections;
 import java.util.Map;

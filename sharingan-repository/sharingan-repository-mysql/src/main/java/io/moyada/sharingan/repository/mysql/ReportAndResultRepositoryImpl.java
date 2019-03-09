@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ReportAndResultRepositoryImpl implements ResultRepository, ReportRepository {
 
-    private Map<String, Integer> cacheIndex = new ConcurrentHashMap<>();
+    private Map<String, Integer> cacheIndex = new ConcurrentHashMap<String, Integer>();
 
     @Autowired
     private ReportDAO reportDAO;

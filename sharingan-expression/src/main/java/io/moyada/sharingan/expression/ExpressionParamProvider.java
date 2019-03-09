@@ -21,7 +21,7 @@ public class ExpressionParamProvider implements ParamProvider {
      */
     private int length;
 
-    public ExpressionParamProvider(ArgsProvider[] providers) {
+    ExpressionParamProvider(ArgsProvider[] providers) {
         this.providers = providers;
         this.length = providers.length;
     }

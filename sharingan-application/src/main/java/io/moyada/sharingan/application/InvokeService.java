@@ -3,12 +3,16 @@ package io.moyada.sharingan.application;
 
 import io.moyada.sharingan.application.command.CreateReportCommand;
 import io.moyada.sharingan.domain.expression.ParamProvider;
-import io.moyada.sharingan.domain.metadada.*;
+import io.moyada.sharingan.domain.metadada.ClassData;
+import io.moyada.sharingan.domain.metadada.HttpData;
+import io.moyada.sharingan.domain.metadada.InvokeData;
+import io.moyada.sharingan.domain.metadada.ServiceData;
 import io.moyada.sharingan.domain.request.QuestInfo;
 import io.moyada.sharingan.domain.request.ReportId;
 import io.moyada.sharingan.domain.task.ReportData;
 import io.moyada.sharingan.domain.task.TaskProcessor;
 import io.moyada.sharingan.infrastructure.ContextFactory;
+import io.moyada.sharingan.infrastructure.exception.InitializeInvokerException;
 import io.moyada.sharingan.infrastructure.invoke.InvokeProxy;
 import io.moyada.sharingan.infrastructure.invoke.data.ClassInvocation;
 import io.moyada.sharingan.infrastructure.invoke.data.HttpInvocation;
@@ -58,7 +62,7 @@ public class InvokeService {
         if (invokeData instanceof HttpData) {
             result = doHttpInvoke(questInfo, (HttpData) invokeData);
         } else if (invokeData instanceof ClassData) {
-            result = doDubboInvoke(questInfo, (ClassData) invokeData);
+            result = doRPCInvoke(questInfo, (ClassData) invokeData);
         } else {
             return Result.failed("unknown InvocationMetaDate");
         }
@@ -67,8 +71,13 @@ public class InvokeService {
         return result;
     }
 
-    private Result<String> doDubboInvoke(QuestInfo questInfo, ClassData classData) {
-        InvokeProxy invokeProxy = getInvokeProxy(classData.getServiceData());
+    private Result<String> doRPCInvoke(QuestInfo questInfo, ClassData classData) {
+        InvokeProxy invokeProxy;
+        try {
+            invokeProxy = getInvokeProxy(classData.getServiceData());
+        } catch (InitializeInvokerException e) {
+            return Result.failed(e.getMessage());
+        }
 
         ClassInvocation classInvocation = classData.getInvocation();
         try {
@@ -83,7 +92,12 @@ public class InvokeService {
     }
 
     private Result<String> doHttpInvoke(QuestInfo questInfo, HttpData httpData) {
-        InvokeProxy invokeProxy = getInvokeProxy(httpData.getServiceData());
+        InvokeProxy invokeProxy;
+        try {
+            invokeProxy = getInvokeProxy(httpData.getServiceData());
+        } catch (InitializeInvokerException e) {
+            return Result.failed(e.getMessage());
+        }
 
         HttpInvocation httpInvocation = httpData.getInvocation();
         ParamProvider paramProvider = expressionService.getHttpParamProvider(questInfo, httpInvocation);

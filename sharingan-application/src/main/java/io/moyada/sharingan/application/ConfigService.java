@@ -44,14 +44,14 @@ public class ConfigService {
         if (!methodData.isEmpty()) {
             data.addAll(methodData.stream()
                     .map(c -> new FunctionData(c.getId(), c.getMethodName(),
-                            "[" + c.getParamType() + "] " + c.getReturnType(), c.getExpression()))
+                            " (" + c.getParamType() + ") " + c.getReturnType(), c.getExpression()))
                     .collect(Collectors.toList()));
         }
 
         if (!httpData.isEmpty()) {
             data.addAll(httpData.stream()
                     .map(c -> new FunctionData(c.getId(),  c.getMethodName(),
-                            "[" + c.getMethodType() + "]", c.getParam(), c.getHeader(), c.getBody()))
+                            " (" + c.getMethodType() + ") ", c.getParam(), c.getHeader(), c.getBody()))
                     .collect(Collectors.toList()));
         }
 

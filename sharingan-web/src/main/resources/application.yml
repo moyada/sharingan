@@ -1,0 +1,19 @@
+sharingan:
+  datasource:
+    url: jdbc:mysql://119.23.110.20:3306/sharingan?useSSL=false&useUnicode=true&useAffectedRows=true&serverTimezone=Asia/Shanghai
+    username: moyada
+    password: Xcj1H@yKxJgq84e4e3
+  maven:
+    registry: http://localhost:8081
+    username:
+    password:
+  rpc:
+    dubbo:
+      registry: zookeeper://119.23.110.20:2181
+      username:
+      password:
+    sofa:
+      registry: zookeeper://119.23.110.20:2181
+      direct-url: bolt://127.0.0.1:12200
+    springcloud:
+#      registry: http://127.0.0.1:8761/eureka

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sharingan-manager</artifactId>
+    <artifactId>sharingan-web</artifactId>
     <packaging>jar</packaging>
 
     <build>

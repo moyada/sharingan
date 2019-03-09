@@ -6,12 +6,12 @@ classes/
 .babel.json
 logs/
 deploy/logs/
-sharingan-manager/src/main/resources/application.yaml
+sharingan-web/src/main/resources/application.yaml
 deploy/config/conf-test.properties
 */sharingan-manager.jar
 sharingan-manager.tar.gz
 out/
-/sharingan-manager/page/node_modules/
+/sharingan-web/page/node_modules/
 .classpath
 .project
 .settings/
