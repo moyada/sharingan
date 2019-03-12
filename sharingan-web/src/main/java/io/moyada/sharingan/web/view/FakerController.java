@@ -1,4 +1,4 @@
-package io.moyada.sharingan.manager.view;
+package io.moyada.sharingan.web.view;
 
 
 import io.moyada.sharingan.application.data.FunctionData;
@@ -10,8 +10,8 @@ import io.moyada.sharingan.domain.metadada.AppData;
 import io.moyada.sharingan.domain.metadada.ServiceData;
 import io.moyada.sharingan.domain.request.InvokeReport;
 import io.moyada.sharingan.domain.request.QuestInfo;
-import io.moyada.sharingan.manager.vo.Result;
-import io.moyada.sharingan.manager.vo.SelectVO;
+import io.moyada.sharingan.web.vo.Result;
+import io.moyada.sharingan.web.vo.SelectVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

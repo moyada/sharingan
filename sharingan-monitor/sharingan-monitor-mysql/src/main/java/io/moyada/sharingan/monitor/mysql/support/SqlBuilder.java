@@ -7,6 +7,8 @@ import io.moyada.sharingan.monitor.api.util.StringUtil;
 import io.moyada.sharingan.monitor.mysql.config.FindAction;
 import io.moyada.sharingan.monitor.mysql.config.MetadataConfig;
 
+import java.util.Arrays;
+
 /**
  * SQL 构造器
  * @author xueyikang
@@ -91,8 +93,10 @@ public class SqlBuilder {
                 httpInfo.getServiceId(),
                 NameUtil.getValue(httpInfo.getName()),
                 NameUtil.getValue(httpInfo.getType().name()),
-                NameUtil.getValue(httpInfo.getContentType().getValue()),
-                NameUtil.getValue(ExpressionUtil.getExpression(httpInfo.getName(), httpInfo.getParam(), httpInfo.getHeader())));
+                NameUtil.getValue(Arrays.toString(httpInfo.getParam())),
+                NameUtil.getValue(Arrays.toString(httpInfo.getHeader())),
+                NameUtil.getValue((String) null),
+                NameUtil.getValue(httpInfo.getContentType().getValue()));
         return buildInsertSql(metadataConfig.getHttpConfig(), value);
     }
 

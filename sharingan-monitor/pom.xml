@@ -19,7 +19,6 @@
         <module>sharingan-monitor-http</module>
     </modules>
 
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

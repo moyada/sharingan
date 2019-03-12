@@ -1,4 +1,4 @@
-package io.moyada.sharingan.manager.vo;
+package io.moyada.sharingan.web.vo;
 
 import java.io.Serializable;
 

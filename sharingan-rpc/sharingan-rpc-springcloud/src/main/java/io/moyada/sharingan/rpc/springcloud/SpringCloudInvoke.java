@@ -166,20 +166,20 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
             return;
         }
 
+        int index;
         if (hasBody) {
-            try {
-                requestTemplate.body(argsValue[0].toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            requestTemplate.body(argsValue[0].toString());
+            index = 1;
+        } else {
+            index = 0;
         }
 
         Map<String, Object> paramMap = new HashMap<>();
         Object value;
-        for (int index = hasBody ? 1 : 0; index < paramSize; index++) {
+        for (int count = 0; count < paramSize; count++, index++) {
             value = argsValue[index];
             if (null != value) {
-                paramMap.put(params[index], value);
+                paramMap.put(params[count], value);
             }
         }
 
@@ -197,5 +197,34 @@ public class SpringCloudInvoke extends AsyncMethodInvoke<Request, HttpInvocation
 
     private <T> T getInstance(Class<T> clazz) {
         return feignContext.getInstance(clazz.getName(), clazz);
+    }
+
+    @Override
+    protected String getArgs(Object[] args) {
+        if (isEmpty) {
+            return "[]";
+        }
+
+        StringBuilder result = new StringBuilder(args.length * 20);
+
+        int index = hasBody ? 1 : 0;
+
+        result.append("[");
+        Object value;
+
+        for (int count = 0; count < paramSize; count++, index++) {
+            value = args[index];
+            if (null != value) {
+                result.append(params[count]).append(": ").append(value).append(", ");
+            }
+        }
+
+        if (hasBody) {
+            result.append("body: ").append(args[0].toString());
+        } else {
+            result.delete(result.length() - 2, result.length());
+        }
+        result.append("]");
+        return result.toString();
     }
 }

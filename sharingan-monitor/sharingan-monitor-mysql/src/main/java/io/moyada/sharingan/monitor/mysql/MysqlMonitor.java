@@ -12,7 +12,7 @@ import io.moyada.sharingan.monitor.mysql.handler.RecordConsumer;
 import io.moyada.sharingan.monitor.mysql.handler.RecordConverter;
 import io.moyada.sharingan.monitor.mysql.support.SqlBuilder;
 import io.moyada.sharingan.monitor.mysql.support.SqlExecutor;
-import io.moyada.sharingan.serialization.jackson.JacksonSerializer;
+import io.moyada.sharingan.serialization.gson.GsonSerializer;
 
 /**
  * @author xueyikang
@@ -45,7 +45,7 @@ public class MysqlMonitor extends AsyncBatchMonitor<Record> {
         SqlBuilder sqlBuilder = new SqlBuilder(metadataConfig);
         DataRepository dataRepository = new DataRepositoryImpl(sqlExecutor, sqlBuilder,  dataMapperConfig);
 
-        RecordConverter converter = new RecordConverter(dataRepository, new JacksonSerializer());
+        RecordConverter converter = new RecordConverter(dataRepository, new GsonSerializer());
         RecordConsumer consumer = new RecordConsumer(dataRepository);
         return new MysqlMonitor(monitorConfig, converter, consumer);
     }

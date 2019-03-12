@@ -66,7 +66,7 @@
         <spring.version>5.1.1.RELEASE</spring.version>
         <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
 
-        <servlet.version>4.0.0</servlet.version>
+        <servlet.version>4.0.1</servlet.version>
 
         <!-- for maven compiler plugin -->
         <java_source_version>1.8</java_source_version>
@@ -268,6 +268,15 @@
                 <optional>true</optional>
             </dependency>
 
+            <!-- web -->
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId>
+                <version>${spring-boot.version}</version>
+                <optional>true</optional>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
@@ -308,12 +317,6 @@
                 <version>${lmax.disruptor.version}</version>
                 <optional>true</optional>
             </dependency>
-
-            <!--<dependency>-->
-                <!--<groupId>com.fasterxml</groupId>-->
-                <!--<artifactId>classmate</artifactId>-->
-                <!--<version>${classmate.version}</version>-->
-            <!--</dependency>-->
 
             <dependency>
                 <groupId>javax.servlet</groupId>

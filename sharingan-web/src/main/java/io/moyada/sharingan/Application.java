@@ -1,17 +1,14 @@
 package io.moyada.sharingan;
 
-import io.moyada.sharingan.manager.config.WebConfig;
+import io.moyada.sharingan.web.config.WebConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Indexed;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
-@EnableWebMvc
-//@EnableWebFlux
 @Import(WebConfig.class)
 @SpringBootApplication
 @Indexed

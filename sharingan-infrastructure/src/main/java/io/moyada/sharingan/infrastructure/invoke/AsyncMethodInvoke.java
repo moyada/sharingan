@@ -3,7 +3,6 @@ package io.moyada.sharingan.infrastructure.invoke;
 
 import io.moyada.sharingan.infrastructure.invoke.data.InvocationMetaDate;
 import io.moyada.sharingan.infrastructure.invoke.data.Result;
-import io.moyada.sharingan.infrastructure.util.StringUtil;
 
 /**
  * 异步方法调用器
@@ -22,7 +21,9 @@ public abstract class AsyncMethodInvoke<T, I extends InvocationMetaDate> extends
     @Override
     public void call(Invocation invocation) {
         Result result = execute(invocation);
-        result.setArguments(StringUtil.toString(invocation.getArgsValue()));
+        result.setArguments(getArgs(invocation.getArgsValue()));
         invokeReceiver.callback(result);
     }
+
+    protected abstract String getArgs(Object[] args);
 }

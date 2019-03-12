@@ -4,6 +4,7 @@ package io.moyada.sharingan.infrastructure.invoke;
 import io.moyada.sharingan.infrastructure.exception.UnsupportedParamNumberException;
 import io.moyada.sharingan.infrastructure.invoke.data.InvocationMetaDate;
 import io.moyada.sharingan.infrastructure.invoke.data.Result;
+import io.moyada.sharingan.infrastructure.util.JsonUtil;
 
 import java.lang.invoke.MethodHandle;
 
@@ -77,5 +78,10 @@ public class DefaultMethodInvoke<I extends InvocationMetaDate> extends AsyncMeth
 
     protected String convertError(Throwable throwable) {
         return throwable.getMessage();
+    }
+
+    @Override
+    protected String getArgs(Object[] args) {
+        return JsonUtil.toJson(args);
     }
 }

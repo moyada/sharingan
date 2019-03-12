@@ -1,4 +1,4 @@
-package io.moyada.sharingan.manager.view;
+package io.moyada.sharingan.web.view;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

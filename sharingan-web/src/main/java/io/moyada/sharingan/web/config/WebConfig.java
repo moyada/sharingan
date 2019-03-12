@@ -1,4 +1,4 @@
-package io.moyada.sharingan.manager.config;
+package io.moyada.sharingan.web.config;
 
 
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @since 1.0
  **/
 @Configuration
+//@EnableWebFlux
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
