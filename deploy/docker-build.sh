@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
-DIR=$(pwd)
+DIR=$(cd `dirname $0`;pwd)
 FILE=docker-build.sh
 INDEX=1
 VERSION=v0.0.$INDEX
 CURRENT_VERSION=sharingan:$VERSION
 
-sh build-web.sh
-
-cd ..
 echo " ====> start rebuild sharingan image..."
 
 docker build -f Dockerfile -t $CURRENT_VERSION .

@@ -1,0 +1,4 @@
+*
+!deploy
+deploy/logs/
+deploy/schema/
